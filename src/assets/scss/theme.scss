@@ -1,0 +1,270 @@
+:root {
+    --platinumblue: #2a33b7;
+    --momentumorange: #e5ba5b;
+    --premiereorange: #f5941d;
+    --vivaorange: #f8b60a;
+    --eezygreen: #1bcc46;
+}
+
+// UTILS
+.sidebar-logo-outer {
+    width: 100px;
+}
+
+.sidebar-logo {
+    width: 150%;
+    height: 90px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.sidebar-logo-sm {
+    margin-right: 10px;
+    width: 150%;
+    height: 90px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.img-sm {
+    width: 110px;
+    height: auto;
+}
+
+.vertical-collpsed .navbar-brand-box {
+    overflow: hidden;
+}
+
+.navbar-brand-box {
+    padding-right: 1.8rem;
+    padding-left: 0.8rem;
+}
+
+// MOMENTUM
+.momentum {
+    //Momentum Credit Theme
+    .vertical-menu {
+        i:before {
+            color: var(--momentumorange);
+        }
+
+        .mm-active {
+            .active {
+                color: var(--momentumorange) !important;
+            }
+        }
+    }
+
+    .bg-primary {
+        background-color: var(--momentumorange) !important;
+    }
+
+    .sidebar-logo {
+        background-image: url(../images/subs-logos/moment-credit-logo-edit.png);
+    }
+    .sidebar-logo-sm {
+        background-image: url(../images/subs-logos/logos-sm/moment-logo-sm.png);
+    }
+}
+
+// PREMIER
+
+.premier {
+    .vertical-menu {
+        i:before {
+            color: var(--premiereorange);
+        }
+
+        .mm-active {
+            .active {
+                color: var(--premiereorange) !important;
+            }
+        }
+    }
+
+    .bg-primary {
+        background-color: var(--premiereorange) !important;
+    }
+
+    .sidebar-logo {
+        background-image: url(../images/subs-logos/premier-credit-logo-edit.png);
+        height: 70px;
+        width: auto;
+        margin-top: 10px;
+    }
+    .sidebar-logo-sm {
+        background-image: url(../images/subs-logos/logos-sm/premier-credit-logo-sm.png);
+    }
+}
+
+// PLATINUM
+
+.platinum {
+    .vertical-menu {
+        i:before {
+            color: var(--platinumblue);
+        }
+
+        .mm-active {
+            .active {
+                color: var(--platinumblue) !important;
+            }
+        }
+    }
+
+    .bg-primary {
+        background-color: var(--platinumblue) !important;
+    }
+
+    .sidebar-logo {
+        background-image: url(../images/subs-logos/platinum-kenya-logo-edit.png);
+    }
+    .sidebar-logo-sm {
+        background-image: url(../images/subs-logos/logos-sm/platinum-kenya-logo-sm.png);
+    }
+}
+
+// VIVA
+
+.viva {
+    .vertical-menu {
+        i:before {
+            color: var(--vivaorange);
+        }
+
+        .mm-active {
+            .active {
+                color: var(--vivaorange) !important;
+            }
+        }
+    }
+
+    .bg-primary {
+        background-color: var(--vivaorange) !important;
+    }
+
+    .sidebar-logo {
+        background-image: url(../images/subs-logos/viva365-logo-edit.png);
+    }
+    .sidebar-logo-sm {
+        background-image: url(../images/subs-logos/logos-sm/viva-365-logo-sm.png);
+    }
+}
+
+// EEZY GROUP
+
+.ez {
+    .vertical-menu {
+        i:before {
+            color: var(--eezygreen);
+        }
+
+        .mm-active {
+            .active {
+                color: var(--eezygreen) !important;
+            }
+        }
+    }
+
+    .bg-primary {
+        background-color: var(--eezygreen) !important;
+    }
+
+    .sidebar-logo {
+        background-image: url(../images/subs-logos/ez-track-logo-edit.png);
+    }
+    .sidebar-logo-sm {
+        background-image: url(../images/subs-logos/logos-sm/ez-track-logo-sm.png);
+    }
+}
+
+// EEZY TRACK
+
+.eezytrack {
+    .vertical-menu {
+        i:before {
+            color: var(--eezygreen);
+        }
+
+        .mm-active {
+            .active {
+                color: var(--eezygreen) !important;
+            }
+        }
+    }
+
+    .bg-primary {
+        background-color: var(--eezygreen) !important;
+    }
+
+    .sidebar-logo {
+        background-image: url(../images/subs-logos/ez-track-logo-edit.png);
+    }
+    .sidebar-logo-sm {
+        background-image: url(../images/subs-logos/logos-sm/ez-track-logo-sm.png);
+    }
+}
+
+// TRACKNAV
+
+.tracknav {
+    .vertical-menu {
+        i:before {
+            color: var(--eezygreen);
+        }
+
+        .mm-active {
+            .active {
+                color: var(--eezygreen) !important;
+            }
+        }
+    }
+
+    .bg-primary {
+        background-color: var(--eezygreen) !important;
+    }
+
+    .sidebar-logo {
+        background-image: url(../images/subs-logos/ez-track-logo-edit.png);
+    }
+    .sidebar-logo-sm {
+        background-image: url(../images/subs-logos/logos-sm/ez-track-logo-sm.png);
+    }
+}
+
+.phl {
+    .vertical-menu {
+        i:before {
+            color: var(--platinumblue);
+        }
+
+        .mm-active {
+            .active {
+                color: var(--platinumblue) !important;
+            }
+        }
+    }
+
+    .bg-primary {
+        background-color: var(--platinumblue) !important;
+    }
+
+    .sidebar-logo {
+        background-image: url(../images/phl_logo.png);
+    }
+    .sidebar-logo-sm {
+        background-image: url(../images/phl_logo.png);
+    }
+}
+
+// OTHER
+
+.progress .bg-primary {
+    --bs-bg-opacity: 1;
+    background-color: rgba(
+        var(--bs-primary-rgb),
+        var(--bs-bg-opacity)
+    ) !important;
+}

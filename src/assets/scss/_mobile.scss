@@ -1,0 +1,126 @@
+/**
+ * Global mobile styling.
+ */
+@media only screen and (max-width: 480px) {
+    // vue good table
+    .vgt-wrap {
+        .vgt-global-search {
+            padding: 0;
+            margin: 12px 0;
+            display: flex;
+            flex-direction: column;
+            > div {
+                padding: 0;
+                width: 100%;
+            }
+            form[role='search'] {
+                width: 100%;
+                float: none;
+            }
+        }
+        table {
+            font-size: 0.8rem;
+            tbody {
+                padding-top: 10px;
+                tr {
+                    td:before {
+                        padding-left: 0;
+                    }
+                }
+            }
+            th.vgt-checkbox-col {
+                background: none;
+                border: none;
+                padding: 0;
+            }
+            td {
+                padding: 0.5em 0.5em 0 0.5em;
+            }
+        }
+        .vgt-wrap__footer {
+            .footer__row-count {
+                select {
+                    font-size: 14px;
+                    option {
+                        font-size: 18px;
+                    }
+                }
+            }
+            .footer__navigation {
+                font-size: 14px;
+                float: left !important;
+                margin-top: 10px;
+                button {
+                    span {
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+
+    // popup modal
+    .platcorp-modal {
+        .modal-container {
+            margin-right: 5vw !important;
+            margin-left: 5vw !important;
+        }
+    }
+
+    // vue final modal
+    .vfm {
+        .vfm__container {
+            margin-right: 5vw !important;
+            margin-left: 5vw !important;
+            .modal__title {
+                font-size: 1.4em;
+                margin-bottom: 1em !important;
+            }
+        }
+    }
+
+    // element-plus modal
+    .el-overlay-dialog {
+        .el-dialog__header {
+            padding-bottom: 0;
+        }
+        .el-dialog {
+            width: 90%;
+        }
+        .el-form-item {
+            display: block;
+            margin-bottom: 10px;
+            label {
+                margin: 0;
+            }
+        }
+    }
+
+    // ck editor
+    .ck.ck-editor {
+        .ck-button {
+            .ck-button__label {
+                line-height: 1.2em;
+            }
+        }
+    }
+
+    // topbar
+    #page-topbar {
+        .navbar-header {
+            .navbar-brand-box {
+                display: none;
+            }
+            .btn-search {
+                margin-left: 0 !important;
+                button {
+                    padding: 0 4px;
+                }
+                ul {
+                    left: -35px !important;
+                    width: 80vw;
+                }
+            }
+        }
+    }
+}

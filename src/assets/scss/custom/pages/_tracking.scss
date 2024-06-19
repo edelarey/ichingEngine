@@ -1,0 +1,330 @@
+#map2 {
+    left: 0px;
+    width: 60vw;
+    height: 75vh;
+    top: 50px;
+}
+
+.map-port {
+    height: 80vh;
+}
+
+.el-table tr.current-row.el-table__row {
+    background-color: rgb(13, 202, 240) !important;
+}
+.el-table tr.current-row.el-table__row td {
+    background-color: rgb(13, 202, 240) !important;
+    color: black;
+}
+.el-table tr.el-table__row td {
+    background-color: white !important;
+    color: black;
+}
+.el-table tr {
+    cursor: default;
+}
+.el-table tr td {
+    cursor: default;
+}
+
+.in-line-switch {
+    display: inline-block;
+}
+.in-line-switch div {
+    display: inline-block !important;
+}
+
+// .checkbox-wrapper-form-etrack {
+//     cursor: pointer;
+//     display: block;
+//     box-shadow: inset 0 0 0 1px $gray-400;
+//     border-radius: 1px;
+
+//     input {
+//       opacity: 0;
+//       cursor: pointer;
+//     }
+//     input:checked ~ label {
+//       opacity: 1;
+//     }
+
+//     label {
+
+//       cursor: pointer;
+//       opacity: 0;
+
+//       transition-duration: 0.05s;
+//       top: 0;
+//       &:before {
+//         content: "\F012C";
+//         font-family: "Material Design Icons";
+//         top: 0;
+//         height: 20px;
+//         color: darken($dark, 5%);
+//         width: 20px;
+//         position: absolute;
+//         margin-top: -16px;
+//         left: 4px;
+//         font-size: 13px;
+//       }
+//     }
+//   }
+
+.sideInfoBlock {
+    margin-top: 0 !important;
+    position: absolute;
+    left: 275px;
+    top: -1.25rem;
+    background: #fff;
+    border: 1px solid #ccc;
+    width: 370px;
+    min-height: 215px;
+    display: block;
+    border-radius: 5px;
+    overflow: hidden;
+
+    .close {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #566573;
+        background-color: #ccc;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .imageOne {
+        img {
+            width: 100%;
+            max-width: 25rem;
+            max-height: 20rem;
+            // background-size: cover;
+            // background-color: #0c0c0c;
+        }
+
+    }
+    .image-container {
+        width: 365px; 
+        height: 365px; 
+        border: 1px solid #ccc;
+        display: flex;
+        background-color: #5a5f6d;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 7px 4px 14px 0px;
+      }
+      
+      .image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    .carList {
+        display: block;
+        margin: 0;
+        padding: 5px 0;
+        li {
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+            font-size: 14px;
+            span {
+                &.icon {
+                    width: 30px;
+                    margin-right: 10px;
+                    flex-shrink: 0;
+                    text-align: center;
+                    color: #a9adb6;
+                    img {
+                        max-width: 100%;
+                    }
+                }
+                &:last-child {
+                    color: #555b6d;
+                }
+            }
+            .count {
+                background: green;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                color: #fff !important;
+                border-radius: 50%;
+                align-items: center;
+                font-size: 13px;
+                justify-content: center;
+            }
+            .io-on {
+                background: green;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                color: #fff !important;
+                border-radius: 50%;
+                align-items: center;
+                font-size: 13px;
+                justify-content: center;
+            }
+            .io-off {
+                background: red;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                color: #fff !important;
+                border-radius: 50%;
+                align-items: center;
+                font-size: 13px;
+                justify-content: center;
+            }
+        }
+    }
+
+    .inputslide {
+        border-top: 1px solid #ccc;
+        padding: 10px 0;
+        overflow: auto;
+        .slideBtn {
+            width: 100%;
+            padding: 5px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+}
+
+@media screen and (max-width: 600px) {
+       
+    // .btn {
+    //     position: absolute;
+    //     right: 0.5rem;
+    //  }
+    .sideInfoBlock {
+    
+        position: relative;
+        left: 0;
+        top: 1rem;
+        background: #fff;
+        border: 1px solid #ccc;
+        width:90vw;
+        margin: 15px !important;
+        min-height: 215px;
+        display: flex;
+        border-radius: 5px;
+        overflow: hidden;
+       
+    
+     .btn{
+        padding:0 !important; 
+        margin:0;
+     }
+
+    .close {
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        z-index: 2;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #566573;
+        background-color: #ccc;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .imageOne {
+        position: absolute;
+        z-index:1;
+        right: 0 !important;
+        left:0 !important;
+        top: 0px;
+        overflow: hidden;
+        max-width: 180px;
+       
+        img {                   
+            width: 100%;
+            //height:auto;   
+            max-width: 25rem !important;
+            max-height: 12rem !important;     
+            padding-bottom: 5px;      
+        }
+        
+    }
+    .m-1{
+        margin: 0.25rem !important;
+        max-width: 130px !important;
+    }
+    .gap-2 {
+        gap: 0.5rem !important;
+        max-width: 120px;
+    }
+    .image-container {
+        position: absolute;
+        z-index:1;
+        left: 0 !important;
+        background-color: #0b0d13;
+        top: 0px;
+        width: 200px !important; /* Set the desired width of the container */
+        height: 140px !important; /* Set the desired height of the container */
+        border: 1px solid #c000;
+        display: flex;
+        //justify-content: center;
+       // align-items: center;
+      }
+      
+      .image-container img {
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: contain;
+      }
+
+    
+    .carList {
+        margin-top: 100px;
+        display: inline-block;
+        padding: 2rem 0;
+        width: 200px;
+        li {
+            
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+            font-size: 14px;
+            span {
+                &.icon {
+                    width: 30px;
+                    margin-right: 10px;
+                    flex-shrink: 0;
+                    text-align: center;
+                    color: #a9adb6;
+                    img {
+                        max-width: 100%;
+                    }
+                }
+                &:last-child {
+                    color: #555b6d;
+                }
+            }
+            .count {
+                background: green;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                color: #fff !important;
+                border-radius: 50%;
+                align-items: center;
+                font-size: 13px;
+                justify-content: center;
+            }
+        }
+    }
+
+    }
+
+}

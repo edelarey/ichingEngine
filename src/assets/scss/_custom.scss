@@ -1,0 +1,454 @@
+.modal-backdrop {
+    opacity: 0.5;
+}
+
+.modal-header,
+.alert {
+    .close {
+        padding: 0.5rem 1.75rem;
+        background: transparent;
+        border: 0;
+        font-size: 25px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        opacity: 0.5;
+        width: 1em;
+        height: 1em;
+        z-index: 2;
+
+        button {
+            display: none;
+        }
+    }
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.vhd__datepicker__input {
+    height: $input-height !important;
+    line-height: $input-height !important;
+}
+
+.form-check {
+    .custom-control-input {
+        border-radius: 0.25em;
+        float: left;
+        margin: 3px 3px 3px -19px !important;
+    }
+}
+
+.check-group {
+    input {
+        position: absolute;
+        clip: rect(0, 0, 0, 0);
+        pointer-events: none;
+    }
+}
+
+.custom-select {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-left: 0.5rem;
+    font-size: 0.7875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    vertical-align: middle;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.owl-nav {
+    margin-top: 16px;
+    text-align: center;
+
+    button {
+        width: 30px;
+        height: 30px;
+        line-height: 28px !important;
+        font-size: 20px !important;
+        border-radius: 50% !important;
+        background-color: rgba($primary, 0.25) !important;
+        color: $primary !important;
+        margin: 4px 8px !important;
+        border: none;
+    }
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.vhd__datepicker__input {
+    height: $input-height !important;
+    line-height: $input-height !important;
+}
+
+.form-check {
+    .custom-control-input {
+        border-radius: 0.25em;
+        float: left;
+        margin: 3px 3px 3px -19px !important;
+    }
+}
+
+.check-group {
+    input {
+        position: absolute;
+        clip: rect(0, 0, 0, 0);
+        pointer-events: none;
+    }
+}
+
+.form-check {
+    .custom-control-input {
+        background-color: #556ee6;
+        border-color: #556ee6;
+    }
+}
+
+.mb-5r {
+    margin-bottom: 5rem;
+}
+
+table.vgt-table {
+    border-collapse: collapse;
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 100%;
+    table-layout: auto;
+    padding: 0.75rem 0.75rem;
+    border: 1px solid #dcdfe6;
+    font-size: inherit;
+    border-width: 1px 0 0 0;
+}
+
+table.vgt-table td {
+    padding: 0.75em 0.75em;
+    vertical-align: top;
+    border-bottom: 1px solid #dcdfe6;
+    color: #606266;
+}
+
+.vgt-table thead th {
+    background: #ffffff;
+}
+
+.vgt-global-search {
+    border: none;
+    width: 100%;
+    background: #fff;
+
+    form {
+        width: 15vw;
+        float: right;
+        margin-bottom: 0.3em;
+        margin-right: -0.6em;
+    }
+}
+
+.vgt-selection-info-row {
+    line-height: 2.8em;
+}
+
+.vgt-input {
+    --bs-bg-opacity: 1;
+    background-color: rgba(
+        var(--bs-light-rgb),
+        var(--bs-bg-opacity)
+    ) !important;
+    border: none;
+}
+
+.vgt-global-search__input .input__icon {
+    display: none;
+}
+
+.vgt-wrap__footer {
+    color: #606266;
+    font-size: 10px !important;
+    padding: 0.5em;
+    border: none;
+    background: #fff;
+}
+
+.vgt-wrap__footer .footer__row-count__label {
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.vgt-wrap__footer .footer__row-count__select {
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+.vgt-wrap__footer .footer__navigation__page-btn {
+    font-weight: normal;
+}
+
+.vgt-wrap__footer .footer__navigation {
+    font-size: 15px;
+}
+
+.modal-wrap {
+    background-color: #c6e2ff;
+    color: #000;
+}
+.modal-wrap[td] {
+    color: #000;
+}
+.modal-wrap .bg-gray {
+    background-color: #adb5bd;
+}
+.dropzone {
+    align-items: center;
+    cursor: pointer;
+    min-height: 112px;
+
+    .dropzone__message {
+        cursor: pointer;
+    }
+
+    .dropzone__item {
+        .dropzone__item-thumbnail {
+            border-radius: 6px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .dropzone__item-controls {
+            z-index: 1004;
+        }
+
+        .dropzone__details {
+            bottom: 0;
+        }
+
+        .dropzone__filename > span {
+            display: block;
+            white-space: break-spaces;
+        }
+    }
+}
+
+.vehicle-photos-dropzone {
+    .dropzone__progress {
+        display: none;
+    }
+}
+
+.multiselect {
+    font-size: 14px !important;
+
+    .multiselect-placeholder {
+        color: rgba(0, 0, 0, 0.57) !important;
+        font-size: 15px;
+    }
+
+    &.is-invalid {
+        border-color: #f46a6a;
+    }
+}
+
+ul.multiselect-options {
+    li {
+        span {
+            font-size: 14px;
+        }
+    }
+}
+
+.file-upload-dropzone {
+    .dropzone__progress {
+        display: none;
+    }
+}
+
+body.offline {
+    a.hide-when-offline {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+}
+
+.multiselect {
+    .multiselect-single-label {
+        font-size: 0.9rem;
+    }
+}
+
+.template-ckeditor {
+    border: 1px solid var(--ck-color-base-border) !important;
+    border-radius: var(--ck-border-radius) !important;
+    max-height: 700px;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.platcorp-modal {
+    &.template-preview {
+        .modal-container {
+            margin-right: 1vw;
+            margin-left: 16vw;
+        }
+
+        .modal__content {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 8px;
+        }
+    }
+}
+
+.ck.ck-content,
+.ck-source-editing-area {
+    min-height: 250px !important;
+}
+
+.p-toast.toast-wrapper {
+    z-index: 1004;
+    font-size: 14px;
+
+    .p-toast-message-text {
+        word-break: break-word;
+    }
+
+    .p-toast-detail {
+        a {
+            color: #224a23;
+
+            &:hover {
+                text-decoration: underline !important;
+            }
+        }
+    }
+}
+
+.report-create,
+.report-edit {
+    textarea#query {
+        background: #2c3e50;
+        color: white;
+        font-family: monospace;
+        border: none;
+        border-radius: 0;
+    }
+
+    .assign-wrapper,
+    .unassign-wrapper {
+        .card-body {
+            ul {
+                list-style: none;
+                padding: 0;
+                max-height: 150px;
+                overflow: auto;
+
+                li {
+                    border-bottom: 1px solid lightgray;
+                    padding: 6px 0 8px 0;
+
+                    button {
+                        padding: 2px 10px;
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+    }
+
+    .assign-all {
+        padding: 2px 10px;
+        font-size: 12px;
+    }
+}
+
+.el-form-item {
+    flex-direction: column;
+    margin-bottom: 15px;
+
+    .el-form-item__label {
+        justify-content: flex-start;
+    }
+}
+
+.vgt-table.polar-bear {
+    border-radius: 0px !important;
+}
+.vgt-global-search {
+    padding: 10px;
+}
+// .vgt-wrap.polar-bear .vgt-wrap__footer {
+//   border-bottom: 1px solid #e3e8ee;
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   width: 100%;
+// }
+// .vgt-wrap.polar-bear .vgt-wrap__footer::after{
+//   display: none;
+// }
+
+::placeholder {
+    opacity: 0.5 !important;
+}
+
+.error-msg {
+    color: #ff0000;
+}
+
+body {
+    background-color: $auth-bg !important;
+}
+// .page-content {
+//   background: $auth-bg;
+// }
+
+.edit-action {
+    border: none;
+    background: no-repeat;
+    padding: 0;
+}
+
+.date-inputs {
+    input {
+        width: 100% !important;
+        border: 1px solid #ccc !important;
+        height: 30px !important;
+    }
+    .v3dp__datepicker {
+        width: 100%;
+    }
+}
+
+.MainWrapper {
+    overflow: hidden;
+    .NotificationUpper {
+        position: absolute;
+        top: 0;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.8);
+        height: 100vh;
+        max-width: 400px;
+        min-width: 400px;
+        left: 0;
+    }
+    .el-table--fit {
+        background: transparent !important;
+    }
+    .el-table__cell {
+        background: rgba(0, 0, 0, 0.8) !important;
+        color: #fff;
+    }
+}

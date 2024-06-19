@@ -1,0 +1,746 @@
+.leaflet-container {
+    position: relative;
+    z-index: 10;
+
+    .leaflet-pane {
+        .leaflet-marker-icon {
+            border: none;
+            background: transparent;
+        }
+        .marker-icon-cluster {
+            position: relative;
+            width: 52px;
+            height: 53px;
+
+            background-image: url('../images/tracking/m1.png');
+            background-color: transparent;
+            background-size: 53px 52px;
+            background-position: center center;
+            color: white;
+        }
+        .marker-icon-cluster-text {
+            position: relative;
+            top: 18px;
+            text-align: center;
+        }
+        .marker-icon {
+            position: relative;
+            width: 26px;
+            height: 26px;
+            background-image: url('../images/tracking/carfront.png');
+            background-size: 18px 18px;
+            background-position: center center;
+            border: 2px solid #666;
+            border-radius: 50%;
+
+            &.active,
+            &.moving {
+                background-color: #96c034;
+            }
+            &.idling,
+            &.online {
+                background-color: #ffc926;
+            }
+            &.parked {
+                background-color: #3b5249;
+            }
+            &.offline {
+                background-color: #ccc;
+            }
+            &.cluster {
+                width: 52px;
+                height: 53px;
+                border: 0px;
+                background-image: url('../images/tracking/m1.png');
+                background-color: #34c0b400;
+                background-size: 53px 52px;
+                color: white;
+            }
+
+            &.selected {
+                border-color: red;
+                border-radius: 50%;
+                border: 3px solid red;
+                width: 26px;
+                height: 26px;
+            }
+            .bearing {
+                width: 100%;
+                height: 100%;
+                display: block;
+                position: absolute;
+                top: 0;
+                z-index: -1;
+                &:after {
+                    content: '';
+                    width: 0;
+                    height: 0;
+                    border-left: 13px solid transparent;
+                    border-right: 13px solid transparent;
+                    border-bottom: 26px solid #3d52d5;
+                    position: absolute;
+                    top: -13px;
+                    left: 50%;
+                    margin-left: -13px;
+                }
+                &.bearing10 {
+                    transform: rotate(10deg);
+                }
+                &.bearing20 {
+                    transform: rotate(20deg);
+                }
+                &.bearing30 {
+                    transform: rotate(30deg);
+                }
+                &.bearing40 {
+                    transform: rotate(40deg);
+                }
+                &.bearing50 {
+                    transform: rotate(50deg);
+                }
+                &.bearing60 {
+                    transform: rotate(60deg);
+                }
+                &.bearing70 {
+                    transform: rotate(70deg);
+                }
+                &.bearing80 {
+                    transform: rotate(80deg);
+                }
+                &.bearing90 {
+                    transform: rotate(90deg);
+                }
+                &.bearing100 {
+                    transform: rotate(100deg);
+                }
+                &.bearing110 {
+                    transform: rotate(110deg);
+                }
+                &.bearing120 {
+                    transform: rotate(120deg);
+                }
+                &.bearing130 {
+                    transform: rotate(130deg);
+                }
+                &.bearing140 {
+                    transform: rotate(140deg);
+                }
+                &.bearing150 {
+                    transform: rotate(150deg);
+                }
+                &.bearing160 {
+                    transform: rotate(160deg);
+                }
+                &.bearing170 {
+                    transform: rotate(170deg);
+                }
+                &.bearing180 {
+                    transform: rotate(180deg);
+                }
+                &.bearing190 {
+                    transform: rotate(190deg);
+                }
+                &.bearing200 {
+                    transform: rotate(200deg);
+                }
+                &.bearing210 {
+                    transform: rotate(210deg);
+                }
+                &.bearing220 {
+                    transform: rotate(220deg);
+                }
+                &.bearing230 {
+                    transform: rotate(230deg);
+                }
+                &.bearing240 {
+                    transform: rotate(240deg);
+                }
+                &.bearing250 {
+                    transform: rotate(250deg);
+                }
+                &.bearing260 {
+                    transform: rotate(260deg);
+                }
+                &.bearing270 {
+                    transform: rotate(270deg);
+                }
+                &.bearing280 {
+                    transform: rotate(280deg);
+                }
+                &.bearing290 {
+                    transform: rotate(290deg);
+                }
+                &.bearing300 {
+                    transform: rotate(300deg);
+                }
+                &.bearing310 {
+                    transform: rotate(310deg);
+                }
+                &.bearing320 {
+                    transform: rotate(320deg);
+                }
+                &.bearing330 {
+                    transform: rotate(330deg);
+                }
+                &.bearing340 {
+                    transform: rotate(340deg);
+                }
+                &.bearing350 {
+                    transform: rotate(350deg);
+                }
+            }
+        }
+    }
+}
+
+.page-content {
+    > div {
+        position: relative;
+    }
+    &.tracking {
+        padding: calc(#{$header-height}) 0 $footer-height 0;
+    }
+}
+
+.device-list-overlay {
+    background: #fff;
+    position: absolute;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    top: 10px;
+    left: 10px;
+    z-index: 11;
+    padding: 1.25rem;
+    width: 290px;
+    min-height: 215px;
+    a {
+        color: #999;
+        &:hover {
+            color: #333;
+        }
+    }
+    .device-list {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        max-height: calc(100vh - $header-height - $footer-height - 65px);
+        .scroller {
+            // height: calc(100vh - $header-height - $footer-height - 180px);
+            max-height: calc(100vh - $header-height - $footer-height - 180px);
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+            &::-webkit-scrollbar-track {
+                background: #ccc;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #888;
+            }
+        }
+        .device-table {
+            padding: 0;
+            margin: 0;
+            .header-row {
+                font-weight: bold;
+                text-align: center;
+            }
+            .scroller {
+                max-height: calc(
+                    100vh - $header-height - $footer-height - 180px
+                );
+            }
+            .device-row {
+                border-bottom: 1px solid #ccc;
+                padding-top: 5px;
+                padding-left: 5px;
+                padding-bottom: -3px;
+                cursor: pointer;
+                &.selected {
+                    background-color: rgba($color: #2374ab, $alpha: 0.5);
+                }
+                .device-status-name {
+                    text-align: right;
+                    font-size: 80%;
+                }
+                .device-status-lastupdate {
+                    font-size: 70%;
+                    text-align: right;
+                }
+            }
+            .vehicle-icon {
+                width: 26px;
+                height: 26px;
+                background-image: url('../images/tracking/carfront.png');
+                background-size: 18px 18px;
+                background-position: center center;
+                border: 2px solid #666;
+                border-radius: 50%;
+                &.active,
+                &.moving {
+                    background-color: #96c034;
+                }
+                &.idling,
+                &.online {
+                    background-color: #ffc926;
+                }
+                &.parked {
+                    background-color: #3b5249;
+                }
+                &.offline {
+                    background-color: #ccc;
+                }
+            }
+        }
+    }
+}
+
+/*Starts Mobile Device for device info */
+@media screen and (max-width: 600px) {
+    .device-list-overlay {
+        background: #fff;
+        position: absolute;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        top: 10px;
+        left: 10px;       
+        z-index: 11;
+        padding: 0.2rem !important;
+        width: 230px;
+        max-height: 250px;  
+        a {
+            color: #999;
+            &:hover {
+                color: #333;
+            }  
+        } 
+        .device-list {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        max-height: 40%;
+        .scroller {
+            // height: calc(100vh - $header-height - $footer-height - 180px);
+            max-height: calc(100vh - $header-height - $footer-height - 180px);
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+            &::-webkit-scrollbar-track {
+                background: #ccc;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #888;
+            }
+        }
+        .device-table {
+            padding: 0;
+            margin: 0;
+            .header-row {
+                font-weight: bold;
+                text-align: center;
+            }
+            .scroller {
+                max-height: 3rem;
+            }
+            .device-row {
+                border-bottom: 1px solid #ccc;
+                padding-top: 5px;
+                padding-left: 5px;
+                padding-bottom: 1px !important;
+                cursor: pointer;
+                &.selected {
+                    background-color: rgba($color: #2374ab, $alpha: 0.5);
+                }
+                .device-status-name {
+                    text-align: right;
+                    font-size: 60%;
+                }
+                .device-status-lastupdate {
+                    font-size: 70%;
+                    text-align: right;
+                }
+            }
+            .vehicle-icon {
+                width: 26px;
+                height: 26px;
+                background-image: url('../images/tracking/carfront.png');
+                background-size: 18px 18px;
+                background-position: center center;
+                border: 2px solid #666;
+                padding-right: 2px;
+                border-radius: 50%;
+                &.active,
+                &.moving {
+                    background-color: #96c034;
+                }
+                &.idling,
+                &.online {
+                    background-color: #ffc926;
+                }
+                &.parked {
+                    background-color: #3b5249;
+                }
+                &.offline {
+                    background-color: #ccc;
+                }
+            }
+        }
+    }
+
+    }
+    .device-list {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        max-height: 0px;
+        .scroller {
+            // height: calc(100vh - $header-height - $footer-height - 180px);
+            max-height: calc(100vh - $header-height - $footer-height - 180px);
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+            &::-webkit-scrollbar-track {
+                background: #ccc;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #888;
+            }
+            overflow: hidden;
+        }
+    }
+    .filter {
+        > div {
+            border: 1px solid;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            float: right;
+            position: relative;
+            margin: 0px 2px 2px 2px;
+            text-align: center;
+            vertical-align: center;
+            font-size: 10px;
+            line-height: 30px;
+            &:hover {
+                cursor: pointer;
+            }
+            &.minimize {
+                float: left;
+                color: #566573;
+                font-size: 16px;
+                border: none;
+            }
+        }
+        .offline {
+            color: #566573;
+            background-color: #ccc;
+            border-color: #ccc;
+    
+            &.selected {
+                border-width: 2px;
+                border-style: dotted;
+                border-color: #999;
+            }
+        }
+        .active,
+        .moving {
+            color: #fff;
+            background-color: #96c034;
+            border-color: #96c034;
+            &.selected {
+                border-width: 2px;
+                border-style: dotted;
+                border-color: #999;
+            }
+        }
+        .parked,
+        .online {
+            color: #fff;
+            background-color: #777;
+            border-color: #777;
+            &.selected {
+                border-width: 2px;
+                border-style: dotted;
+                border-color: #333;
+            }
+        }
+        .idling {
+            color: #fff;
+            background-color: #ffc926;
+            border-color: #ffc926;
+            &.selected {
+                border-width: 2px;
+                border-style: dotted;
+                border-color: #ccc;
+            }
+        }
+    }
+    .device-list-overlay-table {
+        background: #8f0505;
+        position: relative;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        top: 10px;
+        left: 10px;
+        z-index: 11;
+        padding: 5px 5px;
+        width: 290px;
+        a {
+            color: #999;
+            &:hover {
+                color: #333;
+            }
+        }
+        .device-list {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            max-height: calc(100vh - $header-height - $footer-height - 65px);
+            .scroller {
+                // height: calc(100vh - $header-height - $footer-height - 180px);
+                max-height: calc(100vh - $header-height - $footer-height - 180px);
+                &::-webkit-scrollbar {
+                    width: 5px;
+                }
+                &::-webkit-scrollbar-track {
+                    background: #ccc;
+                }
+                &::-webkit-scrollbar-thumb {
+                    background: #888;
+                }
+            }
+            .device-table {
+                padding: 0;
+                margin: 0;
+                .header-row {
+                    font-weight: bold;
+                    text-align: center;
+                }
+                .scroller {
+                    max-height: calc(
+                        100vh - $header-height - $footer-height - 180px
+                    );
+                }
+                .device-row {
+                    border-bottom: 1px solid #ccc;
+                    padding-top: 5px;
+                    padding-left: 5px;
+                    padding-bottom: -3px !important;
+                    cursor: pointer;
+                    &.selected {
+                        background-color: rgba($color: #2374ab, $alpha: 0.5);
+                    }
+                    .device-status-name {
+                        text-align: right;
+                        font-size: 80%;
+                    }
+                    .device-status-lastupdate {
+                        font-size: 70%;
+                        text-align: right;
+                    }
+                }
+                .vehicle-icon {
+                    width: 26px;
+                    height: 26px;
+                    background-image: url('../images/tracking/carfront.png');
+                    background-size: 18px 18px;
+                    background-position: center center;
+                    border: 2px solid #666;
+                    border-radius: 50%;
+                    &.active,
+                    &.moving {
+                        background-color: #96c034;
+                    }
+                    &.idling,
+                    &.online {
+                        background-color: #ffc926;
+                    }
+                    &.parked {
+                        background-color: #3b5249;
+                    }
+                    &.offline {
+                        background-color: #ccc;
+                    }
+                }
+            }
+        }
+    }
+
+} 
+/*Ends Mobile Device for device info */
+
+.device-list-overlay-table {
+    background: #fff;
+    position: relative;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    top: 10px;
+    left: 10px;
+    z-index: 11;
+    padding: 5px 5px;
+    width: 290px;
+    a {
+        color: #999;
+        &:hover {
+            color: #333;
+        }
+    }
+    .device-list {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        max-height: calc(100vh - $header-height - $footer-height - 65px);
+        .scroller {
+            // height: calc(100vh - $header-height - $footer-height - 180px);
+            max-height: calc(100vh - $header-height - $footer-height - 180px);
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+            &::-webkit-scrollbar-track {
+                background: #ccc;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #888;
+            }
+        }
+        .device-table {
+            padding: 0;
+            margin: 0;
+            .header-row {
+                font-weight: bold;
+                text-align: center;
+            }
+            .scroller {
+                max-height: calc(
+                    100vh - $header-height - $footer-height - 180px
+                );
+            }
+            .device-row {
+                border-bottom: 1px solid #ccc;
+                padding-top: 5px;
+                padding-left: 5px;
+                padding-bottom: -3px;
+                cursor: pointer;
+                &.selected {
+                    background-color: rgba($color: #2374ab, $alpha: 0.5);
+                }
+                .device-status-name {
+                    text-align: right;
+                    font-size: 80%;
+                }
+                .device-status-lastupdate {
+                    font-size: 70%;
+                    text-align: right;
+                }
+            }
+            .vehicle-icon {
+                width: 26px;
+                height: 26px;
+                background-image: url('../images/tracking/carfront.png');
+                background-size: 18px 18px;
+                background-position: center center;
+                border: 2px solid #666;
+                border-radius: 50%;
+                &.active,
+                &.moving {
+                    background-color: #96c034;
+                }
+                &.idling,
+                &.online {
+                    background-color: #ffc926;
+                }
+                &.parked {
+                    background-color: #3b5249;
+                }
+                &.offline {
+                    background-color: #ccc;
+                }
+            }
+        }
+    }
+}
+
+.filter {
+    > div {
+        border: 1px solid;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        float: right;
+        position: relative;
+        margin: 0px 2px 2px 2px;
+        text-align: center;
+        vertical-align: center;
+        font-size: 10px;
+        line-height: 30px;
+        &:hover {
+            cursor: pointer;
+        }
+        &.minimize {
+            float: left;
+            color: #566573;
+            font-size: 16px;
+            border: none;
+        }
+    }
+    .offline {
+        color: #566573;
+        background-color: #ccc;
+        border-color: #ccc;
+
+        &.selected {
+            border-width: 2px;
+            border-style: dotted;
+            border-color: #999;
+        }
+    }
+    .active,
+    .moving {
+        color: #fff;
+        background-color: #96c034;
+        border-color: #96c034;
+        &.selected {
+            border-width: 2px;
+            border-style: dotted;
+            border-color: #999;
+        }
+    }
+    .parked,
+    .online {
+        color: #fff;
+        background-color: #777;
+        border-color: #777;
+        &.selected {
+            border-width: 2px;
+            border-style: dotted;
+            border-color: #333;
+        }
+    }
+    .idling {
+        color: #fff;
+        background-color: #ffc926;
+        border-color: #ffc926;
+        &.selected {
+            border-width: 2px;
+            border-style: dotted;
+            border-color: #ccc;
+        }
+    }
+}
+
+.MarkerColor {
+    i {
+        font-size: 30px;
+    }
+}
+
+.GreenMarker {
+    color: green;
+}
+
+.RedMarker {
+    color: red;
+}
+
+.BlackMarker {
+    color: black;
+}
