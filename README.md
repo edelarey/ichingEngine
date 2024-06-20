@@ -1,7 +1,6 @@
 # Iching Engine
-
-
-
-## Getting started
-
 Astrology of the I-Ching
+## Getting started
+Download. 
+npm i
+npm run serve
