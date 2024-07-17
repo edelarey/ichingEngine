@@ -1,11 +1,13 @@
 const { DateTime } = require('luxon');
 const SunCalc = require('suncalc');
-import bagua from './bagua';
+import bagua from '@const/bagua';
+
 
 /** The following is based on The Astrology of I Ching by W.A. Sherrill and W.K. Chu, Routledge and Keegan Paul, 1976 */
 
-/** The matching of the Trigrams (bagua) and their respective positive and negative natures
+/** The matching of the Trigrams (bagua) and their respective positive (Yang) and negative (Yin) natures
  * with the 5 elements to produce the 10 Celestial Stems
+ * Winter Solstice is the Starting point for the Celestial Stems
  */
 class CelestialStem {
   constructor(name, element, charge, aspect, aspectNumber, oppositeAspect) {
@@ -82,16 +84,16 @@ class HoraryBranch {
 class IChingAstrology {
   constructor() {
     this.celestialStems = [
-      new CelestialStem('Chia', 'Wood',  'Yang', bagua.qián,  'A', 6, 'B'),
-      new CelestialStem('I',    'Wood',  'Yin',  bagua.kūn,   'B', 2, 'A'),
-      new CelestialStem('Ping', 'Fire',  'Yang', bagua.gèn, 'C', 8, 'D'),
-      new CelestialStem('Ting', 'Fire',  'Yin',  bagua.duì,  'D', 7, 'C'), 
-      new CelestialStem('Wu',   'Earth', 'Yang', bagua.kǎn,  'E', 1, 'F'),
-      new CelestialStem('Chi',  'Earth', 'Yin',  bagua.lí,   'F', 9, 'E'),
-      new CelestialStem('Keng', 'Metal', 'Yang', bagua.zhèn, 'G', 5, 'H'),
-      new CelestialStem('Hsin', 'Metal', 'Yin',  bagua.xùn,  'H', 4, 'G'),
-      new CelestialStem('Jen',  'Water', 'Yang', bagua.qián,'I', 6, 'J'),
-      new CelestialStem('Kuei', 'Water', 'Yin',  bagua.kūn, 'J', 2, 'I') 
+      new CelestialStem('Chia', 'Wood',  'Yang', bagua.bagua.qián,  'A', 6, 'B'),
+      new CelestialStem('I',    'Wood',  'Yin',  bagua.bagua.kūn,   'B', 2, 'A'),
+      new CelestialStem('Ping', 'Fire',  'Yang', bagua.bagua.gèn, 'C', 8, 'D'),
+      new CelestialStem('Ting', 'Fire',  'Yin',  bagua.bagua.duì,  'D', 7, 'C'), 
+      new CelestialStem('Wu',   'Earth', 'Yang', bagua.bagua.kǎn,  'E', 1, 'F'),
+      new CelestialStem('Chi',  'Earth', 'Yin',  bagua.bagua.lí,   'F', 9, 'E'),
+      new CelestialStem('Keng', 'Metal', 'Yang', bagua.bagua.zhèn, 'G', 5, 'H'),
+      new CelestialStem('Hsin', 'Metal', 'Yin',  bagua.bagua.xùn,  'H', 4, 'G'),
+      new CelestialStem('Jen',  'Water', 'Yang', bagua.bagua.qián,'I', 6, 'J'),
+      new CelestialStem('Kuei', 'Water', 'Yin',  bagua.bagua.kūn, 'J', 2, 'I') 
     ];
     this.horaryBranches = [
       new HoraryBranch('Tzu',   'Water', 'Yang', 'a', 1, 6),
@@ -1136,6 +1138,9 @@ async function calculateNatalHexagram(birthDate, birthTime) {
 
 
 export default {
+  CelestialStem,
+  HoraryBranch,
+  IChingAstrology,
   hexagramAstrology,
   calculateTrueLocalTime,
   getSolarTerm,
