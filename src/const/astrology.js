@@ -84,7 +84,7 @@ class IChingAstrology {
     this.celestialStems = [
       new CelestialStem('Chia', 'Wood',  'Yang', bagua.qián,  'A', 6, 'B'),
       new CelestialStem('I',    'Wood',  'Yin',  bagua.kūn,   'B', 2, 'A'),
-      new CelestialStem('Ping', 'Fire',  'Yang', bagua.DateTimegèn, 'C', 8, 'D'),
+      new CelestialStem('Ping', 'Fire',  'Yang', bagua.gèn, 'C', 8, 'D'),
       new CelestialStem('Ting', 'Fire',  'Yin',  bagua.duì,  'D', 7, 'C'), 
       new CelestialStem('Wu',   'Earth', 'Yang', bagua.kǎn,  'E', 1, 'F'),
       new CelestialStem('Chi',  'Earth', 'Yin',  bagua.lí,   'F', 9, 'E'),
