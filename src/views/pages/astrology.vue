@@ -198,37 +198,37 @@ export default {
             
         };
         const  calcTrueLocalTime = async() => {
-            mapAstroHexagram();
+         //   mapAstroHexagram();
             // Example usage
-        //     console.log(`Birth Date:  ${state.birthDate}`);
+            console.log(`Birth Date:  ${state.birthDate}`);
         
-        //     console.log(`Lat: ${state.latitude} Lng: ${state.longitude} `);
-        //     const abirthDate = DateTime.fromJSDate(new Date(state.birthDate)).toFormat('yyyy-MM-dd');
-        //     const abirthTime = DateTime.fromJSDate(new Date(state.birthDate)).toFormat('HH:mm');      
+            console.log(`Lat: ${state.latitude} Lng: ${state.longitude} `);
+            const abirthDate = DateTime.fromJSDate(new Date(state.birthDate)).toFormat('yyyy-MM-dd');
+            const abirthTime = DateTime.fromJSDate(new Date(state.birthDate)).toFormat('HH:mm');      
                         
-        //   //  51.40864141429926, -0.050956657671912306 - Jaz
-        //   // -26.39654621324616, 27.37685364070206 - Ed
+          //  51.40864141429926, -0.050956657671912306 - Jaz
+          // -26.39654621324616, 27.37685364070206 - Ed
 
-        //     const localTime = await astro.calculateTrueLocalTime(abirthDate, abirthTime, state.latitude, state.longitude);
-        //          console.log(`True Local Time: ${localTime}`);
-        //     const sexagenaryCycle = await astro.computeSexagenaryCycle(localTime);
-        //     const determineSubCycle = await astro.determineSubCycle(abirthDate, abirthTime);
-        //     const determineNatalHexagram = await astro.calculateNatalHexagram(abirthDate, abirthTime);
-        //     const firstBracket = determineNatalHexagram.english.indexOf('(');
-        //     const lastBracket = determineNatalHexagram.english.indexOf(')');            
-        //     const strippedWord = determineNatalHexagram.english.substring(firstBracket+1, lastBracket);
-        //     console.log(`Stripped Word: ${strippedWord}`);
-        //     state.natalHexagram = determineNatalHexagram.english;
-        //     const thehexagram = hexagram.sequence_binary().filter((item) => _.includes(item.translation,strippedWord));
-        //     if (thehexagram.length > 0)
-        //     {
-        //         state.hexagram = thehexagram[0];
-        //     }
-        //     else
-        //     {
-        //         console.log('The Hexagram', 'Not Found');
-        //     }   
-        //     console.log('The Hexagram', util.inspect(thehexagram, true, 100, [true]));
+            const localTime = await astro.calculateTrueLocalTime(abirthDate, abirthTime, state.latitude, state.longitude);
+                 console.log(`True Local Time: ${localTime}`);
+            const sexagenaryCycle = await astro.computeSexagenaryCycle(localTime);
+            const determineSubCycle = await astro.determineSubCycle(abirthDate, abirthTime);
+            const determineNatalHexagram = await astro.calculateNatalHexagram(abirthDate, abirthTime);
+            const firstBracket = determineNatalHexagram.english.indexOf('(');
+            const lastBracket = determineNatalHexagram.english.indexOf(')');            
+            const strippedWord = determineNatalHexagram.english.substring(firstBracket+1, lastBracket);
+            console.log(`Stripped Word: ${strippedWord}`);
+            state.natalHexagram = determineNatalHexagram.english;
+            const thehexagram = hexagram.sequence_binary().filter((item) => _.includes(item.translation,strippedWord));
+            if (thehexagram.length > 0)
+            {
+                state.hexagram = thehexagram[0];
+            }
+            else
+            {
+                console.log('The Hexagram', 'Not Found');
+            }   
+            console.log('The Hexagram', util.inspect(thehexagram, true, 100, [true]));
 
 
             

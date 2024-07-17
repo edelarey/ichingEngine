@@ -1,6 +1,178 @@
 const { DateTime } = require('luxon');
 const SunCalc = require('suncalc');
 
+/** The following is based on The Astrology of I Ching by W.A. Sherrill and W.K. Chu, Routledge and Keegan Paul, 1976 */
+
+
+class CelestialStem {
+  constructor(name, element, charge, aspect, aspectNumber, oppositeAspect) {
+    this.name = name;
+    this.element = element;
+    this.charge = charge;
+    this.aspect = aspect;
+    this.aspectNumber = aspectNumber;
+    this.oppositeAspect = oppositeAspect;
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  getElement() {
+    return this.element;
+  }
+
+  getCharge() {
+    return this.charge;
+  }
+
+  getAspect() {
+    return this.aspect;
+  }
+
+  getAspectNumber() {
+    return this.aspectNumber;
+  }
+
+  getoppositeAspect() {
+    return this.oppositeAspect;
+  }
+
+
+}
+
+class HoraryBranch {
+  constructor(name, englishName, chineseName, animalSign,  relatedStems) {
+    this.name = name;
+    this.englishName = englishName;
+    this.chineseName = chineseName;
+    this.animalSign = animalSign;
+    this.relatedStems = relatedStems;
+  }
+
+  getEnglishName() {
+    return this.englishName;
+  }
+
+  getChineseName() {
+    return this.chineseName;
+  }
+
+  getAnimalSign() {
+    return this.animalSign;
+  }
+  
+  getRelatedStems() {
+    return this.relatedStems;
+  }
+}
+
+class IChingAstrology {
+  constructor() {
+    this.celestialStems = [
+      new CelestialStem('Jia', 'Wood',   'Yang', '木 (Mù) Yang',  'A', 6, 'B'),
+      new CelestialStem('Yi',  'Wood',   'Yin',  '木 (Mù) Yin',   'B', 2, 'A'),
+      new CelestialStem('Bing', 'Fire',  'Yang', '火 (Huǒ) Yang', 'C', 8, 'D'),
+      new CelestialStem('Ding', 'Fire',  'Yin',  '火 (Huǒ) Yin',  'D', 7, 'C'), 
+      new CelestialStem('Wu',   'Earth', 'Yang', '土 (Tǔ) Yang',  'E', 1, 'F'),
+      new CelestialStem('Ji',   'Earth', 'Yin',  '土 (Tǔ) Yin',   'F', 9, 'E'),
+      new CelestialStem('Geng', 'Metal', 'Yang', '金 (Jīn) Yang', 'G', 5, 'H'),
+      new CelestialStem('Xin',  'Metal', 'Yin',  '金 (Jīn) Yin',  'H', 4, 'G'),
+      new CelestialStem('Ren',  'Water', 'Yang', '水 (Shuǐ) Yang','I', 6, 'J'),
+      new CelestialStem('Gui',  'Water', 'Yin',  '水 (Shuǐ) Yin', 'J', 2, 'I') 
+    ];
+    this.horaryBranches = [
+      new HoraryBranch('Zi', 'Rat', '子 (Zǐ)', 'Rat', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
+      new HoraryBranch('Chou', 'Ox', '丑 (Chǒu)', 'Ox', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
+      new HoraryBranch('Yin', 'Tiger', '寅 (Yín)', 'Tiger', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
+      new HoraryBranch('Mao', 'Rabbit', '卯 (Mǎo)', 'Rabbit', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
+      new HoraryBranch('Chen', 'Dragon', '辰 (Chén)', 'Dragon', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
+      new HoraryBranch('Si', 'Snake', '巳 (Sì)', 'Snake', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
+      new HoraryBranch('Wu', 'Horse', '午 (Wǔ)', 'Horse', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
+      new HoraryBranch('Wei', 'Goat', '未 (Wèi)', 'Goat', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
+      new HoraryBranch('Shen', 'Monkey', '申 (Shēn)', 'Monkey', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
+      new HoraryBranch('You', 'Rooster', '酉 (Yǒu)', 'Rooster', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
+      new HoraryBranch('Xu', 'Dog', '戌 (Xū)', 'Dog', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
+      new HoraryBranch('Hai', 'Pig', '亥 (Hài)', 'Pig', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui'])
+    ];
+
+    this.linkages = [
+      { stem: 'Jia', branch: 'Zi' },
+      { stem: 'Yi', branch: 'Chou' },
+      { stem: 'Bing', branch: 'Yin' },
+      { stem: 'Ding', branch: 'Mao' },
+      { stem: 'Wu', branch: 'Chen' },
+      { stem: 'Ji', branch: 'Si' },
+      { stem: 'Geng', branch: 'Wu' },
+      { stem: 'Xin', branch: 'Wei' },
+      { stem: 'Ren', branch: 'Shen' },
+      { stem: 'Gui', branch: 'You' },
+      { stem: 'Jia', branch: 'Xu' },
+      { stem: 'Yi', branch: 'Hai' },
+      { stem: 'Bing', branch: 'Zi' },
+      { stem: 'Ding', branch: 'Chou' },
+      { stem: 'Wu', branch: 'Yin' },
+      { stem: 'Ji', branch: 'Mao' },
+      { stem: 'Geng', branch: 'Chen' },
+      { stem: 'Xin', branch: 'Si' },
+      { stem: 'Ren', branch: 'Wu' },
+      { stem: 'Gui', branch: 'Wei' },
+      { stem: 'Jia', branch: 'Shen' },
+      { stem: 'Yi', branch: 'You' },
+      { stem: 'Bing', branch: 'Xu' },
+      { stem: 'Ding', branch: 'Hai' },
+      { stem: 'Wu', branch: 'Zi' },
+      { stem: 'Ji', branch: 'Chou' },
+      { stem: 'Geng', branch: 'Yin' },
+      { stem: 'Xin', branch: 'Mao' },
+      { stem: 'Ren', branch: 'Chen' },
+      { stem: 'Gui', branch: 'Si' },
+      { stem: 'Jia', branch: 'Wu' },
+      { stem: 'Yi', branch: 'Wei' },
+      { stem: 'Bing', branch: 'Shen' },
+      { stem: 'Ding', branch: 'You' },
+      { stem: 'Wu', branch: 'Xu' },
+      { stem: 'Ji', branch: 'Hai' },
+      { stem: 'Geng', branch: 'Zi' },
+      { stem: 'Xin', branch: 'Chou' },
+      { stem: 'Ren', branch: 'Yin' },
+      { stem: 'Gui', branch: 'Mao' },
+      { stem: 'Jia', branch: 'Chen' },
+      { stem: 'Yi', branch: 'Si' },
+      { stem: 'Bing', branch: 'Wu' },
+      { stem: 'Ding', branch: 'Wei' },
+      { stem: 'Wu', branch: 'Shen' },
+      { stem: 'Ji', branch: 'You' },
+      { stem: 'Geng', branch: 'Xu' },
+      { stem: 'Xin', branch: 'Hai' },
+      { stem: 'Ren', branch: 'Zi' },
+      { stem: 'Gui', branch: 'Chou' }
+    ];
+    
+  }
+
+  getCelestialStem(name) {
+    return this.celestialStems.find(stem => stem.name === name);
+  }
+
+  getAllCelestialStems() {
+    return this.celestialStems;
+  }
+  
+  getHoraryBranch(name) {
+    return this.horaryBranches.find(branch => branch.name === name);
+  }
+
+  getAllHoraryBranches() {
+    return this.horaryBranches;
+  }
+}
+
+
+
+
+
+
 const hexagramAstrology = {
   // Wood Stem
   WoodRat: {
