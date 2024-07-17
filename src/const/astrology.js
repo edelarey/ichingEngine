@@ -1,9 +1,12 @@
 const { DateTime } = require('luxon');
 const SunCalc = require('suncalc');
+import bagua from './bagua';
 
 /** The following is based on The Astrology of I Ching by W.A. Sherrill and W.K. Chu, Routledge and Keegan Paul, 1976 */
 
-
+/** The matching of the Trigrams (bagua) and their respective positive and negative natures
+ * with the 5 elements to produce the 10 Celestial Stems
+ */
 class CelestialStem {
   constructor(name, element, charge, aspect, aspectNumber, oppositeAspect) {
     this.name = name;
@@ -34,7 +37,7 @@ class CelestialStem {
     return this.aspectNumber;
   }
 
-  getoppositeAspect() {
+  getOppositeAspect() {
     return this.oppositeAspect;
   }
 
@@ -42,113 +45,69 @@ class CelestialStem {
 }
 
 class HoraryBranch {
-  constructor(name, englishName, chineseName, animalSign,  relatedStems) {
+  constructor(name, element, charge, trigram, letter,  number) {
     this.name = name;
-    this.englishName = englishName;
-    this.chineseName = chineseName;
-    this.animalSign = animalSign;
-    this.relatedStems = relatedStems;
+    this.element = element;
+    this.charge = charge;
+    this.trigram = trigram;
+    this.letter = letter;
+    this.number = number;
   }
 
-  getEnglishName() {
-    return this.englishName;
+  getName() {
+    return this.name;
   }
 
-  getChineseName() {
-    return this.chineseName;
+  getTrigram() {
+      return this.trigram;
   }
 
-  getAnimalSign() {
-    return this.animalSign;
+  getElement() {
+    return this.element;
   }
-  
-  getRelatedStems() {
-    return this.relatedStems;
+
+  getCharge() {
+    return this.charge;
+  }
+
+  getLetter() {
+    return this.letter;
+  }
+
+  getNumber() {
+    return this.number;
   }
 }
 
 class IChingAstrology {
   constructor() {
     this.celestialStems = [
-      new CelestialStem('Jia', 'Wood',   'Yang', '木 (Mù) Yang',  'A', 6, 'B'),
-      new CelestialStem('Yi',  'Wood',   'Yin',  '木 (Mù) Yin',   'B', 2, 'A'),
-      new CelestialStem('Bing', 'Fire',  'Yang', '火 (Huǒ) Yang', 'C', 8, 'D'),
-      new CelestialStem('Ding', 'Fire',  'Yin',  '火 (Huǒ) Yin',  'D', 7, 'C'), 
-      new CelestialStem('Wu',   'Earth', 'Yang', '土 (Tǔ) Yang',  'E', 1, 'F'),
-      new CelestialStem('Ji',   'Earth', 'Yin',  '土 (Tǔ) Yin',   'F', 9, 'E'),
-      new CelestialStem('Geng', 'Metal', 'Yang', '金 (Jīn) Yang', 'G', 5, 'H'),
-      new CelestialStem('Xin',  'Metal', 'Yin',  '金 (Jīn) Yin',  'H', 4, 'G'),
-      new CelestialStem('Ren',  'Water', 'Yang', '水 (Shuǐ) Yang','I', 6, 'J'),
-      new CelestialStem('Gui',  'Water', 'Yin',  '水 (Shuǐ) Yin', 'J', 2, 'I') 
+      new CelestialStem('Chia', 'Wood',  'Yang', bagua.qián,  'A', 6, 'B'),
+      new CelestialStem('I',    'Wood',  'Yin',  bagua.kūn,   'B', 2, 'A'),
+      new CelestialStem('Ping', 'Fire',  'Yang', bagua.DateTimegèn, 'C', 8, 'D'),
+      new CelestialStem('Ting', 'Fire',  'Yin',  bagua.duì,  'D', 7, 'C'), 
+      new CelestialStem('Wu',   'Earth', 'Yang', bagua.kǎn,  'E', 1, 'F'),
+      new CelestialStem('Chi',  'Earth', 'Yin',  bagua.lí,   'F', 9, 'E'),
+      new CelestialStem('Keng', 'Metal', 'Yang', bagua.zhèn, 'G', 5, 'H'),
+      new CelestialStem('Hsin', 'Metal', 'Yin',  bagua.xùn,  'H', 4, 'G'),
+      new CelestialStem('Jen',  'Water', 'Yang', bagua.qián,'I', 6, 'J'),
+      new CelestialStem('Kuei', 'Water', 'Yin',  bagua.kūn, 'J', 2, 'I') 
     ];
     this.horaryBranches = [
-      new HoraryBranch('Zi', 'Rat', '子 (Zǐ)', 'Rat', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
-      new HoraryBranch('Chou', 'Ox', '丑 (Chǒu)', 'Ox', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
-      new HoraryBranch('Yin', 'Tiger', '寅 (Yín)', 'Tiger', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
-      new HoraryBranch('Mao', 'Rabbit', '卯 (Mǎo)', 'Rabbit', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
-      new HoraryBranch('Chen', 'Dragon', '辰 (Chén)', 'Dragon', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
-      new HoraryBranch('Si', 'Snake', '巳 (Sì)', 'Snake', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
-      new HoraryBranch('Wu', 'Horse', '午 (Wǔ)', 'Horse', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
-      new HoraryBranch('Wei', 'Goat', '未 (Wèi)', 'Goat', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
-      new HoraryBranch('Shen', 'Monkey', '申 (Shēn)', 'Monkey', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
-      new HoraryBranch('You', 'Rooster', '酉 (Yǒu)', 'Rooster', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui']),
-      new HoraryBranch('Xu', 'Dog', '戌 (Xū)', 'Dog', ['Jia', 'Bing', 'Wu', 'Geng', 'Ren']),
-      new HoraryBranch('Hai', 'Pig', '亥 (Hài)', 'Pig', ['Yi', 'Ding', 'Ji', 'Xin', 'Gui'])
+      new HoraryBranch('Tzu',   'Water', 'Yang', 'a', 1, 6),
+      new HoraryBranch(`Ch'ou`, 'Earth', 'Yin',  'b', 5, 10),
+      new HoraryBranch('Yin',   'Wood',  'Yang', 'c', 5, 8),
+      new HoraryBranch('Mao',   'Wood',  'Yin',  'd', 5, 8),
+      new HoraryBranch(`Ch'en`, 'Earth', 'Yang', 'e', 5, 10),
+      new HoraryBranch('Szu',   'Fire',  'Yin',  'f', 2, 7),
+      new HoraryBranch('Wu',    'Fire',  'Yang', 'g', 2, 7),
+      new HoraryBranch('Wei',   'Earth', 'Yin',  'h', 5, 10),
+      new HoraryBranch('Shen',  'Metal', 'Yang', 'i', 4, 9),
+      new HoraryBranch('Yu',    'Metal', 'Yin',  'j', 4, 9),
+      new HoraryBranch('Hsu',   'Earth', 'Yang', 'k', 5, 10),
+      new HoraryBranch('Hai',   'Water', 'Yin',  'l', 1, 6),      
     ];
 
-    this.linkages = [
-      { stem: 'Jia', branch: 'Zi' },
-      { stem: 'Yi', branch: 'Chou' },
-      { stem: 'Bing', branch: 'Yin' },
-      { stem: 'Ding', branch: 'Mao' },
-      { stem: 'Wu', branch: 'Chen' },
-      { stem: 'Ji', branch: 'Si' },
-      { stem: 'Geng', branch: 'Wu' },
-      { stem: 'Xin', branch: 'Wei' },
-      { stem: 'Ren', branch: 'Shen' },
-      { stem: 'Gui', branch: 'You' },
-      { stem: 'Jia', branch: 'Xu' },
-      { stem: 'Yi', branch: 'Hai' },
-      { stem: 'Bing', branch: 'Zi' },
-      { stem: 'Ding', branch: 'Chou' },
-      { stem: 'Wu', branch: 'Yin' },
-      { stem: 'Ji', branch: 'Mao' },
-      { stem: 'Geng', branch: 'Chen' },
-      { stem: 'Xin', branch: 'Si' },
-      { stem: 'Ren', branch: 'Wu' },
-      { stem: 'Gui', branch: 'Wei' },
-      { stem: 'Jia', branch: 'Shen' },
-      { stem: 'Yi', branch: 'You' },
-      { stem: 'Bing', branch: 'Xu' },
-      { stem: 'Ding', branch: 'Hai' },
-      { stem: 'Wu', branch: 'Zi' },
-      { stem: 'Ji', branch: 'Chou' },
-      { stem: 'Geng', branch: 'Yin' },
-      { stem: 'Xin', branch: 'Mao' },
-      { stem: 'Ren', branch: 'Chen' },
-      { stem: 'Gui', branch: 'Si' },
-      { stem: 'Jia', branch: 'Wu' },
-      { stem: 'Yi', branch: 'Wei' },
-      { stem: 'Bing', branch: 'Shen' },
-      { stem: 'Ding', branch: 'You' },
-      { stem: 'Wu', branch: 'Xu' },
-      { stem: 'Ji', branch: 'Hai' },
-      { stem: 'Geng', branch: 'Zi' },
-      { stem: 'Xin', branch: 'Chou' },
-      { stem: 'Ren', branch: 'Yin' },
-      { stem: 'Gui', branch: 'Mao' },
-      { stem: 'Jia', branch: 'Chen' },
-      { stem: 'Yi', branch: 'Si' },
-      { stem: 'Bing', branch: 'Wu' },
-      { stem: 'Ding', branch: 'Wei' },
-      { stem: 'Wu', branch: 'Shen' },
-      { stem: 'Ji', branch: 'You' },
-      { stem: 'Geng', branch: 'Xu' },
-      { stem: 'Xin', branch: 'Hai' },
-      { stem: 'Ren', branch: 'Zi' },
-      { stem: 'Gui', branch: 'Chou' }
-    ];
-    
   }
 
   getCelestialStem(name) {
@@ -167,10 +126,6 @@ class IChingAstrology {
     return this.horaryBranches;
   }
 }
-
-
-
-
 
 
 const hexagramAstrology = {
