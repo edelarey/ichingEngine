@@ -1,19 +1,189 @@
 const { DateTime } = require('luxon');
 const SunCalc = require('suncalc');
-import bagua from '@const/bagua';
+import bagua from '../const/bagua';
+import hexagram from './hexagram';
+import yao from './yao';
+const Color = require("color");
 
 
 /** The following is based on The Astrology of I Ching by W.A. Sherrill and W.K. Chu, Routledge and Keegan Paul, 1976 */
+const direction = {
+  North: 'North',
+  NorthEast: 'North-East',
+  NorthWest: 'North-West',
+  South: 'South',
+  SouthEast: 'South-East',
+  SouthWest: 'South-West', 
+  East: 'East',
+  West: 'West',
+  Middle: 'Middle',
+}
+
+/** Seasons */
+const season = {
+  Spring: 'Spring',
+  Summer: 'Summer',
+  Autumn: 'Autumn',
+  Winter: 'Winter',
+  Neither: 'Neither',
+
+}
+
+/** Elements in Relation to Celestial Stems Fu Hsi's Later Heaven Sequence
+ * Order shows the manner of one element generating another in the cycle of the seasons
+ * The order of the elements is Wood, Fire, Earth, Metal, Water and then back to Wood
+*/
+
+const laterHeavenElements = {
+  Wood: {
+    order: 1,       
+    trigram: bagua.bagua.zhèn,
+    numbers: [3, 8],
+    bodyPart: 'liver',
+    direction: direction.East,
+    color: Color.rgb(	0, 255, 0),
+    },
+  Fire: {
+    order: 2,       
+    trigram: bagua.bagua.lí,   
+    numbers: [2, 7],
+    bodyPart: 'heart',
+    direction: direction.South,
+    color: Color.rgb(	255, 0, 0),
+  },
+  Earth: {
+    order: 3,   
+    numbers: [5, 5],
+    bodyPart: 'spleen',
+    color: Color.rgb(	255, 255, 0),
+    direction: direction.Middle,
+  },
+  Metal: {
+    order: 4,
+    
+    numbers: [4, 9],
+    bodyPart: 'lungs',
+    color: Color.rgb(	255, 255, 255),
+    direction: direction.West,
+  },
+  Water: {
+    order: 5,   
+    numbers: [1, 6],
+    bodyPart: 'kidneys',
+    color: Color.rgb(	0, 0, 0),
+    direction: direction.North,
+  }    
+};
+
+/** Elements in Relation to Celestial Stems Fu Hsi's Later Heaven Sequence**/
+const elementsLaterHeavenSequence = [laterHeavenElements.Wood, laterHeavenElements.Fire, laterHeavenElements.Earth, laterHeavenElements.Metal, laterHeavenElements.Water];
+
+/** Elements in Relation to Celestial Stems Fu Hsi's Earlier Heaven Sequence
+ * Order shows the manner of one element generating another in the cycle of the seasons
+ * The order of the elements is Metal, Earth, Wood, Wind, Water, Fire, Mountain, Lake and then back to Metal
+*/
+
+const ealierHeavenElements = {
+  Metal: {
+    order: 1,
+    trigram: bagua.bagua.qián,
+    direction: direction.South,
+    season: season.Summer,
+  },
+  Earth: {
+    order: 2,
+    trigram: bagua.bagua.kūn,
+    direction: direction.North,
+    season: season.Winter,
+  },
+  Wood: {
+    order: 3,
+    trigram: bagua.bagua.zhèn,
+    direction: direction.East,
+    season: season.Spring,
+  },
+  Wind: {
+    order: 4,
+    trigram: bagua.bagua.xùn,
+    direction: direction.SouthWest,
+    season: season.Neither,
+  },
+  Water: {
+    order: 5,
+    trigram: bagua.bagua.kǎn,
+    direction: direction.West,
+    season: season.Autumn,
+  },
+  Fire: {
+    order: 6,
+    trigram: bagua.bagua.lí,
+    direction: direction.East,
+    season: season.Spring,
+  },
+  Mountain: {
+    order: 7,
+    trigram: bagua.bagua.gèn,
+    direction: direction.NorthWest,
+    season: season.Neither,
+  },
+  Lake: {
+    order: 8,
+    trigram: bagua.bagua.duì,
+    direction: direction.SouthEast,
+    season: season.Autumn,
+  },
+}
+
+
+/** Elements in Relation to Celestial Stems Fu Hsi's Earlier Heaven Sequence*/
+
+const EarlierHeavenSequence = {
+  Wood: {   
+    hexagram: hexagram.hexagram.pǐ,
+    trigram: bagua.bagua.kūn,
+    numbers: [3, 8],
+    direction: direction.North,
+    polarity: yao.yao.yin,
+    },
+  Fire: {
+    hexagram: hexagram.hexagram.sǔn,
+    trigram: bagua.bagua.qián,    
+    numbers: [2, 7],
+    direction: direction.South,
+    polarity: yao.yao.yang,
+  },
+  Earth: {
+    hexagram: hexagram.hexagram.jìjì,
+    numbers: [5, 5],
+    direction: direction.Centre,
+  },
+  Metal: {
+    trigram: bagua.bagua.kǎn,
+    numbers: [4, 9],
+    direction: direction.West,
+    season: 'Autumn',
+  },
+  Water: {   
+    trigram: bagua.bagua.lí,
+    numbers: [1, 6],
+    direction: direction.East,
+  }    
+};
+
+
 
 /** The matching of the Trigrams (bagua) and their respective positive (Yang) and negative (Yin) natures
  * with the 5 elements to produce the 10 Celestial Stems
  * Winter Solstice is the Starting point for the Celestial Stems
  */
+
+
 class CelestialStem {
-  constructor(name, element, charge, aspect, aspectNumber, oppositeAspect) {
+  constructor(name, element, charge, trigram, aspect, aspectNumber, oppositeAspect) {
     this.name = name;
     this.element = element;
     this.charge = charge;
+    this.trigram = trigram;
     this.aspect = aspect;
     this.aspectNumber = aspectNumber;
     this.oppositeAspect = oppositeAspect;
@@ -29,6 +199,10 @@ class CelestialStem {
 
   getCharge() {
     return this.charge;
+  }
+
+  getTrigram() {
+    return this.trigram;
   }
 
   getAspect() {
@@ -83,31 +257,36 @@ class HoraryBranch {
 
 class IChingAstrology {
   constructor() {
+    this.elements = laterHeavenElements;
+
+    /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
+     * contributes to the element, yoa indicates if it is positive or negative contribution */
     this.celestialStems = [
-      new CelestialStem('Chia', 'Wood',  'Yang', bagua.bagua.qián,  'A', 6, 'B'),
-      new CelestialStem('I',    'Wood',  'Yin',  bagua.bagua.kūn,   'B', 2, 'A'),
-      new CelestialStem('Ping', 'Fire',  'Yang', bagua.bagua.gèn, 'C', 8, 'D'),
-      new CelestialStem('Ting', 'Fire',  'Yin',  bagua.bagua.duì,  'D', 7, 'C'), 
-      new CelestialStem('Wu',   'Earth', 'Yang', bagua.bagua.kǎn,  'E', 1, 'F'),
-      new CelestialStem('Chi',  'Earth', 'Yin',  bagua.bagua.lí,   'F', 9, 'E'),
-      new CelestialStem('Keng', 'Metal', 'Yang', bagua.bagua.zhèn, 'G', 5, 'H'),
-      new CelestialStem('Hsin', 'Metal', 'Yin',  bagua.bagua.xùn,  'H', 4, 'G'),
-      new CelestialStem('Jen',  'Water', 'Yang', bagua.bagua.qián,'I', 6, 'J'),
-      new CelestialStem('Kuei', 'Water', 'Yin',  bagua.bagua.kūn, 'J', 2, 'I') 
+      new CelestialStem('Chia', laterHeavenElements.Wood,  yao.yao.yang, bagua.bagua.qián, 'A', 6, 'B'),
+      new CelestialStem('I',    laterHeavenElements.Wood,  yao.yao.yin,  bagua.bagua.kūn,  'B', 2, 'A'),
+      new CelestialStem('Ping', laterHeavenElements.Fire,  yao.yao.yang, bagua.bagua.gèn,  'C', 8, 'D'),
+      new CelestialStem('Ting', laterHeavenElements.Fire,  yao.yao.yin,  bagua.bagua.duì,  'D', 7, 'C'), 
+      new CelestialStem('Wu',   laterHeavenElements.Earth, yao.yao.yang, bagua.bagua.kǎn,  'E', 1, 'F'),
+      new CelestialStem('Chi',  laterHeavenElements.Earth, yao.yao.yin,  bagua.bagua.lí,   'F', 9, 'E'),
+      new CelestialStem('Keng', laterHeavenElements.Metal, yao.yao.yang, bagua.bagua.zhèn, 'G', 5, 'H'),
+      new CelestialStem('Hsin', laterHeavenElements.Metal, yao.yao.yin,  bagua.bagua.xùn,  'H', 4, 'G'),
+      new CelestialStem('Jen',  laterHeavenElements.Water, yao.yao.yang, bagua.bagua.qián, 'I', 6, 'J'),
+      new CelestialStem('Kuei', laterHeavenElements.Water, yao.yao.yin,  bagua.bagua.kūn,  'J', 2, 'I') 
     ];
+    /** The numbers in the horary branch are from the Ho Map */
     this.horaryBranches = [
-      new HoraryBranch('Tzu',   'Water', 'Yang', 'a', 1, 6),
-      new HoraryBranch(`Ch'ou`, 'Earth', 'Yin',  'b', 5, 10),
-      new HoraryBranch('Yin',   'Wood',  'Yang', 'c', 5, 8),
-      new HoraryBranch('Mao',   'Wood',  'Yin',  'd', 5, 8),
-      new HoraryBranch(`Ch'en`, 'Earth', 'Yang', 'e', 5, 10),
-      new HoraryBranch('Szu',   'Fire',  'Yin',  'f', 2, 7),
-      new HoraryBranch('Wu',    'Fire',  'Yang', 'g', 2, 7),
-      new HoraryBranch('Wei',   'Earth', 'Yin',  'h', 5, 10),
-      new HoraryBranch('Shen',  'Metal', 'Yang', 'i', 4, 9),
-      new HoraryBranch('Yu',    'Metal', 'Yin',  'j', 4, 9),
-      new HoraryBranch('Hsu',   'Earth', 'Yang', 'k', 5, 10),
-      new HoraryBranch('Hai',   'Water', 'Yin',  'l', 1, 6),      
+      new HoraryBranch('Tzu',   laterHeavenElements.Water, yao.yao.yang, 'a', 1, 6),
+      new HoraryBranch(`Ch'ou`, laterHeavenElements.Earth, yao.yao.yin,  'b', 5, 10),
+      new HoraryBranch('Yin',   laterHeavenElements.Wood,  yao.yao.yang, 'c', 5, 8),
+      new HoraryBranch('Mao',   laterHeavenElements.Wood,  yao.yao.yin,  'd', 5, 8),
+      new HoraryBranch(`Ch'en`, laterHeavenElements.Earth, yao.yao.yang, 'e', 5, 10),
+      new HoraryBranch('Szu',   laterHeavenElements.Fire,  yao.yao.yin,  'f', 2, 7),
+      new HoraryBranch('Wu',    laterHeavenElements.Fire,  yao.yao.yang, 'g', 2, 7),
+      new HoraryBranch('Wei',   laterHeavenElements.Earth, yao.yao.yin,  'h', 5, 10),
+      new HoraryBranch('Shen',  laterHeavenElements.Metal, yao.yao.yang, direction.West, 'i', 4, 9),
+      new HoraryBranch('Yu',    laterHeavenElements.Metal, yao.yao.yin,  'j', 4, 9),
+      new HoraryBranch('Hsu',   laterHeavenElements.Earth, yao.yao.yang, 'k', 5, 10),
+      new HoraryBranch('Hai',   laterHeavenElements.Water, yao.yao.yin,  'l', 1, 6),      
     ];
 
   }
@@ -1138,6 +1317,8 @@ async function calculateNatalHexagram(birthDate, birthTime) {
 
 
 export default {
+  laterHeavenElements,
+  direction,
   CelestialStem,
   HoraryBranch,
   IChingAstrology,

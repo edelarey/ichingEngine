@@ -37,6 +37,8 @@ const bagua = {
         description: {
             alternate: "kūn",
             translation: "the Receptive, Field",
+            earlierHeavenDirection: "north",
+            earlierHeavenSeason: "winter",
             oldfamilydirection: "southwest",
             oldfamilyrelationship: "mother",
             newfamilyrelationship: "mother",
@@ -62,6 +64,8 @@ const bagua = {
         description: {
             alternate: "Kên", 
             translation: "keeping Still, bound",
+            earlierHeavenDirection: "north-west",
+            earlierHeavenSeason: "none",
             oldfamilydirection: "north",
             oldfamilyrelationship: "second son",
             newfamilyrelationship: "second daughter",
@@ -87,6 +91,8 @@ const bagua = {
         description: {
         alternate: "K'an",
         translation: "the abysmal, gorge",
+        earlierHeavenDirection: "west",
+        earlierHeavenSeason: "autumn",
         oldfamilydirection: "north",
         oldfamilyrelationship: "second daughter",
         newfamilyrelationship: "second son",
@@ -112,6 +118,8 @@ const bagua = {
         description: {
         alternate: "Hsün",
         translation: "the gentle, ground",
+        earlierHeavenDirection: "south-west",
+        earlierHeavenSeason: "none",
         oldfamilydirection: "south-east",
         oldfamilyrelationship: "first daughter",
         newfamilyrelationship: "first daughter",
@@ -135,8 +143,10 @@ const bagua = {
             lowerLine: yao.yao.yang,
         },
         description: {
-        alternate: "zhèn",
+        alternate: "chèn",
         translation:  "inciting movement, the arousing, shake",
+        earlierHeavenDirection: "north-east",
+        earlierHeavenSeason: "none",
         oldfamilydirection: "east",
         oldfamilyrelationship: "first son",
         newfamilyrelationship: "first son",
@@ -162,6 +172,8 @@ const bagua = {
         description: {
         aletrnate: "lí",
         translation: "the clinging, radiance",
+        earlierHeavenDirection: "east",
+        earlierHeavenSeason: "spring",
         oldfamilydirection: "south",
         oldfamilyrelationship: "second son",
         newfamilyrelationship: "second daughter",
@@ -186,6 +198,8 @@ const bagua = {
         },
         description: {
         alternate: "tuì",
+        earlierHeavenDirection: "south-east",
+        earlierHeavenSeason: "none",
         translation: "the joyous, open",
         oldfamilydirection: "west",
         oldfamilyrelationship: "third son",
@@ -212,6 +226,8 @@ const bagua = {
         description: {       
         alternate: "Ch'ien",
         translation: "the creative, force",
+        earlierHeavenDirection: "south",
+        earlierHeavenSeason: "summer",
         oldfamilydirection: "north-west",
         oldfamilyrelationship: "father",
         newfamilyrelationship: "father",
@@ -299,12 +315,26 @@ function sequence_Gua_NewFamilyOrder_ColourComplement_PositionalShift ()
         return  [bagua.kūn, bagua.gèn, bagua.kǎn, bagua.xùn, bagua.zhèn, bagua.lí, bagua.duì, bagua.qián];
     };
 
+    function sequence_later_heaven_TraversalOrder()
+    {
+        return [bagua.lí, bagua.kūn, bagua.duì, bagua.qián, bagua.kǎn, bagua.gèn, bagua.zhèn, bagua.xùn];
+    
+    };
+
+    function sequence_earlier_heaven_TraversalOrder()
+    {
+        return [bagua.qián, bagua.kūn, bagua.zhèn, bagua.xùn, bagua.kǎn, bagua.lí, bagua.gèn, bagua.duì];
+    
+    }
 
 export default
 {
     bagua,
+    sequence_later_heaven_TraversalOrder,
+    sequence_earlier_heaven_TraversalOrder,
     sequence_Gua_OldFamilyOrder,
     sequence_Gua_NewFamilyOrder_ColourComplement_PositionalShift,
     sequence_Gua_NewFamilyOrder_LightSpectrum_TraversalOrder,
     sequence_Gua_NewFamilyOrder_PaintSpectrum_TraversalOrder,
+
 }
