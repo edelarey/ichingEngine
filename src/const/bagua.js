@@ -21,6 +21,38 @@
 const Color = require("color");
 import yao from '@/const/yao';
 
+const element = {
+Wood: 'Wood',
+Fire: 'Fire',
+Earth: 'Earth',
+Metal: 'Metal',
+Water: 'Water',
+}
+
+const compassDirection = {
+    North: 'North',
+    NorthEast: 'North-East',
+    East: 'East',
+    SouthEast: 'South-East',
+    South: 'South',    
+    SouthWest: 'South-West',     
+    West: 'West',
+    NorthWest: 'North-West',
+    Middle: 'Middle',
+  }
+  
+  /** Seasons */
+  const season = {
+    Spring: 'Spring',
+    Beltane: 'Beltane',
+    Summer: 'Summer',
+    Lughnasadh: 'Lughnasadh',
+    Autumn: 'Autumn',
+    Samhain: 'Samhain',
+    Winter: 'Winter',
+    Imbolc: 'Imbolc', 
+  }
+
 
 const bagua = {
     kūn: {
@@ -34,8 +66,20 @@ const bagua = {
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yin,
         },
+        earlierHeaven: {
+            direction: compassDirection.North,            
+            number: 2,
+            season: season.Winter,
+            polarity: yao.yao.yin,      
+        },  
+        laterHeaven: {
+            direction: compassDirection.SouthWest,            
+            number: 2,
+            season: season.Lughnasadh,
+            polarity: yao.yao.yang,      
+        },
         description: {
-            alternate: "kūn",
+            alternate: "kūn, k'un",
             translation: "the Receptive, Field",
             earlierHeavenDirection: "north",
             earlierHeavenSeason: "winter",
@@ -59,8 +103,20 @@ const bagua = {
         lines:{
             upperLine: yao.yao.yang,        
             middleLine: yao.yao.yin,
-            lowerLine: yao.yao.yin,
-        },    
+            lowerLine: yao.yao.yang,
+        },   
+        earlierHeaven: {
+            direction: compassDirection.NorthWest,            
+            number: 8,
+            season: season.Samhain,
+            polarity: yao.yao.yang,      
+        },  
+        laterHeaven: {
+            direction: compassDirection.NorthEast,            
+            number: 8,
+            season: season.Imbolc,
+            polarity: yao.yao.yang,      
+        },
         description: {
             alternate: "Kên", 
             translation: "keeping Still, bound",
@@ -88,10 +144,24 @@ const bagua = {
             middleLine: yao.yao.yang,
             lowerLine: yao.yao.yin,
         },
+        earlierHeaven: {
+            direction: compassDirection.West,            
+            number: 1,
+            season: season.Autumn,
+            polarity: yao.yao.yang,      
+        }, 
+        laterHeaven: {
+            direction: compassDirection.North,        
+            number: 1,
+            season: season.Winter,
+            polarity: yao.yao.yang,
+        },
         description: {
-        alternate: "K'an",
+        alternate: "K'an, Kan",
         translation: "the abysmal, gorge",
-        earlierHeavenDirection: "west",
+        earlierHeavenDirection: "west",      
+        laterHeavenDirection: "north",
+        laterHeavenNumber: 1,
         earlierHeavenSeason: "autumn",
         oldfamilydirection: "north",
         oldfamilyrelationship: "second daughter",
@@ -114,9 +184,21 @@ const bagua = {
             upperLine: yao.yao.yang,
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yin,
-        },        
+        },  
+        earlierHeaven: {
+            direction: compassDirection.SouthWest,            
+            number: 4,
+            season: season.Lughnasadh,
+            polarity: yao.yao.yin,      
+        },   
+        laterHeaven: {
+            direction: compassDirection.SouthEast,            
+            number: 4,
+            season: season.Beltane,
+            polarity: yao.yao.yin,      
+        },   
         description: {
-        alternate: "Hsün",
+        alternate: "Hsün, Sun",
         translation: "the gentle, ground",
         earlierHeavenDirection: "south-west",
         earlierHeavenSeason: "none",
@@ -142,8 +224,20 @@ const bagua = {
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yang,
         },
+        earlierHeaven: {
+            direction: compassDirection.NorthEast,            
+            number: 3,
+            season: season.Imbolc,
+            polarity: yao.yao.yang,      
+        }, 
+        laterHeaven: {
+            direction: compassDirection.East,            
+            number: 3,
+            season: season.Spring,
+            polarity: yao.yao.yang,      
+        },
         description: {
-        alternate: "chèn",
+        alternate: "chèn, chên",
         translation:  "inciting movement, the arousing, shake",
         earlierHeavenDirection: "north-east",
         earlierHeavenSeason: "none",
@@ -169,8 +263,20 @@ const bagua = {
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yang,
         },
+        earlierHeaven: {
+            direction: compassDirection.East,            
+            number: 9,
+            season: season.Spring,
+            polarity: yao.yao.yin,      
+        }, 
+        laterHeaven: {
+            direction: compassDirection.South,            
+            number: 9,
+            season: season.Summer,
+            polarity: yao.yao.yin,
+        },
         description: {
-        aletrnate: "lí",
+        aletrnate: "li",
         translation: "the clinging, radiance",
         earlierHeavenDirection: "east",
         earlierHeavenSeason: "spring",
@@ -196,8 +302,20 @@ const bagua = {
             middleLine: yao.yao.yang,
             lowerLine: yao.yao.yang,
         },
+        earlierHeaven: {
+            direction: compassDirection.SouthEast,            
+            number: 7,
+            season: season.Beltane,
+            polarity: yao.yao.yin,      
+        },
+        laterHeaven: {
+            direction: compassDirection.West,            
+            number: 7,
+            season: season.Autumn,
+            polarity: yao.yao.yin,      
+        },
         description: {
-        alternate: "tuì",
+        alternate: "Tuì, Tui",
         earlierHeavenDirection: "south-east",
         earlierHeavenSeason: "none",
         translation: "the joyous, open",
@@ -222,6 +340,18 @@ const bagua = {
             upperLine: yao.yao.yang,
             middleLine: yao.yao.yang,
             lowerLine: yao.yao.yang,
+        },
+        earlierHeaven: {
+            direction: compassDirection.South,            
+            number: 6,
+            season: season.Summer,
+            polarity: yao.yao.yang,      
+        },
+        laterHeaven: {
+            direction: compassDirection.NorthWest,            
+            number: 6,
+            season: season.Samhain,
+            polarity: yao.yao.yang,      
         },
         description: {       
         alternate: "Ch'ien",

@@ -7,37 +7,73 @@ const Color = require("color");
 
 
 /** The following is based on The Astrology of I Ching by W.A. Sherrill and W.K. Chu, Routledge and Keegan Paul, 1976 */
-const direction = {
-  North: 'North',
-  NorthEast: 'North-East',
-  NorthWest: 'North-West',
-  South: 'South',
-  SouthEast: 'South-East',
-  SouthWest: 'South-West', 
-  East: 'East',
-  West: 'West',
-  Middle: 'Middle',
-}
 
-/** Seasons */
-const season = {
-  Spring: 'Spring',
-  Summer: 'Summer',
-  Autumn: 'Autumn',
-  Winter: 'Winter',
-  Neither: 'Neither',
+/** Ho Lo Li Shu - Ho Map Lo Map Rational Number (W.K. Chu, 1993, p.8) */
+const hoMap = {
+  Wood: {
+    order: 1,       
+    numbers: [3, 8],  
+    polarity: [yao.yao.yang, yao.yao.yin],
+    bodyPart: 'liver',
+    direction: direction.East,
+    color: Color.rgb(	0, 255, 0), // Green
+    },
+  Fire: {
+    order: 2,           
+    numbers: [2, 7],
+    polarity: [yao.yao.yang, yao.yao.yin],
+    bodyPart: 'heart',
+    direction: direction.South,
+    color: Color.rgb(	255, 0, 0), // Red
+  },
+  Earth: {
+    order: 3,   
+    numbers: [5, 5],
+    polarity: [yao.yao.yin, yao.yao.yang],
+    bodyPart: 'spleen',
+    color: Color.rgb(	255, 255, 0), // Yellow
+    direction: direction.Middle,
+  },
+  Metal: {
+    order: 4,    
+    numbers: [4, 9],
+    polarity: [yao.yao.yang, yao.yao.yin],
+    bodyPart: 'lungs',
+    color: Color.rgb(	255, 255, 255), // White
+    direction: direction.West,
+  },
+  Water: {
+    order: 5,   
+    polarity: [yao.yao.yin, yao.yao.yang],
+    numbers: [1, 6],
+    bodyPart: 'kidneys',
+    color: Color.rgb(	0, 0, 0), // Black
+    direction: direction.North,
+  }    
+};
 
-}
+
 
 /** Elements in Relation to Celestial Stems Fu Hsi's Later Heaven Sequence
  * Order shows the manner of one element generating another in the cycle of the seasons
  * The order of the elements is Wood, Fire, Earth, Metal, Water and then back to Wood
+ * Represents Earthly Manifestation of the Elements
 */
+
+/** LoMap = Later Heaven Sequence Of Trigrams AND the Magic Square Of Three
+ * (W.K. Chu, 1993, p.12)
+ */
+const magicSquareOfThree =
+  [
+    [4, 9, 2],
+    [3, 5, 7],
+    [8, 1, 6]
+  ];
 
 const laterHeavenElements = {
   Wood: {
     order: 1,       
-    trigram: bagua.bagua.zhèn,
+    trigrams: [bagua.bagua.zhèn, bagua.bagua.gèn],
     numbers: [3, 8],
     bodyPart: 'liver',
     direction: direction.East,
@@ -45,14 +81,15 @@ const laterHeavenElements = {
     },
   Fire: {
     order: 2,       
-    trigram: bagua.bagua.lí,   
+    trigrams: [bagua.bagua.kūn, bagua.bagua.duì],  
     numbers: [2, 7],
     bodyPart: 'heart',
     direction: direction.South,
     color: Color.rgb(	255, 0, 0),
   },
   Earth: {
-    order: 3,   
+    order: 3,
+    trigrams: [bagua.bagua.kǎn, bagua.bagua.li],    // (1 + 9 = 10 = 5 + 5 )
     numbers: [5, 5],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0),
@@ -60,14 +97,15 @@ const laterHeavenElements = {
   },
   Metal: {
     order: 4,
-    
+    trigrams: [bagua.bagua.xùn, bagua.bagua.lí],     
     numbers: [4, 9],
     bodyPart: 'lungs',
     color: Color.rgb(	255, 255, 255),
     direction: direction.West,
   },
   Water: {
-    order: 5,   
+    order: 5,
+    trigrams: [bagua.bagua.kǎn, bagua.bagua.qián],     
     numbers: [1, 6],
     bodyPart: 'kidneys',
     color: Color.rgb(	0, 0, 0),
@@ -75,12 +113,17 @@ const laterHeavenElements = {
   }    
 };
 
-/** Elements in Relation to Celestial Stems Fu Hsi's Later Heaven Sequence**/
-const elementsLaterHeavenSequence = [laterHeavenElements.Wood, laterHeavenElements.Fire, laterHeavenElements.Earth, laterHeavenElements.Metal, laterHeavenElements.Water];
+/** Elements in Relation to Celestial Stems Fu Hsi's Later Heaven Sequence
+ *  Progressive sequence of the elements from left to right, and then from Last to First (Water Produces Wood)
+ *  Used in This Interpretation Of IChing Astrology 
+ * (W.K. Chu, 1993, p.13)
+ *  **/
+const laterHeavenElementSequence = [laterHeavenElements.Wood, laterHeavenElements.Fire, laterHeavenElements.Earth, laterHeavenElements.Metal, laterHeavenElements.Water];
 
 /** Elements in Relation to Celestial Stems Fu Hsi's Earlier Heaven Sequence
  * Order shows the manner of one element generating another in the cycle of the seasons
  * The order of the elements is Metal, Earth, Wood, Wind, Water, Fire, Mountain, Lake and then back to Metal
+ * Represents Heavenly Arrangents of the Elements Prior to Manefestation on Earth
 */
 
 const ealierHeavenElements = {
@@ -133,6 +176,8 @@ const ealierHeavenElements = {
     season: season.Autumn,
   },
 }
+
+
 
 
 /** Elements in Relation to Celestial Stems Fu Hsi's Earlier Heaven Sequence*/
