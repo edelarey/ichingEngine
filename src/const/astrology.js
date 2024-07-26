@@ -28,7 +28,7 @@ const hoMap = {
   },
   Earth: {
     order: 3,   
-    numbers: [5, 5],
+    numbers: [5, 5],  // 1, 9 = 5 + 5 = 10 
     polarity: [yao.yao.yin, yao.yao.yang],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0), // Yellow
@@ -89,8 +89,8 @@ const laterHeavenElements = {
   },
   Earth: {
     order: 3,
-    trigrams: [bagua.bagua.kǎn, bagua.bagua.li],    // (10 = 5 + 5 )
-    numbers: [5, 10],
+    trigrams: [bagua.bagua.kǎn, bagua.bagua.li],    // (1, 9 = 5 + 5 = 10 )
+    numbers: [1, 9],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0),
     direction: direction.Middle,
