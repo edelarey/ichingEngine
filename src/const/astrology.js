@@ -89,8 +89,8 @@ const laterHeavenElements = {
   },
   Earth: {
     order: 3,
-    trigrams: [bagua.bagua.kǎn, bagua.bagua.li],    // (1 + 9 = 10 = 5 + 5 )
-    numbers: [5, 5],
+    trigrams: [bagua.bagua.kǎn, bagua.bagua.li],    // (10 = 5 + 5 )
+    numbers: [5, 10],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0),
     direction: direction.Middle,
@@ -201,10 +201,10 @@ class CelestialStem {
 }
 
 class HoraryBranch {
-  constructor(name, numbers,element) {
+  constructor(name, hoMapNumbers,element) {
     this.name = name;
     this.element = element;    
-    this.numbers = numbers;
+    this.hoMapNumbers = hoMapNumbers;
   }
 
   getName() {
@@ -214,8 +214,8 @@ class HoraryBranch {
   getElement() {
     return this.element;
   }
-  getNumber() {
-    return this.numbers;
+  getHoMapNumbers() {
+    return this.hoMapNumbers;
   }
 }
 
