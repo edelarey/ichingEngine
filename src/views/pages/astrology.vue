@@ -203,6 +203,9 @@ export default {
             const astrology = new astro.IChingAstrology();
             // const stems = astrology.getAllCelestialStems();
             console.log('stems', astrology.getAllCelestialStems());
+            console.log('branches', astrology.getAllHoraryBranches());
+            console.log('sexagenary cycles', astrology.getAllSexagenaryCycles());
+
          //   mapAstroHexagram();
             // Example usage
         //     console.log(`Birth Date:  ${state.birthDate}`);

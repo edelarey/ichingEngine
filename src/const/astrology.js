@@ -16,7 +16,7 @@ const hoMap = {
     numbers: [3, 8],  
     polarity: [yao.yao.yang, yao.yao.yin],
     bodyPart: 'liver',
-    direction: direction.East,
+    direction: bagua.compassDirection.East,
     color: Color.rgb(	0, 255, 0), // Green
     },
   Fire: {
@@ -24,7 +24,7 @@ const hoMap = {
     numbers: [2, 7],
     polarity: [yao.yao.yang, yao.yao.yin],
     bodyPart: 'heart',
-    direction: direction.South,
+    direction: bagua.compassDirection.South,
     color: Color.rgb(	255, 0, 0), // Red
   },
   Earth: {
@@ -33,7 +33,7 @@ const hoMap = {
     polarity: [yao.yao.yin, yao.yao.yang],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0), // Yellow
-    direction: direction.Middle,
+    direction: bagua.compassDirection.Center,
   },
   Metal: {
     order: 4,    
@@ -41,7 +41,7 @@ const hoMap = {
     polarity: [yao.yao.yang, yao.yao.yin],
     bodyPart: 'lungs',
     color: Color.rgb(	255, 255, 255), // White
-    direction: direction.West,
+    direction: bagua.compassDirection.West,
   },
   Water: {
     order: 5,   
@@ -49,7 +49,7 @@ const hoMap = {
     numbers: [1, 6],
     bodyPart: 'kidneys',
     color: Color.rgb(	0, 0, 0), // Black
-    direction: direction.North,
+    direction: bagua.compassDirection.North,
   }    
 };
 
@@ -77,7 +77,7 @@ const laterHeavenElements = {
     trigrams: [bagua.bagua.zhèn, bagua.bagua.gèn],
     numbers: [3, 8],
     bodyPart: 'liver',
-    direction: direction.East,
+    direction: bagua.compassDirection.East,
     color: Color.rgb(	0, 255, 0),
     },
   Fire: {
@@ -85,7 +85,7 @@ const laterHeavenElements = {
     trigrams: [bagua.bagua.kūn, bagua.bagua.duì],  
     numbers: [2, 7],
     bodyPart: 'heart',
-    direction: direction.South,
+    direction: bagua.compassDirection.South,
     color: Color.rgb(	255, 0, 0),
   },
   Earth: {
@@ -94,7 +94,7 @@ const laterHeavenElements = {
     numbers: [1, 9],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0),
-    direction: direction.Middle,
+    direction: bagua.compassDirection.Center,
   },
   Metal: {
     order: 4,
@@ -102,7 +102,7 @@ const laterHeavenElements = {
     numbers: [4, 9],
     bodyPart: 'lungs',
     color: Color.rgb(	255, 255, 255),
-    direction: direction.West,
+    direction: bagua.compassDirection.West,
   },
   Water: {
     order: 5,
@@ -110,7 +110,7 @@ const laterHeavenElements = {
     numbers: [1, 6],
     bodyPart: 'kidneys',
     color: Color.rgb(	0, 0, 0),
-    direction: direction.North,
+    direction: bagua.compassDirection.North,
   }    
 };
 
@@ -162,8 +162,7 @@ const ealierHeavenElements = {
     trigrams: [bagua.bagua.qián, bagua.bagua.kūn],     
     numbers: [6, 2],
     bodyPart: 'kidneys',
-    color: Color.rgb(	0, 0, 0), // Black
-    direction: direction.North,
+    color: Color.rgb(	0, 0, 0), // Black 
   }    
 };
 
@@ -289,71 +288,71 @@ class IChingAstrology {
     ];
     /** Sexagenary Cycles based on combinations of Celestial stems and Horary Branches */
     this.sexagenaryCycle = [
-      new SexagenaryCycle(1, this.getCelestialStemByAlpha('A'), this.getCelestialStemByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(2, this.getCelestialStemByAlpha('B'), this.getCelestialStemByAlpha('b'), yao.yao.yin),
-      new SexagenaryCycle(3, this.getCelestialStemByAlpha('C'), this.getCelestialStemByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(4, this.getCelestialStemByAlpha('D'), this.getCelestialStemByAlpha('d'), yao.yao.yin),
-      new SexagenaryCycle(5, this.getCelestialStemByAlpha('E'), this.getCelestialStemByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(6, this.getCelestialStemByAlpha('F'), this.getCelestialStemByAlpha('f'), yao.yao.yin),
-      new SexagenaryCycle(7, this.getCelestialStemByAlpha('G'), this.getCelestialStemByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(8, this.getCelestialStemByAlpha('H'), this.getCelestialStemByAlpha('h'), yao.yao.yin),
-      new SexagenaryCycle(9, this.getCelestialStemByAlpha('I'), this.getCelestialStemByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(10, this.getCelestialStemByAlpha('J'), this.getCelestialStemByAlpha('j'), yao.yao.yin),
+      new SexagenaryCycle(1, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
+      new SexagenaryCycle(2, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
+      new SexagenaryCycle(3, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
+      new SexagenaryCycle(4, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
+      new SexagenaryCycle(5, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
+      new SexagenaryCycle(6, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
+      new SexagenaryCycle(7, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
+      new SexagenaryCycle(8, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
+      new SexagenaryCycle(9, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
+      new SexagenaryCycle(10, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
 
-      new SexagenaryCycle(11, this.getCelestialStemByAlpha('A'), this.getCelestialStemByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(12, this.getCelestialStemByAlpha('B'), this.getCelestialStemByAlpha('l'), yao.yao.yin),
-      new SexagenaryCycle(13, this.getCelestialStemByAlpha('C'), this.getCelestialStemByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(14, this.getCelestialStemByAlpha('D'), this.getCelestialStemByAlpha('b'), yao.yao.yin),
-      new SexagenaryCycle(15, this.getCelestialStemByAlpha('E'), this.getCelestialStemByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(16, this.getCelestialStemByAlpha('F'), this.getCelestialStemByAlpha('d'), yao.yao.yin),
-      new SexagenaryCycle(17, this.getCelestialStemByAlpha('G'), this.getCelestialStemByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(18, this.getCelestialStemByAlpha('H'), this.getCelestialStemByAlpha('f'), yao.yao.yin),
-      new SexagenaryCycle(19, this.getCelestialStemByAlpha('I'), this.getCelestialStemByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(20, this.getCelestialStemByAlpha('J'), this.getCelestialStemByAlpha('h'), yao.yao.yin),
+      new SexagenaryCycle(11, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
+      new SexagenaryCycle(12, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('l'), yao.yao.yin),
+      new SexagenaryCycle(13, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
+      new SexagenaryCycle(14, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
+      new SexagenaryCycle(15, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
+      new SexagenaryCycle(16, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
+      new SexagenaryCycle(17, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
+      new SexagenaryCycle(18, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
+      new SexagenaryCycle(19, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
+      new SexagenaryCycle(20, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
 
-      new SexagenaryCycle(21, this.getCelestialStemByAlpha('A'), this.getCelestialStemByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(22, this.getCelestialStemByAlpha('B'), this.getCelestialStemByAlpha('j'), yao.yao.yin),
-      new SexagenaryCycle(23, this.getCelestialStemByAlpha('C'), this.getCelestialStemByAlpha('k'), yao.yao.yang),
+      new SexagenaryCycle(21, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
+      new SexagenaryCycle(22, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
+      new SexagenaryCycle(23, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
       new SexagenaryCycle(24, this.getCelestialStemByAlpha('D'), this.getCelestialStemByAlpha('l'), yao.yao.yin),
-      new SexagenaryCycle(25, this.getCelestialStemByAlpha('E'), this.getCelestialStemByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(26, this.getCelestialStemByAlpha('F'), this.getCelestialStemByAlpha('b'), yao.yao.yin),
-      new SexagenaryCycle(27, this.getCelestialStemByAlpha('G'), this.getCelestialStemByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(28, this.getCelestialStemByAlpha('H'), this.getCelestialStemByAlpha('d'), yao.yao.yin),
-      new SexagenaryCycle(29, this.getCelestialStemByAlpha('I'), this.getCelestialStemByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(30, this.getCelestialStemByAlpha('J'), this.getCelestialStemByAlpha('f'), yao.yao.yin),
+      new SexagenaryCycle(25, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
+      new SexagenaryCycle(26, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
+      new SexagenaryCycle(27, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
+      new SexagenaryCycle(28, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
+      new SexagenaryCycle(29, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
+      new SexagenaryCycle(30, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
      
-      new SexagenaryCycle(31, this.getCelestialStemByAlpha('A'), this.getCelestialStemByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(32, this.getCelestialStemByAlpha('B'), this.getCelestialStemByAlpha('h'), yao.yao.yin),
-      new SexagenaryCycle(33, this.getCelestialStemByAlpha('C'), this.getCelestialStemByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(34, this.getCelestialStemByAlpha('D'), this.getCelestialStemByAlpha('j'), yao.yao.yin),
-      new SexagenaryCycle(35, this.getCelestialStemByAlpha('E'), this.getCelestialStemByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(36, this.getCelestialStemByAlpha('F'), this.getCelestialStemByAlpha('l'), yao.yao.yin),
-      new SexagenaryCycle(37, this.getCelestialStemByAlpha('G'), this.getCelestialStemByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(38, this.getCelestialStemByAlpha('H'), this.getCelestialStemByAlpha('b'), yao.yao.yin),
-      new SexagenaryCycle(39, this.getCelestialStemByAlpha('I'), this.getCelestialStemByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(40, this.getCelestialStemByAlpha('J'), this.getCelestialStemByAlpha('d'), yao.yao.yin),
+      new SexagenaryCycle(31, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
+      new SexagenaryCycle(32, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
+      new SexagenaryCycle(33, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
+      new SexagenaryCycle(34, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
+      new SexagenaryCycle(35, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
+      new SexagenaryCycle(36, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('l'), yao.yao.yin),
+      new SexagenaryCycle(37, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
+      new SexagenaryCycle(38, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
+      new SexagenaryCycle(39, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
+      new SexagenaryCycle(40, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
 
-      new SexagenaryCycle(41, this.getCelestialStemByAlpha('A'), this.getCelestialStemByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(42, this.getCelestialStemByAlpha('B'), this.getCelestialStemByAlpha('f'), yao.yao.yin),
-      new SexagenaryCycle(43, this.getCelestialStemByAlpha('C'), this.getCelestialStemByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(44, this.getCelestialStemByAlpha('D'), this.getCelestialStemByAlpha('h'), yao.yao.yin),
-      new SexagenaryCycle(45, this.getCelestialStemByAlpha('E'), this.getCelestialStemByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(46, this.getCelestialStemByAlpha('F'), this.getCelestialStemByAlpha('j'), yao.yao.yin),
-      new SexagenaryCycle(47, this.getCelestialStemByAlpha('G'), this.getCelestialStemByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(48, this.getCelestialStemByAlpha('H'), this.getCelestialStemByAlpha('l'), yao.yao.yin),
-      new SexagenaryCycle(49, this.getCelestialStemByAlpha('I'), this.getCelestialStemByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(50, this.getCelestialStemByAlpha('J'), this.getCelestialStemByAlpha('b'), yao.yao.yin),
+      new SexagenaryCycle(41, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
+      new SexagenaryCycle(42, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
+      new SexagenaryCycle(43, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
+      new SexagenaryCycle(44, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
+      new SexagenaryCycle(45, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
+      new SexagenaryCycle(46, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
+      new SexagenaryCycle(47, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
+      new SexagenaryCycle(48, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('l'), yao.yao.yin),
+      new SexagenaryCycle(49, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
+      new SexagenaryCycle(50, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
 
-      new SexagenaryCycle(51, this.getCelestialStemByAlpha('A'), this.getCelestialStemByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(52, this.getCelestialStemByAlpha('B'), this.getCelestialStemByAlpha('d'), yao.yao.yin),
-      new SexagenaryCycle(53, this.getCelestialStemByAlpha('C'), this.getCelestialStemByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(54, this.getCelestialStemByAlpha('D'), this.getCelestialStemByAlpha('f'), yao.yao.yin),
-      new SexagenaryCycle(55, this.getCelestialStemByAlpha('E'), this.getCelestialStemByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(56, this.getCelestialStemByAlpha('F'), this.getCelestialStemByAlpha('h'), yao.yao.yin),
-      new SexagenaryCycle(57, this.getCelestialStemByAlpha('G'), this.getCelestialStemByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(58, this.getCelestialStemByAlpha('H'), this.getCelestialStemByAlpha('j'), yao.yao.yin),
-      new SexagenaryCycle(59, this.getCelestialStemByAlpha('I'), this.getCelestialStemByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(60, this.getCelestialStemByAlpha('J'), this.getCelestialStemByAlpha('l'), yao.yao.yin),
+      new SexagenaryCycle(51, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
+      new SexagenaryCycle(52, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
+      new SexagenaryCycle(53, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
+      new SexagenaryCycle(54, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
+      new SexagenaryCycle(55, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
+      new SexagenaryCycle(56, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
+      new SexagenaryCycle(57, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
+      new SexagenaryCycle(58, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
+      new SexagenaryCycle(59, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
+      new SexagenaryCycle(60, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('l'), yao.yao.yin),
       ];
     
   }
@@ -374,6 +373,10 @@ class IChingAstrology {
     return this.horaryBranches;
   }
 
+  getAllSexagenaryCycles() {
+    return this.sexagenaryCycle;
+  };
+
   getCelestialStemByAlpha (alphabeticOrder)
     {
       return this.celestialStems.find(stem => stem.alphabeticOrder === alphabeticOrder);
@@ -382,6 +385,11 @@ class IChingAstrology {
   getHoraryBranchByAlpha (alphabeticOrder)
     {
       return this.horaryBranches.find(branch => branch.alphabeticOrder === alphabeticOrder);
+    }
+
+  getSexagenaryCycleByNumber (number)
+    {
+      return this.sexagenaryCycle.find(cycle => cycle.number === number);
     }
 }
 
@@ -1395,7 +1403,8 @@ async function calculateNatalHexagram(birthDate, birthTime) {
 
 export default {
   laterHeavenElements,
-  direction,
+  ealierHeavenElements,
+  SexagenaryCycle,
   CelestialStem,
   HoraryBranch,
   IChingAstrology,

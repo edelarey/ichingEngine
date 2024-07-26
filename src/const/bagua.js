@@ -38,6 +38,7 @@ const compassDirection = {
     SouthWest: 'South-West',     
     West: 'West',
     NorthWest: 'North-West',
+    Center: 'Center',
   }
   
   /** Seasons */
@@ -459,6 +460,9 @@ function sequence_Gua_NewFamilyOrder_ColourComplement_PositionalShift ()
 export default
 {
     bagua,
+    compassDirection,
+    element,
+    season,
     sequence_later_heaven_TraversalOrder,
     sequence_earlier_heaven_TraversalOrder,
     sequence_Gua_OldFamilyOrder,
