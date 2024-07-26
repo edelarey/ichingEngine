@@ -38,7 +38,6 @@ const compassDirection = {
     SouthWest: 'South-West',     
     West: 'West',
     NorthWest: 'North-West',
-    Middle: 'Middle',
   }
   
   /** Seasons */
