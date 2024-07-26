@@ -127,94 +127,44 @@ const laterHeavenElementSequence = [laterHeavenElements.Wood, laterHeavenElement
 */
 
 const ealierHeavenElements = {
-  Metal: {
-    order: 1,
-    trigram: bagua.bagua.qián,
-    direction: direction.South,
-    season: season.Summer,
+  Wood: {
+    order: 1,       
+    trigrams: [bagua.bagua.qián, bagua.bagua.kūn],
+    numbers: [6, 2],
+    bodyPart: 'liver',
+    color: Color.rgb(	0, 255, 0), // Green
+    },
+  Fire: {
+    order: 2,       
+    trigrams: [bagua.bagua.gèn, bagua.bagua.duì],  
+    numbers: [8, 7],
+    bodyPart: 'heart',
+    color: Color.rgb(	255, 0, 0), // Red
   },
   Earth: {
-    order: 2,
-    trigram: bagua.bagua.kūn,
-    direction: direction.North,
-    season: season.Winter,
-  },
-  Wood: {
     order: 3,
-    trigram: bagua.bagua.zhèn,
-    direction: direction.East,
-    season: season.Spring,
+    trigrams: [bagua.bagua.kǎn, bagua.bagua.li],    // (1 + 9 = 10 = 5 + 5 )
+    numbers: [1, 9],
+    bodyPart: 'spleen',
+    color: Color.rgb(	255, 255, 0),    // Yellow
   },
-  Wind: {
+  Metal: {
     order: 4,
-    trigram: bagua.bagua.xùn,
-    direction: direction.SouthWest,
-    season: season.Neither,
+    trigrams: [bagua.zhèn, bagua.bagua.xùn],     
+    numbers: [4, 9],
+    bodyPart: 'lungs',
+    color: Color.rgb(	255, 255, 255), // White    
+
   },
   Water: {
     order: 5,
-    trigram: bagua.bagua.kǎn,
-    direction: direction.West,
-    season: season.Autumn,
-  },
-  Fire: {
-    order: 6,
-    trigram: bagua.bagua.lí,
-    direction: direction.East,
-    season: season.Spring,
-  },
-  Mountain: {
-    order: 7,
-    trigram: bagua.bagua.gèn,
-    direction: direction.NorthWest,
-    season: season.Neither,
-  },
-  Lake: {
-    order: 8,
-    trigram: bagua.bagua.duì,
-    direction: direction.SouthEast,
-    season: season.Autumn,
-  },
-}
-
-
-
-
-/** Elements in Relation to Celestial Stems Fu Hsi's Earlier Heaven Sequence*/
-
-const EarlierHeavenSequence = {
-  Wood: {   
-    hexagram: hexagram.hexagram.pǐ,
-    trigram: bagua.bagua.kūn,
-    numbers: [3, 8],
+    trigrams: [bagua.bagua.qián, bagua.bagua.kūn],     
+    numbers: [6, 2],
+    bodyPart: 'kidneys',
+    color: Color.rgb(	0, 0, 0), // Black
     direction: direction.North,
-    polarity: yao.yao.yin,
-    },
-  Fire: {
-    hexagram: hexagram.hexagram.sǔn,
-    trigram: bagua.bagua.qián,    
-    numbers: [2, 7],
-    direction: direction.South,
-    polarity: yao.yao.yang,
-  },
-  Earth: {
-    hexagram: hexagram.hexagram.jìjì,
-    numbers: [5, 5],
-    direction: direction.Centre,
-  },
-  Metal: {
-    trigram: bagua.bagua.kǎn,
-    numbers: [4, 9],
-    direction: direction.West,
-    season: 'Autumn',
-  },
-  Water: {   
-    trigram: bagua.bagua.lí,
-    numbers: [1, 6],
-    direction: direction.East,
   }    
 };
-
 
 
 /** The matching of the Trigrams (bagua) and their respective positive (Yang) and negative (Yin) natures
@@ -224,14 +174,11 @@ const EarlierHeavenSequence = {
 
 
 class CelestialStem {
-  constructor(name, element, charge, trigram, aspect, aspectNumber, oppositeAspect) {
+  constructor(name, trigram, oppositeTrigram, element) {
     this.name = name;
-    this.element = element;
-    this.charge = charge;
+    this.element = element;  
     this.trigram = trigram;
-    this.aspect = aspect;
-    this.aspectNumber = aspectNumber;
-    this.oppositeAspect = oppositeAspect;
+    this.oppositeTrigram = oppositeTrigram;
   }
 
   getName() {
@@ -242,24 +189,12 @@ class CelestialStem {
     return this.element;
   }
 
-  getCharge() {
-    return this.charge;
-  }
-
   getTrigram() {
     return this.trigram;
   }
 
-  getAspect() {
-    return this.aspect;
-  }
-
-  getAspectNumber() {
-    return this.aspectNumber;
-  }
-
-  getOppositeAspect() {
-    return this.oppositeAspect;
+  getOppositeTrigram() {
+    return this.oppositeTrigram;
   }
 
 
@@ -302,21 +237,21 @@ class HoraryBranch {
 
 class IChingAstrology {
   constructor() {
-    this.elements = laterHeavenElements;
+    this.elements = ealierHeavenElements;
 
     /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
      * contributes to the element, yoa indicates if it is positive or negative contribution */
     this.celestialStems = [
-      new CelestialStem('Chia', laterHeavenElements.Wood,  yao.yao.yang, bagua.bagua.qián, 'A', 6, 'B'),
-      new CelestialStem('I',    laterHeavenElements.Wood,  yao.yao.yin,  bagua.bagua.kūn,  'B', 2, 'A'),
-      new CelestialStem('Ping', laterHeavenElements.Fire,  yao.yao.yang, bagua.bagua.gèn,  'C', 8, 'D'),
-      new CelestialStem('Ting', laterHeavenElements.Fire,  yao.yao.yin,  bagua.bagua.duì,  'D', 7, 'C'), 
-      new CelestialStem('Wu',   laterHeavenElements.Earth, yao.yao.yang, bagua.bagua.kǎn,  'E', 1, 'F'),
-      new CelestialStem('Chi',  laterHeavenElements.Earth, yao.yao.yin,  bagua.bagua.lí,   'F', 9, 'E'),
-      new CelestialStem('Keng', laterHeavenElements.Metal, yao.yao.yang, bagua.bagua.zhèn, 'G', 5, 'H'),
-      new CelestialStem('Hsin', laterHeavenElements.Metal, yao.yao.yin,  bagua.bagua.xùn,  'H', 4, 'G'),
-      new CelestialStem('Jen',  laterHeavenElements.Water, yao.yao.yang, bagua.bagua.qián, 'I', 6, 'J'),
-      new CelestialStem('Kuei', laterHeavenElements.Water, yao.yao.yin,  bagua.bagua.kūn,  'J', 2, 'I') 
+      new CelestialStem('Chia', bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood),
+      new CelestialStem('I',    bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood),
+      new CelestialStem('Ping', bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire),
+      new CelestialStem('Ting', bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire), 
+      new CelestialStem('Wu',   bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth),
+      new CelestialStem('Chi',  bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth),
+      new CelestialStem('Keng', bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal),
+      new CelestialStem('Hsin', bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal),
+      new CelestialStem('Jen',  bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water),
+      new CelestialStem('Kuei', bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water), 
     ];
     /** The numbers in the horary branch are from the Ho Map */
     this.horaryBranches = [
