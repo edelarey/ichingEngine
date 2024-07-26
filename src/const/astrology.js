@@ -201,37 +201,21 @@ class CelestialStem {
 }
 
 class HoraryBranch {
-  constructor(name, element, charge, trigram, letter,  number) {
+  constructor(name, numbers,element) {
     this.name = name;
-    this.element = element;
-    this.charge = charge;
-    this.trigram = trigram;
-    this.letter = letter;
-    this.number = number;
+    this.element = element;    
+    this.numbers = numbers;
   }
 
   getName() {
     return this.name;
   }
 
-  getTrigram() {
-      return this.trigram;
-  }
-
   getElement() {
     return this.element;
   }
-
-  getCharge() {
-    return this.charge;
-  }
-
-  getLetter() {
-    return this.letter;
-  }
-
   getNumber() {
-    return this.number;
+    return this.numbers;
   }
 }
 
@@ -255,18 +239,18 @@ class IChingAstrology {
     ];
     /** The numbers in the horary branch are from the Ho Map */
     this.horaryBranches = [
-      new HoraryBranch('Tzu',   laterHeavenElements.Water, yao.yao.yang, 'a', 1, 6),
-      new HoraryBranch(`Ch'ou`, laterHeavenElements.Earth, yao.yao.yin,  'b', 5, 10),
-      new HoraryBranch('Yin',   laterHeavenElements.Wood,  yao.yao.yang, 'c', 5, 8),
-      new HoraryBranch('Mao',   laterHeavenElements.Wood,  yao.yao.yin,  'd', 5, 8),
-      new HoraryBranch(`Ch'en`, laterHeavenElements.Earth, yao.yao.yang, 'e', 5, 10),
-      new HoraryBranch('Szu',   laterHeavenElements.Fire,  yao.yao.yin,  'f', 2, 7),
-      new HoraryBranch('Wu',    laterHeavenElements.Fire,  yao.yao.yang, 'g', 2, 7),
-      new HoraryBranch('Wei',   laterHeavenElements.Earth, yao.yao.yin,  'h', 5, 10),
-      new HoraryBranch('Shen',  laterHeavenElements.Metal, yao.yao.yang, direction.West, 'i', 4, 9),
-      new HoraryBranch('Yu',    laterHeavenElements.Metal, yao.yao.yin,  'j', 4, 9),
-      new HoraryBranch('Hsu',   laterHeavenElements.Earth, yao.yao.yang, 'k', 5, 10),
-      new HoraryBranch('Hai',   laterHeavenElements.Water, yao.yao.yin,  'l', 1, 6),      
+      new HoraryBranch('Tzu',    [1, 6] , ealierHeavenElements.Water),
+      new HoraryBranch(`Ch'ou`,  [5, 10], ealierHeavenElements.Earth ),
+      new HoraryBranch('Yin',   [5, 8], ealierHeavenElements.Wood),
+      new HoraryBranch('Mao',   [5, 8], ealierHeavenElements.Wood),
+      new HoraryBranch(`Ch'en`, [5, 10] , ealierHeavenElements.Earth),
+      new HoraryBranch('Szu',   [2, 7], ealierHeavenElements.Fire),
+      new HoraryBranch('Wu',    [2, 7], ealierHeavenElements.Fire),
+      new HoraryBranch('Wei',   [5, 10], ealierHeavenElements.Earth),
+      new HoraryBranch('Shen',  [4, 9], ealierHeavenElements.Metal),
+      new HoraryBranch('Yu',    [4, 9], ealierHeavenElements.Metal),
+      new HoraryBranch('Hsu',   [5, 10], ealierHeavenElements.Earth),
+      new HoraryBranch('Hai',   [1, 6], ealierHeavenElements.Water),      
     ];
 
   }
