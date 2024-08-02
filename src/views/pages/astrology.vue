@@ -5,7 +5,16 @@
     <div class="row">
         <div class="col-sm-6">                   
             <div class="card text-center">
-                <div class="card-body" v-if="state.sexagenaryCycle">
+                
+
+                <div class="card-body" v-if="state.cycle">               
+                    <h5 class="card-title">Sexagenary Cycle</h5>
+                    <p :style="{color: colorClass}" class="card-text display-1"> {{state.cycle.cycleName}} </p>  
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.startYear}} </p> 
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.endYear}} </p> 
+                    
+                    <br />
+
                     <h5 class="card-title">Celestital Stem</h5>
                     <p class="card-text display-3">{{state.sexagenaryCycle.celestialStem.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.symbol}} </p>  
@@ -28,6 +37,7 @@
                 <div class="card-body" v-if="state.sexagenaryCycle">
                     <h5 class="card-title">Horary Branch</h5>
                     <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} </p>  
                          
@@ -164,6 +174,7 @@ export default {
                     },
                 ]);
              const state = reactive({
+                cycle: null,
                 sexagenaryCycle: null,            
                 lines: [],
                 hexagram: [],
@@ -247,7 +258,10 @@ export default {
             // console.log('getLowerCycle', astrology.getLowerCycle());
               
                 // Examples
-                console.log(astrology.getFullSexagenaryCycle(1971)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
+                let thecycle = astrology.getFullSexagenaryCycle(1973);
+                state.cycle = thecycle;
+                console.log(state.cycle);
+                console.log(astrology.getFullSexagenaryCycle(1973)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
                 state.sexagenaryCycle = astrology.getYearSexagenaryCycle(1973).cycle;
                 console.log(state.sexagenaryCycle); 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
