@@ -202,9 +202,23 @@ export default {
 
             const astrology = new astro.IChingAstrology();
            
-            console.log('stems', astrology.getAllCelestialStems());
-            console.log('branches', astrology.getAllHoraryBranches());
-            console.log('sexagenary cycles', astrology.getAllSexagenaryCycles());
+            // console.log('stems', astrology.getAllCelestialStems());
+            // console.log('branches', astrology.getAllHoraryBranches());
+            // console.log('sexagenary cycles', astrology.getAllSexagenaryCycles());
+            
+            // console.log('getUpperCycle', astrology.getUpperCycle());
+            // console.log('getMiddleCycle', astrology.getMiddleCycle());            
+            // console.log('getLowerCycle', astrology.getLowerCycle());
+              
+                // Examples
+                console.log(astrology.getFullSexagenaryCycle(1820)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
+                console.log(astrology.getYearSexagenaryCycle(1820)); 
+                // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
+                // console.log(astrology.getFullSexagenaryCycle(1900)); // { cycle: "upper", startYear: 1864, endYear: 1923, year: 1900 }
+                // console.log(astrology.getFullSexagenaryCycle(1950)); // { cycle: "middle", startYear: 1924, endYear: 1983, year: 1950 }
+                // console.log(astrology.getFullSexagenaryCycle(2000)); // { cycle: "lower", startYear: 1984, endYear: 2043, year: 2000 }
+                // console.log(astrology.getFullSexagenaryCycle(2100)); // { cycle: "upper", startYear: 2044, endYear: 2103, year: 2100 }
+            
 
             //const astrology2 = new astro.IChingAstrologyManual();
             // const stems = astrology.getAllCelestialStems();
@@ -212,7 +226,7 @@ export default {
 
 
 
-            
+
          //   mapAstroHexagram();
             // Example usage
         //     console.log(`Birth Date:  ${state.birthDate}`);

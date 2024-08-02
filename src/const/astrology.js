@@ -7,6 +7,8 @@ import yao from './yao';
 const Color = require("color");
 
 
+
+
 /** The following is based on The Astrology of I Ching by W.A. Sherrill and W.K. Chu, Routledge and Keegan Paul, 1976 */
 
 /** Ho Lo Li Shu - Ho Map Lo Map Rational Number (W.K. Chu, 1993, p.8) */
@@ -252,8 +254,21 @@ class SexagenaryCycle {
   }
 }
 
+class SexagenarySubCycle
+{
+  constructor(upperCycle, middleCycle, lowerCycle) 
+  {  
+    this.upperCycle = upperCycle;
+    this.middleCycle = middleCycle;  
+    this.lowerCycle = lowerCycle;  
+  }
+
+}
+
 class IChingAstrology {
   constructor() {
+    this.sexagenarySubCycle = new SexagenarySubCycle( Number(1864), Number(1924), Number(1984));
+
     this.elements = ealierHeavenElements;
 
     /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
@@ -303,6 +318,95 @@ class IChingAstrology {
           }
     }
   }
+  /** Get the Upper, Middle and Lower Reference Cycles as Defined By (Sherrill and Chu, 1976)  
+   *  These cycles represent a starting point for calculating the sexagenary cycle
+   *  for any given year in the past or future 
+   * 
+  */
+    getUpperCycle() {
+      let cycle =[];
+      for (let i = this.sexagenarySubCycle.upperCycle; i < this.sexagenarySubCycle.upperCycle + 60; i++) {        
+          cycle.push({year: i,  cycle: this.sexagenaryCycle[i-this.sexagenarySubCycle.upperCycle]});
+        }
+      return cycle;
+    }
+
+    getMiddleCycle() {
+      let cycle =[];
+      for (let i = this.sexagenarySubCycle.middleCycle; i < this.sexagenarySubCycle.middleCycle + 60; i++) {        
+          cycle.push({year: i,  cycle: this.sexagenaryCycle[i-this.sexagenarySubCycle.middleCycle]});
+        }
+      return cycle;
+    }
+
+    getLowerCycle() {
+      let cycle =[];
+      for (let i = this.sexagenarySubCycle.lowerCycle; i < this.sexagenarySubCycle.lowerCycle + 60; i++) {
+          cycle.push({year: i,  cycle: this.sexagenaryCycle[i-this.sexagenarySubCycle.lowerCycle]});
+        }
+      return cycle;
+    }
+
+    /** Get Full Sexagenary Cycle A particular Year Falls In 
+     * Given a year, return the sexagenary cycle for that year based on the upper, middle and lower cycles each being 60 years
+     * and the starting point for each cycle being 1864, 1924 and 1984 respectively
+     * compute the correct cycle even if the year is before 1864 or after 1984, 
+     * given the cycles follow a 60 year pattern and run from Upper → Middle → Lower → Upper → Middle → Lower and so on.
+     */    
+
+    getFullSexagenaryCycle(year) {
+      const cycles = {
+          upper: { start: 1864, end: 1923 },
+          middle: { start: 1924, end: 1983 },
+          lower: { start: 1984, end: 2043 }
+      };
+  
+      const cycleNames = ['upper', 'middle', 'lower'];
+      const cycleLength = cycles.lower.end - cycles.lower.start + 1;
+  
+      // Calculate total offset from the first defined upper cycle
+      let totalYearsOffset = year - cycles.upper.start;
+  
+      // Calculate how many complete 3-cycle periods (180 years) fit into the offset
+      let fullCyclePeriods = Math.floor(totalYearsOffset / (3 * cycleLength));
+      
+      // Calculate the remainder years after removing the full cycles
+      let remainderYears = totalYearsOffset % (3 * cycleLength);
+      
+      // Adjust for negative remainders (i.e., years before 1864)
+      if (remainderYears < 0) {
+          remainderYears += 3 * cycleLength;
+      }
+  
+      // Determine the cycle index based on the remainder
+      let cycleIndex = Math.floor(remainderYears / cycleLength);
+  
+      // Find the corresponding cycle name
+      let cycleName = cycleNames[cycleIndex];
+  
+      // Calculate the start and end years of the cycle
+      let cycleStart = cycles.upper.start + fullCyclePeriods * (3 * cycleLength) + cycleIndex * cycleLength;
+      let cycleEnd = cycleStart + cycleLength - 1;
+
+      let cycle =[];
+      for (let i = cycleStart; i < cycleStart + 60; i++) {
+          cycle.push({year: i,  cycle: this.sexagenaryCycle[i-cycleStart]});
+        }
+  
+      return {
+          cycleName: cycleName,
+          startYear: cycleStart,
+          endYear: cycleEnd,
+          year: year,
+          cycle: cycle,
+      };
+  }
+
+  getYearSexagenaryCycle(year) {
+    let fullCycle = this.getFullSexagenaryCycle(year);
+    return fullCycle.cycle.find(cycle => cycle.year === year); 
+  }
+    
     getCelestialStem(name) {
       return this.celestialStems.find(stem => stem.name === name);
     }
@@ -1488,6 +1592,7 @@ async function calculateNatalHexagram(birthDate, birthTime) {
 
 
 export default {
+  magicSquareOfThree,
   laterHeavenElements,
   ealierHeavenElements,
   SexagenaryCycle,
