@@ -5,6 +5,41 @@
     <div class="row">
         <div class="col-sm-6">                   
             <div class="card text-center">
+                <div class="card-body" v-if="state.sexagenaryCycle">
+                    <h5 class="card-title">Celestital Stem</h5>
+                    <p class="card-text display-3">{{state.sexagenaryCycle.celestialStem.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.trigram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.celestialStem.trigram.description.bodyPart}} </p> 
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.hexagram.binary}`" class="btn btn-primary">View Detail</a>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-sm-2 mt-auto">
+            <div class="card text-center">
+                <div class="card-body">
+                <p class="card-text display-1">→</p>
+                </div>
+            </div>    
+        </div> -->
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.sexagenaryCycle">
+                    <h5 class="card-title">Horary Branch</h5>
+                    <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} </p>  
+                         
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.hexagramTransformed.binary}`" class="btn btn-primary">View Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>   
+    <div class="row">
+        <div class="col-sm-6">                   
+            <div class="card text-center">
                 <div class="card-body" v-if="state.hexagram">
                     <h5 class="card-title">Natal Hexagram</h5>
                     <p class="card-text display-3">{{state.hexagram.name}}</p>
@@ -129,6 +164,7 @@ export default {
                     },
                 ]);
              const state = reactive({
+                sexagenaryCycle: null,            
                 lines: [],
                 hexagram: [],
                 hexagramTransformed: [],
@@ -211,8 +247,9 @@ export default {
             // console.log('getLowerCycle', astrology.getLowerCycle());
               
                 // Examples
-                console.log(astrology.getFullSexagenaryCycle(1820)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
-                console.log(astrology.getYearSexagenaryCycle(1820)); 
+                console.log(astrology.getFullSexagenaryCycle(1971)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
+                state.sexagenaryCycle = astrology.getYearSexagenaryCycle(1973).cycle;
+                console.log(state.sexagenaryCycle); 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
                 // console.log(astrology.getFullSexagenaryCycle(1900)); // { cycle: "upper", startYear: 1864, endYear: 1923, year: 1900 }
                 // console.log(astrology.getFullSexagenaryCycle(1950)); // { cycle: "middle", startYear: 1924, endYear: 1983, year: 1950 }
