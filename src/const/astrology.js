@@ -90,7 +90,7 @@ const laterHeavenElements = {
   },
   Earth: {
     order: 3,
-    trigrams: [bagua.bagua.kǎn, bagua.bagua.li],    // (1, 9 = 5 + 5 = 10 )
+    trigrams: [bagua.bagua.kǎn, bagua.bagua.lí],    // (1, 9 = 5 + 5 = 10 )
     numbers: [1, 9],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0),
