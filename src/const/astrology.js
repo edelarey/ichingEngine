@@ -144,14 +144,14 @@ const ealierHeavenElements = {
   },
   Earth: {
     order: 3,
-    trigrams: [bagua.bagua.kǎn, bagua.bagua.li],    // (1 + 9 = 10 = 5 + 5 )
+    trigrams: [bagua.bagua.kǎn, bagua.bagua.lí],    // (1 + 9 = 10 = 5 + 5 )
     numbers: [1, 9],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0),    // Yellow
   },
   Metal: {
     order: 4,
-    trigrams: [bagua.zhèn, bagua.bagua.xùn],     
+    trigrams: [bagua.bagua.zhèn, bagua.bagua.xùn],     
     numbers: [4, 9],
     bodyPart: 'lungs',
     color: Color.rgb(	255, 255, 255), // White    
@@ -252,8 +252,94 @@ class SexagenaryCycle {
   }
 }
 
-
 class IChingAstrology {
+  constructor() {
+    this.elements = ealierHeavenElements;
+
+    /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
+     * contributes to the element, yoa indicates if it is positive or negative contribution */
+    this.celestialStems = [
+      new CelestialStem('Chia', bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A'),
+      new CelestialStem('I',    bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
+      new CelestialStem('Ping', bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
+      new CelestialStem('Ting', bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
+      new CelestialStem('Wu',   bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth, 'E'),
+      new CelestialStem('Chi',  bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
+      new CelestialStem('Keng', bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
+      new CelestialStem('Hsin', bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
+      new CelestialStem('Jen',  bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
+      new CelestialStem('Kuei', bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J'), 
+    ];
+    /** The numbers in the horary branch are from the Ho Map */
+    this.horaryBranches = [
+      new HoraryBranch('Tzu',    [1, 6] , ealierHeavenElements.Water, 'a' ),
+      new HoraryBranch(`Ch'ou`,  [5, 10], ealierHeavenElements.Earth, 'b' ),
+      new HoraryBranch('Yin',   [5, 8], ealierHeavenElements.Wood, 'c' ),
+      new HoraryBranch('Mao',   [5, 8], ealierHeavenElements.Wood, 'd' ),
+      new HoraryBranch(`Ch'en`, [5, 10] , ealierHeavenElements.Earth, 'e' ),
+      new HoraryBranch('Szu',   [2, 7], ealierHeavenElements.Fire, 'f' ),
+      new HoraryBranch('Wu',    [2, 7], ealierHeavenElements.Fire, 'g' ),
+      new HoraryBranch('Wei',   [5, 10], ealierHeavenElements.Earth, 'h' ),
+      new HoraryBranch('Shen',  [4, 9], ealierHeavenElements.Metal, 'i' ),
+      new HoraryBranch('Yu',    [4, 9], ealierHeavenElements.Metal, 'j' ),
+      new HoraryBranch('Hsu',   [5, 10], ealierHeavenElements.Earth, 'k' ),
+      new HoraryBranch('Hai',   [1, 6], ealierHeavenElements.Water, 'l' ),      
+    ];
+    /** Compute Sexagenary Cycles based on combinations of Celestial stems and Horary Branches */
+    this.sexagenaryCycle = [];
+    let count = 0;
+    let cycle = 0;
+    /** Only calculate the first 60 */
+    for (let j = 0; j < 6; j++) {
+      for (let i = 0; i < this.celestialStems.length; i++) {          
+            count++;            
+            this.sexagenaryCycle.push(new SexagenaryCycle(count, this.celestialStems[i], this.horaryBranches[cycle], count % 2 === 0 ? yao.yao.yin : yao.yao.yang));
+             // console.log(count,this.celestialStems[i].alphabeticOrder, this.horaryBranches[cycle].alphabeticOrder,  count % 2 === 0 ? yao.yao.yin.polarityString : yao.yao.yang.polarityString);
+            cycle++;
+            if (cycle == 12)
+            {
+              cycle = 0;
+            }
+          }
+    }
+  }
+    getCelestialStem(name) {
+      return this.celestialStems.find(stem => stem.name === name);
+    }
+
+    getAllCelestialStems() {
+      return this.celestialStems;
+    }
+    
+    getHoraryBranch(name) {
+      return this.horaryBranches.find(branch => branch.name === name);
+    }
+
+    getAllHoraryBranches() {
+      return this.horaryBranches;
+    }
+
+    getAllSexagenaryCycles() {
+      return this.sexagenaryCycle;
+    };
+
+    getCelestialStemByAlpha (alphabeticOrder)
+      {
+        return this.celestialStems.find(stem => stem.alphabeticOrder === alphabeticOrder);
+      }
+    
+    getHoraryBranchByAlpha (alphabeticOrder)
+      {
+        return this.horaryBranches.find(branch => branch.alphabeticOrder === alphabeticOrder);
+      }
+
+    getSexagenaryCycleByNumber (number)
+      {
+        return this.sexagenaryCycle.find(cycle => cycle.number === number);
+      }
+}
+
+class IChingAstrologyManual {
   constructor() {
     this.elements = ealierHeavenElements;
 
@@ -1408,6 +1494,7 @@ export default {
   CelestialStem,
   HoraryBranch,
   IChingAstrology,
+  IChingAstrologyManual,
   hexagramAstrology,
   calculateTrueLocalTime,
   getSolarTerm,

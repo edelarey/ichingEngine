@@ -201,11 +201,18 @@ export default {
         const  calcTrueLocalTime = async() => {
 
             const astrology = new astro.IChingAstrology();
-            // const stems = astrology.getAllCelestialStems();
+           
             console.log('stems', astrology.getAllCelestialStems());
             console.log('branches', astrology.getAllHoraryBranches());
             console.log('sexagenary cycles', astrology.getAllSexagenaryCycles());
 
+            //const astrology2 = new astro.IChingAstrologyManual();
+            // const stems = astrology.getAllCelestialStems();
+            //console.log('sexagenary cycles', astrology2.getAllSexagenaryCycles());
+
+
+
+            
          //   mapAstroHexagram();
             // Example usage
         //     console.log(`Birth Date:  ${state.birthDate}`);
@@ -216,6 +223,7 @@ export default {
                         
         //   //  51.40864141429926, -0.050956657671912306 - Jaz
         //   // -26.39654621324616, 27.37685364070206 - Ed
+        //   // -26.09910122550391, 28.229700020645936 -Alex
 
         //     const localTime = await astro.calculateTrueLocalTime(abirthDate, abirthTime, state.latitude, state.longitude);
         //          console.log(`True Local Time: ${localTime}`);
