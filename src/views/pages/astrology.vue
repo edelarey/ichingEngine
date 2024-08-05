@@ -5,6 +5,9 @@
     <div class="row">
         <div class="col-sm-12">                   
             <div class="card text-center">  
+                <h3 class="card-header">
+                Astrological Hexagrams in the I Ching Sexagenary Cycle
+                </h3>                
                 <div class="card-body" v-if="state.cycle">               
                     <h5 class="card-title">BirthDate</h5>
                     <p :style="{color: colorClass}" class="card-text display-6"> {{dateTimeFormatSimple (state.birthDate)}} </p>  
@@ -14,8 +17,26 @@
                     <br />
                 </div>         
                 <div class="card-body" v-else>
-                    <h5 class="card-title">Sexagenary Cycle</h5>
-                    <p class="card-text display-3">No Data</p>
+                    <h5 class="card-title">Enter Your Birth Date</h5>
+                    <p class="card-text"> 
+                        <div class="col-sm-3">                      
+                            <Datepicker
+                                placeholder="Birth Date"
+                                v-model="state.birthDate"                        
+                                format="yyyy-MM-dd HH:mm"
+                                previewFormat="yyyy-MM-dd HH:mm"
+                                :enableTimePicker="true"                    
+                                :disabled="false"      
+                                :min-date="state.minDate"
+                                :max-date="state.maxDate"                                           
+                            >
+                            </Datepicker>
+                        </div>
+                    </p>                     
+                    <h3 :style="{color: colorClass}" class="card-text">Latitude</h3> 
+                    <p :style="{color: colorClass}" class="card-text"><input v-model="state.latitude" placeholder="0.00 Latitude"/></p>  
+                    <h3 :style="{color: colorClass}" class="card-text">Longitude</h3>                     
+                    <p :style="{color: colorClass}" class="card-text"><input v-model="state.longitude" placeholder="0.00 Longitude"/></p>  
                 </div>
             </div>
         </div>
