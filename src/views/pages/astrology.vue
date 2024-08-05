@@ -3,25 +3,32 @@
 <template>
     <PageHeader :title="title" :items="items" />
     <div class="row">
-        <div class="col-sm-6">                   
-            <div class="card text-center">
-                
-
+        <div class="col-sm-12">                   
+            <div class="card text-center">  
                 <div class="card-body" v-if="state.cycle">               
-                    <h5 class="card-title">Sexagenary Cycle</h5>
-                    <p :style="{color: colorClass}" class="card-text display-1"> {{state.cycle.cycleName}} </p>  
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.startYear}} </p> 
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.endYear}} </p> 
-                    
+                    <h5 class="card-title">BirthDate</h5>
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{dateTimeFormatSimple (state.birthDate)}} </p>  
+                    <h6 class="card-subtitle mb-2 ">Sexagenary Cycle</h6>
+                    <p :style="{color: colorClass}" class="card-text display-4"> {{state.cycle.cycleName}} </p>  
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.startYear}} - {{state.cycle.endYear}} </p>                
                     <br />
-
+                </div>         
+                <div class="card-body" v-else>
+                    <h5 class="card-title">Sexagenary Cycle</h5>
+                    <p class="card-text display-3">No Data</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.sexagenaryCycle">
                     <h5 class="card-title">Celestital Stem</h5>
                     <p class="card-text display-3">{{state.sexagenaryCycle.celestialStem.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.trigram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.celestialStem.trigram.description.bodyPart}} </p> 
-                            <br />
-                    <a  :href="`/hexagram_detail?hexagram=${state.hexagram.binary}`" class="btn btn-primary">View Detail</a>
+                            <br />                    <a  :href="`/hexagram_detail?hexagram=${state.hexagram.binary}`" class="btn btn-primary">View Detail</a>
+                    
                 </div>
             </div>
         </div>
@@ -36,11 +43,10 @@
             <div class="card text-center">
                 <div class="card-body" v-if="state.sexagenaryCycle">
                     <h5 class="card-title">Horary Branch</h5>
-                    <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}}</p>
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>
+                    <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}}</p>                            
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} </p>  
-                         
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>                         
                             <br />
                     <a  :href="`/hexagram_detail?hexagram=${state.hexagramTransformed.binary}`" class="btn btn-primary">View Detail</a>
                 </div>
@@ -83,7 +89,7 @@
         </div>
     </div>   
  <div class="row align-items-center">
-         <div class="col">    
+         <div class="col-sm-6">    
             <span  class="text-primary" >
                 <b-form-group>
                     <label for="dateFilter" class="form-label">Birth Date</label>
@@ -93,7 +99,10 @@
                         format="yyyy-MM-dd HH:mm"
                         previewFormat="yyyy-MM-dd HH:mm"
                         :enableTimePicker="true"                    
-                        :disabled="false"                       
+                        :disabled="false"      
+                        :min-date="state.minDate"
+                        :max-date="state.maxDate"    
+                        text-input             
                     >
                     </Datepicker>
                 </b-form-group>
@@ -141,7 +150,6 @@ import PageHeader from '@/components/page-header';
 import hexagram from '@/const/hexagram';
 import  bagua  from '@/const/bagua';
 import coin from '@/const/coin';
-
 import { Icon } from '@iconify/vue';
 import _ from 'lodash';
 import { useHexagramStore } from '@/stores/storeHexagram';
@@ -183,7 +191,18 @@ export default {
                 latitude: 51.40864141429926,
                 longitude: -0.050956657671912306,
                 birthDate: DateTime.now().toISO(),
+                minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toISO(), // Later on this is the maximun BC Date Minimum Date: April 20, 271821 BC   (use negative year)
+                maxDate:  DateTime.fromObject({ year: 275760, month:9, day: 13 }).toISO(),
             });
+
+        const dateTimeFormatSimple = (date) =>  {
+        
+        if (date) {
+            return DateTime.fromJSDate(new Date(date)).toFormat('yyyy-MM-dd HH:mm');
+        }
+    
+        return null;
+        };
 
 
             const textClass = computed (() => {
@@ -199,6 +218,8 @@ export default {
             return value.toString();
             };
             const consult = async () => {
+
+                console.log('Consulting the I Ching');
         
             // toss a coin and generate the hexagram using imported library const/coin
             let primaryHexagram = coin.generateCoinHexagram();
@@ -258,11 +279,14 @@ export default {
             // console.log('getLowerCycle', astrology.getLowerCycle());
               
                 // Examples
-                let thecycle = astrology.getFullSexagenaryCycle(1973);
+                // get the year from the birthdate
+                console.log('Min and Max Date', state.minDate, state.maxDate);
+                let theYear = DateTime.fromJSDate(new Date(state.birthDate)).year;
+                let thecycle = astrology.getFullSexagenaryCycle( theYear);
                 state.cycle = thecycle;
                 console.log(state.cycle);
-                console.log(astrology.getFullSexagenaryCycle(1973)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
-                state.sexagenaryCycle = astrology.getYearSexagenaryCycle(1973).cycle;
+                console.log(astrology.getFullSexagenaryCycle(theYear)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
+                state.sexagenaryCycle = astrology.getYearSexagenaryCycle(theYear).cycle;
                 console.log(state.sexagenaryCycle); 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
                 // console.log(astrology.getFullSexagenaryCycle(1900)); // { cycle: "upper", startYear: 1864, endYear: 1923, year: 1900 }
@@ -328,7 +352,7 @@ export default {
               state.hexagramTransformed = hexagram.getHexagramByBinary(hexagramStore.getSecondaryHexagram);  
         });
        
-        return { title, items, state, textClass, colorClass, format, consult, calcTrueLocalTime };
+        return { dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, calcTrueLocalTime };
 }
 }
 </script>
