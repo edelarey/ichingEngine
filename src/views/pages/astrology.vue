@@ -18,8 +18,8 @@
                 </div>         
                 <div class="card-body" v-else>
                     <h5 class="card-title">Enter Your Birth Date</h5>
-                    <p class="card-text"> 
-                        <div class="col-sm-3">                      
+                    <div class="col-sm-3 card-text text-center">
+                            
                             <Datepicker
                                 placeholder="Birth Date"
                                 v-model="state.birthDate"                        
@@ -31,8 +31,8 @@
                                 :max-date="state.maxDate"                                           
                             >
                             </Datepicker>
-                        </div>
-                    </p>                     
+                 
+                    </div>                     
                     <h3 :style="{color: colorClass}" class="card-text">Latitude</h3> 
                     <p :style="{color: colorClass}" class="card-text"><input v-model="state.latitude" placeholder="0.00 Latitude"/></p>  
                     <h3 :style="{color: colorClass}" class="card-text">Longitude</h3>                     
