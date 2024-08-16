@@ -338,8 +338,8 @@ class IChingAstrology {
     const stemIndex = (dayIndex - 1) % 10;
     const branchIndex = (dayIndex - 1) % 12;
     return {
-      stem: this.celestialStems[stemIndex],
-      branch: this.horaryBranches[branchIndex],
+      celestialStem: this.celestialStems[stemIndex],
+      horaryBranch: this.horaryBranches[branchIndex],
     };
   }
 
@@ -512,10 +512,19 @@ class IChingAstrology {
     return theCycle.cycle; 
   }
 
-  getYearSexagenaryDailyCycle(year) {
+  getYearSexagenaryDailyCycles(year) {
     let fullCycle = this.getFullSexagenaryCycle(year);
     let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
     return theCycle.dailyCycles; 
+  }
+  /** Get a specific daily cycle for a year on date*/
+  getYearSexagenaryDailyCycle(year, date) {
+    // convert the date to format yyyy-mm-dd
+    let dateStr = new Date(date).toISOString().split('T')[0];
+    let fullCycle = this.getFullSexagenaryCycle(year);
+    let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);  
+    let theDay = theCycle.dailyCycles.find(dailyCycle => dailyCycle.date === dateStr);
+    return theDay; 
   }
     
     getCelestialStem(name) {

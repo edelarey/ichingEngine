@@ -44,9 +44,19 @@
             </div>
         </div>
     </div>
+    <div class="row"  v-if="state.cycle">
+        <div class="col-sm-12">                   
+            <div class="card text-center">  
+                <h3 class="card-header">
+                Yearly Cycle
+                </h3> 
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-6">
-            <div class="card text-center">
+            <div class="card text-center">  
+                                
                 <div class="card-body" v-if="state.sexagenaryCycle">
                     <h5 class="card-title">Celestital Stem  - {{formatBirthYear}}</h5>
                     <p class="card-text display-3">{{state.sexagenaryCycle.celestialStem.name}}</p>
@@ -81,6 +91,16 @@
             </div>
         </div>
     </div>   
+    <div class="row"  v-if="state.cycle">
+        <div class="col-sm-12">                   
+            <div class="card text-center">  
+                <h3 class="card-header">
+                Monthly Cycle
+                </h3> 
+            </div>
+        </div>
+    </div>
+    
     <div class="row">
         <div class="col-sm-6">
             <div class="card text-center">
@@ -119,6 +139,59 @@
             </div>
         </div>
     </div>   
+
+    <div class="row"  v-if="state.cycle">
+        <div class="col-sm-12">                   
+            <div class="card text-center">  
+                <h3 class="card-header">
+                Daily Cycle
+                </h3> 
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.sexagenaryCycle">
+                    <h5 class="card-title">Celestital Stem - {{formatBirthDay}}</h5>
+                    <p class="card-text display-3">{{state.dailyStemsandBranches.celestialStem.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.celestialStem.trigram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.celestialStem.trigram.trigram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.celestialStem.trigram.description.bodyPart}} </p> 
+                            <br />
+                            <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Trigram Detail</a>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-sm-2 mt-auto">
+            <div class="card text-center">
+                <div class="card-body">
+                <p class="card-text display-1">→</p>
+                </div>
+            </div>    
+        </div> -->
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.sexagenaryCycle">
+                    <h5 class="card-title">Horary Branch - {{formatBirthDay}}</h5>
+                    <p class="card-text display-3">{{state.dailyStemsandBranches.horaryBranch.name}}</p>                            
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].trigram}}</p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].trigram}}</p>  
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.horaryBranch.element.bodyPart}} </p>                         
+                            <br />
+                    <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Upper Trigram Detail</a>
+                    &nbsp;
+                    <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Lower Trigram Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>   
+
+
+
+
+
     <div class="row">
         <div class="col-sm-6">                   
             <div class="card text-center">
@@ -251,6 +324,7 @@ export default {
                 cycle: null,
                 sexagenaryCycle: null,     
                 monthlyStemsandBranches: null,
+                dailyStemsandBranches: null,
                 birthStemsandBranches: null,                       
                 lines: [],
                 hexagram: [],
@@ -281,6 +355,22 @@ export default {
             const date = new Date(state.birthDate);
             return date.toLocaleString('default', { month: 'long' });
         });
+
+        const formatBirthDay = computed(() => {
+            const date = new Date(state.birthDate);
+            return DateTime.fromJSDate(date).toFormat('cccc d') + getOrdinalSuffix(date.getDate());
+        });
+
+        // Helper function to get the ordinal suffix (st, nd, rd, th)
+        function getOrdinalSuffix(day) {
+            if (day > 3 && day < 21) return 'th'; // Handles 11th, 12th, 13th
+            switch (day % 10) {
+                case 1: return 'st';
+                case 2: return 'nd';
+                case 3: return 'rd';
+                default: return 'th';
+            }
+        }
 
 
             const textClass = computed (() => {
@@ -366,8 +456,9 @@ export default {
                 console.log(state.cycle);
                 
                 state.sexagenaryCycle = astrology.getYearSexagenaryCycle(theYear);
-                console.log('Specific Yearly Sexagenary Cycle', state.sexagenaryCycle); 
-                console.log('Specific Daily Sexagenary Cycle', astrology.getYearSexagenaryDailyCycle(theYear)); 
+                state.dailyStemsandBranches = astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate)
+                console.log('Specific Yearly Sexagenary Cycle', state.sexagenaryCycle);                 
+                console.log('Specific Daily Sexagenary Cycle', astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate)); 
 
 
 
@@ -440,7 +531,7 @@ export default {
               state.hexagramTransformed = hexagram.getHexagramByBinary(hexagramStore.getSecondaryHexagram);  
         });
        
-        return { dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, calcTrueLocalTime, formatBirthMonth, formatBirthYear };
+        return { dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, calcTrueLocalTime, formatBirthMonth, formatBirthYear, formatBirthDay };
 }
 }
 </script>
