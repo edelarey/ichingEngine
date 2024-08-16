@@ -364,9 +364,11 @@ export default {
                 let thecycle = astrology.getFullSexagenaryCycle( theYear);
                 state.cycle = thecycle;
                 console.log(state.cycle);
-                console.log(astrology.getFullSexagenaryCycle(theYear)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
-                state.sexagenaryCycle = astrology.getYearSexagenaryCycle(theYear).cycle;
-                console.log(state.sexagenaryCycle); 
+                
+                state.sexagenaryCycle = astrology.getYearSexagenaryCycle(theYear);
+                console.log('Specific Yearly Sexagenary Cycle', state.sexagenaryCycle); 
+                console.log('Specific Daily Sexagenary Cycle', astrology.getYearSexagenaryDailyCycle(theYear)); 
+
 
 
                 state.monthlyStemsandBranches = astrology.getMonthlyStemsAndBranchesForaYear(theYear);

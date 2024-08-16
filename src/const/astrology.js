@@ -302,22 +302,71 @@ class IChingAstrology {
     ];
     /** Compute Sexagenary Cycles based on combinations of Celestial stems and Horary Branches */
     this.sexagenaryCycle = [];
+    this.initializeSexagenaryCycles();
+  }
+
+  initializeSexagenaryCycles() {
     let count = 0;
     let cycle = 0;
-    /** Only calculate the first 60 */
     for (let j = 0; j < 6; j++) {
       for (let i = 0; i < this.celestialStems.length; i++) {          
-            count++;            
-            this.sexagenaryCycle.push(new SexagenaryCycle(count, this.celestialStems[i], this.horaryBranches[cycle], count % 2 === 0 ? yao.yao.yin : yao.yao.yang));
-             // console.log(count,this.celestialStems[i].alphabeticOrder, this.horaryBranches[cycle].alphabeticOrder,  count % 2 === 0 ? yao.yao.yin.polarityString : yao.yao.yang.polarityString);
-            cycle++;
-            if (cycle == 12)
-            {
-              cycle = 0;
-            }
-          }
+        count++;            
+        this.sexagenaryCycle.push(new SexagenaryCycle(count, this.celestialStems[i], this.horaryBranches[cycle], count % 2 === 0 ? yao.yao.yin : yao.yao.yang));
+        cycle++;
+        if (cycle == 12) {
+          cycle = 0;
+        }
+      }
     }
   }
+
+    // Method to determine the winter solstice of a given year
+    getWinterSolstice(year) {
+      return DateTime.fromObject({ year: year, month: 12, day: 21 });
+    }
+
+      // Helper method to calculate the date from the day of the year
+  calculateDateFromDayOfYear(year, dayOfYear) {
+    const startDate = new Date(year, 0, 1); // January 1st of the year
+    const targetDate = new Date(startDate.setDate(dayOfYear));
+    return targetDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+  }
+  
+
+   // Method to get the stem-branch combination for a specific day
+   getDailyCycleForDay(dayIndex) {
+    const stemIndex = (dayIndex - 1) % 10;
+    const branchIndex = (dayIndex - 1) % 12;
+    return {
+      stem: this.celestialStems[stemIndex],
+      branch: this.horaryBranches[branchIndex],
+    };
+  }
+
+   // Method to generate daily cycles for a given year based on the starting day
+   generateYearlyDailyCycles(year, startingDay) {
+    const daysInYear = 365; // or 366 for leap years
+    let dailyCycles = [];
+    for (let day = 1; day <= daysInYear; day++) {
+      let dayIndex = (startingDay + day - 2) % 60 + 1; // Adjust for starting day and wrap around 60-day cycle
+      dailyCycles.push({
+        day: day,
+        date: this.calculateDateFromDayOfYear(year, day),
+        ...this.getDailyCycleForDay(dayIndex)
+      });
+    }
+    return dailyCycles;
+  }
+
+   // Helper method to calculate the offset for daily cycles for a given year
+   getDailyCycleStart(year) {
+    // Adjust based on specific historical data or reference
+    const baseYear = 1924;
+    const increment = 5; // Increment per year, adjust if needed
+    return ((year - baseYear) * increment % 60 + 60) % 60 + 1;
+  }
+
+
   /** Get the Upper, Middle and Lower Reference Cycles as Defined By (Sherrill and Chu, 1976)  
    *  These cycles represent a starting point for calculating the sexagenary cycle
    *  for any given year in the past or future 
@@ -438,7 +487,7 @@ class IChingAstrology {
 
       let cycle =[];
       for (let i = cycleStart; i < cycleStart + 60; i++) {
-          cycle.push({year: i,  cycle: this.sexagenaryCycle[i-cycleStart]});
+          cycle.push({year: i,  cycle: this.sexagenaryCycle[i-cycleStart], dailyCycles: this.generateYearlyDailyCycles(i, this.getDailyCycleStart(i))});
         }
   
       return {
@@ -448,11 +497,25 @@ class IChingAstrology {
           year: year,
           cycle: cycle,
       };
-  }
+
+ }
+
+ getYearSexagenaryObject(year) {
+  let fullCycle = this.getFullSexagenaryCycle(year);
+  let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
+  return theCycle; 
+}
 
   getYearSexagenaryCycle(year) {
     let fullCycle = this.getFullSexagenaryCycle(year);
-    return fullCycle.cycle.find(cycle => cycle.year === year); 
+    let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
+    return theCycle.cycle; 
+  }
+
+  getYearSexagenaryDailyCycle(year) {
+    let fullCycle = this.getFullSexagenaryCycle(year);
+    let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
+    return theCycle.dailyCycles; 
   }
     
     getCelestialStem(name) {
