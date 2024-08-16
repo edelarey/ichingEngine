@@ -16,11 +16,11 @@
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.startYear}} - {{state.cycle.endYear}} </p>                
                     <br />
                 </div>         
-                <div class="card-body" v-else>
+                <div class="card-body center-content" v-else>
                     <h5 class="card-title">Enter Your Birth Date</h5>
-                    <div class="col-sm-3 card-text text-center">
-                            
-                            <Datepicker
+                    <div class="col-sm-1">
+                    <p :style="{color: colorClass}" class="card-text">
+                        <Datepicker
                                 placeholder="Birth Date"
                                 v-model="state.birthDate"                        
                                 format="yyyy-MM-dd HH:mm"
@@ -30,13 +30,16 @@
                                 :min-date="state.minDate"
                                 :max-date="state.maxDate"                                           
                             >
-                            </Datepicker>
-                 
-                    </div>                     
-                    <h3 :style="{color: colorClass}" class="card-text">Latitude</h3> 
-                    <p :style="{color: colorClass}" class="card-text"><input v-model="state.latitude" placeholder="0.00 Latitude"/></p>  
-                    <h3 :style="{color: colorClass}" class="card-text">Longitude</h3>                     
-                    <p :style="{color: colorClass}" class="card-text"><input v-model="state.longitude" placeholder="0.00 Longitude"/></p>  
+                            </Datepicker>                 
+                    </p>                  
+                    </div> 
+                    <br/>
+                    <div class="col-sm-3">                  
+                        <h3 :style="{color: colorClass}" class="card-text">Latitude</h3> 
+                        <p :style="{color: colorClass}" class="card-text"><input v-model="state.latitude" placeholder="0.00 Latitude"/></p>  
+                        <h3 :style="{color: colorClass}" class="card-text">Longitude</h3>                     
+                        <p :style="{color: colorClass}" class="card-text"><input v-model="state.longitude" placeholder="0.00 Longitude"/></p>  
+                    </div>
                 </div>
             </div>
         </div>
@@ -50,7 +53,7 @@
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.trigram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.celestialStem.trigram.description.bodyPart}} </p> 
-                            <br />                    <a  :href="`/hexagram_detail?hexagram=${state.hexagram.binary}`" class="btn btn-primary">View Detail</a>
+                            <br /><a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.celestialStem.trigram.binary}`" class="btn btn-primary">View Detail</a>
                     
                 </div>
             </div>
@@ -71,7 +74,7 @@
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>                         
                             <br />
-                    <a  :href="`/hexagram_detail?hexagram=${state.hexagramTransformed.binary}`" class="btn btn-primary">View Detail</a>
+                    <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">View Detail</a>
                 </div>
             </div>
         </div>
@@ -85,7 +88,8 @@
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.celestialStem.trigram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.celestialStem.trigram.trigram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.celestialStem.trigram.description.bodyPart}} </p> 
-                            <br />                    <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">View Detail</a>
+                            <br />
+                            <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">View Detail</a>
                     
                 </div>
             </div>
@@ -106,7 +110,7 @@
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.bodyPart}} </p>                         
                             <br />
-                    <a  :href="`/hexagram_detail?hexagram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">View Detail</a>
+                    <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">View Detail</a>
                 </div>
             </div>
         </div>
@@ -424,3 +428,10 @@ export default {
 }
 }
 </script>
+<style scoped>
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
