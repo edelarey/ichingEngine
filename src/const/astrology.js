@@ -347,6 +347,54 @@ class IChingAstrology {
       return cycle;
     }
 
+     // Method to determine the winter solstice of a given year
+    getWinterSolstice(year) {
+      return DateTime.fromObject({ year: year, month: 12, day: 21 });
+    }
+
+    getMonthlyStemsAndBranchesForaYear(year) {
+      let results = [];
+  
+      for (let month = 1; month <= 12; month++) {
+        // Create the DateTime object for the 1st of the month
+        let monthStart = DateTime.fromObject({ year: year, month: month, day: 1 });
+  
+        // Determine the celestial stem and horary branch
+        let cycleIndex = ((year - 1864) % 60) * 12 + (month - 1); // Offset within the sexagenary cycle
+        let stemIndex = cycleIndex % 10;
+        let branchIndex = cycleIndex % 12;
+  
+        let stem = this.celestialStems[stemIndex];
+        let branch = this.horaryBranches[branchIndex];
+  
+        results.push({
+          month: monthStart.toFormat('dd-MM-yyyy'),
+          celestialStem: stem,
+          horaryBranch: branch
+        });
+      }
+  
+      return results;
+    }
+
+    getMonthlyStemAndBranchForaYear(year, month) {
+      let monthStart = DateTime.fromObject({ year: year, month: month, day: 1 });
+  
+      // Calculate the cycle index for the month
+      let cycleIndex = ((year - 1864) % 60) * 12 + (month - 1); // Offset within the sexagenary cycle
+      let stemIndex = cycleIndex % 10;
+      let branchIndex = cycleIndex % 12;
+  
+      let stem = this.celestialStems[stemIndex];
+      let branch = this.horaryBranches[branchIndex];
+  
+      return {
+        month: monthStart.toFormat('dd-MM-yyyy'),
+        celestialStem: stem,
+        horaryBranch: branch
+      };
+    }
+
     /** Get Full Sexagenary Cycle A particular Year Falls In 
      * Given a year, return the sexagenary cycle for that year based on the upper, middle and lower cycles each being 60 years
      * and the starting point for each cycle being 1864, 1924 and 1984 respectively
