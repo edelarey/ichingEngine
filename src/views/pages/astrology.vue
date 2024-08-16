@@ -48,12 +48,12 @@
         <div class="col-sm-6">
             <div class="card text-center">
                 <div class="card-body" v-if="state.sexagenaryCycle">
-                    <h5 class="card-title">Celestital Stem (Yearly)</h5>
+                    <h5 class="card-title">Celestital Stem  - {{formatBirthYear}}</h5>
                     <p class="card-text display-3">{{state.sexagenaryCycle.celestialStem.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.trigram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.celestialStem.trigram.description.bodyPart}} </p> 
-                            <br /><a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.celestialStem.trigram.binary}`" class="btn btn-primary">View Detail</a>
+                            <br /><a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.celestialStem.trigram.binary}`" class="btn btn-primary">Trigram Detail</a>
                     
                 </div>
             </div>
@@ -68,13 +68,15 @@
         <div class="col-sm-6">
             <div class="card text-center">
                 <div class="card-body" v-if="state.sexagenaryCycle">
-                    <h5 class="card-title">Horary Branch (Yearly)</h5>
+                    <h5 class="card-title">Horary Branch - {{formatBirthYear}}</h5>
                     <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}}</p>                            
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} </p>  
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].trigram}}</p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].trigram}}</p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>                         
                             <br />
-                    <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">View Detail</a>
+                    <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Upper Trigram Detail</a>
+                    &nbsp;
+                    <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Lower Trigram Detail</a>
                 </div>
             </div>
         </div>
@@ -83,13 +85,13 @@
         <div class="col-sm-6">
             <div class="card text-center">
                 <div class="card-body" v-if="state.sexagenaryCycle">
-                    <h5 class="card-title">Celestital Stem (Monthly)</h5>
+                    <h5 class="card-title">Celestital Stem - {{formatBirthMonth}}</h5>
                     <p class="card-text display-3">{{state.birthStemsandBranches.celestialStem.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.celestialStem.trigram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.celestialStem.trigram.trigram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.celestialStem.trigram.description.bodyPart}} </p> 
                             <br />
-                            <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">View Detail</a>
+                            <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Trigram Detail</a>
                     
                 </div>
             </div>
@@ -104,13 +106,15 @@
         <div class="col-sm-6">
             <div class="card text-center">
                 <div class="card-body" v-if="state.sexagenaryCycle">
-                    <h5 class="card-title">Horary Branch (Monthly)</h5>
+                    <h5 class="card-title">Horary Branch - {{formatBirthMonth}}</h5>
                     <p class="card-text display-3">{{state.birthStemsandBranches.horaryBranch.name}}</p>                            
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol}} </p>  
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].trigram}}</p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].trigram}}</p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.bodyPart}} </p>                         
                             <br />
-                    <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">View Detail</a>
+                    <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Upper Trigram Detail</a>
+                    &nbsp;
+                    <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Lower Trigram Detail</a>
                 </div>
             </div>
         </div>
@@ -125,7 +129,7 @@
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.hexagram.hexagram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.hexagram.translation}} </p> 
                             <br />
-                    <a  :href="`/hexagram_detail?hexagram=${state.hexagram.binary}`" class="btn btn-primary">View Detail</a>
+                    <a  :href="`/hexagram_detail?hexagram=${state.hexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
                 </div>
             </div>
         </div>
@@ -145,7 +149,7 @@
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.hexagramTransformed.hexagram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.hexagramTransformed.translation}} </p> 
                             <br />
-                    <a  :href="`/hexagram_detail?hexagram=${state.hexagramTransformed.binary}`" class="btn btn-primary">View Detail</a>
+                    <a  :href="`/hexagram_detail?hexagram=${state.hexagramTransformed.binary}`" class="btn btn-primary">Hexagram Detail</a>
                 </div>
             </div>
         </div>
@@ -254,7 +258,7 @@ export default {
                 natalHexagram:'',
                 latitude: 51.40864141429926,
                 longitude: -0.050956657671912306,
-                birthDate: DateTime.now().toISO(),
+                birthDate: DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(),
                 minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toISO(), // Later on this is the maximun BC Date Minimum Date: April 20, 271821 BC   (use negative year)
                 maxDate:  DateTime.fromObject({ year: 275760, month:9, day: 13 }).toISO(),
             });
@@ -267,6 +271,16 @@ export default {
     
         return null;
         };
+        
+
+        const formatBirthYear = computed(() => {          
+            return DateTime.fromJSDate(new Date(state.birthDate)).year;
+        });
+
+        const formatBirthMonth = computed(() => {
+            const date = new Date(state.birthDate);
+            return date.toLocaleString('default', { month: 'long' });
+        });
 
 
             const textClass = computed (() => {
@@ -424,7 +438,7 @@ export default {
               state.hexagramTransformed = hexagram.getHexagramByBinary(hexagramStore.getSecondaryHexagram);  
         });
        
-        return { dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, calcTrueLocalTime };
+        return { dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, calcTrueLocalTime, formatBirthMonth, formatBirthYear };
 }
 }
 </script>
