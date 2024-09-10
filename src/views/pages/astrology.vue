@@ -451,12 +451,16 @@ export default {
                 console.log('Min and Max Date', state.minDate, state.maxDate);
                 let theYear = DateTime.fromJSDate(new Date(state.birthDate)).year;
                 let theMonth = DateTime.fromJSDate(new Date(state.birthDate)).month;
+                let theDay = DateTime.fromJSDate(new Date(state.birthDate)).day;
                 let thecycle = astrology.getFullSexagenaryCycle( theYear);
                 state.cycle = thecycle;
                 console.log(state.cycle);
                 
                 state.sexagenaryCycle = astrology.getYearSexagenaryCycle(theYear);
-                state.dailyStemsandBranches = astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate)
+                state.dailyStemsandBranches = astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate);
+
+                console.log('dailyStemsandBranches', state.dailyStemsandBranches);
+
                 console.log('Specific Yearly Sexagenary Cycle', state.sexagenaryCycle);                 
                 console.log('Specific Daily Sexagenary Cycle', astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate)); 
 
@@ -465,6 +469,15 @@ export default {
                 state.monthlyStemsandBranches = astrology.getMonthlyStemsAndBranchesForaYear(theYear);
                 console.log('Monthly Stems and Branches', state.monthlyStemsandBranches);
                 state.birthStemsandBranches = astrology.getMonthlyStemAndBranchForaYear(theYear, theMonth);
+                // using tables
+                let dailyCycle = astrology.calculateDailyCycleValue(theYear, theMonth, theDay);
+                // let hourlyCycle = astrology.calculateHourlyCycleForDate(state.birthDate, 10);
+
+
+                console.log('Daily Cycle Value', dailyCycle);
+                //console.log('Hourly Cycle Value', hourlyCycle);
+
+
                 console.log('Birth Stems and Branches', state.birthStemsandBranches);
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
