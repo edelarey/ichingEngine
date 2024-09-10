@@ -169,6 +169,7 @@ const ealierHeavenElements = {
 };
 
 
+
 /** The matching of the Trigrams (bagua) and their respective positive (Yang) and negative (Yin) natures
  * with the 5 elements to produce the 10 Celestial Stems
  * Winter Solstice is the Starting point for the Celestial Stems
@@ -320,8 +321,12 @@ class IChingAstrology {
     }
   }
 
+  isLeapYear (year) {
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+  };
+
     // Method to determine the winter solstice of a given year
-    getWinterSolstice(year) {
+   getWinterSolstice(year) {
       return DateTime.fromObject({ year: year, month: 12, day: 21 });
     }
 
@@ -701,6 +706,170 @@ class IChingAstrologyManual {
     {
       return this.sexagenaryCycle.find(cycle => cycle.number === number);
     }
+
+    getMonthlyStemAndBranch (year, month) {
+      const monthlyStemsandBranches = {
+        "December_last_half": { polarity: "+", season: "Winter Solstice", years: ["Aa", "Ca", "Ea", "Ga", "Ia"] },
+        "January": { polarity: "-", season: ["Little Cold", "Severe Cold"], years: ["Bb", "Db", "Fb", "Hb", "Jb"] },
+        "February": { polarity: "+", season: ["Spring Begins", "Rain Water"], years: ["Cc", "Ec", "Gc", "Ic", "Ac"] },
+        "March": { polarity: "-", season: ["Excited Insects", "Vernal Equinox"], years: ["Dd", "Fd", "Hd", "Jd", "Bd"] },
+        "April": { polarity: "+", season: ["Clear Bright", "Grain Rains"], years: ["Ee", "Ge", "Ie", "Ae", "Ce"] },
+        "May": { polarity: "-", season: ["Summer Begins", "Grain Fills"], years: ["Ff", "Hf", "Jf", "Bf", "Df"] },
+        "June": { polarity: "+", season: ["Grain in Ear", "Summer Solstice"], years: ["Gg", "Ig", "Ag", "Cg", "Eg"] },
+        "July": { polarity: "-", season: ["Slight Heat", "Great Heat"], years: ["Hh", "Jh", "Bh", "Dh", "Fh"] },
+        "August": { polarity: "+", season: ["Autumn Begins", "Limit of Heat"], years: ["Ii", "Ai", "Ci", "Ei", "Gi"] },
+        "September": { polarity: "-", season: ["White Dew", "Autumnal Equinox"], years: ["Jj", "Bj", "Dj", "Fj", "Hj"] },
+        "October": { polarity: "+", season: ["Cold Dew", "Hoar Frost Descends"], years: ["Ak", "Ck", "Ek", "Gk", "Ik"] },
+        "November": { polarity: "-", season: ["Winter Begins", "Little Snow"], years: ["Bl", "Dl", "Fl", "Hl", "Jl"] },
+        "December_first_half": { polarity: "+", season: "Heavy Snow", years: ["Ca", "Ea", "Ga", "Ia", "Aa"] }
+      };
+
+      const yearGroups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+      const yearGroupIndex = (year - 1) % 10; // Modulo to wrap around 10-year cycles
+      const yearGroup = yearGroups[yearGroupIndex];
+
+      // Map month to table key
+        let monthKey;
+        switch (month) {
+          case 1: monthKey = "January"; break;
+          case 2: monthKey = "February"; break;
+          case 3: monthKey = "March"; break;
+          case 4: monthKey = "April"; break;
+          case 5: monthKey = "May"; break;
+          case 6: monthKey = "June"; break;
+          case 7: monthKey = "July"; break;
+          case 8: monthKey = "August"; break;
+          case 9: monthKey = "September"; break;
+          case 10: monthKey = "October"; break;
+          case 11: monthKey = "November"; break;
+          case 12: monthKey = year % 2 === 0 ? "December_first_half" : "December_last_half"; break;
+          default: throw new Error("Invalid month");
+        }
+
+        // Fetch the details for the given month
+        const monthDetails = table[monthKey];
+
+        // Find the matching stem and branch for the year group
+        const applicableYearStemBranch = monthDetails.years.find(stemBranch => stemBranch.startsWith(yearGroup));
+
+        return {
+          year,
+          month,
+          season: monthDetails.season,
+          stemAndBranch: applicableYearStemBranch,
+          polarity: monthDetails.polarity
+        };
+        
+    }
+
+  calculateDailyCycleValue(year, month, day) {
+      /** Daily Cycle Values (Table 6) */
+      const dailyCycleValues = {
+        1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30], // January
+        2: [31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58], // February
+        3: [59, 60, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], // March
+        4: [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59], // April
+        5: [60, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30], // May
+        6: [31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60], // June
+        7: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31], // July
+        8: [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2], // August
+        9: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // September
+        10: [33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2, 3], // October
+        11: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33], // November
+        12: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2, 3, 4] // December
+      };
+  
+      // Adjust for leap year (from March onward)
+      if (this.isLeapYear(year) && month >= 3) {
+          day += 1; // Shift day by one for leap years starting in March
+      }
+  
+      const dailyCycleValue = dailyCycleValues[month][day - 1]; // Get the value based on month and day
+  
+      // Determine celestial stem and branch based on cycle value
+      return this.getDailyCycleForDay(dailyCycleValue);
+  }
+
+  // Method to calculate the hourly stem and branch from Table 7
+  calculateHourlyCycleForDate(date, hour) {
+    const dayCycle = this.getYearSexagenaryDailyCycle(date.year, date);
+    const dayLetter = dayCycle.celestialStem.alphabeticOrder; // Get the day letter (A, B, C, D, E, F, G, H, I, J)
+
+    const hourlyStemsAndBranches = {
+      'A': ['Aa', 'Bb', 'Cc', 'Dd', 'Ee', 'Ff', 'Gg', 'Hh', 'Ii', 'Jj', 'Ak', 'Bl', 'Ca'],
+      'B': ['Ca', 'Db', 'Ec', 'Fd', 'Ge', 'Hf', 'Ig', 'Jh', 'Ai', 'Bj', 'Ck', 'Dl', 'Ea'],
+      'C': ['Ea', 'Fb', 'Gc', 'Hd', 'Ie', 'Jf', 'Ag', 'Bh', 'Ci', 'Dj', 'Ek', 'Fl', 'Ga'],
+      'D': ['Ga', 'Hb', 'Ic', 'Jd', 'Ae', 'Bf', 'Cg', 'Dh', 'Ei', 'Fj', 'Gk', 'Hl', 'Ia'],
+      'E': ['Ia', 'Jb', 'Ac', 'Bd', 'Ce', 'Df', 'Eg', 'Fh', 'Gi', 'Hj', 'Ik', 'Jl', 'Aa'],
+      'F': ['Aa', 'Bb', 'Cc', 'Dd', 'Ee', 'Ff', 'Gg', 'Hh', 'Ii', 'Jj', 'Ak', 'Bl', 'Ca'],
+      'G': ['Ca', 'Db', 'Ec', 'Fd', 'Ge', 'Hf', 'Ig', 'Jh', 'Ai', 'Bj', 'Ck', 'Dl', 'Ea'],
+      'H': ['Ea', 'Fb', 'Gc', 'Hd', 'Ie', 'Jf', 'Ag', 'Bh', 'Ci', 'Dj', 'Ek', 'Fl', 'Ga'],
+      'I': ['Ga', 'Hb', 'Ic', 'Jd', 'Ae', 'Bf', 'Cg', 'Dh', 'Ei', 'Fj', 'Gk', 'Hl', 'Ia'],
+      'J': ['Ia', 'Jb', 'Ac', 'Bd', 'Ce', 'Df', 'Eg', 'Fh', 'Gi', 'Hj', 'Ik', 'Jl', 'Aa']
+    };
+
+    const hourRanges = [
+        { start: 0, end: 1, index: 0 },
+        { start: 1, end: 3, index: 1 },
+        { start: 3, end: 5, index: 2 },
+        { start: 5, end: 7, index: 3 },
+        { start: 7, end: 9, index: 4 },
+        { start: 9, end: 11, index: 5 },
+        { start: 11, end: 13, index: 6 },
+        { start: 13, end: 15, index: 7 },
+        { start: 15, end: 17, index: 8 },
+        { start: 17, end: 19, index: 9 },
+        { start: 19, end: 21, index: 10 },
+        { start: 21, end: 23, index: 11 },
+        { start: 23, end: 24, index: 12 }
+    ];
+
+    // Validate the hour and dayLetter
+    const hourIndex = hourRanges.find(range => hour >= range.start && hour < range.end)?.index;
+    if (hourIndex === undefined) {
+        throw new Error("Invalid hour provided. Must be between 0 and 24.");
+    }
+    if (!hourlyStemsAndBranches[dayLetter]) {
+        throw new Error(`Invalid day letter '${dayLetter}' provided.`);
+    }
+
+    const hourlyStemBranch = hourlyStemsAndBranches[dayLetter][hourIndex];
+
+    // Convert the hourly stem-branch code to its respective stem and branch objects
+    const celestialStem = this.getCelestialStemByAlpha(hourlyStemBranch.charAt(0));
+    const horaryBranch = this.getHoraryBranchByAlpha(hourlyStemBranch.charAt(1));
+
+    return { celestialStem, horaryBranch };
+}
+
+  generateYearlyDailyCycles(year, startingDay) {
+    const daysInYear = this.isLeapYear(year) ? 366 : 365; // Handle leap years
+    let dailyCycles = [];
+
+    for (let day = 1; day <= daysInYear; day++) {
+        const date = this.calculateDateFromDayOfYear(year, day);
+        const [yearPart, monthPart, dayPart] = date.split('-').map(Number);
+
+        // Get daily cycle value
+        const dailyCycle = this.calculateDailyCycleValue(yearPart, monthPart, dayPart);
+
+        // Get hourly cycles for this day
+        const hourlyCycles = [];
+        for (let hour = 0; hour < 24; hour += 2) {
+            hourlyCycles.push(this.calculateHourlyCycleForDate(DateTime.fromObject({ year: yearPart, month: monthPart, day: dayPart }), hour));
+        }
+
+        dailyCycles.push({
+            day: day,
+            date: date,
+            ...dailyCycle,
+            hourlyCycles
+        });
+    }
+    return dailyCycles;
+  }
+
+
 }
 
 

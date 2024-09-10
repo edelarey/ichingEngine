@@ -104,7 +104,7 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="card text-center">
-                <div class="card-body" v-if="state.sexagenaryCycle">
+                <div class="card-body" v-if="state.birthStemsandBranches">
                     <h5 class="card-title">Celestital Stem - {{formatBirthMonth}}</h5>
                     <p class="card-text display-3">{{state.birthStemsandBranches.celestialStem.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.celestialStem.trigram.symbol}} </p>  
@@ -125,7 +125,7 @@
         </div> -->
         <div class="col-sm-6">
             <div class="card text-center">
-                <div class="card-body" v-if="state.sexagenaryCycle">
+                <div class="card-body" v-if="state.birthStemsandBranches">
                     <h5 class="card-title">Horary Branch - {{formatBirthMonth}}</h5>
                     <p class="card-text display-3">{{state.birthStemsandBranches.horaryBranch.name}}</p>                            
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].trigram}}</p>  
@@ -152,7 +152,7 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="card text-center">
-                <div class="card-body" v-if="state.sexagenaryCycle">
+                <div class="card-body" v-if="state.dailyStemsandBranches">
                     <h5 class="card-title">Celestital Stem - {{formatBirthDay}}</h5>
                     <p class="card-text display-3">{{state.dailyStemsandBranches.celestialStem.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.celestialStem.trigram.symbol}} </p>  
@@ -173,7 +173,7 @@
         </div> -->
         <div class="col-sm-6">
             <div class="card text-center">
-                <div class="card-body" v-if="state.sexagenaryCycle">
+                <div class="card-body" v-if="state.dailyStemsandBranches">
                     <h5 class="card-title">Horary Branch - {{formatBirthDay}}</h5>
                     <p class="card-text display-3">{{state.dailyStemsandBranches.horaryBranch.name}}</p>                            
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].trigram}}</p>  
