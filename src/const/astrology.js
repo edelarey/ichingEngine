@@ -169,13 +169,39 @@ const ealierHeavenElements = {
 };
 
 
+class HeavenlyNumberTrigram {
+  constructor(number, trigram) { 
+    this.number = number;
+    this.trigram = trigram;
+  }  
+  getTrigram() {
+    return this.trigram;
+  }
+  getNumber() {
+    return this.number;
+  }
+}
+
+class EarthlyNumberTrigram {
+  constructor(number, trigram) {
+    this.number = number;
+    this.trigram = trigram;
+  }
+  getTrigram() {
+    return this.trigram;
+  }
+  getNumber() {
+    return this.number;
+  }
+}  
+
+
+
 
 /** The matching of the Trigrams (bagua) and their respective positive (Yang) and negative (Yin) natures
  * with the 5 elements to produce the 10 Celestial Stems
  * Winter Solstice is the Starting point for the Celestial Stems
  */
-
-
 class CelestialStem {
   constructor(name, hoMapNumber, trigram, oppositeTrigram, element, alphabeticOrder) {
     this.name = name;
@@ -332,6 +358,60 @@ class IChingAstrology {
       new MonthlyStemAndBranch('December_first_half', '+', ['Heavy Snow'], ['Ca', 'Ea', 'Ga', 'Ia', 'Aa'])
     ];
 
+    /** For Male Upper Cycle */
+    this.heavenlyNumbers = [
+      new HeavenlyNumberTrigram(1, bagua.kǎn ),
+      new HeavenlyNumberTrigram(2, bagua.kūn ),
+      new HeavenlyNumberTrigram(3, bagua.zhèn ),
+      new HeavenlyNumberTrigram(4, bagua.xùn ),
+      new HeavenlyNumberTrigram(5, bagua.gèn ),
+      new HeavenlyNumberTrigram(6, bagua.qián ),
+      new HeavenlyNumberTrigram(7, bagua.duì ),
+      new HeavenlyNumberTrigram(8, bagua.gèn ),
+      new HeavenlyNumberTrigram(9, bagua.lí ),
+      new HeavenlyNumberTrigram(10, bagua.kǎn ),
+      new HeavenlyNumberTrigram(11, bagua.kǎn ),
+      new HeavenlyNumberTrigram(12, bagua.kūn ),
+      new HeavenlyNumberTrigram(13, bagua.zhèn ),
+      new HeavenlyNumberTrigram(14, bagua.xùn ),
+      new HeavenlyNumberTrigram(15, bagua.gèn ),
+      new HeavenlyNumberTrigram(16, bagua.qián ),
+      new HeavenlyNumberTrigram(17, bagua.duì ),
+      new HeavenlyNumberTrigram(18, bagua.gèn ),
+      new HeavenlyNumberTrigram(19, bagua.lí ),
+      new HeavenlyNumberTrigram(20, bagua.kūn ),
+      new HeavenlyNumberTrigram(21, bagua.kǎn ),
+      new HeavenlyNumberTrigram(22, bagua.kūn ),
+      new HeavenlyNumberTrigram(23, bagua.zhèn ),
+      new HeavenlyNumberTrigram(24, bagua.xùn ),
+      new HeavenlyNumberTrigram(25, bagua.gèn ),
+      new HeavenlyNumberTrigram(26, bagua.kǎn ),
+      new HeavenlyNumberTrigram(27, bagua.kūn ),
+      new HeavenlyNumberTrigram(28, bagua.zhèn ),
+      new HeavenlyNumberTrigram(29, bagua.xùn ),
+      new HeavenlyNumberTrigram(30, bagua.gèn ),
+      new HeavenlyNumberTrigram(31, bagua.qián ),
+      new HeavenlyNumberTrigram(32, bagua.duì ),
+      new HeavenlyNumberTrigram(33, bagua.gèn ),
+      new HeavenlyNumberTrigram(34, bagua.lí ),
+      new HeavenlyNumberTrigram(35, bagua.kǎn ),
+      new HeavenlyNumberTrigram(36, bagua.kǎn ),
+      new HeavenlyNumberTrigram(37, bagua.kūn ),
+      new HeavenlyNumberTrigram(38, bagua.zhèn ),
+      new HeavenlyNumberTrigram(39, bagua.xùn ),
+      new HeavenlyNumberTrigram(40, bagua.gèn ),
+      new HeavenlyNumberTrigram(41, bagua.qián ),
+      new HeavenlyNumberTrigram(42, bagua.duì ),
+      new HeavenlyNumberTrigram(43, bagua.gèn ),
+      new HeavenlyNumberTrigram(44, bagua.lí ),
+      new HeavenlyNumberTrigram(45, bagua.kūn ),
+      new HeavenlyNumberTrigram(46, bagua.kǎn ),
+      new HeavenlyNumberTrigram(47, bagua.kūn ),
+      new HeavenlyNumberTrigram(48, bagua.zhèn ),
+      new HeavenlyNumberTrigram(49, bagua.xùn ),
+      new HeavenlyNumberTrigram(50, bagua.gèn ),
+    ];
+
     /** Compute Sexagenary Cycles based on combinations of Celestial stems and Horary Branches */
     this.sexagenaryCycle = [];
     this.initializeSexagenaryCycles();
@@ -474,7 +554,8 @@ class IChingAstrology {
       let branch = this.horaryBranches[branchIndex];
   
       return {
-        month: monthStart.toFormat('dd-MM-yyyy'),
+        month: monthStart.monthLong,
+        monthNumber: month,
         celestialStem: stem,
         horaryBranch: branch
       };
@@ -765,6 +846,20 @@ class IChingConsultation {
      const earthlyNumber = allNumbers.filter(n => n % 2 === 0).reduce((acc, val) => acc + val, 0); // Sum of even numbers
  
      return {
+      trueLocalDateTime,
+      yearlyCycle,
+      yearSymbols,
+      yearNumbers,
+      astrologicalMonth,
+      monthSymbols,
+      monthNumbers,
+      dailyCycleValue,
+      dailyCycle,
+      dailySum,
+      dailySymbols,
+      dailyNumbers,
+      hourlySymbols,
+      hourlyNumbers,
       allNumbers,
        heavenlyNumber,
        earthlyNumber
