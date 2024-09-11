@@ -689,7 +689,6 @@ class IChingAstrology {
  }
 
  getYearSexagenaryObject(fullCycle, year) {
-  console.log('here',fullCycle);
   let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
   return theCycle; 
 }
