@@ -359,7 +359,7 @@ class IChingAstrology {
     ];
 
     /** For Male Upper Cycle */
-    this.heavenlyNumbers = [
+    this.heavenlyNumbersUpperCycleMale = [
       new HeavenlyNumberTrigram(1, bagua.kǎn ),
       new HeavenlyNumberTrigram(2, bagua.kūn ),
       new HeavenlyNumberTrigram(3, bagua.zhèn ),
@@ -411,6 +411,8 @@ class IChingAstrology {
       new HeavenlyNumberTrigram(49, bagua.xùn ),
       new HeavenlyNumberTrigram(50, bagua.gèn ),
     ];
+
+
 
     /** Compute Sexagenary Cycles based on combinations of Celestial stems and Horary Branches */
     this.sexagenaryCycle = [];
