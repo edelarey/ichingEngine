@@ -15,7 +15,7 @@
                     <p :style="{color: colorClass}" class="card-text display-4"> {{state.cycle.cycleName}} </p>  
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.startYear}} - {{state.cycle.endYear}} </p>                
                     <br />
-                </div>         
+                </div>   
                 <div class="card-body center-content" v-else>
                     <h5 class="card-title">Enter Your Birth Date</h5>
                     <div class="col-sm-1">
@@ -31,6 +31,12 @@
                                 :max-date="state.maxDate"                                           
                             >
                             </Datepicker>                 
+                    </p>
+                    <p>
+                        <select v-model="state.gender" class="form-control">
+                            <option value="MALE">MALE</option>
+                            <option value="FEMALE">FEMALE</option>
+                        </select>
                     </p>                  
                     </div> 
                     <br/>
@@ -186,12 +192,42 @@
                 </div>
             </div>
         </div>
-    </div>   
-
-
-
-
-
+    </div>
+    <div class="row">
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenHexagram">
+                    <h5 class="card-title">Pre-Heaven Hexagram</h5>
+                    <p class="card-text display-3">{{state.hexagram.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.hexagram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenHexagram.translation}} </p> 
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.preHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-sm-2 mt-auto">
+            <div class="card text-center">
+                <div class="card-body">
+                <p class="card-text display-1">→</p>
+                </div>
+            </div>    
+        </div> -->
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenHexagram">
+                    <h5 class="card-title">Pre-Heaven Hexagram</h5>
+                    <p class="card-text display-3">{{state.preHeavenHexagram.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.hexagram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenHexagram.translation}} </p> 
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.preHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                </div>
+            </div>
+        </div>
+    </div> 
     <div class="row">
         <div class="col-sm-6">                   
             <div class="card text-center">
@@ -325,11 +361,13 @@ export default {
                 sexagenaryCycle: null,     
                 monthlyStemsandBranches: null,
                 dailyStemsandBranches: null,
-                birthStemsandBranches: null,                       
+                birthStemsandBranches: null, 
+                gender: 'MALE',                      
                 lines: [],
                 hexagram: [],
                 hexagramTransformed: [],
                 natalHexagram:'',
+                preHeavenHexagram:'',
                 latitude: 51.40864141429926,
                 longitude: -0.050956657671912306,
                 birthDate: DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(),
@@ -455,7 +493,7 @@ export default {
                 let theDay = DateTime.fromJSDate(new Date(state.birthDate)).day;
                 let thecycle = astrology.getFullSexagenaryCycle( theYear);
                 state.cycle = thecycle;
-                console.log(state.cycle);
+                console.log('Cycle', state.cycle);
                 
                 state.sexagenaryCycle = astrology.getYearSexagenaryCycle(theYear);
                 state.dailyStemsandBranches = astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate);
@@ -483,9 +521,14 @@ export default {
 
                 const consultation = new astro.IChingConsultation(astrology);
                 // get the date part and the time part from brithdate
-
-                const result = await consultation.consultOracle(state.birthDate, 40.7128, -74.0060); // Example date, time, and location
+                let theGender = astro.Gender.MALE;
+                if (state.gender === 'FEMALE')
+                {
+                    theGender = astro.Gender.FEMALE;
+                }
+                const result = await consultation.consultOracle(state.birthDate, theGender,  40.7128, -74.0060); // Example date, time, and location
                 console.log('consultation', result);
+                state.preHeavenHexagram = result.preHeavenHexagram;
 
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }

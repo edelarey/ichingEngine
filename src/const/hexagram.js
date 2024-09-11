@@ -812,6 +812,16 @@ function getHexagramByBinary(binary)
     return sequence_GreyCode;
  }
 
+ function getHexagramByAboveBelow(above, below)
+ {
+    let hexagram = this.sequence_kingwen().filter((item) => item.above == above && item.below == below);
+    if (hexagram.length > 0)
+    {
+        return hexagram[0];
+    }
+    else return this.hexagram.kūn;
+ }
+
 
 
 export default
@@ -821,5 +831,6 @@ export default
     sequence_binary,
     sequence_kingwen,
     sequence_greycode,
+    getHexagramByAboveBelow,
 
 }

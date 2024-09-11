@@ -6,6 +6,11 @@ import hexagram from './hexagram';
 import yao from './yao';
 const Color = require("color");
 
+/** Structure to represent gender */
+const Gender = {
+  MALE: 'male',
+  FEMALE: 'female',
+};
 
 
 
@@ -358,59 +363,123 @@ class IChingAstrology {
       new MonthlyStemAndBranch('December_first_half', '+', ['Heavy Snow'], ['Ca', 'Ea', 'Ga', 'Ia', 'Aa'])
     ];
 
-    /** For Male Upper Cycle */
+    /** Heavenly Numbers for the Various Cycles and Genders */
     this.heavenlyNumbersUpperCycleMale = [
-      new HeavenlyNumberTrigram(1, bagua.kǎn ),
-      new HeavenlyNumberTrigram(2, bagua.kūn ),
-      new HeavenlyNumberTrigram(3, bagua.zhèn ),
-      new HeavenlyNumberTrigram(4, bagua.xùn ),
-      new HeavenlyNumberTrigram(5, bagua.gèn ),
-      new HeavenlyNumberTrigram(6, bagua.qián ),
-      new HeavenlyNumberTrigram(7, bagua.duì ),
-      new HeavenlyNumberTrigram(8, bagua.gèn ),
-      new HeavenlyNumberTrigram(9, bagua.lí ),
-      new HeavenlyNumberTrigram(10, bagua.kǎn ),
-      new HeavenlyNumberTrigram(11, bagua.kǎn ),
-      new HeavenlyNumberTrigram(12, bagua.kūn ),
-      new HeavenlyNumberTrigram(13, bagua.zhèn ),
-      new HeavenlyNumberTrigram(14, bagua.xùn ),
-      new HeavenlyNumberTrigram(15, bagua.gèn ),
-      new HeavenlyNumberTrigram(16, bagua.qián ),
-      new HeavenlyNumberTrigram(17, bagua.duì ),
-      new HeavenlyNumberTrigram(18, bagua.gèn ),
-      new HeavenlyNumberTrigram(19, bagua.lí ),
-      new HeavenlyNumberTrigram(20, bagua.kūn ),
-      new HeavenlyNumberTrigram(21, bagua.kǎn ),
-      new HeavenlyNumberTrigram(22, bagua.kūn ),
-      new HeavenlyNumberTrigram(23, bagua.zhèn ),
-      new HeavenlyNumberTrigram(24, bagua.xùn ),
-      new HeavenlyNumberTrigram(25, bagua.gèn ),
-      new HeavenlyNumberTrigram(26, bagua.kǎn ),
-      new HeavenlyNumberTrigram(27, bagua.kūn ),
-      new HeavenlyNumberTrigram(28, bagua.zhèn ),
-      new HeavenlyNumberTrigram(29, bagua.xùn ),
-      new HeavenlyNumberTrigram(30, bagua.gèn ),
-      new HeavenlyNumberTrigram(31, bagua.qián ),
-      new HeavenlyNumberTrigram(32, bagua.duì ),
-      new HeavenlyNumberTrigram(33, bagua.gèn ),
-      new HeavenlyNumberTrigram(34, bagua.lí ),
-      new HeavenlyNumberTrigram(35, bagua.kǎn ),
-      new HeavenlyNumberTrigram(36, bagua.kǎn ),
-      new HeavenlyNumberTrigram(37, bagua.kūn ),
-      new HeavenlyNumberTrigram(38, bagua.zhèn ),
-      new HeavenlyNumberTrigram(39, bagua.xùn ),
-      new HeavenlyNumberTrigram(40, bagua.gèn ),
-      new HeavenlyNumberTrigram(41, bagua.qián ),
-      new HeavenlyNumberTrigram(42, bagua.duì ),
-      new HeavenlyNumberTrigram(43, bagua.gèn ),
-      new HeavenlyNumberTrigram(44, bagua.lí ),
-      new HeavenlyNumberTrigram(45, bagua.kūn ),
-      new HeavenlyNumberTrigram(46, bagua.kǎn ),
-      new HeavenlyNumberTrigram(47, bagua.kūn ),
-      new HeavenlyNumberTrigram(48, bagua.zhèn ),
-      new HeavenlyNumberTrigram(49, bagua.xùn ),
-      new HeavenlyNumberTrigram(50, bagua.gèn ),
+      new HeavenlyNumberTrigram(1, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(2, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(3, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(4, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(5, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(6, bagua.bagua.qián ),
+      new HeavenlyNumberTrigram(7, bagua.bagua.duì ),
+      new HeavenlyNumberTrigram(8, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(9, bagua.bagua.lí ),
+      new HeavenlyNumberTrigram(10, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(11, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(12, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(13, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(14, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(15, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(16, bagua.bagua.qián ),
+      new HeavenlyNumberTrigram(17, bagua.bagua.duì ),
+      new HeavenlyNumberTrigram(18, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(19, bagua.bagua.lí ),
+      new HeavenlyNumberTrigram(20, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(21, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(22, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(23, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(24, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(25, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(26, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(27, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(28, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(29, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(30, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(31, bagua.bagua.qián ),
+      new HeavenlyNumberTrigram(32, bagua.bagua.duì ),
+      new HeavenlyNumberTrigram(33, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(34, bagua.bagua.lí ),
+      new HeavenlyNumberTrigram(35, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(36, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(37, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(38, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(39, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(40, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(41, bagua.bagua.qián ),
+      new HeavenlyNumberTrigram(42, bagua.bagua.duì ),
+      new HeavenlyNumberTrigram(43, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(44, bagua.bagua.lí ),
+      new HeavenlyNumberTrigram(45, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(46, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(47, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(48, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(49, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(50, bagua.bagua.gèn ),
     ];
+
+    this.heavenlyNumbersUpperCycleFemale = this.heavenlyNumbersUpperCycleMale;
+    this.heavenlyNumbersUpperCycleFemale[4] = new HeavenlyNumberTrigram(5, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[14] = new HeavenlyNumberTrigram(15, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[24] = new HeavenlyNumberTrigram(25, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[29] = new HeavenlyNumberTrigram(30, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[39] = new HeavenlyNumberTrigram(40, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[49] = new HeavenlyNumberTrigram(50, bagua.bagua.kūn);
+
+    this.heavenlyNumbersMiddleCycleMaleEvenFemaleOdd = this.heavenlyNumbersUpperCycleMale;
+    this.heavenlyNumbersMiddleCycleMaleOddFemaleEven = this.heavenlyNumbersUpperCycleFemale;
+
+    this.heavenlyNumbersLowerCycleMale = this.heavenlyNumbersUpperCycleMale;
+    this.heavenlyNumbersLowerCycleMale[4] = new HeavenlyNumberTrigram(5, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[14] = new HeavenlyNumberTrigram(15, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[24] = new HeavenlyNumberTrigram(25, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[29] = new HeavenlyNumberTrigram(30, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[39] = new HeavenlyNumberTrigram(40, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[49] = new HeavenlyNumberTrigram(50, bagua.bagua.lí);
+
+    this.heavenlyNumbersLowerCycleFemale = this.heavenlyNumbersUpperCycleMale;
+    this.heavenlyNumbersLowerCycleFemale[4] = new HeavenlyNumberTrigram(5, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[14] = new HeavenlyNumberTrigram(15, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[24] = new HeavenlyNumberTrigram(25, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[29] = new HeavenlyNumberTrigram(30, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[39] = new HeavenlyNumberTrigram(40, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[49] = new HeavenlyNumberTrigram(50, bagua.bagua.duì);
+
+  /** Heavenly Numbers for the Earthly Cycle */
+  this.earthlyNumbers = [
+    new EarthlyNumberTrigram(2, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(4, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(6, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(8, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(10, bagua.bagua.kǎn ),
+    new EarthlyNumberTrigram(12, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(14, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(16, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(18, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(20, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(22, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(24, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(26, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(28, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(30, bagua.bagua.zhèn ),
+    new EarthlyNumberTrigram(32, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(34, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(36, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(38, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(40, bagua.bagua.kǎn ),
+    new EarthlyNumberTrigram(42, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(44, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(46, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(48, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(50, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(52, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(54, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(56, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(58, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(60, bagua.bagua.zhèn ),    
+  ];
+
+    
+
 
 
 
@@ -783,7 +852,7 @@ class IChingConsultation {
     this.astrology = astrology; // Instance of IChingAstrology
   }
 
-  async consultOracle(birthDateTime, latitude, longitude) {
+  async consultOracle(birthDateTime, gender = Gender.MALE, latitude, longitude) {
     // Step 1: Calculate the true astrological local time
     console.log('-----------------------------------------');
     const trueLocalDateTime = await this.calculateTrueLocalTime(birthDateTime, latitude, longitude);
@@ -794,58 +863,104 @@ class IChingConsultation {
     const day = trueLocalDateTime.day;
     const hour = trueLocalDateTime.hour;
 
+    const fullCycle = this.astrology.getFullSexagenaryCycle(year);
     // Step 2: Get the yearly cycle number
     const yearlyCycle = this.astrology.getYearSexagenaryObject(year);
-    console.log('yearlyCycle', yearlyCycle);
+
     // Step 3: Find symbols for the year
     const yearSymbols = yearlyCycle.cycle.celestialStem.alphabeticOrder + yearlyCycle.cycle.horaryBranch.alphabeticOrder;
-    console.log('yearSymbols', yearSymbols);
+
     // Step 4: Convert yearly symbols to numbers
     const yearNumbers = this.getSymbolNumbers(yearlyCycle.cycle.celestialStem, yearlyCycle.cycle.horaryBranch);
-    console.log('yearNumbers', yearNumbers);
+   
     // Step 5: Determine the astrological month
     const astrologicalMonth = this.astrology.getMonthlyStemAndBranchForaYear(year, month);
-    console.log('astrologicalMonth', astrologicalMonth);
+ 
     // Step 6: Find monthly symbols
     const monthSymbols = astrologicalMonth.celestialStem.alphabeticOrder + astrologicalMonth.horaryBranch.alphabeticOrder;
 
     // Step 7: Convert monthly symbols to numbers
     const monthNumbers = this.getSymbolNumbers(astrologicalMonth.celestialStem, astrologicalMonth.horaryBranch);
-    console.log('monthNumbers', monthNumbers);
+
      // Step 8: Find daily cycle number
      const dailyCycleValue = this.astrology.calculateDailyCycleValue(year, month, day);
 
-    console.log('dailyCycleValue', dailyCycleValue);
+
     // Step 9: Find daily cycle number for the year
     const dailyCycle = this.astrology.getYearSexagenaryDailyCycle(year, `${year}-${month}-${day}`);
 
-    console.log('dailyCycle', dailyCycle);
+
        // Step 10: Correctly calculate the daily sum using the homap numbers of the daily cycles
        const dailySum = this.calculateDailySum(dailyCycleValue, dailyCycle);
 
-    console.log('dailySum', dailySum);
+ 
 
    // Step 11: Find daily symbols using the sum
    const dailySymbols = this.astrology.getSexagenaryCycleByNumber(dailySum % 60);
-    console.log('dailySymbols', dailySymbols);
+
 
    // Step 12: Convert daily symbols to numbers
     const dailyNumbers = this.getSymbolNumbers(dailySymbols.celestialStem, dailySymbols.horaryBranch);
-    console.log('dailyNumbers', dailyNumbers);
+
 
 
      // Step 13: Find hourly symbols
      const hourlySymbols = this.astrology.calculateHourlyCycleForDate(trueLocalDateTime, hour);
-     console.log('hourlySymbols', hourlySymbols);
+
 
      // Step 14: Convert hourly symbols to numbers
      const hourlyNumbers = this.getSymbolNumbers(hourlySymbols.celestialStem, hourlySymbols.horaryBranch);
-     console.log('hourlyNumbers', hourlyNumbers);
+
  
      // Step 15-16: Calculate heavenly and earthly numbers
      const allNumbers = [...yearNumbers, ...monthNumbers, ...dailyNumbers, ...hourlyNumbers];
      const heavenlyNumber = allNumbers.filter(n => n % 2 !== 0).reduce((acc, val) => acc + val, 0); // Sum of odd numbers
      const earthlyNumber = allNumbers.filter(n => n % 2 === 0).reduce((acc, val) => acc + val, 0); // Sum of even numbers
+
+     let heavenlyTrigram = null; let earthlyTrigram = null; let preHeavenHexagram = null;
+     let birthYearIsOdd = year % 2 !== 0;
+
+     // determine which cycle we are in and based on that calculate the correct heavenly and earthly trigrams
+     // also include the gender to determine the correct heavenly trigram
+     switch (fullCycle.cycleName) {
+      case 'upper':
+         if (gender == Gender.MALE) {
+            heavenlyTrigram = this.astrology.heavenlyNumbersUpperCycleMale.find(trigram => trigram.number === heavenlyNumber);       
+          } 
+          else {
+            heavenlyTrigram = this.astrology.heavenlyNumbersUpperCycleFemale.find(trigram => trigram.number === heavenlyNumber);         
+          }
+        break;
+      case 'middle':
+        // Determine whether the BirthYear is odd or even    
+     
+        if (  (birthYearIsOdd && gender == Gender.MALE ) || (!birthYearIsOdd && gender == Gender.FEMALE) ) {
+          heavenlyTrigram = this.astrology.heavenlyNumbersMiddleCycleMaleOddFemaleEven.find(trigram => trigram.number === heavenlyNumber);          
+        }
+        if (  (birthYearIsOdd && gender == Gender.FEMALE ) || (!birthYearIsOdd && gender == Gender.MALE) ) {
+          // birthYear is even and gender is male or birthYear is odd and gender is female
+          heavenlyTrigram = this.astrology.heavenlyNumbersMiddleCycleMaleEvenFemaleOdd.find(trigram => trigram.number === heavenlyNumber);
+        }
+        break;
+      case 'lower':
+        heavenlyTrigram = this.astrology.heavenlyNumbersLowerCycleFemale.find(trigram => trigram.number === heavenlyNumber);
+        break;   
+     }
+
+     earthlyTrigram = this.astrology.earthlyNumbers.find(trigram => trigram.number === earthlyNumber);
+
+     // Now determine which trigram goes on top and which on the bottom to construct the Pre-Heaven Hexagram
+     // The rule is as follows: For Gender.MALE if the year of birth is even, the heavenly trigram goes on top and earthly at the bottom, for odd years the earthly trigram goes on top and the heavenly at the bottom
+     // For Gender.FEMALE if the year of birth is even, the heavenly trigram goes at the bottom and earthly on top. For odd years the heavenly trigram is on top earthly trigram goes on bottom
+
+      if ((!birthYearIsOdd && gender == Gender.MALE ) || (birthYearIsOdd && gender == Gender.FEMALE))
+        {          
+          preHeavenHexagram = hexagram.getHexagramByAboveBelow(heavenlyTrigram.trigram, earthlyTrigram.trigram);          
+        }
+      if ((birthYearIsOdd && gender === Gender.MALE) || (!birthYearIsOdd && gender == Gender.FEMALE))
+        {       
+         preHeavenHexagram = hexagram.getHexagramByAboveBelow(earthlyTrigram.trigram, heavenlyTrigram.trigram);
+        }
  
      return {
       trueLocalDateTime,
@@ -863,8 +978,11 @@ class IChingConsultation {
       hourlySymbols,
       hourlyNumbers,
       allNumbers,
-       heavenlyNumber,
-       earthlyNumber
+      heavenlyNumber,
+      earthlyNumber,
+      heavenlyTrigram,
+      earthlyTrigram,
+      preHeavenHexagram,
      };
   }
 
@@ -2091,7 +2209,7 @@ class IChingAstrologyManual {
 export default {
   magicSquareOfThree,
   laterHeavenElements,
-  ealierHeavenElements,
+  ealierHeavenElements,  
   SexagenaryCycle,
   CelestialStem,
   HoraryBranch,
@@ -2103,6 +2221,6 @@ export default {
   getSolarTerm,
   determineSubCycle,
   computeSexagenaryCycle,
-  calculateNatalHexagram
-  
+  calculateNatalHexagram,
+  Gender,  
 }
