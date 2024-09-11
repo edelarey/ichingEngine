@@ -526,7 +526,7 @@ export default {
                 {
                     theGender = astro.Gender.FEMALE;
                 }
-                const result = await consultation.consultOracle(state.birthDate, theGender,  40.7128, -74.0060); // Example date, time, and location
+                const result = await consultation.consultOracle(new DateTime(state.birthDate).toISO(), theGender,  40.7128, -74.0060); // Example date, time, and location
                 console.log('consultation', result);
                 state.preHeavenHexagram = result.preHeavenHexagram;
 

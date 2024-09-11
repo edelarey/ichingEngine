@@ -688,8 +688,8 @@ class IChingAstrology {
 
  }
 
- getYearSexagenaryObject(year) {
-  let fullCycle = this.getFullSexagenaryCycle(year);
+ getYearSexagenaryObject(fullCycle, year) {
+  console.log('here',fullCycle);
   let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
   return theCycle; 
 }
@@ -865,7 +865,8 @@ class IChingConsultation {
 
     const fullCycle = this.astrology.getFullSexagenaryCycle(year);
     // Step 2: Get the yearly cycle number
-    const yearlyCycle = this.astrology.getYearSexagenaryObject(year);
+    const yearlyCycle = this.astrology.getYearSexagenaryObject(fullCycle, year);
+    console.log('yearlyCycle', yearlyCycle);
 
     // Step 3: Find symbols for the year
     const yearSymbols = yearlyCycle.cycle.celestialStem.alphabeticOrder + yearlyCycle.cycle.horaryBranch.alphabeticOrder;
