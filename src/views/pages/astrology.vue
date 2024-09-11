@@ -449,6 +449,7 @@ export default {
                 // Examples
                 // get the year from the birthdate
                 console.log('Min and Max Date', state.minDate, state.maxDate);
+                console.log('BirthDate', state.birthDate);
                 let theYear = DateTime.fromJSDate(new Date(state.birthDate)).year;
                 let theMonth = DateTime.fromJSDate(new Date(state.birthDate)).month;
                 let theDay = DateTime.fromJSDate(new Date(state.birthDate)).day;
@@ -479,6 +480,13 @@ export default {
 
 
                 console.log('Birth Stems and Branches', state.birthStemsandBranches);
+
+                const consultation = new astro.IChingConsultation(astrology);
+                // get the date part and the time part from brithdate
+
+                const result = await consultation.consultOracle(state.birthDate, 40.7128, -74.0060); // Example date, time, and location
+                console.log('consultation', result);
+
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
                 // console.log(astrology.getFullSexagenaryCycle(1900)); // { cycle: "upper", startYear: 1864, endYear: 1923, year: 1900 }
