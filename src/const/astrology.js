@@ -854,7 +854,9 @@ class IChingConsultation {
   async consultOracle(birthDateTime, gender = Gender.MALE, latitude, longitude) {
     // Step 1: Calculate the true astrological local time
     console.log('-----------------------------------------');
-    const trueLocalDateTime = await this.calculateTrueLocalTime(birthDateTime, latitude, longitude);
+    const jsDate = new Date(birthDateTime);
+    const trueLocalDateTime = DateTime.fromJSDate(jsDate);
+    //await this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
     console.log('trueLocalDateTime', trueLocalDateTime);
     // Extract year, month, day, and hour for further calculations
     const year = trueLocalDateTime.year;
