@@ -326,7 +326,7 @@ class IChingAstrology {
       new CelestialStem('Ting', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
       new CelestialStem('Wu',   1, bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth, 'E'),
       new CelestialStem('Chi',  9, bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
-      new CelestialStem('Keng', 5, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
+      new CelestialStem('Keng', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
       new CelestialStem('Hsin', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
       new CelestialStem('Jen',  6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
       new CelestialStem('Kuei', 2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J'), 
@@ -335,14 +335,14 @@ class IChingAstrology {
     this.horaryBranches = [
       new HoraryBranch('Tzu',    [1, 6] , ealierHeavenElements.Water, 'a' ),
       new HoraryBranch(`Ch'ou`,  [5, 10], ealierHeavenElements.Earth, 'b' ),
-      new HoraryBranch('Yin',   [5, 8], ealierHeavenElements.Wood, 'c' ),
-      new HoraryBranch('Mao',   [5, 8], ealierHeavenElements.Wood, 'd' ),
+      new HoraryBranch('Yin',   [3], ealierHeavenElements.Wood, 'c' ),
+      new HoraryBranch('Mao',   [8], ealierHeavenElements.Wood, 'd' ),
       new HoraryBranch(`Ch'en`, [5, 10] , ealierHeavenElements.Earth, 'e' ),
-      new HoraryBranch('Szu',   [2, 7], ealierHeavenElements.Fire, 'f' ),
-      new HoraryBranch('Wu',    [2, 7], ealierHeavenElements.Fire, 'g' ),
+      new HoraryBranch('Szu',   [2], ealierHeavenElements.Fire, 'f' ),
+      new HoraryBranch('Wu',    [7], ealierHeavenElements.Fire, 'g' ),
       new HoraryBranch('Wei',   [5, 10], ealierHeavenElements.Earth, 'h' ),
-      new HoraryBranch('Shen',  [4, 9], ealierHeavenElements.Metal, 'i' ),
-      new HoraryBranch('Yu',    [4, 9], ealierHeavenElements.Metal, 'j' ),
+      new HoraryBranch('Shen',  [4], ealierHeavenElements.Metal, 'i' ),
+      new HoraryBranch('Yu',    [9], ealierHeavenElements.Metal, 'j' ),
       new HoraryBranch('Hsu',   [5, 10], ealierHeavenElements.Earth, 'k' ),
       new HoraryBranch('Hai',   [1, 6], ealierHeavenElements.Water, 'l' ),      
     ];
@@ -615,7 +615,10 @@ class IChingAstrology {
 
     getMonthlyStemAndBranchForaYear(year, month) {
       let monthStart = DateTime.fromObject({ year: year, month: month, day: 1 });
-  
+      let  monthlyStem =   this.monthlyStemsAndBranches.find(monthlyStemAndBranch => monthlyStemAndBranch.month === monthStart.monthLong);
+      
+      console.log('monthlyStem', monthlyStem);
+
       // Calculate the cycle index for the month
       let cycleIndex = ((year - 1864) % 60) * 12 + (month - 1); // Offset within the sexagenary cycle
       let stemIndex = cycleIndex % 10;

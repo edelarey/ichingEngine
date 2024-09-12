@@ -303,7 +303,7 @@ export default {
                 earthlyTrigram:'',
                 latitude: 51.40864141429926,
                 longitude: -0.050956657671912306,
-                birthDate: DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(),
+                birthDate: DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(),
                 minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toISO(), // Later on this is the maximun BC Date Minimum Date: April 20, 271821 BC   (use negative year)
                 maxDate:  DateTime.fromObject({ year: 275760, month:9, day: 13 }).toISO(),
             });
