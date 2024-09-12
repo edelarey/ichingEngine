@@ -16,7 +16,7 @@
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.startYear}} - {{state.cycle.endYear}} </p>                
                     <br />
                 </div>   
-                <div class="card-body center-content" v-else>
+                <div class="card-body center-content">
                     <h5 class="card-title">Enter Your Birth Date</h5>
                     <div class="col-sm-1">
                     <p :style="{color: colorClass}" class="card-text">
@@ -46,6 +46,13 @@
                         <h3 :style="{color: colorClass}" class="card-text">Longitude</h3>                     
                         <p :style="{color: colorClass}" class="card-text"><input v-model="state.longitude" placeholder="0.00 Longitude"/></p>  
                     </div>
+                    <div class="row align-items-center">
+                            <div class="col">
+                            <div class="card text-center">
+                                    <button @click="consult()" class="btn btn-primary">Consult</button>
+                            </div>
+                            </div>
+                    </div> 
                 </div>
             </div>
         </div>
@@ -198,26 +205,6 @@
             <div class="card text-center">
                 <div class="card-body" v-if="state.preHeavenHexagram">
                     <h5 class="card-title">Pre-Heaven Hexagram</h5>
-                    <p class="card-text display-3">{{state.hexagram.name}}</p>
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.symbol}} </p>  
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.hexagram}} </p> 
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenHexagram.translation}} </p> 
-                            <br />
-                    <a  :href="`/hexagram_detail?hexagram=${state.preHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
-                </div>
-            </div>
-        </div>
-        <!-- <div class="col-sm-2 mt-auto">
-            <div class="card text-center">
-                <div class="card-body">
-                <p class="card-text display-1">→</p>
-                </div>
-            </div>    
-        </div> -->
-        <div class="col-sm-6">
-            <div class="card text-center">
-                <div class="card-body" v-if="state.preHeavenHexagram">
-                    <h5 class="card-title">Pre-Heaven Hexagram</h5>
                     <p class="card-text display-3">{{state.preHeavenHexagram.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.hexagram}} </p> 
@@ -227,21 +214,6 @@
                 </div>
             </div>
         </div>
-    </div> 
-    <div class="row">
-        <div class="col-sm-6">                   
-            <div class="card text-center">
-                <div class="card-body" v-if="state.hexagram">
-                    <h5 class="card-title">Natal Hexagram</h5>
-                    <p class="card-text display-3">{{state.hexagram.name}}</p>
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.hexagram.symbol}} </p>  
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.hexagram.hexagram}} </p> 
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.hexagram.translation}} </p> 
-                            <br />
-                    <a  :href="`/hexagram_detail?hexagram=${state.hexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
-                </div>
-            </div>
-        </div>
         <!-- <div class="col-sm-2 mt-auto">
             <div class="card text-center">
                 <div class="card-body">
@@ -251,72 +223,31 @@
         </div> -->
         <div class="col-sm-6">
             <div class="card text-center">
-                <div class="card-body" v-if="state.hexagramTransformed">
-                    <h5 class="card-title">Transformed Natal Hexagram</h5>
-                    <p class="card-text display-3">{{state.hexagramTransformed.name}}</p>
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.hexagramTransformed.symbol}} </p>  
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.hexagramTransformed.hexagram}} </p> 
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.hexagramTransformed.translation}} </p> 
-                            <br />
-                    <a  :href="`/hexagram_detail?hexagram=${state.hexagramTransformed.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                <div class="card-body" v-if="state.heavenlyTrigram">
+                     <h5 class="card-title">Heavenly and Earthly Trigrams</h5>
+                        <div class="row justify-content-center">    
+                            <div class="col-sm-3">
+                            <p class="card-text display-3">{{state.heavenlyTrigram.trigram.name}}</p>
+                                    <p :style="{color: colorClass}" class="card-text display-1"> {{state.heavenlyTrigram.trigram.symbol}} </p>  
+                                    <p :style="{color: colorClass}" class="card-text display-1"> {{state.heavenlyTrigram.trigram.trigram}} </p> 
+                                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.heavenlyTrigram.trigram.description.bodyPart}} </p> 
+                                    <br />
+                                <a  :href="`/trigram_detail?trigram=${state.heavenlyTrigram.trigram.binary}`" class="btn btn-primary">Heavenly Trigram Detail</a>
+                            </div>
+                            <div class="col-sm-3">
+                                <p class="card-text display-3">{{state.earthlyTrigram.trigram.name}}</p>
+                                        <p :style="{color: colorClass}" class="card-text display-1"> {{state.earthlyTrigram.trigram.symbol}} </p>  
+                                        <p :style="{color: colorClass}" class="card-text display-1"> {{state.earthlyTrigram.trigram.trigram}} </p> 
+                                        <p :style="{color: colorClass}" class="card-text display-6"> {{state.earthlyTrigram.trigram.description.bodyPart}} </p> 
+                                        <br />
+                                <a  :href="`/trigram_detail?trigram=${state.earthlyTrigram.trigram.binary}`" class="btn btn-primary">Earthly Trigram Detail</a>
+                            </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>   
- <div class="row align-items-center">
-         <div class="col-sm-6">    
-            <span  class="text-primary" >
-                <b-form-group>
-                    <label for="dateFilter" class="form-label">Birth Date</label>
-                    <Datepicker
-                        placeholder="Birth Date"
-                        v-model="state.birthDate"                        
-                        format="yyyy-MM-dd HH:mm"
-                        previewFormat="yyyy-MM-dd HH:mm"
-                        :enableTimePicker="true"                    
-                        :disabled="false"      
-                        :min-date="state.minDate"
-                        :max-date="state.maxDate"    
-                        text-input             
-                    >
-                    </Datepicker>
-                </b-form-group>
-            </span>            
-        </div>
- </div>  
-  <div class="row align-items-center">
-       
-        <div class="col">
-           <div class="card text-center">
-                <p>Latitude</p>
-                <input v-model="state.latitude" placeholder="0.00"/>
-           </div>
-        </div>
-        <div class="col">
-           <div class="card text-center">
-                <p>Longitude</p>
-                <input v-model="state.longitude" placeholder="0.00"/>
-           </div>
-        </div>
- </div>    
- <div class="row align-items-center">
-        <div class="col">
-           <div class="card text-center">
-                <button @click="calcTrueLocalTime()" class="btn btn-primary">Calculate Natal Hexagram</button>
-           </div>
-        </div>
- </div>  
- <div class="row">
-        <div class="col">                   
-            <div class="card text-center">
-                <div class="card-body" v-if="state.hexagram">
-                    <h5 class="card-title">Natal Hexagram</h5>
-                    <p class="card-text display-3"><span v-html="state.natalHexagram"></span></p>
-                            
-                </div>
-            </div>
-        </div>
-</div>    
+    </div> 
+ 
 </template>
 
 
@@ -368,6 +299,8 @@ export default {
                 hexagramTransformed: [],
                 natalHexagram:'',
                 preHeavenHexagram:'',
+                heavenlyTrigram:'',
+                earthlyTrigram:'',
                 latitude: 51.40864141429926,
                 longitude: -0.050956657671912306,
                 birthDate: DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(),
@@ -422,28 +355,7 @@ export default {
             
             const format = (value) => {
             return value.toString();
-            };
-            const consult = async () => {
-
-                console.log('Consulting the I Ching');
-        
-            // toss a coin and generate the hexagram using imported library const/coin
-            let primaryHexagram = coin.generateCoinHexagram();
-            let secondaryHexagram = coin.generateSecondaryCoinHexagram(primaryHexagram);
-            let primaryBinary = coin.transformCoinHexagramToBinary(primaryHexagram);
-            let secondaryBinary = coin.transformCoinHexagramToBinary(secondaryHexagram);
-            // Set the displayed hexagram and transformed hexagram
-            state.hexagram = hexagram.sequence_binary().filter((item) => item.binary == primaryBinary)[0];
-            state.hexagramTransformed = hexagram.sequence_binary().filter((item) => item.binary == secondaryBinary)[0];
-            // save to the store using storeHexagram.js
-            hexagramStore.setPrimaryHexagram(primaryBinary);
-            hexagramStore.setSecondaryHexagram(secondaryBinary);
-        
-            console.log('primaryHexagram',primaryHexagram);
-            console.log('primaryBinary',primaryBinary);
-            console.log('secondaryHexagram',secondaryHexagram);
-            console.log('secondaryBinary',secondaryBinary); 
-        };
+            };            
         const mapAstroHexagram = () => {
             
             // loop through astrological hexagrams contain in astro
@@ -472,7 +384,7 @@ export default {
              console.log('count found', countFound, 'count not found', countNotFound);
             
         };
-        const  calcTrueLocalTime = async() => {
+        const  consult = async() => {
 
             const astrology = new astro.IChingAstrology();
            
@@ -529,6 +441,8 @@ export default {
                 const result = await consultation.consultOracle(new DateTime(state.birthDate).toISO(), theGender,  40.7128, -74.0060); // Example date, time, and location
                 console.log('consultation', result);
                 state.preHeavenHexagram = result.preHeavenHexagram;
+                state.heavenlyTrigram = result.heavenlyTrigram;
+                state.earthlyTrigram = result.earthlyTrigram;
 
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
@@ -591,11 +505,10 @@ export default {
         };
 
         onMounted( async() => {    
-              state.hexagram = hexagram.getHexagramByBinary(hexagramStore.getPrimaryHexagram);
-              state.hexagramTransformed = hexagram.getHexagramByBinary(hexagramStore.getSecondaryHexagram);  
+            consult();
         });
        
-        return { dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, calcTrueLocalTime, formatBirthMonth, formatBirthYear, formatBirthDay };
+        return { dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
 }
 }
 </script>
