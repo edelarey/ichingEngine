@@ -693,7 +693,8 @@ class IChingAstrology {
     getHourlyStemABranchForTimeAndSymbol(hour, minute, dailyStemSymbol) {
       // Convert time to hour integer
       
-    
+      
+      if (hour = 0) { hour = 24}
       // Find the matching hourly stem branch object
       const hourlyStemBranch = this.hourlyStemsBranches.find(item => {
         // Handle the 24-hour format and wrap-around (like 24-1 means 00:00 to 01:00)
@@ -705,7 +706,8 @@ class IChingAstrology {
           return (hour >= item.startHour || hour < item.stopHour);
         }
       });
-    
+     console.log('hourlyStemBranch', hourlyStemBranch, dailyStemSymbol);
+
       if (!hourlyStemBranch) {
         throw new Error('Invalid time or no matching hourly stem branch found.');
       }
@@ -809,6 +811,7 @@ class IChingAstrology {
     let fullCycle = this.getFullSexagenaryCycle(year);
     let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);  
     let theDay = theCycle.dailyCycles.find(dailyCycle => dailyCycle.date === dateStr);
+  
     return theDay; 
   }
     
