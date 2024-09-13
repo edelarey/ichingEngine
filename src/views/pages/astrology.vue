@@ -400,36 +400,32 @@ export default {
                 // get the year from the birthdate
                 console.log('Min and Max Date', state.minDate, state.maxDate);
                 console.log('BirthDate', state.birthDate);
-                let theYear = DateTime.fromJSDate(new Date(state.birthDate)).year;
-                let theMonth = DateTime.fromJSDate(new Date(state.birthDate)).month;
-                let theDay = DateTime.fromJSDate(new Date(state.birthDate)).day;
-                let thecycle = astrology.getFullSexagenaryCycle( theYear);
-                state.cycle = thecycle;
-                console.log('Cycle', state.cycle);
+                // let theYear = DateTime.fromJSDate(new Date(state.birthDate)).year;
+                // let theMonth = DateTime.fromJSDate(new Date(state.birthDate)).month;
+                // let theDay = DateTime.fromJSDate(new Date(state.birthDate)).day;
+                // let thecycle = astrology.getFullSexagenaryCycle( theYear);
+                // state.cycle = thecycle;
+                // console.log('Cycle', state.cycle);
                 
-                state.sexagenaryCycle = astrology.getYearSexagenaryCycle(theYear);
-                state.dailyStemsandBranches = astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate);
+                // state.sexagenaryCycle = astrology.getYearSexagenaryCycle(theYear);
+               
+                // state.dailyStemsandBranches = astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate);
 
-                console.log('dailyStemsandBranches', state.dailyStemsandBranches);
+                 //console.log('dailyStemsandBranches', state.dailyStemsandBranches);
 
-                console.log('Specific Yearly Sexagenary Cycle', state.sexagenaryCycle);                 
-                console.log('Specific Daily Sexagenary Cycle', astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate)); 
-
-
-
-                state.monthlyStemsandBranches = astrology.getMonthlyStemsAndBranchesForaYear(theYear);
-                console.log('Monthly Stems and Branches', state.monthlyStemsandBranches);
-                state.birthStemsandBranches = astrology.getMonthlyStemAndBranchForaYear(theYear, theMonth);
-                // using tables
-                let dailyCycle = astrology.calculateDailyCycleValue(theYear, theMonth, theDay);
-                // let hourlyCycle = astrology.calculateHourlyCycleForDate(state.birthDate, 10);
+                // console.log('Specific Yearly Sexagenary Cycle', state.sexagenaryCycle);                 
+                // console.log('Specific Daily Sexagenary Cycle', astrology.getYearSexagenaryDailyCycle(theYear, state.birthDate)); 
 
 
-                console.log('Daily Cycle Value', dailyCycle);
-                //console.log('Hourly Cycle Value', hourlyCycle);
+
+                 //state.monthlyStemsandBranches = astrology.getMonthlyStemsAndBranchesForaYear(theYear);
+                 //console.log('Monthly Stems and Branches', state.monthlyStemsandBranches);
+            
+                // //state.birthStemsandBranches = astrology.getMonthlyStemBranchForaYear(state.sexagenaryCycle.celestialStem.alphabeticOrder, theMonth, theDay);
+             
 
 
-                console.log('Birth Stems and Branches', state.birthStemsandBranches);
+                // console.log('Birth Stems and Branches', state.birthStemsandBranches);
 
                 const consultation = new astro.IChingConsultation(astrology);
                 // get the date part and the time part from brithdate
@@ -441,9 +437,14 @@ export default {
                 console.log('raw',state.birthDate);
                 const result = await consultation.consultOracle(state.birthDate, theGender,  40.7128, -74.0060); // Example date, time, and location
                 console.log('consultation', result);
-                state.preHeavenHexagram = result.preHeavenHexagram;
-                state.heavenlyTrigram = result.heavenlyTrigram;
-                state.earthlyTrigram = result.earthlyTrigram;
+                state.cycle = result.sexagenaryCycle;
+                state.sexagenaryCycle = result.yearly.yearlyCycle.cycle;
+                state.dailyStemsandBranches = result.daily.dailyCycle;
+                state.monthlyStemsandBranches = result.monthly.monthlyStemBranch;
+                state.birthStemsandBranches = result.monthly.monthlyStemBranch;
+                state.preHeavenHexagram = result.iching.preHeavenHexagram;
+                state.heavenlyTrigram = result.iching.heavenlyTrigram;
+                state.earthlyTrigram = result.iching.earthlyTrigram;
 
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }

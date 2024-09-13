@@ -200,9 +200,6 @@ class EarthlyNumberTrigram {
   }
 }  
 
-
-
-
 /** The matching of the Trigrams (bagua) and their respective positive (Yang) and negative (Yin) natures
  * with the 5 elements to produce the 10 Celestial Stems
  * Winter Solstice is the Starting point for the Celestial Stems
@@ -267,7 +264,8 @@ class HoraryBranch {
   }
 }
 
-class MonthlyStemAndBranch {
+
+class MonthlyStemBranch {
   constructor(month, polarity, season, years) {
     this.month = month;
     this.polarity = polarity;
@@ -275,6 +273,15 @@ class MonthlyStemAndBranch {
     this.years = years;
   }
 }
+
+class HourlyStemBranch {
+  constructor(startHour, stopHour, applicableStemBranches) {
+    this.startHour = startHour;
+    this.stopHour = stopHour;
+    this.stemBranch = applicableStemBranches;
+  }
+}
+
 
 class SexagenaryCycle {
   constructor (number, celestialStem, horaryBranch, polarity) {
@@ -291,6 +298,7 @@ class SexagenaryCycle {
   getCelestialStem() {
     return this.celestialStem;
   }
+
 
   getHoraryBranch() {
     return this.horaryBranch;
@@ -335,33 +343,56 @@ class IChingAstrology {
     this.horaryBranches = [
       new HoraryBranch('Tzu',    [1, 6] , ealierHeavenElements.Water, 'a' ),
       new HoraryBranch(`Ch'ou`,  [5, 10], ealierHeavenElements.Earth, 'b' ),
-      new HoraryBranch('Yin',   [3], ealierHeavenElements.Wood, 'c' ),
-      new HoraryBranch('Mao',   [8], ealierHeavenElements.Wood, 'd' ),
+      new HoraryBranch('Yin',   [3,8], ealierHeavenElements.Wood, 'c' ),
+      new HoraryBranch('Mao',   [3,8], ealierHeavenElements.Wood, 'd' ),
       new HoraryBranch(`Ch'en`, [5, 10] , ealierHeavenElements.Earth, 'e' ),
-      new HoraryBranch('Szu',   [2], ealierHeavenElements.Fire, 'f' ),
-      new HoraryBranch('Wu',    [7], ealierHeavenElements.Fire, 'g' ),
+      new HoraryBranch('Szu',   [2,7], ealierHeavenElements.Fire, 'f' ),
+      new HoraryBranch('Wu',    [2,7], ealierHeavenElements.Fire, 'g' ),
       new HoraryBranch('Wei',   [5, 10], ealierHeavenElements.Earth, 'h' ),
-      new HoraryBranch('Shen',  [4], ealierHeavenElements.Metal, 'i' ),
-      new HoraryBranch('Yu',    [9], ealierHeavenElements.Metal, 'j' ),
+      new HoraryBranch('Shen',  [4,9], ealierHeavenElements.Metal, 'i' ),
+      new HoraryBranch('Yu',    [4,9], ealierHeavenElements.Metal, 'j' ),
       new HoraryBranch('Hsu',   [5, 10], ealierHeavenElements.Earth, 'k' ),
       new HoraryBranch('Hai',   [1, 6], ealierHeavenElements.Water, 'l' ),      
     ];
-    /** Static Stems and Branches Stem is Upper Case, Branch is lower case, Upper case is the applicable year */
+    /** Static Stems and Branches Stem is Upper Case, Branch is lower case, ApplicABLE Year - Stem and Branch */
+    
+   
+
     this.monthlyStemsAndBranches = [
-      new MonthlyStemAndBranch('December_last_half', '+', ['Winter Solstice'], ['Aa', 'Ca', 'Ea', 'Ga', 'Ia']),
-      new MonthlyStemAndBranch('January', '-', ['Little Cold', 'Severe Cold'], ['Bb', 'Db', 'Fb', 'Hb', 'Jb']),
-      new MonthlyStemAndBranch('February', '+', ['Spring Begins', 'Rain Water'], ['Cc', 'Ec', 'Gc', 'Ic', 'Ac']),
-      new MonthlyStemAndBranch('March', '-', ['Excited Insects', 'Vernal Equinox'], ['Dd', 'Fd', 'Hd', 'Jd', 'Bd']),
-      new MonthlyStemAndBranch('April', '+', ['Clear Bright', 'Grain Rains'], ['Ee', 'Ge', 'Ie', 'Ae', 'Ce']),
-      new MonthlyStemAndBranch('May', '-', ['Summer Begins', 'Grain Fills'], ['Ff', 'Hf', 'Jf', 'Bf', 'Df']),
-      new MonthlyStemAndBranch('June', '+', ['Grain in Ear', 'Summer Solstice'], ['Gg', 'Ig', 'Ag', 'Cg', 'Eg']),
-      new MonthlyStemAndBranch('July', '-', ['Slight Heat', 'Great Heat'], ['Hh', 'Jh', 'Bh', 'Dh', 'Fh']),
-      new MonthlyStemAndBranch('August', '+', ['Autumn Begins', 'Limit of Heat'], ['Ii', 'Ai', 'Ci', 'Ei', 'Gi']),
-      new MonthlyStemAndBranch('September', '-', ['White Dew', 'Autumnal Equinox'], ['Jj', 'Bj', 'Dj', 'Fj', 'Hj']),
-      new MonthlyStemAndBranch('October', '+', ['Cold Dew', 'Hoar Frost Descends'], ['Ak', 'Ck', 'Ek', 'Gk', 'Ik']),
-      new MonthlyStemAndBranch('November', '-', ['Winter Begins', 'Little Snow'], ['Bl', 'Dl', 'Fl', 'Hl', 'Jl']),
-      new MonthlyStemAndBranch('December_first_half', '+', ['Heavy Snow'], ['Ca', 'Ea', 'Ga', 'Ia', 'Aa'])
+      new MonthlyStemBranch('December_last_half', '+', ['Winter Solstice'],  {AF: "Aa", BG: "Ca", CH: "Ea", DI: "Ga", EJ: "Ia"}),
+      new MonthlyStemBranch('January', '-', ['Little Cold', 'Severe Cold'],  {AF: "Bb", BG: "Db", CH: "Fb", DI: "Hb", EJ: "Jb"}),
+      new MonthlyStemBranch('February', '+', ['Spring Begins', 'Rain Water'], {AF: "Cc", BG: "Ec", CH: "Gc", DI: "Ic", EJ: "Ac"} ),      
+      new MonthlyStemBranch('March', '-', ['Excited Insects', 'Vernal Equinox'], {AF: "Dd", BG: "Fb", CH: "Hd", DI: "Jd", EJ: "Bd"}),
+      new MonthlyStemBranch('April', '+', ['Clear Bright', 'Grain Rains'], {AF: "Ee", BG: "Ge", CH: "Ie", DI: "Ae", EJ: "Ce"}),
+      new MonthlyStemBranch('May', '-', ['Summer Begins', 'Grain Fills'], {AF: "Ff", BG: "Hf", CH: "Jf", DI: "Bf", EJ: "Df"}),
+      new MonthlyStemBranch('June', '+', ['Grain in Ear', 'Summer Solstice'], {AF: "Gg", BG: "Ig", CH: "Ag", DI: "Cg", EJ: "Eg"}),
+      new MonthlyStemBranch('July', '-', ['Slight Heat', 'Great Heat'],  {AF: "Hh", BG: "Jh", CH: "Bh", DI: "Dh",EJ: "Fh"}),
+      new MonthlyStemBranch('August', '+', ['Autumn Begins', 'Limit of Heat'], {AF: "Ii", BG: "Ai", CH: "Ci", DI: "Ei",EJ: "Gi"}),
+      new MonthlyStemBranch('September', '-', ['White Dew', 'Autumnal Equinox'], {AF: "Jj", BG: "Bj", CH: "Dj", DI: "Fj", EJ: "Hj"}),
+      new MonthlyStemBranch('October', '+', ['Cold Dew', 'Hoar Frost Descends'], {AF: "Ak", BG: "Ck", CH: "Ek", DI: "Gk",EJ: "Ik"}),
+      new MonthlyStemBranch('November', '-', ['Winter Begins', 'Little Snow'], {AF: "Bl",BG: "Dl", CH: "Fl",  DI: "Hl", EJ: "Jl"}),
+      new MonthlyStemBranch('December_first_half', '+',  {AF: "Ca", BG: "Ea", CH: "Ga", DI: "Ia", EJ: "Aa"})
     ];
+
+   
+
+    this.hourlyStemsBranches =
+    [ new HourlyStemBranch(24, 1, {AF: "Aa", BG: "Ca", CH: "Ea", DI: "Ga", EJ: "Ia"}),
+      new HourlyStemBranch(1, 3,  {AF: "Bb", BG: "Db", CH: "Fb", DI: "Hb", EJ: "Jb"}),
+      new HourlyStemBranch(3, 5, {AF: "Cc", BG: "Ec", CH: "Gc", DI: "Ic", EJ: "Ac"} ),      
+      new HourlyStemBranch(5, 7, {AF: "Dd", BG: "Fb", CH: "Hd", DI: "Jd", EJ: "Bd"}),
+      new HourlyStemBranch(7, 9, {AF: "Ee", BG: "Ge", CH: "Ie", DI: "Ae", EJ: "Ce"}),
+      new HourlyStemBranch(9, 11, {AF: "Ff", BG: "Hf", CH: "Jf", DI: "Bf", EJ: "Df"}),
+      new HourlyStemBranch(11, 13, {AF: "Gg", BG: "Ig", CH: "Ag", DI: "Cg", EJ: "Eg"}),
+      new HourlyStemBranch(13, 15, {AF: "Hh", BG: "Jh", CH: "Bh", DI: "Dh",EJ: "Fh"}),
+      new HourlyStemBranch(15, 17, {AF: "Ii", BG: "Ai", CH: "Ci", DI: "Ei",EJ: "Gi"}),
+      new HourlyStemBranch(17, 19, {AF: "Jj", BG: "Bj", CH: "Dj", DI: "Fj", EJ: "Hj"}),
+      new HourlyStemBranch(19, 21, {AF: "Ak", BG: "Ck", CH: "Ek", DI: "Gk",EJ: "Ik"}),
+      new HourlyStemBranch(21, 23, {AF: "Bl",BG: "Dl", CH: "Fl",  DI: "Hl", EJ: "Jl"}),
+      new HourlyStemBranch(23, 24, {AF: "Ca", BG: "Ea", CH: "Ga", DI: "Ia", EJ: "Aa"})
+    ];
+
+    
 
     /** Heavenly Numbers for the Various Cycles and Genders */
     this.heavenlyNumbersUpperCycleMale = [
@@ -613,25 +644,87 @@ class IChingAstrology {
       return results;
     }
 
-    getMonthlyStemAndBranchForaYear(year, month) {
-      let monthStart = DateTime.fromObject({ year: year, month: month, day: 1 });
-      let  monthlyStem =   this.monthlyStemsAndBranches.find(monthlyStemAndBranch => monthlyStemAndBranch.month === monthStart.monthLong);
-      
-      console.log('monthlyStem', monthlyStem);
-
-      // Calculate the cycle index for the month
-      let cycleIndex = ((year - 1864) % 60) * 12 + (month - 1); // Offset within the sexagenary cycle
-      let stemIndex = cycleIndex % 10;
-      let branchIndex = cycleIndex % 12;
-  
-      let stem = this.celestialStems[stemIndex];
-      let branch = this.horaryBranches[branchIndex];
-  
+    getMonthlyStemBranchForaYear (yearSymbol, month, day) {
+      // Determine whether it's the first half or last half of December
+      let targetMonth;
+      if (month === 12) {
+        if (day <= 15) {
+          targetMonth = 'December_first_half';
+        } else {
+          targetMonth = 'December_last_half';
+        }
+      } else {
+        // Convert month number to month name
+        const monthNames = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November'
+        ];
+        targetMonth = monthNames[month - 1];
+      }
+    
+      // Find the matching monthly stem and branch object
+      const monthlyStemBranch = this.monthlyStemsAndBranches.find(
+        item => item.month === targetMonth
+      );
+    
+      if (!monthlyStemBranch) {
+        throw new Error('Invalid month or structure not found.');
+      }
+      console.log('monthlySteamAndBranch', monthlyStemBranch);
+      // Find the correct applicableYear key that contains the yearSymbol
+      const applicableYearKey = Object.keys(monthlyStemBranch.years).find(key => key.includes(yearSymbol));
+    
+      if (!applicableYearKey) {
+        throw new Error('Year symbol does not match any applicable year type.');
+      }
+    
+      // Get the stem and branch using the correct applicable year key
+      const stemBranch = monthlyStemBranch.years[applicableYearKey];
+    
       return {
-        month: monthStart.monthLong,
-        monthNumber: month,
-        celestialStem: stem,
-        horaryBranch: branch
+        month: month,        
+        monthName: targetMonth,
+        symbols:stemBranch,
+        celestialStem: this.getCelestialStemByAlpha(stemBranch.charAt(0)), // First character is the celestial stem
+        horaryBranch:  this.getHoraryBranchByAlpha(stemBranch.charAt(1)),   // Second character is the horary branch
+      };
+    }
+
+    getHourlyStemABranchForTimeAndSymbol(hour, minute, dailyStemSymbol) {
+      // Convert time to hour integer
+      
+    
+      // Find the matching hourly stem branch object
+      const hourlyStemBranch = this.hourlyStemsBranches.find(item => {
+        // Handle the 24-hour format and wrap-around (like 24-1 means 00:00 to 01:00)
+        if (item.startHour < item.stopHour) {
+          // Normal case (e.g., 1-3, 3-5)
+          return hour >= item.startHour && hour < item.stopHour;
+        } else {
+          // Wrap-around case (e.g., 23-1, which means 23:00 to 01:00)
+          return (hour >= item.startHour || hour < item.stopHour);
+        }
+      });
+    
+      if (!hourlyStemBranch) {
+        throw new Error('Invalid time or no matching hourly stem branch found.');
+      }
+    
+      // Find the correct applicable year key that contains the daily stem symbol
+      const applicableYearKey = Object.keys(hourlyStemBranch.stemBranch).find(key => key.includes(dailyStemSymbol));
+    
+      if (!applicableYearKey) {
+        throw new Error('Daily stem symbol does not match any applicable year type.');
+      }
+    
+      // Get the stem and branch using the correct applicable year key
+      const stemBranchSymbol = hourlyStemBranch.stemBranch[applicableYearKey]
+
+      return {
+        time: `${hour}:00 - ${hour + 1}:00`,
+        symbols:applicableYearKey,
+        celestialStem: this.getCelestialStemByAlpha(stemBranchSymbol.charAt(0)), // First character is the celestial stem
+        horaryBranch:  this.getHoraryBranchByAlpha(stemBranchSymbol.charAt(1)),   // Second character is the horary branch
       };
     }
 
@@ -711,6 +804,8 @@ class IChingAstrology {
   getYearSexagenaryDailyCycle(year, date) {
     // convert the date to format yyyy-mm-dd
     let dateStr = new Date(date).toISOString().split('T')[0];
+   
+
     let fullCycle = this.getFullSexagenaryCycle(year);
     let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);  
     let theDay = theCycle.dailyCycles.find(dailyCycle => dailyCycle.date === dateStr);
@@ -752,7 +847,7 @@ class IChingAstrology {
         return this.sexagenaryCycle.find(cycle => cycle.number === number);
       }
 
-     getMonthlyStemAndBranch(year, month) {
+     getMonthlyStemBranch(year, month) {
           const yearGroupIndex = (year - 1) % 10; // Calculate year group index
           const monthIndex = month === 12 && new Date().getDate() > 15 ? 'December_last_half' : 'December_first_half'; // Special handling for December
       
@@ -788,64 +883,13 @@ class IChingAstrology {
         if (this.isLeapYear(year) && month >= 3) {
             day += 1; // Shift day by one for leap years starting in March
         }
-    
-        const dailyCycleValue = dailyCycleValues[month][day - 1]; // Get the value based on month and day
-    
-        // Determine celestial stem and branch based on cycle value
-        return this.getDailyCycleForDay(dailyCycleValue);
-    }
-  
-    // Method to calculate the hourly stem and branch from Table 7
-    calculateHourlyCycleForDate(date, hour) {
-        const dayCycle = this.getYearSexagenaryDailyCycle(date.year, date);
        
-        const dayLetter = dayCycle.celestialStem.alphabeticOrder; // Get the day letter (A, B, C, D, E, F, G, H, I, J)
+        const dailyCycleValue = dailyCycleValues[month][day-1]; // Get the value based on month and day
+
     
-        const hourlyStemsAndBranchesForCorrectDay = {
-          'A': ['Aa', 'Bb', 'Cc', 'Dd', 'Ee', 'Ff', 'Gg', 'Hh', 'Ii', 'Jj', 'Ak', 'Bl', 'Ca'],
-          'B': ['Ca', 'Db', 'Ec', 'Fd', 'Ge', 'Hf', 'Ig', 'Jh', 'Ai', 'Bj', 'Ck', 'Dl', 'Ea'],
-          'C': ['Ea', 'Fb', 'Gc', 'Hd', 'Ie', 'Jf', 'Ag', 'Bh', 'Ci', 'Dj', 'Ek', 'Fl', 'Ga'],
-          'D': ['Ga', 'Hb', 'Ic', 'Jd', 'Ae', 'Bf', 'Cg', 'Dh', 'Ei', 'Fj', 'Gk', 'Hl', 'Ia'],
-          'E': ['Ia', 'Jb', 'Ac', 'Bd', 'Ce', 'Df', 'Eg', 'Fh', 'Gi', 'Hj', 'Ik', 'Jl', 'Aa'],
-          'F': ['Aa', 'Bb', 'Cc', 'Dd', 'Ee', 'Ff', 'Gg', 'Hh', 'Ii', 'Jj', 'Ak', 'Bl', 'Ca'],
-          'G': ['Ca', 'Db', 'Ec', 'Fd', 'Ge', 'Hf', 'Ig', 'Jh', 'Ai', 'Bj', 'Ck', 'Dl', 'Ea'],
-          'H': ['Ea', 'Fb', 'Gc', 'Hd', 'Ie', 'Jf', 'Ag', 'Bh', 'Ci', 'Dj', 'Ek', 'Fl', 'Ga'],
-          'I': ['Ga', 'Hb', 'Ic', 'Jd', 'Ae', 'Bf', 'Cg', 'Dh', 'Ei', 'Fj', 'Gk', 'Hl', 'Ia'],
-          'J': ['Ia', 'Jb', 'Ac', 'Bd', 'Ce', 'Df', 'Eg', 'Fh', 'Gi', 'Hj', 'Ik', 'Jl', 'Aa']
-        };
-    
-        const hourRanges = [
-            { start: 0, end: 1, index: 0 },
-            { start: 1, end: 3, index: 1 },
-            { start: 3, end: 5, index: 2 },
-            { start: 5, end: 7, index: 3 },
-            { start: 7, end: 9, index: 4 },
-            { start: 9, end: 11, index: 5 },
-            { start: 11, end: 13, index: 6 },
-            { start: 13, end: 15, index: 7 },
-            { start: 15, end: 17, index: 8 },
-            { start: 17, end: 19, index: 9 },
-            { start: 19, end: 21, index: 10 },
-            { start: 21, end: 23, index: 11 },
-            { start: 23, end: 24, index: 12 }
-        ];
-    
-        // Validate the hour and dayLetter
-        const hourIndex = hourRanges.find(range => hour >= range.start && hour < range.end)?.index;
-        if (hourIndex === undefined) {
-            throw new Error("Invalid hour provided. Must be between 0 and 24.");
-        }
-        if (!hourlyStemsAndBranchesForCorrectDay[dayLetter]) {
-            throw new Error(`Invalid day letter '${dayLetter}' provided.`);
-        }
-    
-        const hourlyStemBranch = hourlyStemsAndBranchesForCorrectDay[dayLetter][hourIndex];
-    
-        // Convert the hourly stem-branch code to its respective stem and branch objects
-        const celestialStem = this.getCelestialStemByAlpha(hourlyStemBranch.charAt(0));
-        const horaryBranch = this.getHoraryBranchByAlpha(hourlyStemBranch.charAt(1));
-    
-        return { celestialStem, horaryBranch };
+        return dailyCycleValue;
+        // Determine celestial stem and branch based on cycle value
+        
     }
 }
 
@@ -866,6 +910,7 @@ class IChingConsultation {
     const month = trueLocalDateTime.month;
     const day = trueLocalDateTime.day;
     const hour = trueLocalDateTime.hour;
+    const minute = trueLocalDateTime.minute;
 
     const fullCycle = this.astrology.getFullSexagenaryCycle(year);
     // Step 2: Get the yearly cycle number
@@ -877,48 +922,53 @@ class IChingConsultation {
 
     // Step 4: Convert yearly symbols to numbers
     const yearNumbers = this.getSymbolNumbers(yearlyCycle.cycle.celestialStem, yearlyCycle.cycle.horaryBranch);
-   
+
     // Step 5: Determine the astrological month
-    const astrologicalMonth = this.astrology.getMonthlyStemAndBranchForaYear(year, month);
+    const monthlyStemBranch = this.astrology.getMonthlyStemBranchForaYear(yearlyCycle.cycle.celestialStem.alphabeticOrder, month, day);
  
     // Step 6: Find monthly symbols
-    const monthSymbols = astrologicalMonth.celestialStem.alphabeticOrder + astrologicalMonth.horaryBranch.alphabeticOrder;
+    const monthSymbols = monthlyStemBranch.celestialStem.alphabeticOrder + monthlyStemBranch.horaryBranch.alphabeticOrder;
 
     // Step 7: Convert monthly symbols to numbers
-    const monthNumbers = this.getSymbolNumbers(astrologicalMonth.celestialStem, astrologicalMonth.horaryBranch);
+    const monthNumbers = this.getSymbolNumbers(monthlyStemBranch.celestialStem, monthlyStemBranch.horaryBranch);
 
-     // Step 8: Find daily cycle number
-     const dailyCycleValue = this.astrology.calculateDailyCycleValue(year, month, day);
-
-
+     // Step 8: Find daily cycle Value
+    const dailyCycleValue = this.astrology.calculateDailyCycleValue(year, month, day);
+   
     // Step 9: Find daily cycle number for the year
-    const dailyCycle = this.astrology.getYearSexagenaryDailyCycle(year, `${year}-${month}-${day}`);
-
+    const dailyCycle = this.astrology.getYearSexagenaryDailyCycle(year, birthDateTime);
 
        // Step 10: Correctly calculate the daily sum using the homap numbers of the daily cycles
-       const dailySum = this.calculateDailySum(dailyCycleValue, dailyCycle);
+   const dailySum = this.calculateDailySum(dailyCycleValue, dailyCycle.day);
 
- 
+      // Step 11: Find daily symbols using the sum
+   const dailyStemBranch = this.astrology.getSexagenaryCycleByNumber(dailySum % 60);
 
-   // Step 11: Find daily symbols using the sum
-   const dailySymbols = this.astrology.getSexagenaryCycleByNumber(dailySum % 60);
-
-
+   const dailySymbols = dailyStemBranch.celestialStem.alphabeticOrder + dailyStemBranch.horaryBranch.alphabeticOrder;
+    
    // Step 12: Convert daily symbols to numbers
-    const dailyNumbers = this.getSymbolNumbers(dailySymbols.celestialStem, dailySymbols.horaryBranch);
-
-
+    const dailyNumbers = this.getSymbolNumbers(dailyStemBranch.celestialStem, dailyStemBranch.horaryBranch);
 
      // Step 13: Find hourly symbols
-     const hourlySymbols = this.astrology.calculateHourlyCycleForDate(trueLocalDateTime, hour);
+     const hourlyStemBranch = this.astrology.getHourlyStemABranchForTimeAndSymbol(hour, minute,   dailyStemBranch.celestialStem.alphabeticOrder);
+     
+     
+    //  return {
+    //   time: time24hr,
+    //   symbols:applicableYearKey,
+    //   celestialStem: this.getCelestialStemByAlpha(stemBranchSymbol.charAt(0)), // First character is the celestial stem
+    //   horaryBranch:  this.getHoraryBranchByAlpha(stemBranchSymbol.charAt(1)),   // Second character is the horary branch
+    // };
 
+     const hourlySymbols = hourlyStemBranch.celestialStem.alphabeticOrder + hourlyStemBranch.horaryBranch.alphabeticOrder;
 
      // Step 14: Convert hourly symbols to numbers
-     const hourlyNumbers = this.getSymbolNumbers(hourlySymbols.celestialStem, hourlySymbols.horaryBranch);
+     const hourlyNumbers = this.getSymbolNumbers(hourlyStemBranch.celestialStem, hourlyStemBranch.horaryBranch);
 
  
      // Step 15-16: Calculate heavenly and earthly numbers
      const allNumbers = [...yearNumbers, ...monthNumbers, ...dailyNumbers, ...hourlyNumbers];
+
      const heavenlyNumber = allNumbers.filter(n => n % 2 !== 0).reduce((acc, val) => acc + val, 0); // Sum of odd numbers
      const earthlyNumber = allNumbers.filter(n => n % 2 === 0).reduce((acc, val) => acc + val, 0); // Sum of even numbers
 
@@ -968,42 +1018,51 @@ class IChingConsultation {
         }
  
      return {
+      birthDateTime,
       trueLocalDateTime,
-      yearlyCycle,
-      yearSymbols,
-      yearNumbers,
-      astrologicalMonth,
-      monthSymbols,
-      monthNumbers,
-      dailyCycleValue,
-      dailyCycle,
-      dailySum,
-      dailySymbols,
-      dailyNumbers,
-      hourlySymbols,
-      hourlyNumbers,
-      allNumbers,
-      heavenlyNumber,
-      earthlyNumber,
-      heavenlyTrigram,
-      earthlyTrigram,
-      preHeavenHexagram,
+      sexagenaryCycle: fullCycle,
+      yearly: {
+        year,
+        yearlyCycle,
+        yearSymbols,
+        yearNumbers,
+      },
+      monthly: {
+        monthlyStemBranch,
+        monthSymbols,
+        monthNumbers,
+      },
+      daily:{
+        dailyCycleValue,
+        dailyCycle,
+        dailySum,
+        dailyStemBranch,
+        dailyNumbers,
+        dailySymbols,
+      },      
+      hourly: {
+        hour,
+        hourlySymbols,        
+        hourlyNumbers,
+      },
+      iching :{
+        heavenlyNumber,
+        earthlyNumber,
+        heavenlyTrigram,
+        earthlyTrigram,
+        preHeavenHexagram,
+        stemBranchNumbers: allNumbers,
+      }      
+      
+      
      };
   }
 
   // Helper function to calculate the daily sum using hoMap numbers from celestialStem and horaryBranch objects
   calculateDailySum(dailyCycleValue, dailyCycle) {
-    const dailyCycleValueStemNumber = dailyCycleValue.celestialStem.getHoMapNumber();
-    const dailyCycleValueBranchNumbers = dailyCycleValue.horaryBranch.getHoMapNumbers();
-
-    const dailyCycleStemNumber = dailyCycle.celestialStem.getHoMapNumber();
-    const dailyCycleBranchNumbers = dailyCycle.horaryBranch.getHoMapNumbers();
-
-    // Combine and sum all the numbers
-    const allNumbers = [dailyCycleValueStemNumber, ...dailyCycleValueBranchNumbers, dailyCycleStemNumber, ...dailyCycleBranchNumbers];
-
-    // Calculate the total sum
-    return allNumbers.reduce((acc, val) => acc + val, 0);
+   // find the sexaginary cycle that corresponds to the dailycyclevalue + dailyCycle
+   let dailySum = dailyCycleValue + dailyCycle;   
+     return dailySum;
   }
 
   // Function to convert symbols to numbers based on Table 1
