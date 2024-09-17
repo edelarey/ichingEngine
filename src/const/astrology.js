@@ -694,7 +694,8 @@ class IChingAstrology {
       // Convert time to hour integer
       
       
-      if (hour = 0) { hour = 24}
+      if (hour == 0) { hour = 24}
+      
       // Find the matching hourly stem branch object
       const hourlyStemBranch = this.hourlyStemsBranches.find(item => {
         // Handle the 24-hour format and wrap-around (like 24-1 means 00:00 to 01:00)
@@ -804,10 +805,8 @@ class IChingAstrology {
   }
   /** Get a specific daily cycle for a year on date*/
   getYearSexagenaryDailyCycle(year, date) {
-    // convert the date to format yyyy-mm-dd
-    let dateStr = new Date(date).toISOString().split('T')[0];
-   
-
+    // convert the date to format yyyy-mm-dd 
+    let dateStr = date.split('T')[0];
     let fullCycle = this.getFullSexagenaryCycle(year);
     let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);  
     let theDay = theCycle.dailyCycles.find(dailyCycle => dailyCycle.date === dateStr);
@@ -847,6 +846,7 @@ class IChingAstrology {
 
     getSexagenaryCycleByNumber (number)
       {
+       
         return this.sexagenaryCycle.find(cycle => cycle.number === number);
       }
 
@@ -894,6 +894,38 @@ class IChingAstrology {
         // Determine celestial stem and branch based on cycle value
         
     }
+
+    getJulianDayNumber(date) {
+      const dt = DateTime.fromISO(date, { zone: 'UTC' });
+      const year = dt.year;
+      const month = dt.month;
+      const day = dt.day;
+    
+      let A = Math.floor((14 - month) / 12);
+      let Y = year + 4800 - A;
+      let M = month + 12 * A - 3;
+    
+      return day + Math.floor((153 * M + 2) / 5) + 365 * Y + Math.floor(Y / 4) - Math.floor(Y / 100) + Math.floor(Y / 400) - 32045;
+    }
+
+// Function to calculate the sexagenary day number
+   getSexagenaryDay(date) {
+
+     let jdNoon = this.getJulianDayNumber(date);
+      const sexagenaryDay = 1 + ((jdNoon - 11) % 60);
+      return sexagenaryDay <= 0 ? sexagenaryDay + 60 : sexagenaryDay;
+  }
+
+// Function to calculate the weekday number
+   getWeekdayNumber(date) {
+      let jdNoon = this.getJulianDayNumber(date);
+    return (jdNoon + 1) % 7;
+}
+
+
+
+
+
 }
 
 class IChingConsultation {
@@ -904,10 +936,14 @@ class IChingConsultation {
   async consultOracle(birthDateTime, gender = Gender.MALE, latitude, longitude) {
     // Step 1: Calculate the true astrological local time
     console.log('-----------------------------------------');
+
     const jsDate = new Date(birthDateTime);
+    console.log('raw', jsDate);
     const trueLocalDateTime = DateTime.fromJSDate(jsDate);
     //await this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
-    console.log('trueLocalDateTime', trueLocalDateTime);
+    const dateStr = trueLocalDateTime.toFormat("yyyy-MM-dd'T'HH:mm:ss").toString()
+    console.log('trueLocalDateTime',dateStr);
+
     // Extract year, month, day, and hour for further calculations
     const year = trueLocalDateTime.year;
     const month = trueLocalDateTime.month;
@@ -916,45 +952,55 @@ class IChingConsultation {
     const minute = trueLocalDateTime.minute;
 
     const fullCycle = this.astrology.getFullSexagenaryCycle(year);
+    console.log('fullCycle', fullCycle);
     // Step 2: Get the yearly cycle number
     const yearlyCycle = this.astrology.getYearSexagenaryObject(fullCycle, year);
     console.log('yearlyCycle', yearlyCycle);
 
     // Step 3: Find symbols for the year
     const yearSymbols = yearlyCycle.cycle.celestialStem.alphabeticOrder + yearlyCycle.cycle.horaryBranch.alphabeticOrder;
+    console.log('yearSymbols', yearSymbols);
 
     // Step 4: Convert yearly symbols to numbers
     const yearNumbers = this.getSymbolNumbers(yearlyCycle.cycle.celestialStem, yearlyCycle.cycle.horaryBranch);
-
+    console.log('yearNumbers', yearNumbers);
     // Step 5: Determine the astrological month
     const monthlyStemBranch = this.astrology.getMonthlyStemBranchForaYear(yearlyCycle.cycle.celestialStem.alphabeticOrder, month, day);
- 
+    console.log('monthlyStemBranch', monthlyStemBranch);
     // Step 6: Find monthly symbols
     const monthSymbols = monthlyStemBranch.celestialStem.alphabeticOrder + monthlyStemBranch.horaryBranch.alphabeticOrder;
-
+    console.log('monthSymbols', monthSymbols);
     // Step 7: Convert monthly symbols to numbers
     const monthNumbers = this.getSymbolNumbers(monthlyStemBranch.celestialStem, monthlyStemBranch.horaryBranch);
-
+    console.log('monthNumbers', monthNumbers);
      // Step 8: Find daily cycle Value
     const dailyCycleValue = this.astrology.calculateDailyCycleValue(year, month, day);
-   
+    console.log('dailyCycleValue', dailyCycleValue);
     // Step 9: Find daily cycle number for the year
-    const dailyCycle = this.astrology.getYearSexagenaryDailyCycle(year, birthDateTime);
+    const dailyCycle = this.astrology.getYearSexagenaryDailyCycle(year, dateStr);
+    console.log('dailyCycle', dailyCycle);
+
+   
 
        // Step 10: Correctly calculate the daily sum using the homap numbers of the daily cycles
-   const dailySum = this.calculateDailySum(dailyCycleValue, dailyCycle.day);
+       // unnecessary with new formula
+       // const dailySum = this.calculateDailySum(dailyCycleValue, dailyCycle.day);
 
+     let   dailySum = this.astrology.getSexagenaryDay(dateStr);
+
+    console.log('dailySum', dailySum);
       // Step 11: Find daily symbols using the sum
    const dailyStemBranch = this.astrology.getSexagenaryCycleByNumber(dailySum % 60);
-
+   console.log('dailyStemBranch', dailyStemBranch);
+    // Step 12: Convert daily symbols to numbers
    const dailySymbols = dailyStemBranch.celestialStem.alphabeticOrder + dailyStemBranch.horaryBranch.alphabeticOrder;
-    
+    console.log('dailySymbols', dailySymbols);    
    // Step 12: Convert daily symbols to numbers
     const dailyNumbers = this.getSymbolNumbers(dailyStemBranch.celestialStem, dailyStemBranch.horaryBranch);
-
+    console.log('dailyNumbers', dailyNumbers);
      // Step 13: Find hourly symbols
      const hourlyStemBranch = this.astrology.getHourlyStemABranchForTimeAndSymbol(hour, minute,   dailyStemBranch.celestialStem.alphabeticOrder);
-     
+    console.log('hourlyStemBranch', hourlyStemBranch); 
      
     //  return {
     //   time: time24hr,
@@ -964,17 +1010,18 @@ class IChingConsultation {
     // };
 
      const hourlySymbols = hourlyStemBranch.celestialStem.alphabeticOrder + hourlyStemBranch.horaryBranch.alphabeticOrder;
-
+      console.log('hourlySymbols', hourlySymbols);
      // Step 14: Convert hourly symbols to numbers
      const hourlyNumbers = this.getSymbolNumbers(hourlyStemBranch.celestialStem, hourlyStemBranch.horaryBranch);
-
+      console.log('hourlyNumbers', hourlyNumbers);
  
      // Step 15-16: Calculate heavenly and earthly numbers
      const allNumbers = [...yearNumbers, ...monthNumbers, ...dailyNumbers, ...hourlyNumbers];
 
      const heavenlyNumber = allNumbers.filter(n => n % 2 !== 0).reduce((acc, val) => acc + val, 0); // Sum of odd numbers
+     console.log('heavenlyNumber', heavenlyNumber);
      const earthlyNumber = allNumbers.filter(n => n % 2 === 0).reduce((acc, val) => acc + val, 0); // Sum of even numbers
-
+      console.log('earthlyNumber', earthlyNumber);
      let heavenlyTrigram = null; let earthlyTrigram = null; let preHeavenHexagram = null;
      let birthYearIsOdd = year % 2 !== 0;
 
@@ -1064,7 +1111,7 @@ class IChingConsultation {
   // Helper function to calculate the daily sum using hoMap numbers from celestialStem and horaryBranch objects
   calculateDailySum(dailyCycleValue, dailyCycle) {
    // find the sexaginary cycle that corresponds to the dailycyclevalue + dailyCycle
-   let dailySum = dailyCycleValue + dailyCycle;   
+   let dailySum = Number(dailyCycleValue) + Number(dailyCycle);   
      return dailySum;
   }
 
