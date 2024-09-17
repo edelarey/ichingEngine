@@ -72,7 +72,7 @@
                                 
                 <div class="card-body" v-if="state.sexagenaryCycle">
                     <h5 class="card-title">Celestital Stem  - {{formatBirthYear}}</h5>
-                    <p class="card-text display-3">{{state.sexagenaryCycle.celestialStem.name}}</p>
+                    <p class="card-text display-3">{{state.sexagenaryCycle.celestialStem.name}} {{state.sexagenaryCycle.celestialStem.symbol}} </p>                          
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.celestialStem.trigram.trigram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.celestialStem.trigram.description.bodyPart}} </p> 
@@ -92,7 +92,7 @@
             <div class="card text-center">
                 <div class="card-body" v-if="state.sexagenaryCycle">
                     <h5 class="card-title">Horary Branch - {{formatBirthYear}}</h5>
-                    <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}}</p>                            
+                    <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}} {{state.sexagenaryCycle.horaryBranch.symbol}} {{state.sexagenaryCycle.horaryBranch.animal}}</p>                            
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].trigram}}</p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].trigram}}</p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>                         
@@ -119,7 +119,7 @@
             <div class="card text-center">
                 <div class="card-body" v-if="state.birthStemsandBranches">
                     <h5 class="card-title">Celestital Stem - {{formatBirthMonth}}</h5>
-                    <p class="card-text display-3">{{state.birthStemsandBranches.celestialStem.name}}</p>
+                    <p class="card-text display-3">{{state.birthStemsandBranches.celestialStem.name}} {{state.birthStemsandBranches.celestialStem.symbol}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.celestialStem.trigram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.celestialStem.trigram.trigram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.celestialStem.trigram.description.bodyPart}} </p> 
@@ -140,7 +140,7 @@
             <div class="card text-center">
                 <div class="card-body" v-if="state.birthStemsandBranches">
                     <h5 class="card-title">Horary Branch - {{formatBirthMonth}}</h5>
-                    <p class="card-text display-3">{{state.birthStemsandBranches.horaryBranch.name}}</p>                            
+                    <p class="card-text display-3">{{state.birthStemsandBranches.horaryBranch.name}} {{state.birthStemsandBranches.horaryBranch.symbol}} {{state.birthStemsandBranches.horaryBranch.animal}}</p>                            
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].trigram}}</p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].trigram}}</p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.bodyPart}} </p>                         
@@ -167,7 +167,7 @@
             <div class="card text-center">
                 <div class="card-body" v-if="state.dailyStemsandBranches">
                     <h5 class="card-title">Celestital Stem - {{formatBirthDay}}</h5>
-                    <p class="card-text display-3">{{state.dailyStemsandBranches.celestialStem.name}}</p>
+                    <p class="card-text display-3">{{state.dailyStemsandBranches.celestialStem.name}} {{state.dailyStemsandBranches.celestialStem.symbol}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.celestialStem.trigram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.celestialStem.trigram.trigram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.celestialStem.trigram.description.bodyPart}} </p> 
@@ -188,7 +188,7 @@
             <div class="card text-center">
                 <div class="card-body" v-if="state.dailyStemsandBranches">
                     <h5 class="card-title">Horary Branch - {{formatBirthDay}}</h5>
-                    <p class="card-text display-3">{{state.dailyStemsandBranches.horaryBranch.name}}</p>                            
+                    <p class="card-text display-3">{{state.dailyStemsandBranches.horaryBranch.name}} {{state.dailyStemsandBranches.horaryBranch.symbol}} {{state.dailyStemsandBranches.horaryBranch.animal}}</p>                      
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].trigram}}</p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].trigram}}</p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.horaryBranch.element.bodyPart}} </p>                         

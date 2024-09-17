@@ -205,8 +205,9 @@ class EarthlyNumberTrigram {
  * Winter Solstice is the Starting point for the Celestial Stems
  */
 class CelestialStem {
-  constructor(name, hoMapNumber, trigram, oppositeTrigram, element, alphabeticOrder) {
+  constructor(name, symbol, hoMapNumber, trigram, oppositeTrigram, element, alphabeticOrder) {
     this.name = name;
+    this.symbol = symbol;
     this.hoMapNumber = hoMapNumber;
     this.element = element;  
     this.trigram = trigram;
@@ -218,6 +219,10 @@ class CelestialStem {
     return this.name;
   }
 
+  getSymbol() {
+    return this.symbol;
+  }
+  
   getElement() {
     return this.element;
   }
@@ -241,15 +246,21 @@ class CelestialStem {
 }
 
 class HoraryBranch {
-  constructor(name, hoMapNumbers,element, alphabeticOrder) {
+  constructor(name, symbol, hoMapNumbers,element, alphabeticOrder, animal) {
     this.name = name;
+    this.symbol = symbol;
     this.element = element;    
     this.hoMapNumbers = hoMapNumbers;
     this.alphabeticOrder = alphabeticOrder;
+    this.animal = animal;
   }
 
   getName() {
     return this.name;
+  }
+
+  getSymbol() {
+    return this.symbol;
   }
 
   getElement() {
@@ -261,6 +272,10 @@ class HoraryBranch {
 
   getAlphabeticOrder() {
     return this.alphabeticOrder;
+  }
+
+  getAnimal() {
+    return this.animal;
   }
 }
 
@@ -328,31 +343,31 @@ class IChingAstrology {
     /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
      * contributes to the element, yoa indicates if it is positive or negative contribution */
     this.celestialStems = [
-      new CelestialStem('Chia', 6, bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A'),
-      new CelestialStem('I',    2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
-      new CelestialStem('Ping', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
-      new CelestialStem('Ting', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
-      new CelestialStem('Wu',   1, bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth, 'E'),
-      new CelestialStem('Chi',  9, bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
-      new CelestialStem('Keng', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
-      new CelestialStem('Hsin', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
-      new CelestialStem('Jen',  6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
-      new CelestialStem('Kuei', 2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J'), 
+      new CelestialStem('Chia','甲', 6, bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A'),
+      new CelestialStem('I', '乙',   2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
+      new CelestialStem('Ping', '丙', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
+      new CelestialStem('Ting', '丁', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
+      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth, 'E'),
+      new CelestialStem('Chi', '己', 9, bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
+      new CelestialStem('Keng', '庚', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
+      new CelestialStem('Hsin', '辛', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
+      new CelestialStem('Jen',  '壬', 6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
+      new CelestialStem('Kuei', '癸', 2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J'), 
     ];
     /** The numbers in the horary branch are from the Ho Map */
     this.horaryBranches = [
-      new HoraryBranch('Tzu',    [1, 6] , ealierHeavenElements.Water, 'a' ),
-      new HoraryBranch(`Ch'ou`,  [5, 10], ealierHeavenElements.Earth, 'b' ),
-      new HoraryBranch('Yin',   [3,8], ealierHeavenElements.Wood, 'c' ),
-      new HoraryBranch('Mao',   [3,8], ealierHeavenElements.Wood, 'd' ),
-      new HoraryBranch(`Ch'en`, [5, 10] , ealierHeavenElements.Earth, 'e' ),
-      new HoraryBranch('Szu',   [2,7], ealierHeavenElements.Fire, 'f' ),
-      new HoraryBranch('Wu',    [2,7], ealierHeavenElements.Fire, 'g' ),
-      new HoraryBranch('Wei',   [5, 10], ealierHeavenElements.Earth, 'h' ),
-      new HoraryBranch('Shen',  [4,9], ealierHeavenElements.Metal, 'i' ),
-      new HoraryBranch('Yu',    [4,9], ealierHeavenElements.Metal, 'j' ),
-      new HoraryBranch('Hsu',   [5, 10], ealierHeavenElements.Earth, 'k' ),
-      new HoraryBranch('Hai',   [1, 6], ealierHeavenElements.Water, 'l' ),      
+      new HoraryBranch('Tzu', '子',   [1, 6] , ealierHeavenElements.Water, 'a', 'Rat' ),
+      new HoraryBranch(`Ch'ou`, '丑',  [5, 10], ealierHeavenElements.Earth, 'b', 'Ox' ),
+      new HoraryBranch('Yin','寅',   [3,8], ealierHeavenElements.Wood, 'c', 'Tiger'),
+      new HoraryBranch('Mao', '卯',   [3,8], ealierHeavenElements.Wood, 'd', 'Rabbit' ),
+      new HoraryBranch(`Ch'en`, '辰', [5, 10] , ealierHeavenElements.Earth, 'e', 'Dragon' ),
+      new HoraryBranch('Szu', '巳', [2,7], ealierHeavenElements.Fire, 'f', 'Snake' ),
+      new HoraryBranch('Wu', '午',   [2,7], ealierHeavenElements.Fire, 'g', 'Horse' ),
+      new HoraryBranch('Wei', '未',   [5, 10], ealierHeavenElements.Earth, 'h', 'Goat' ),
+      new HoraryBranch('Shen', '申',  [4,9], ealierHeavenElements.Metal, 'i', 'Monkey' ),
+      new HoraryBranch('Yu', '酉',   [4,9], ealierHeavenElements.Metal, 'j', 'Rooster' ),
+      new HoraryBranch('Hsu', '戌',  [5, 10], ealierHeavenElements.Earth, 'k', 'Dog' ),
+      new HoraryBranch('Hai', '亥',  [1, 6], ealierHeavenElements.Water, 'l', 'Pig' ),      
     ];
     /** Static Stems and Branches Stem is Upper Case, Branch is lower case, ApplicABLE Year - Stem and Branch */
     
