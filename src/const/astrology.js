@@ -707,8 +707,7 @@ class IChingAstrology {
           return (hour >= item.startHour || hour < item.stopHour);
         }
       });
-     console.log('hourlyStemBranch', hourlyStemBranch, dailyStemSymbol);
-
+    
       if (!hourlyStemBranch) {
         throw new Error('Invalid time or no matching hourly stem branch found.');
       }
@@ -908,7 +907,9 @@ class IChingAstrology {
       return day + Math.floor((153 * M + 2) / 5) + 365 * Y + Math.floor(Y / 4) - Math.floor(Y / 100) + Math.floor(Y / 400) - 32045;
     }
 
-// Function to calculate the sexagenary day number
+  /**  Function to calculate the sexagenary day number 
+   * https://ytliu0.github.io/ChineseCalendar/sexagenary.html
+  */
    getSexagenaryDay(date) {
 
      let jdNoon = this.getJulianDayNumber(date);
