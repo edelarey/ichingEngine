@@ -36,7 +36,7 @@ const hoMap = {
   },
   Earth: {
     order: 3,   
-    numbers: [5, 5],  // 1, 9 = 5 + 5 = 10 
+    numbers: [5, 10],  // 1, 9 = 5 + 5 = 10 
     polarity: [yao.yao.yin, yao.yao.yang],
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0), // Yellow
@@ -139,6 +139,7 @@ const ealierHeavenElements = {
     order: 1,       
     trigrams: [bagua.bagua.qián, bagua.bagua.kūn],
     numbers: [6, 2],
+    polarity: [yao.yao.yang, yao.yao.yin], 
     bodyPart: 'liver',
     color: Color.rgb(	0, 255, 0), // Green
     },
@@ -146,6 +147,7 @@ const ealierHeavenElements = {
     order: 2,       
     trigrams: [bagua.bagua.gèn, bagua.bagua.duì],  
     numbers: [8, 7],
+    polarity: [yao.yao.yang, yao.yao.yin], 
     bodyPart: 'heart',
     color: Color.rgb(	255, 0, 0), // Red
   },
@@ -153,13 +155,15 @@ const ealierHeavenElements = {
     order: 3,
     trigrams: [bagua.bagua.kǎn, bagua.bagua.lí],    // (1 + 9 = 10 = 5 + 5 )
     numbers: [1, 9],
+    polarity: [yao.yao.yang, yao.yao.yin], 
     bodyPart: 'spleen',
     color: Color.rgb(	255, 255, 0),    // Yellow
   },
   Metal: {
-    order: 4,
+    order: 4,    
     trigrams: [bagua.bagua.zhèn, bagua.bagua.xùn],     
     numbers: [4, 9],
+    polarity: [yao.yao.yang, yao.yao.yin], 
     bodyPart: 'lungs',
     color: Color.rgb(	255, 255, 255), // White    
 
@@ -168,6 +172,7 @@ const ealierHeavenElements = {
     order: 5,
     trigrams: [bagua.bagua.qián, bagua.bagua.kūn],     
     numbers: [6, 2],
+    polarity: [yao.yao.yang, yao.yao.yin], 
     bodyPart: 'kidneys',
     color: Color.rgb(	0, 0, 0), // Black 
   }    
@@ -392,7 +397,7 @@ class IChingAstrology {
    
 
     this.hourlyStemsBranches =
-    [ new HourlyStemBranch(24, 1, {AF: "Aa", BG: "Ca", CH: "Ea", DI: "Ga", EJ: "Ia"}),
+    [ new HourlyStemBranch(0, 1, {AF: "Aa", BG: "Ca", CH: "Ea", DI: "Ga", EJ: "Ia"}),
       new HourlyStemBranch(1, 3,  {AF: "Bb", BG: "Db", CH: "Fb", DI: "Hb", EJ: "Jb"}),
       new HourlyStemBranch(3, 5, {AF: "Cc", BG: "Ec", CH: "Gc", DI: "Ic", EJ: "Ac"} ),      
       new HourlyStemBranch(5, 7, {AF: "Dd", BG: "Fb", CH: "Hd", DI: "Jd", EJ: "Bd"}),
@@ -404,7 +409,7 @@ class IChingAstrology {
       new HourlyStemBranch(17, 19, {AF: "Jj", BG: "Bj", CH: "Dj", DI: "Fj", EJ: "Hj"}),
       new HourlyStemBranch(19, 21, {AF: "Ak", BG: "Ck", CH: "Ek", DI: "Gk",EJ: "Ik"}),
       new HourlyStemBranch(21, 23, {AF: "Bl",BG: "Dl", CH: "Fl",  DI: "Hl", EJ: "Jl"}),
-      new HourlyStemBranch(23, 24, {AF: "Ca", BG: "Ea", CH: "Ga", DI: "Ia", EJ: "Aa"})
+      new HourlyStemBranch(23, 0, {AF: "Ca", BG: "Ea", CH: "Ga", DI: "Ia", EJ: "Aa"})
     ];
 
     
@@ -709,7 +714,7 @@ class IChingAstrology {
       // Convert time to hour integer
       
       
-      if (hour == 0) { hour = 24}
+     
       
       // Find the matching hourly stem branch object
       const hourlyStemBranch = this.hourlyStemsBranches.find(item => {
@@ -738,7 +743,7 @@ class IChingAstrology {
       const stemBranchSymbol = hourlyStemBranch.stemBranch[applicableYearKey]
 
       return {
-        time: `${hour}:00 - ${hour + 1}:00`,
+        time: `${hour}:${minute}`,
         symbols:applicableYearKey,
         celestialStem: this.getCelestialStemByAlpha(stemBranchSymbol.charAt(0)), // First character is the celestial stem
         horaryBranch:  this.getHoraryBranchByAlpha(stemBranchSymbol.charAt(1)),   // Second character is the horary branch
@@ -955,8 +960,7 @@ class IChingConsultation {
 
     const jsDate = new Date(birthDateTime);
     console.log('raw', jsDate);
-    const trueLocalDateTime = DateTime.fromJSDate(jsDate);
-    //await this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
+    const trueLocalDateTime = await this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
     const dateStr = trueLocalDateTime.toFormat("yyyy-MM-dd'T'HH:mm:ss").toString()
     console.log('trueLocalDateTime',dateStr);
 
@@ -1034,12 +1038,28 @@ class IChingConsultation {
      // Step 15-16: Calculate heavenly and earthly numbers
      const allNumbers = [...yearNumbers, ...monthNumbers, ...dailyNumbers, ...hourlyNumbers];
 
-     const heavenlyNumber = allNumbers.filter(n => n % 2 !== 0).reduce((acc, val) => acc + val, 0); // Sum of odd numbers
+     console.log('allNumbers', allNumbers);
+     
+
+     let heavenlyNumber = allNumbers.filter(n => n % 2 !== 0).reduce((acc, val) => acc + val, 0); // Sum of odd numbers
      console.log('heavenlyNumber', heavenlyNumber);
-     const earthlyNumber = allNumbers.filter(n => n % 2 === 0).reduce((acc, val) => acc + val, 0); // Sum of even numbers
+
+     let earthlyNumber = allNumbers.filter(n => n % 2 === 0).reduce((acc, val) => acc + val, 0); // Sum of even numbers
       console.log('earthlyNumber', earthlyNumber);
+
+      // if heavenly number > 50, swap the numbers around. To Do: Figure out why this happens???!!
+      // only seems to happen between 17:00 and 19:00 in 1970 January 17th
+      if (heavenlyNumber > 50) {
+        const temp = heavenlyNumber;
+        heavenlyNumber = earthlyNumber;
+        earthlyNumber = temp;
+        console.log('Swapped Numbers as heavenlyNumber > 50');
+      }
+
      let heavenlyTrigram = null; let earthlyTrigram = null; let preHeavenHexagram = null;
      let birthYearIsOdd = year % 2 !== 0;
+
+     console.log(birthYearIsOdd);
 
      // determine which cycle we are in and based on that calculate the correct heavenly and earthly trigrams
      // also include the gender to determine the correct heavenly trigram
