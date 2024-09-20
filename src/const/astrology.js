@@ -1310,40 +1310,42 @@ class IChingAstrology_South {
     }
 
     getHourlyStemABranchForTimeAndSymbol(hour, minute, dailyStemSymbol) {
-     // Convert time to hour integer
-      // Find the matching hourly stem branch object
-      const hourlyStemBranch = this.hourlyStemsBranches.find(item => {
-        // Handle the 24-hour format and wrap-around (like 24-1 means 00:00 to 01:00)
-        if (item.startHour < item.stopHour) {
-          // Normal case (e.g., 1-3, 3-5)
-          return hour >= item.startHour && hour < item.stopHour;
-        } else {
-          // Wrap-around case (e.g., 23-1, which means 23:00 to 01:00)
-          return (hour >= item.startHour || hour < item.stopHour);
-        }
-      });
-    
-      if (!hourlyStemBranch) {
-        throw new Error('Invalid time or no matching hourly stem branch found.');
-      }
-    
-      // Find the correct applicable year key that contains the daily stem symbol
-      const applicableYearKey = Object.keys(hourlyStemBranch.stemBranch).find(key => key.includes(dailyStemSymbol));
-    
-      if (!applicableYearKey) {
-        throw new Error('Daily stem symbol does not match any applicable year type.');
-      }
-    
-      // Get the stem and branch using the correct applicable year key
-      const stemBranchSymbol = hourlyStemBranch.stemBranch[applicableYearKey]
-
-      return {
-        time: `${hour}:${minute}`,
-        symbols:applicableYearKey,
-        celestialStem: this.getCelestialStemByAlpha(stemBranchSymbol.charAt(0)), // First character is the celestial stem
-        horaryBranch:  this.getHoraryBranchByAlpha(stemBranchSymbol.charAt(1)),   // Second character is the horary branch
-      };
-    }
+      // Convert time to hour integer
+       // Find the matching hourly stem branch object
+       const thehour = Math.floor(hour + minute / 60);
+       
+       const hourlyStemBranch = this.hourlyStemsBranches.find(item => {
+         // Handle the 24-hour format and wrap-around (like 24-1 means 00:00 to 01:00)
+         if (item.startHour < item.stopHour) {
+           // Normal case (e.g., 1-3, 3-5)
+           return thehour >= item.startHour && hour < item.stopHour;
+         } else {
+           // Wrap-around case (e.g., 23-1, which means 23:00 to 01:00)
+           return (thehour >= item.startHour || hour < item.stopHour);
+         }
+       });
+     
+       if (!hourlyStemBranch) {
+         throw new Error('Invalid time or no matching hourly stem branch found.');
+       }
+     
+       // Find the correct applicable year key that contains the daily stem symbol
+       const applicableYearKey = Object.keys(hourlyStemBranch.stemBranch).find(key => key.includes(dailyStemSymbol));
+     
+       if (!applicableYearKey) {
+         throw new Error('Daily stem symbol does not match any applicable year type.');
+       }
+     
+       // Get the stem and branch using the correct applicable year key
+       const stemBranchSymbol = hourlyStemBranch.stemBranch[applicableYearKey]
+ 
+       return {
+         time: `${hour}:${minute}`,
+         symbols:applicableYearKey,
+         celestialStem: this.getCelestialStemByAlpha(stemBranchSymbol.charAt(0)), // First character is the celestial stem
+         horaryBranch:  this.getHoraryBranchByAlpha(stemBranchSymbol.charAt(1)),   // Second character is the horary branch
+       };
+     }
 
     /** Get Full Sexagenary Cycle A particular Year Falls In 
      * Given a year, return the sexagenary cycle for that year based on the upper, middle and lower cycles each being 60 years
@@ -1560,7 +1562,8 @@ class IChingConsultation {
 
     const jsDate = new Date(birthDateTime);
     console.log('raw', jsDate);
-    const trueLocalDateTime = await this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
+    const trueLocalDateTime = DateTime.fromJSDate(jsDate);
+    //await this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
     const dateStr = trueLocalDateTime.toFormat("yyyy-MM-dd'T'HH:mm:ss").toString()
     console.log('trueLocalDateTime',dateStr);
 
