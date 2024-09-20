@@ -306,9 +306,12 @@ export default {
                 preHeavenHexagram:'',
                 heavenlyTrigram:'',
                 earthlyTrigram:'',
-                latitude: 51.40864141429926,
-                longitude: -0.050956657671912306,
-                birthDate: DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(),
+                latitude:  -26.39655582357474, 
+                longitude: 27.37679999686307,
+                birthDate:  DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(), 
+                /** DateTime.fromObject({ year: 1972, month: 2, day: 22, hour: 21, minute: 15}).toISO(), Brian */
+                /**  DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(), Ed */
+                /** DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(), */
                 /**   DateTime.fromObject({ year: 1934, month: 9, day: 18, hour: 0, minute:36}).toISO(),*/
                 minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toISO(), // Later on this is the maximun BC Date Minimum Date: April 20, 271821 BC   (use negative year)
                 maxDate:  DateTime.fromObject({ year: 275760, month:9, day: 13 }).toISO(),
