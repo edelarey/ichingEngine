@@ -308,7 +308,7 @@ export default {
                 earthlyTrigram:'',
                 latitude:  -26.39655582357474, 
                 longitude: 27.37679999686307,
-                birthDate:  DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(), 
+                birthDate:  DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(), 
                 /** DateTime.fromObject({ year: 1972, month: 2, day: 22, hour: 21, minute: 15}).toISO(), Brian */
                 /**  DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(), Ed */
                 /** DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(), */

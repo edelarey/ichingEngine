@@ -1563,7 +1563,8 @@ class IChingConsultation {
     const jsDate = new Date(birthDateTime);
     console.log('raw', jsDate);
     const trueLocalDateTime = DateTime.fromJSDate(jsDate);
-    //await this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
+    //const trueLocalDateTime = this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
+    console.log('trueLocalDateTime', trueLocalDateTime);
     const dateStr = trueLocalDateTime.toFormat("yyyy-MM-dd'T'HH:mm:ss").toString()
     console.log('trueLocalDateTime',dateStr);
 
@@ -1762,22 +1763,28 @@ class IChingConsultation {
   }
 
   // Function to calculate the true local time
-  async calculateTrueLocalTime(birthDateTimeISO, latitude, longitude) {
-    const birthDateTime = DateTime.fromISO(birthDateTimeISO);
-
-    // Calculate the time zone offset in minutes
-    const timeZoneOffset = birthDateTime.offset;
-
-    // Calculate the solar noon for the given coordinates using SunCalc
-    const solarNoon = SunCalc.getTimes(birthDateTime.toJSDate(), latitude, longitude).solarNoon;
-
-    // Calculate the difference between solar noon and the birth date and time
-    const solarNoonOffset = DateTime.fromJSDate(solarNoon).diff(birthDateTime);
-
-    // Calculate true local time by adjusting the birth time with solar noon offset and time zone offset
-    const trueLocalTime = birthDateTime.plus(solarNoonOffset).minus({ minutes: timeZoneOffset });
-
-    return trueLocalTime;
+  calculateTrueLocalTime(birthDateUTC, latitude, longitude) {
+    // Constants
+    const referenceLongitude = 120; // 120 degrees east
+    const degreesPerHour = 15; // 360 degrees / 24 hours
+    const utcOffset = (longitude - referenceLongitude) / degreesPerHour; // Offset in hours
+  
+    // Create a Luxon DateTime object from the UTC birth date
+    const utcDateTime = DateTime.fromISO(birthDateUTC, { zone: 'utc' });
+  
+    // Adjust the time by the UTC offset
+    let localDateTime = utcDateTime.plus({ hours: utcOffset });
+  
+    // Determine if DST is applicable
+    // Check if the date falls in a region that observes DST and adjust accordingly
+    const isDST = localDateTime.isInDST; // Note: You'll need to define DST rules for specific regions
+  
+    // Example of applying DST (this may vary based on the specific region)
+    if (isDST) {
+      localDateTime = localDateTime.plus({ hours: 1 }); // Adjust for DST
+    }
+  
+    return localDateTime; // Return the true local time as a string
   }
 }
 
