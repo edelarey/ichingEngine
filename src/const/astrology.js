@@ -339,7 +339,7 @@ class SexagenarySubCycle
 
 }
 
-class IChingAstrology {
+class IChingAstrology_North {
   constructor() {
     this.sexagenarySubCycle = new SexagenarySubCycle( Number(1864), Number(1924), Number(1984));
 
@@ -948,6 +948,606 @@ class IChingAstrology {
 
 
 }
+
+class IChingAstrology_South {
+  constructor() {
+    this.sexagenarySubCycle = new SexagenarySubCycle(Number(1869), Number(1929), Number(1989));
+
+    this.elements = ealierHeavenElements;
+
+    /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
+     * contributes to the element, yoa indicates if it is positive or negative contribution */
+    this.celestialStems = [
+      new CelestialStem('Chia','甲', 6, bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A'),
+      new CelestialStem('I', '乙',   2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
+      new CelestialStem('Ping', '丙', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
+      new CelestialStem('Ting', '丁', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
+      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth, 'E'),
+      new CelestialStem('Chi', '己', 9, bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
+      new CelestialStem('Keng', '庚', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
+      new CelestialStem('Hsin', '辛', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
+      new CelestialStem('Jen',  '壬', 6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
+      new CelestialStem('Kuei', '癸', 2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J'), 
+    ];
+    /** The numbers in the horary branch are from the Ho Map */
+    this.horaryBranches = [
+      new HoraryBranch('Tzu', '子',   [1, 6] , ealierHeavenElements.Water, 'a', 'Rat' ),
+      new HoraryBranch(`Ch'ou`, '丑',  [5, 10], ealierHeavenElements.Earth, 'b', 'Ox' ),
+      new HoraryBranch('Yin','寅',   [3,8], ealierHeavenElements.Wood, 'c', 'Tiger'),
+      new HoraryBranch('Mao', '卯',   [3,8], ealierHeavenElements.Wood, 'd', 'Rabbit' ),
+      new HoraryBranch(`Ch'en`, '辰', [5, 10] , ealierHeavenElements.Earth, 'e', 'Dragon' ),
+      new HoraryBranch('Szu', '巳', [2,7], ealierHeavenElements.Fire, 'f', 'Snake' ),
+      new HoraryBranch('Wu', '午',   [2,7], ealierHeavenElements.Fire, 'g', 'Horse' ),
+      new HoraryBranch('Wei', '未',   [5, 10], ealierHeavenElements.Earth, 'h', 'Goat' ),
+      new HoraryBranch('Shen', '申',  [4,9], ealierHeavenElements.Metal, 'i', 'Monkey' ),
+      new HoraryBranch('Yu', '酉',   [4,9], ealierHeavenElements.Metal, 'j', 'Rooster' ),
+      new HoraryBranch('Hsu', '戌',  [5, 10], ealierHeavenElements.Earth, 'k', 'Dog' ),
+      new HoraryBranch('Hai', '亥',  [1, 6], ealierHeavenElements.Water, 'l', 'Pig' ),      
+    ];
+    /** Static Stems and Branches Stem is Upper Case, Branch is lower case, ApplicABLE Year - Stem and Branch */
+    
+    this.monthlyStemsAndBranches = [
+      new MonthlyStemBranch('December_last_half', '+', ['Summer Solstice'],  {AF: "Hh", BG: "Jh", CH: "Bh", DI: "Dh", EJ: "Fh"}),
+      new MonthlyStemBranch('January', '-', ['Slight Heat', 'Great Heat'],  {AF: "Hh", BG: "Jh", CH: "Bh", DI: "Dh", EJ: "Fh"}),
+      new MonthlyStemBranch('February', '+', ['Autumn Begins', 'Limit of Heat'], {AF: "Ii", BG: "Ai", CH: "Ci", DI: "Ei", EJ: "Gi"} ),      
+      new MonthlyStemBranch('March', '-', ['White Dew', 'Autumnal Equinox'],  {AF: "Jj", BG: "Bj", CH: "Dj", DI: "Fj", EJ: "Hj"}),
+      new MonthlyStemBranch('April', '+', ['Cold Dew', 'Hoar Frost Descends'], {AF: "Ak", BG: "Ck", CH: "Ek", DI: "Gk", EJ: "Ik"}),
+      new MonthlyStemBranch('May', '-', ['Winter Begins', 'Little Snow'], {AF: "Bl", BG: "Dl", CH: "Fl", DI: "Hl", EJ: "Jl"}),
+      new MonthlyStemBranch('June', '+', ['Heavy Snow', 'Winter Solstice'], {AF: "Ca", BG: "Ea", CH: "Ga", DI: "Ia", EJ: "Aa"}),
+      new MonthlyStemBranch('July', '-', ['Little Cold', 'Severe Cold'],  {AF: "Bb", BG: "Db", CH: "Fb", DI: "Hb",EJ: "Jb"}),
+      new MonthlyStemBranch('August', '+', ['Spring Begins', 'Rain Water'], {AF: "Cc", BG: "Ec", CH: "Gc", DI: "Ic",EJ: "Ac"}),
+      new MonthlyStemBranch('September', '-', ['Excited Insects', 'Vernal Equinox'], {AF: "Dd", BG: "Fd", CH: "Hd", DI: "Jd", EJ: "Bd"}),
+      new MonthlyStemBranch('October', '+', ['Clear Bright', 'Grain Rains'], {AF: "Ee", BG: "Ge", CH: "Ie", DI: "Ae",EJ: "Ce"}),
+      new MonthlyStemBranch('November', '-', ['Summer Begins', 'Grain Fills'], {AF: "Ff",BG: "Hf", CH: "Jf",  DI: "Bf", EJ: "Df"}),
+      new MonthlyStemBranch('December_first_half', '+', ['Grain in Ear'],  {AF: "Gg", BG: "Ig", CH: "Ag", DI: "Cg", EJ: "Eg"})
+    ];
+
+
+   
+
+    this.hourlyStemsBranches =
+    [ new HourlyStemBranch(0, 1, {AF: "Aa", BG: "Ca", CH: "Ea", DI: "Ga", EJ: "Ia"}),
+      new HourlyStemBranch(1, 3,  {AF: "Bb", BG: "Db", CH: "Fb", DI: "Hb", EJ: "Jb"}),
+      new HourlyStemBranch(3, 5, {AF: "Cc", BG: "Ec", CH: "Gc", DI: "Ic", EJ: "Ac"} ),      
+      new HourlyStemBranch(5, 7, {AF: "Dd", BG: "Fb", CH: "Hd", DI: "Jd", EJ: "Bd"}),
+      new HourlyStemBranch(7, 9, {AF: "Ee", BG: "Ge", CH: "Ie", DI: "Ae", EJ: "Ce"}),
+      new HourlyStemBranch(9, 11, {AF: "Ff", BG: "Hf", CH: "Jf", DI: "Bf", EJ: "Df"}),
+      new HourlyStemBranch(11, 13, {AF: "Gg", BG: "Ig", CH: "Ag", DI: "Cg", EJ: "Eg"}),
+      new HourlyStemBranch(13, 15, {AF: "Hh", BG: "Jh", CH: "Bh", DI: "Dh",EJ: "Fh"}),
+      new HourlyStemBranch(15, 17, {AF: "Ii", BG: "Ai", CH: "Ci", DI: "Ei",EJ: "Gi"}),
+      new HourlyStemBranch(17, 19, {AF: "Jj", BG: "Bj", CH: "Dj", DI: "Fj", EJ: "Hj"}),
+      new HourlyStemBranch(19, 21, {AF: "Ak", BG: "Ck", CH: "Ek", DI: "Gk",EJ: "Ik"}),
+      new HourlyStemBranch(21, 23, {AF: "Bl",BG: "Dl", CH: "Fl",  DI: "Hl", EJ: "Jl"}),
+      new HourlyStemBranch(23, 0, {AF: "Ca", BG: "Ea", CH: "Ga", DI: "Ia", EJ: "Aa"})
+    ];
+
+    
+
+    /** Heavenly Numbers for the Various Cycles and Genders */
+    this.heavenlyNumbersUpperCycleMale = [
+      new HeavenlyNumberTrigram(1, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(2, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(3, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(4, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(5, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(6, bagua.bagua.qián ),
+      new HeavenlyNumberTrigram(7, bagua.bagua.duì ),
+      new HeavenlyNumberTrigram(8, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(9, bagua.bagua.lí ),
+      new HeavenlyNumberTrigram(10, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(11, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(12, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(13, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(14, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(15, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(16, bagua.bagua.qián ),
+      new HeavenlyNumberTrigram(17, bagua.bagua.duì ),
+      new HeavenlyNumberTrigram(18, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(19, bagua.bagua.lí ),
+      new HeavenlyNumberTrigram(20, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(21, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(22, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(23, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(24, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(25, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(26, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(27, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(28, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(29, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(30, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(31, bagua.bagua.qián ),
+      new HeavenlyNumberTrigram(32, bagua.bagua.duì ),
+      new HeavenlyNumberTrigram(33, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(34, bagua.bagua.lí ),
+      new HeavenlyNumberTrigram(35, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(36, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(37, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(38, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(39, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(40, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(41, bagua.bagua.qián ),
+      new HeavenlyNumberTrigram(42, bagua.bagua.duì ),
+      new HeavenlyNumberTrigram(43, bagua.bagua.gèn ),
+      new HeavenlyNumberTrigram(44, bagua.bagua.lí ),
+      new HeavenlyNumberTrigram(45, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(46, bagua.bagua.kǎn ),
+      new HeavenlyNumberTrigram(47, bagua.bagua.kūn ),
+      new HeavenlyNumberTrigram(48, bagua.bagua.zhèn ),
+      new HeavenlyNumberTrigram(49, bagua.bagua.xùn ),
+      new HeavenlyNumberTrigram(50, bagua.bagua.gèn ),
+    ];
+
+    this.heavenlyNumbersUpperCycleFemale = this.heavenlyNumbersUpperCycleMale;
+    this.heavenlyNumbersUpperCycleFemale[4] = new HeavenlyNumberTrigram(5, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[14] = new HeavenlyNumberTrigram(15, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[24] = new HeavenlyNumberTrigram(25, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[29] = new HeavenlyNumberTrigram(30, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[39] = new HeavenlyNumberTrigram(40, bagua.bagua.kūn);
+    this.heavenlyNumbersUpperCycleFemale[49] = new HeavenlyNumberTrigram(50, bagua.bagua.kūn);
+
+    this.heavenlyNumbersMiddleCycleMaleEvenFemaleOdd = this.heavenlyNumbersUpperCycleMale;
+    this.heavenlyNumbersMiddleCycleMaleOddFemaleEven = this.heavenlyNumbersUpperCycleFemale;
+
+    this.heavenlyNumbersLowerCycleMale = this.heavenlyNumbersUpperCycleMale;
+    this.heavenlyNumbersLowerCycleMale[4] = new HeavenlyNumberTrigram(5, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[14] = new HeavenlyNumberTrigram(15, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[24] = new HeavenlyNumberTrigram(25, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[29] = new HeavenlyNumberTrigram(30, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[39] = new HeavenlyNumberTrigram(40, bagua.bagua.lí);
+    this.heavenlyNumbersLowerCycleMale[49] = new HeavenlyNumberTrigram(50, bagua.bagua.lí);
+
+    this.heavenlyNumbersLowerCycleFemale = this.heavenlyNumbersUpperCycleMale;
+    this.heavenlyNumbersLowerCycleFemale[4] = new HeavenlyNumberTrigram(5, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[14] = new HeavenlyNumberTrigram(15, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[24] = new HeavenlyNumberTrigram(25, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[29] = new HeavenlyNumberTrigram(30, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[39] = new HeavenlyNumberTrigram(40, bagua.bagua.duì);
+    this.heavenlyNumbersLowerCycleFemale[49] = new HeavenlyNumberTrigram(50, bagua.bagua.duì);
+
+  /** Heavenly Numbers for the Earthly Cycle */
+  this.earthlyNumbers = [
+    new EarthlyNumberTrigram(2, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(4, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(6, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(8, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(10, bagua.bagua.kǎn ),
+    new EarthlyNumberTrigram(12, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(14, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(16, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(18, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(20, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(22, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(24, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(26, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(28, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(30, bagua.bagua.zhèn ),
+    new EarthlyNumberTrigram(32, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(34, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(36, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(38, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(40, bagua.bagua.kǎn ),
+    new EarthlyNumberTrigram(42, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(44, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(46, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(48, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(50, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(52, bagua.bagua.kūn ),
+    new EarthlyNumberTrigram(54, bagua.bagua.xùn ),
+    new EarthlyNumberTrigram(56, bagua.bagua.qián ),
+    new EarthlyNumberTrigram(58, bagua.bagua.gèn ),
+    new EarthlyNumberTrigram(60, bagua.bagua.zhèn ),    
+  ];
+    
+    /** Compute Sexagenary Cycles based on combinations of Celestial stems and Horary Branches */
+    this.sexagenaryCycle = [];
+    this.initializeSexagenaryCycles();
+  }
+
+      initializeSexagenaryCycles() {
+        let count = 0;
+        let cycle = 0;
+        for (let j = 0; j < 6; j++) {
+          for (let i = 0; i < this.celestialStems.length; i++) {
+            count++;
+            this.sexagenaryCycle.push(new SexagenaryCycle(count, this.celestialStems[i], this.horaryBranches[cycle], count % 2 === 0 ? 'yin' : 'yang'));
+            cycle++;
+            if (cycle === 12) cycle = 0;
+          }
+        }
+      }
+
+      isLeapYear (year) {
+        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+      };
+
+      // Method to determine the winter solstice of a given year
+      getWinterSolstice(year) {
+        return DateTime.fromObject({ year: year, month: 6, day: 21 });
+      }
+
+        // Helper method to calculate the date from the day of the year
+      calculateDateFromDayOfYear(year, dayOfYear) {
+        const startDate = new Date(year, 0, 1); // January 1st of the year
+        const targetDate = new Date(startDate.setDate(dayOfYear));
+        return targetDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      }
+
+      // Method to get the stem-branch combination for a specific day
+      getDailyCycleForDay(dayIndex) {
+        const stemIndex = (dayIndex - 1) % 10;
+        const branchIndex = (dayIndex - 1) % 12;
+        return {
+          celestialStem: this.celestialStems[stemIndex],
+          horaryBranch: this.horaryBranches[branchIndex],
+        };
+      }
+
+      // Method to generate daily cycles for a given year based on the starting day
+      generateYearlyDailyCycles(year, startingDay) {
+        const daysInYear = this.isLeapYear(year) ? 366 : 365; // Adjust for leap years
+        let dailyCycles = [];
+        for (let day = 1; day <= daysInYear; day++) {
+          let dayIndex = (startingDay + day - 2) % 60 + 1; // Adjust for starting day and wrap around 60-day cycle
+          dailyCycles.push({
+            day: day,
+            date: this.calculateDateFromDayOfYear(year, day),
+            ...this.getDailyCycleForDay(dayIndex),
+          });
+        }
+        return dailyCycles;
+      }
+
+      // Helper method to calculate the offset for daily cycles for a given year
+      getDailyCycleStart(year) {
+        // Southern Hemisphere offset logic
+        const baseYear = 1929;  // For Southern Hemisphere offset reference
+        const increment = 5; // Increment per year, adjust if needed
+        return ((year - baseYear) * increment % 60 + 60) % 60 + 1;
+      }
+
+
+  /** Get the Upper, Middle and Lower Reference Cycles as Defined By (Sherrill and Chu, 1976)  
+   *  These cycles represent a starting point for calculating the sexagenary cycle
+   *  for any given year in the past or future 
+   * Southern Hemisphere yearly cycle calculations
+   * 
+  */
+ 
+  getUpperCycle() {
+    let cycle = [];
+    for (let i = this.sexagenarySubCycle.upperCycle; i < this.sexagenarySubCycle.upperCycle + 60; i++) {
+      cycle.push({year: i + 5.5, cycle: this.sexagenaryCycle[i - this.sexagenarySubCycle.upperCycle]});
+    }
+    return cycle;
+  }
+
+  getMiddleCycle() {
+    let cycle = [];
+    for (let i = this.sexagenarySubCycle.middleCycle; i < this.sexagenarySubCycle.middleCycle + 60; i++) {
+      cycle.push({year: i + 5.5, cycle: this.sexagenaryCycle[i - this.sexagenarySubCycle.middleCycle]});
+    }
+    return cycle;
+  }
+
+  getLowerCycle() {
+    let cycle = [];
+    for (let i = this.sexagenarySubCycle.lowerCycle; i < this.sexagenarySubCycle.lowerCycle + 60; i++) {
+      cycle.push({year: i + 5.5, cycle: this.sexagenaryCycle[i - this.sexagenarySubCycle.lowerCycle]});
+    }
+    return cycle;
+  }
+
+   getMonthlyStemsAndBranchesForaYear(year) {
+      let results = [];
+    
+      // Adjust the Southern Hemisphere astrological year to start from June
+      for (let month = 1; month <= 12; month++) {
+        let monthStart = DateTime.fromObject({ year: year, month: month, day: 1 });
+    
+        // Adjust the cycle index for Southern Hemisphere
+        let cycleIndex = ((year - 1929) % 60) * 12 + (month + 5) % 12; // Offset by 6 months
+        let stemIndex = cycleIndex % 10;
+        let branchIndex = cycleIndex % 12;
+    
+        let stem = this.celestialStems[stemIndex];
+        let branch = this.horaryBranches[branchIndex];
+    
+        results.push({
+          month: monthStart.toFormat('dd-MM-yyyy'),
+          celestialStem: stem,
+          horaryBranch: branch
+        });
+      }
+    
+      return results;
+    }
+    
+
+    getMonthlyStemBranchForaYear (yearSymbol, month, day) {
+      // Determine whether it's the first half or last half of December
+      let targetMonth;
+      if (month === 12) {
+        if (day <= 15) {
+          targetMonth = 'December_first_half';
+        } else {
+          targetMonth = 'December_last_half';
+        }
+      } else {
+        // Convert month number to month name
+        const monthNames = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November'
+        ];
+        targetMonth = monthNames[month - 1];
+      }
+    
+      // Find the matching monthly stem and branch object
+      const monthlyStemBranch = this.monthlyStemsAndBranches.find(
+        item => item.month === targetMonth
+      );
+    
+      if (!monthlyStemBranch) {
+        throw new Error('Invalid month or structure not found.');
+      }
+      console.log('monthlySteamAndBranch', monthlyStemBranch);
+      // Find the correct applicableYear key that contains the yearSymbol
+      const applicableYearKey = Object.keys(monthlyStemBranch.years).find(key => key.includes(yearSymbol));
+    
+      if (!applicableYearKey) {
+        throw new Error('Year symbol does not match any applicable year type.');
+      }
+    
+      // Get the stem and branch using the correct applicable year key
+      const stemBranch = monthlyStemBranch.years[applicableYearKey];
+    
+      return {
+        month: month,        
+        monthName: targetMonth,
+        symbols:stemBranch,
+        celestialStem: this.getCelestialStemByAlpha(stemBranch.charAt(0)), // First character is the celestial stem
+        horaryBranch:  this.getHoraryBranchByAlpha(stemBranch.charAt(1)),   // Second character is the horary branch
+      };
+    }
+
+    getHourlyStemABranchForTimeAndSymbol(hour, minute, dailyStemSymbol) {
+     // Convert time to hour integer
+      // Find the matching hourly stem branch object
+      const hourlyStemBranch = this.hourlyStemsBranches.find(item => {
+        // Handle the 24-hour format and wrap-around (like 24-1 means 00:00 to 01:00)
+        if (item.startHour < item.stopHour) {
+          // Normal case (e.g., 1-3, 3-5)
+          return hour >= item.startHour && hour < item.stopHour;
+        } else {
+          // Wrap-around case (e.g., 23-1, which means 23:00 to 01:00)
+          return (hour >= item.startHour || hour < item.stopHour);
+        }
+      });
+    
+      if (!hourlyStemBranch) {
+        throw new Error('Invalid time or no matching hourly stem branch found.');
+      }
+    
+      // Find the correct applicable year key that contains the daily stem symbol
+      const applicableYearKey = Object.keys(hourlyStemBranch.stemBranch).find(key => key.includes(dailyStemSymbol));
+    
+      if (!applicableYearKey) {
+        throw new Error('Daily stem symbol does not match any applicable year type.');
+      }
+    
+      // Get the stem and branch using the correct applicable year key
+      const stemBranchSymbol = hourlyStemBranch.stemBranch[applicableYearKey]
+
+      return {
+        time: `${hour}:${minute}`,
+        symbols:applicableYearKey,
+        celestialStem: this.getCelestialStemByAlpha(stemBranchSymbol.charAt(0)), // First character is the celestial stem
+        horaryBranch:  this.getHoraryBranchByAlpha(stemBranchSymbol.charAt(1)),   // Second character is the horary branch
+      };
+    }
+
+    /** Get Full Sexagenary Cycle A particular Year Falls In 
+     * Given a year, return the sexagenary cycle for that year based on the upper, middle and lower cycles each being 60 years
+     * and the starting point for each cycle being 1869, 1929 and 1989 respectively
+     * compute the correct cycle even if the year is before 1864 or after 1984, 
+     * given the cycles follow a 60 year pattern and run from Upper → Middle → Lower → Upper → Middle → Lower and so on.
+     */    
+
+    getFullSexagenaryCycle(year) {
+      const cycles = {
+          upper: { start: 1989, end: 2048 },
+          middle: { start: 1869, end: 1928 },
+          lower: { start: 1929, end: 1988 }
+      };
+  
+      const cycleNames = ['upper', 'middle', 'lower'];
+      const cycleLength = cycles.lower.end - cycles.lower.start + 1;
+  
+      // Calculate total offset from the first defined upper cycle
+      let totalYearsOffset = year - cycles.upper.start;
+  
+      // Calculate how many complete 3-cycle periods (180 years) fit into the offset
+      let fullCyclePeriods = Math.floor(totalYearsOffset / (3 * cycleLength));
+      
+      // Calculate the remainder years after removing the full cycles
+      let remainderYears = totalYearsOffset % (3 * cycleLength);
+      
+      // Adjust for negative remainders (i.e., years before 1864)
+      if (remainderYears < 0) {
+          remainderYears += 3 * cycleLength;
+      }
+  
+      // Determine the cycle index based on the remainder
+      let cycleIndex = Math.floor(remainderYears / cycleLength);
+  
+      // Find the corresponding cycle name
+      let cycleName = cycleNames[cycleIndex];
+  
+      // Calculate the start and end years of the cycle
+      let cycleStart = cycles.upper.start + fullCyclePeriods * (3 * cycleLength) + cycleIndex * cycleLength;
+      let cycleEnd = cycleStart + cycleLength - 1;
+
+      let cycle =[];
+      for (let i = cycleStart; i < cycleStart + 60; i++) {
+          cycle.push({year: i,  cycle: this.sexagenaryCycle[i-cycleStart], dailyCycles: this.generateYearlyDailyCycles(i, this.getDailyCycleStart(i))});
+        }
+  
+      return {
+          cycleName: cycleName,
+          startYear: cycleStart,
+          endYear: cycleEnd,
+          year: year,
+          cycle: cycle,
+      };
+
+ }
+
+ getYearSexagenaryObject(fullCycle, year) {
+  let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
+  return theCycle; 
+}
+
+  getYearSexagenaryCycle(year) {
+    let fullCycle = this.getFullSexagenaryCycle(year);
+    let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
+    return theCycle.cycle; 
+  }
+
+  getYearSexagenaryDailyCycles(year) {
+    let fullCycle = this.getFullSexagenaryCycle(year);
+    let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);
+    return theCycle.dailyCycles; 
+  }
+  /** Get a specific daily cycle for a year on date*/
+  getYearSexagenaryDailyCycle(year, date) {
+    // convert the date to format yyyy-mm-dd 
+    let dateStr = date.split('T')[0];
+    let fullCycle = this.getFullSexagenaryCycle(year);
+    let theCycle = fullCycle.cycle.find(cycle => cycle.year === year);  
+    let theDay = theCycle.dailyCycles.find(dailyCycle => dailyCycle.date === dateStr);
+  
+    return theDay; 
+  }
+    
+    getCelestialStem(name) {
+      return this.celestialStems.find(stem => stem.name === name);
+    }
+
+    getAllCelestialStems() {
+      return this.celestialStems;
+    }
+    
+    getHoraryBranch(name) {
+      return this.horaryBranches.find(branch => branch.name === name);
+    }
+
+    getAllHoraryBranches() {
+      return this.horaryBranches;
+    }
+
+    getAllSexagenaryCycles() {
+      return this.sexagenaryCycle;
+    };
+
+    getCelestialStemByAlpha (alphabeticOrder)
+      {
+        return this.celestialStems.find(stem => stem.alphabeticOrder === alphabeticOrder);
+      }
+    
+    getHoraryBranchByAlpha (alphabeticOrder)
+      {
+        return this.horaryBranches.find(branch => branch.alphabeticOrder === alphabeticOrder);
+      }
+
+    getSexagenaryCycleByNumber (number)
+      {
+       
+        return this.sexagenaryCycle.find(cycle => cycle.number === number);
+      }
+
+     getMonthlyStemBranch(year, month) {
+          const yearGroupIndex = (year - 1) % 10; // Calculate year group index
+          const monthIndex = month === 12 && new Date().getDate() > 15 ? 'December_last_half' : 'December_first_half'; // Special handling for December
+      
+          // Find the month entry
+          const monthEntry = this.monthlyStemsAndBranches.find(entry => entry.month === monthIndex);
+          
+          if (!monthEntry) {
+            throw new Error('Invalid month provided');
+          }
+      
+          // Return the relevant stem and branch for the year group
+          return monthEntry.years[yearGroupIndex];
+      }
+  
+     calculateDailyCycleValue(year, month, day) {
+        /** Daily Cycle Values (Table 6) */
+        const dailyCycleValues = {
+          1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30], // January
+          2: [31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58], // February
+          3: [59, 60, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], // March
+          4: [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59], // April
+          5: [60, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30], // May
+          6: [31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60], // June
+          7: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31], // July
+          8: [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2], // August
+          9: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // September
+          10: [33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2, 3], // October
+          11: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33], // November
+          12: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2, 3, 4] // December
+        };
+    
+        // Adjust for leap year (from March onward)
+        if (this.isLeapYear(year) && month >= 3) {
+            day += 1; // Shift day by one for leap years starting in March
+        }
+       
+        const dailyCycleValue = dailyCycleValues[month][day-1]; // Get the value based on month and day
+
+    
+        return dailyCycleValue;
+        // Determine celestial stem and branch based on cycle value
+        
+    }
+
+    getJulianDayNumber(date) {
+      const dt = DateTime.fromISO(date, { zone: 'UTC' });
+      const year = dt.year;
+      const month = dt.month;
+      const day = dt.day;
+    
+      let A = Math.floor((14 - month) / 12);
+      let Y = year + 4800 - A;
+      let M = month + 12 * A - 3;
+    
+      return day + Math.floor((153 * M + 2) / 5) + 365 * Y + Math.floor(Y / 4) - Math.floor(Y / 100) + Math.floor(Y / 400) - 32045;
+    }
+
+  /**  Function to calculate the sexagenary day number 
+   * https://ytliu0.github.io/ChineseCalendar/sexagenary.html
+  */
+   getSexagenaryDay(date) {
+
+     let jdNoon = this.getJulianDayNumber(date);
+      const sexagenaryDay = 1 + ((jdNoon - 11) % 60);
+      return sexagenaryDay <= 0 ? sexagenaryDay + 60 : sexagenaryDay;
+  }
+
+// Function to calculate the weekday number
+   getWeekdayNumber(date) {
+      let jdNoon = this.getJulianDayNumber(date);
+    return (jdNoon + 1) % 7;
+}
+
+
+
+
+
+}
+
+
+
+
+
 
 class IChingConsultation {
   constructor(astrology) {
@@ -2363,7 +2963,8 @@ export default {
   SexagenaryCycle,
   CelestialStem,
   HoraryBranch,
-  IChingAstrology,
+  IChingAstrology_North,
+  IChingAstrology_South,
   IChingConsultation,
   IChingAstrologyManual,
   hexagramAstrology,

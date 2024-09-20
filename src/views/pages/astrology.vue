@@ -8,9 +8,13 @@
                 <h3 class="card-header">
                 Astrological Hexagrams in the I Ching Sexagenary Cycle
                 </h3>                
-                <div class="card-body" v-if="state.cycle">               
+                <div class="card-body" v-if="state.cycle">
+                    <h5 class="card-title">gender</h5>
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.gender}} </p>                
                     <h5 class="card-title">BirthDate</h5>
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{dateTimeFormatSimple (state.birthDate)}} </p>  
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{dateTimeFormatSimple (state.birthDate)}} </p> 
+                    <h6 class="card-subtitle mb-2 ">Hemisphere</h6>
+                    <p :style="{color: colorClass}" class="card-text display-4"> {{state.hemisphere}} </p>  
                     <h6 class="card-subtitle mb-2 ">Sexagenary Cycle</h6>
                     <p :style="{color: colorClass}" class="card-text display-4"> {{state.cycle.cycleName}} </p>  
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.cycle.startYear}} - {{state.cycle.endYear}} </p>                
@@ -288,6 +292,7 @@ export default {
                     },
                 ]);
              const state = reactive({
+                hemisphere: 'Northern',
                 cycle: null,
                 sexagenaryCycle: null,     
                 monthlyStemsandBranches: null,
@@ -385,9 +390,25 @@ export default {
              console.log('count found', countFound, 'count not found', countNotFound);
             
         };
+        const getHemisphere = (latitude) => {
+                if (latitude >= 0) {
+                    state.hemisphere = "Northern";
+                    return "Northern";
+                } else {
+                    state.hemisphere = "Southern";
+                    return "Southern";
+                } 
+            };
         const  consult = async() => {
 
-            const astrology = new astro.IChingAstrology();
+            let astrology = null;
+            const hemisphere = getHemisphere(state.latitude);
+
+            if (hemisphere === "Northern") {
+                astrology = new astro.IChingAstrology_North();
+            } else {
+                astrology = new astro.IChingAstrology_South();
+            }
            
             // console.log('stems', astrology.getAllCelestialStems());
             // console.log('branches', astrology.getAllHoraryBranches());
