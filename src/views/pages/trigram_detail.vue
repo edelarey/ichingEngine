@@ -6,8 +6,17 @@
                             <p class="card-text display-3">{{this.trigram.name}}</p>
                             <p class="card-text display-1"> {{this.trigram.symbol}} </p>  
                             <p id="trigram" :style="{color: this.colorClass}" class="card-text display-1"> {{this.trigram.trigram}} </p>                            
-                            <p class="card-text display-5"> {{this.trigram.binary}} </p>                             
-                            <p class="card-text display-5">{{this.nature}} : {{this.translation}}</p> 
+                            <p class="card-text display-5">Binary: {{this.trigram.binary}} </p>                             
+                            <p class="card-text display-5">Nature: {{this.nature}} : {{this.translation}}</p> 
+                            <p class="card-text display-5">Animal: {{this.animal}} </p>  
+                            <p class="card-text display-5">Ealier Heaven Direction: {{this.earlierHeavenDirection}} </p>  
+                            <p class="card-text display-5">Old Family Direction: {{this.oldfamilydirection}} </p> 
+                            <p class="card-text display-5">Old Family Relationship: {{this.oldfamilyrelationship}} </p> 
+                            <p class="card-text display-5">New Family Relationship: {{this.newfamilyrelationship}} </p> 
+                            <p class="card-text display-5">BodyPart: {{this.bodyPart}} </p> 
+                            <p class="card-text display-5">Attribute: {{this.attribute}} </p> 
+                            <p class="card-text display-5">State: {{this.state}} </p> 
+                                                     
                             <br />
                             <a href="/trigrams" class="card-link">Trigrams</a>
                     </div>
@@ -79,6 +88,70 @@ export default {
                       }
                       else return '';
                 },
+                earlierHeavenDirection() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.earlierHeavenDirection;                    
+                      }
+                      else return '';
+                },
+                earlierHeavenSeason() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.earlierHeavenSeason;                    
+                      }
+                      else return '';
+                },
+                oldfamilydirection() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.oldfamilydirection;                    
+                      }
+                      else return '';
+                },
+                oldfamilyrelationship() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.oldfamilyrelationship;                    
+                      }
+                      else return '';
+                },
+                newfamilyrelationship() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.newfamilyrelationship;                    
+                      }
+                      else return '';
+                },
+                bodyPart() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.bodyPart;                    
+                      }
+                      else return '';
+                },
+                attribute() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.attribute;                    
+                      }
+                      else return '';
+                },
+                state() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.state;                    
+                      }
+                      else return '';
+                },
+                animal() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.description.animal;                    
+                      }
+                      else return '';
+                },           
+                
             },
      methods: {
     format(value) {

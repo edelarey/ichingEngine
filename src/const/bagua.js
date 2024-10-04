@@ -89,7 +89,7 @@ const bagua = {
             bodyPart:"stomach",
             attribute: "devoted, yielding",
             state: "receptive",
-            animal: "ox," + "牛",
+            animal: "ox, " + "牛",
             nature: "earth," + "地",
             color: Color.rgb(	0, 0, 0), // black
         },
@@ -128,8 +128,8 @@ const bagua = {
             bodyPart:"hands",
             attribute: "still",
             state: "stopping",
-            animal: "dog" + "狗",
-            nature: "mountain" + "山",
+            animal: "dog, " + "狗",
+            nature: "mountain, " + "山",
             color: Color.rgb(	255, 0, 0), // red
         },     
     },
@@ -169,8 +169,8 @@ const bagua = {
         bodyPart:"ear",
         attribute: "dangerous",
         state: "in-motion",
-        animal: "pig," + "豕",
-        nature: "water, moon" + "水",
+        animal: "pig, " + "豕",
+        nature: "water, moon " + "水",
         color: Color.rgb(	0, 0, 255), // blue
         },       
     }, 
@@ -208,8 +208,8 @@ const bagua = {
         bodyPart:"thigh",
         attribute: "penetrating",
         state: "gentle entrance",
-        animal: "cock," + "雞",
-        nature:"wind, wood," + "風",
+        animal: "cock, " + "雞",
+        nature:"wind, wood " + "風",
         color:Color.rgb(	0, 255, 0), // green
         },
     },
@@ -247,8 +247,8 @@ const bagua = {
         bodyPart:"foot",
         attribute: "inciting movement",
         state: "initiative",
-        animal: "dragon," + "龍",
-        nature:"thunder," + "雷",
+        animal: "dragon, " + "龍",
+        nature:"thunder, " + "雷",
         color:Color.rgb(	255, 255, 0), // yellow 
         },
     },
@@ -286,8 +286,8 @@ const bagua = {
         bodyPart:"eye",
         attribute: "light-giving, dependence",
         state: "clinging, clarity, adaptable",
-        animal: "pheasant," + "雉",
-        nature:"fire, sun," + "火",
+        animal: "pheasant, " + "雉",
+        nature:"fire, sun, " + "火",
         color:Color.rgb(	255, 0, 255), // magenta
         },        
     },
@@ -326,7 +326,7 @@ const bagua = {
         attribute: "pleasure",
         state: "tranquil, complete devotion",
         animal: "sheep," + "羊",
-        nature:"marsh, lake, swamp," + "澤",
+        nature:"marsh, lake, swamp, " + "澤",
         color:Color.rgb(	255, 0, 0), // red
         },        
     },
@@ -364,8 +364,8 @@ const bagua = {
         bodyPart:"head",
         attribute: "strong, powerful",
         state: "creative, strong-willed",
-        animal: "horse," + "馬",
-        nature:"heaven, sky," + "天",
+        animal: "horse, " + "馬",
+        nature:"heaven, sky, " + "天",
         color:Color.rgb(	255, 255, 255), // white
         },
         
