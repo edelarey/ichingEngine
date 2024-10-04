@@ -1,5 +1,6 @@
 const { DateTime } = require('luxon');
 const SunCalc = require('suncalc');
+import { name } from 'vue-slide-bar';
 // import { name } from 'vue-slide-bar';
 import bagua from '../const/bagua';
 import hexagram from './hexagram';
@@ -19,6 +20,7 @@ const Gender = {
 /** Ho Lo Li Shu - Ho Map Lo Map Rational Number (W.K. Chu, 1993, p.8) */
 const hoMap = {
   Wood: {
+    name: 'Wood',
     order: 1,       
     numbers: [3, 8],  
     polarity: [yao.yao.yang, yao.yao.yin],
@@ -27,6 +29,7 @@ const hoMap = {
     color: Color.rgb(	0, 255, 0), // Green
     },
   Fire: {
+    name: 'Fire',
     order: 2,           
     numbers: [2, 7],
     polarity: [yao.yao.yang, yao.yao.yin],
@@ -35,6 +38,7 @@ const hoMap = {
     color: Color.rgb(	255, 0, 0), // Red
   },
   Earth: {
+    name: 'Earth',
     order: 3,   
     numbers: [5, 10],  // 1, 9 = 5 + 5 = 10 
     polarity: [yao.yao.yin, yao.yao.yang],
@@ -43,6 +47,7 @@ const hoMap = {
     direction: bagua.compassDirection.Center,
   },
   Metal: {
+    name: 'Metal',
     order: 4,    
     numbers: [4, 9],
     polarity: [yao.yao.yang, yao.yao.yin],
@@ -51,6 +56,7 @@ const hoMap = {
     direction: bagua.compassDirection.West,
   },
   Water: {
+    name: 'Water',
     order: 5,   
     polarity: [yao.yao.yin, yao.yao.yang],
     numbers: [1, 6],
@@ -80,6 +86,7 @@ const magicSquareOfThree =
 
 const laterHeavenElements = {
   Wood: {
+    name: 'Wood',
     order: 1,       
     trigrams: [bagua.bagua.zhèn, bagua.bagua.gèn],
     numbers: [3, 8],
@@ -88,6 +95,7 @@ const laterHeavenElements = {
     color: Color.rgb(	0, 255, 0),
     },
   Fire: {
+    name: 'Fire',
     order: 2,       
     trigrams: [bagua.bagua.kūn, bagua.bagua.duì],  
     numbers: [2, 7],
@@ -96,6 +104,7 @@ const laterHeavenElements = {
     color: Color.rgb(	255, 0, 0),
   },
   Earth: {
+    name: 'Earth',
     order: 3,
     trigrams: [bagua.bagua.kǎn, bagua.bagua.lí],    // (1, 9 = 5 + 5 = 10 )
     numbers: [1, 9],
@@ -104,6 +113,7 @@ const laterHeavenElements = {
     direction: bagua.compassDirection.Center,
   },
   Metal: {
+    name: 'Metal',
     order: 4,
     trigrams: [bagua.bagua.xùn, bagua.bagua.lí],     
     numbers: [4, 9],
@@ -112,6 +122,7 @@ const laterHeavenElements = {
     direction: bagua.compassDirection.West,
   },
   Water: {
+    name: 'Water',
     order: 5,
     trigrams: [bagua.bagua.kǎn, bagua.bagua.qián],     
     numbers: [1, 6],
@@ -136,6 +147,7 @@ const laterHeavenElementSequence = [laterHeavenElements.Wood, laterHeavenElement
 
 const ealierHeavenElements = {
   Wood: {
+    name: 'Wood',
     order: 1,       
     trigrams: [bagua.bagua.qián, bagua.bagua.kūn],
     numbers: [6, 2],
@@ -144,6 +156,7 @@ const ealierHeavenElements = {
     color: Color.rgb(	0, 255, 0), // Green
     },
   Fire: {
+    name: 'Fire',
     order: 2,       
     trigrams: [bagua.bagua.gèn, bagua.bagua.duì],  
     numbers: [8, 7],
@@ -152,6 +165,7 @@ const ealierHeavenElements = {
     color: Color.rgb(	255, 0, 0), // Red
   },
   Earth: {
+    name: 'Earth',
     order: 3,
     trigrams: [bagua.bagua.kǎn, bagua.bagua.lí],    // (1 + 9 = 10 = 5 + 5 )
     numbers: [1, 9],
@@ -160,6 +174,7 @@ const ealierHeavenElements = {
     color: Color.rgb(	255, 255, 0),    // Yellow
   },
   Metal: {
+    name: 'Metal',
     order: 4,    
     trigrams: [bagua.bagua.zhèn, bagua.bagua.xùn],     
     numbers: [4, 9],
@@ -169,6 +184,7 @@ const ealierHeavenElements = {
 
   },
   Water: {
+    name: 'Water',
     order: 5,
     trigrams: [bagua.bagua.qián, bagua.bagua.kūn],     
     numbers: [6, 2],

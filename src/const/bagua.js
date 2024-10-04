@@ -80,7 +80,7 @@ const bagua = {
         },
         description: {
             alternate: "kūn, k'un",
-            translation: "the Receptive, Field",
+            translation: "the receptive, field",
             earlierHeavenDirection: "north",
             earlierHeavenSeason: "winter",
             oldfamilydirection: "southwest",
@@ -119,7 +119,7 @@ const bagua = {
         },
         description: {
             alternate: "Kên", 
-            translation: "keeping Still, bound",
+            translation: "keeping still, bound",
             earlierHeavenDirection: "north-west",
             earlierHeavenSeason: "none",
             oldfamilydirection: "north",
@@ -238,7 +238,7 @@ const bagua = {
         },
         description: {
         alternate: "chèn, chên",
-        translation:  "inciting movement, the arousing, shake",
+        translation:  "the arousing, inciting movement, shake",
         earlierHeavenDirection: "north-east",
         earlierHeavenSeason: "none",
         oldfamilydirection: "east",
