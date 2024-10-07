@@ -8,16 +8,21 @@
                             <p :style="{color: this.colorClass}" class="card-text display-1"> {{this.hexagram.hexagram}} </p> 
                             <p :style="{color: this.colorClass}" class="card-text display-5"> {{this.hexagram.translation}} </p>
                             <p :style="{color: this.colorClass}" class="card-text display-6"> {{this.hexagram.binary}} </p> 
+                            <p class="card-text display-5"> <br />  </p>  
                             <h5 class="card-title">Above</h5>  
                             <p class="card-text display-3">{{this.above.name}}</p>                            
                             <p :style="{color: this.aboveColorClass}" class="card-text display-3"> {{this.above.trigram}} </p> 
                             <p class="card-text display-5">{{this.aboveNature}} : {{this.aboveTranslation}}</p> 
-                            <h5 class="card-title">Below</h5>                                                                                    
+                            <br />
+                            <a  :href="`/trigram_detail?trigram=${this.above.binary}`" class="btn btn-primary">Trigram Detail</a> 
+                            <p class="card-text display-5"> <br />  </p>  
+                            <h5 class="card-title">Below</h5>                                                                                                                
                             <p class="card-text display-3">{{this.below.name}}</p> 
                             <p :style="{color: this.belowColorClass}" class="card-text display-3"> {{this.below.trigram}} </p>
-                            <p class="card-text display-5">{{this.belowNature}} : {{this.belowTranslation}}</p>                             
+                            <p class="card-text display-5">{{this.belowNature}} : {{this.belowTranslation}}</p>   
                             <br />
-                           
+                            <a  :href="`/trigram_detail?trigram=${this.below.binary}`" class="btn btn-primary">Trigram Detail</a>  
+                            <p class="card-text display-5"> <br />  </p>                           
                             <a href="/hexagrams" class="card-link">Hexagrams</a>
                     </div>
                      <span v-if="this.hexagram.explanation" >
@@ -146,6 +151,20 @@ export default {
                       if (!_.isEmpty(this.below))
                       {
                          return this.below.description.nature;                    
+                      }
+                      else return '';
+                },
+                belowBinary() {    
+                      if (!_.isEmpty(this.below))
+                      {
+                         return this.below.binary;                    
+                      }
+                      else return '';
+                },
+                aboveBinary() {    
+                      if (!_.isEmpty(this.below))
+                      {
+                         return this.above.binary;                    
                       }
                       else return '';
                 },

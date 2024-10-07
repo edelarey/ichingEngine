@@ -222,9 +222,6 @@ export default {
             //this.below = await bagua.sequence_Gua_OldFamilyOrder().filter((item) => item.binary == this.hexagram.binary.substring(3,6))[0];
             this.trigram = bagua.sequence_Gua_OldFamilyOrder().filter((item) => item.binary == this.$route.query.trigram)[0];
             
-            console.log('trigram',this.trigram);
-            
-            
             // console.log('hexagram-kingwen:\n',hexagram.sequence_kingwen(),hexagram.sequence_kingwen().length);
             // console.log('hexagrams:\n',hexagram.sequence());
             // console.log('bagua',_.sortBy(bagua.bagua, ['order'], ['asc']));
