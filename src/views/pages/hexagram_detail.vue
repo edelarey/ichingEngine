@@ -52,8 +52,6 @@
                     </span>
             </div>
 </template>
-
-
 <script>
 import PageHeader from '@/components/page-header'; 
 import hexagram from '@/const/hexagram';
