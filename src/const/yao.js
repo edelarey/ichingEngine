@@ -2,6 +2,7 @@ const Color = require("color");
 
     const yao = {
         changingyang: {
+            name: 'changingyang',
             alternate: "OLDYANG",
             line: "-0-",
             binaryString: "1",
@@ -12,6 +13,7 @@ const Color = require("color");
             changing: true,
         },
         changingyin: {
+            name: 'changingyin',
             alternate: "OLDYIN",
             line: "-X-",
             binaryString: "0",
@@ -22,6 +24,7 @@ const Color = require("color");
             changing: true,
         },
         yang: {
+            name: 'yang',
             alternate: "YOUNGYANG",
             line:"---",
             binaryString:"1",
@@ -32,6 +35,7 @@ const Color = require("color");
             changing:  false
         },
         yin: {
+            name: 'yin',
             alternate: "YOUNGYIN",
             line: "- -",
             binaryString: "0",

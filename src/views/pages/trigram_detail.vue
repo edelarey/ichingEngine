@@ -9,14 +9,23 @@
                             <p class="card-text display-5">Binary: {{this.trigram.binary}} </p>                             
                             <p class="card-text display-5">Nature: {{this.nature}} : {{this.translation}}</p> 
                             <p class="card-text display-5">Animal: {{this.animal}} </p>  
-                            <p class="card-text display-5">Ealier Heaven Direction: {{this.earlierHeavenDirection}} </p>  
-                            <p class="card-text display-5">Old Family Direction: {{this.oldfamilydirection}} </p> 
-                            <p class="card-text display-5">Old Family Relationship: {{this.oldfamilyrelationship}} </p> 
-                            <p class="card-text display-5">New Family Relationship: {{this.newfamilyrelationship}} </p> 
-                            <p class="card-text display-5">BodyPart: {{this.bodyPart}} </p> 
+                            <p class="card-text display-5">Body: {{this.bodyPart}} </p> 
                             <p class="card-text display-5">Attribute: {{this.attribute}} </p> 
                             <p class="card-text display-5">State: {{this.state}} </p> 
-                                                     
+                            <p class="card-text display-5"><br/> </p>
+                            <p class="card-text display-3">{{this.earlierHeavenName}} </p>
+                            <p class="card-text display-5">Polarity: {{this.earlierHeavenPolarity.name}} </p>
+                            <p class="card-text display-5">Direction: {{this.earlierHeavenDirection}} </p>  
+                            <p class="card-text display-5">Number: {{this.earlierHeavenNumber}} </p>
+                            <p class="card-text display-5">Season: {{this.earlierHeavenSeason}} </p>
+                            <p class="card-text display-5">Relationship: {{this.earlierHeavenRelationship}} </p>
+                            <p class="card-text display-5"><br/> </p>
+                            <p class="card-text display-3">{{this.laterHeavenName}} </p>
+                            <p class="card-text display-5">Polarity: {{this.laterHeavenPolarity.name}} </p>
+                            <p class="card-text display-5">Direction: {{this.laterHeavenDirection}} </p>  
+                            <p class="card-text display-5">Number: {{this.laterHeavenNumber}} </p>
+                            <p class="card-text display-5">Season: {{this.laterHeavenSeason}} </p>
+                            <p class="card-text display-5">Relationship: {{this.laterHeavenRelationship}} </p>
                             <br />
                             <a href="/trigrams" class="card-link">Trigrams</a>
                     </div>
@@ -88,38 +97,87 @@ export default {
                       }
                       else return '';
                 },
+                earlierHeavenName() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.earlierHeaven.name;                    
+                      }
+                      else return '';
+                },                
                 earlierHeavenDirection() {    
                       if (!_.isEmpty(this.trigram))
                       {
-                         return this.trigram.description.earlierHeavenDirection;                    
+                         return this.trigram.earlierHeaven.direction;                    
+                      }
+                      else return '';
+                },
+                earlierHeavenNumber() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.earlierHeaven.number;                    
                       }
                       else return '';
                 },
                 earlierHeavenSeason() {    
                       if (!_.isEmpty(this.trigram))
                       {
-                         return this.trigram.description.earlierHeavenSeason;                    
+                         return this.trigram.earlierHeaven.season;                    
                       }
                       else return '';
                 },
-                oldfamilydirection() {    
+                earlierHeavenPolarity() {    
                       if (!_.isEmpty(this.trigram))
                       {
-                         return this.trigram.description.oldfamilydirection;                    
+                         return this.trigram.earlierHeaven.polarity;                    
+                      }
+                      else return '';
+                },               
+                earlierHeavenRelationship() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.earlierHeaven.relationship;                    
+                      }
+                      else return '';
+                },        
+                laterHeavenName() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.laterHeaven.name;                    
+                      }
+                      else return '';
+                },   
+                laterHeavenDirection() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.earlierHeaven.direction;                    
+                      }
+                      else return '';
+                },  
+                laterHeavenNumber() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.earlierHeaven.number;                    
                       }
                       else return '';
                 },
-                oldfamilyrelationship() {    
+                laterHeavenSeason() {    
                       if (!_.isEmpty(this.trigram))
                       {
-                         return this.trigram.description.oldfamilyrelationship;                    
+                         return this.trigram.earlierHeaven.season;                    
                       }
                       else return '';
                 },
-                newfamilyrelationship() {    
+                laterHeavenPolarity() {    
                       if (!_.isEmpty(this.trigram))
                       {
-                         return this.trigram.description.newfamilyrelationship;                    
+                         return this.trigram.earlierHeaven.polarity;                    
+                      }
+                      else return '';
+                },
+                laterHeavenRelationship() {    
+                      if (!_.isEmpty(this.trigram))
+                      {
+                         return this.trigram.earlierHeaven.relationship;                    
                       }
                       else return '';
                 },
