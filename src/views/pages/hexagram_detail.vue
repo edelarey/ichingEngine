@@ -4,10 +4,16 @@
                     <div class="card-body text-center">  
                             <h3 class="card-title">Hexagram Detail</h3>
                             <p class="card-text display-3">{{this.hexagram.name}}</p>
+                            <p :style="{color: this.colorClass}" class="card-text display-6"> {{this.hexagram.binary}} </p> 
                             <p :style="{color: this.colorClass}" class="card-text display-1"> {{this.hexagram.symbol}} </p>  
                             <p :style="{color: this.colorClass}" class="card-text display-1"> {{this.hexagram.hexagram}} </p> 
                             <p :style="{color: this.colorClass}" class="card-text display-5"> {{this.hexagram.translation}} </p>
-                            <p :style="{color: this.colorClass}" class="card-text display-6"> {{this.hexagram.binary}} </p> 
+                            <span v-if="this.hexagram.summary">
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="hexagram.summary"></span></p>   
+                                </div>
+                            </span>
                             <p class="card-text display-5"> <br />  </p>  
                             <h5 class="card-title">Above</h5>  
                             <p class="card-text display-3">{{this.above.name}}</p>                            
