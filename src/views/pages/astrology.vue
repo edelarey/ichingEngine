@@ -23,6 +23,25 @@
                 <div class="card-body center-content">
                     <h5 class="card-title">Enter Your Birth Date</h5>
                     <div class="col-sm-1">
+                    <p>
+                        <div>
+                            <input 
+                            v-model="state.name" 
+                            list="saved-names" 
+                            class="form-control" 
+                            placeholder="Type your name or select from the list"
+                            />
+                                <datalist id="saved-names">
+                                    <option 
+                                        v-for="birthday in birthdayList" 
+                                        :key="birthday.name" 
+                                        :value="birthday.name"
+                                    >
+                                        {{ birthday.name }}
+                                </option>
+                                </datalist>
+                        </div>
+                    </p> 
                     <p :style="{color: colorClass}" class="card-text">
                         <Datepicker
                                 placeholder="Birth Date"
@@ -41,7 +60,8 @@
                             <option value="MALE">MALE</option>
                             <option value="FEMALE">FEMALE</option>
                         </select>
-                    </p>                  
+                    </p>      
+
                     </div> 
                     <br/>
                     <div class="col-sm-3">                  
@@ -54,6 +74,16 @@
                             <div class="col">
                             <div class="card text-center">
                                     <button @click="consult()" class="btn btn-primary">Consult</button>
+                            </div>
+                            </div>
+                    </div> 
+                    <p>  &nbsp;</br> </p>
+                    <div class="row align-items-center">
+                       
+                    
+                            <div class="col">
+                            <div class="card text-center">
+                                    <button @click="saveBirthday()" class="btn btn-primary">Save Birthday</button>
                             </div>
                             </div>
                     </div> 
@@ -253,14 +283,16 @@ import coin from '@/const/coin';
 import { Icon } from '@iconify/vue';
 import _ from 'lodash';
 import { useHexagramStore } from '@/stores/storeHexagram';
+import { useBirthdayStore } from '@/stores/storeBirthday';
 import astro from '@/const/astrology';
 import { DateTime } from 'luxon';
 import Datepicker from '@vuepic/vue-datepicker';
-import { reactive, computed, ref, onMounted } from 'vue';
+import { reactive, computed, ref, onMounted, watch } from 'vue';
 import '@vuepic/vue-datepicker/dist/main.css';
 const util = require('util');
 
-const hexagramStore = useHexagramStore();
+
+
 
 export default {
     name: 'hexagrams',
@@ -268,7 +300,9 @@ export default {
        PageHeader, Icon, Datepicker
     },
     setup() {
-   
+        const hexagramStore = useHexagramStore();
+        const birthdayStore = useBirthdayStore();
+        const birthdayList = computed(() => birthdayStore.getBirthdayList);
 
             const title = ref('Astrology');
                                 
@@ -288,6 +322,7 @@ export default {
                 monthlyStemsandBranches: null,
                 dailyStemsandBranches: null,
                 birthStemsandBranches: null, 
+                name: 'John Doe',
                 gender: 'MALE',                      
                 lines: [],
                 hexagram: [],
@@ -341,14 +376,11 @@ export default {
                 default: return 'th';
             }
         }
-
-
-            const textClass = computed (() => {
+        const textClass = computed (() => {
                     return "card-text display-1";
-
                 });
 
-           const colorClass= computed (() => {                    
+        const colorClass= computed (() => {                    
                     return 'rgb(0,0,0)';                    
                 });
             
@@ -392,6 +424,22 @@ export default {
                     return "Southern";
                 } 
             };
+
+        const saveBirthday = async () => {
+            birthdayStore.addBirthday(
+                {            
+                        name: state.name,
+                        birthday: state.birthDate, 
+                        gender: state.gender,
+                        coords: { 
+                            latitude: state.latitude,
+                            longitude: state.longitude, 
+                        },
+                }
+            );
+        }
+
+
         const  consult = async() => {
 
             let astrology = null;
@@ -521,11 +569,23 @@ export default {
    
         };
 
+        watch(() => state.name, (newName) => {
+            const selectedBirthday = birthdayList.value.find(b => b.name === newName);
+            if (selectedBirthday) {              
+                state.birthDate = selectedBirthday.birthday;
+                state.gender = selectedBirthday.gender;
+                state.latitude = selectedBirthday.coords.latitude;
+                state.longitude = selectedBirthday.coords.longitude;
+                consult();
+            }
+        });
+
         onMounted( async() => {    
+            console.log('Birthdays', birthdayStore.getBirthdayList);
             consult();
         });
        
-        return { dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
+        return {birthdayList, birthdayStore,  saveBirthday, dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
 }
 }
 </script>
