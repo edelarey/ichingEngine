@@ -355,6 +355,16 @@ class SexagenarySubCycle
 
 }
 
+class HourlySymbol{
+  constructor(startHour, stopHour, symbol, polarity) {
+    this.startHour = startHour;
+    this.stopHour = stopHour;
+    this.symbol = symbol;
+    this.polarity = polarity;    
+  }
+
+}
+
 class IChingAstrology_North {
   constructor() {
     this.sexagenarySubCycle = new SexagenarySubCycle( Number(1864), Number(1924), Number(1984));
@@ -426,6 +436,21 @@ class IChingAstrology_North {
       new HourlyStemBranch(19, 21, {AF: "Ak", BG: "Ck", CH: "Ek", DI: "Gk",EJ: "Ik"}),
       new HourlyStemBranch(21, 23, {AF: "Bl",BG: "Dl", CH: "Fl",  DI: "Hl", EJ: "Jl"}),
       new HourlyStemBranch(23, 0, {AF: "Ca", BG: "Ea", CH: "Ga", DI: "Ia", EJ: "Aa"})
+    ];
+
+    this.hourlySymbols = [
+      new HourlySymbol(23, 1,  `a`, yao.yao.yang),
+      new HourlySymbol(1, 3,  `b`, yao.yao.yang),
+      new HourlySymbol(3, 5,  `c`, yao.yao.yang),
+      new HourlySymbol(5, 7,  `d`, yao.yao.yang),
+      new HourlySymbol(7, 9,  `e`, yao.yao.yang),
+      new HourlySymbol(9, 11, `f`, yao.yao.yang),
+      new HourlySymbol(11, 13, `g`, yao.yao.yin),
+      new HourlySymbol(13, 15, `h`, yao.yao.yin),
+      new HourlySymbol(15, 17, `i`, yao.yao.yin),
+      new HourlySymbol(17, 19, `j`, yao.yao.yin),
+      new HourlySymbol(19, 21, `k`, yao.yao.yin),
+      new HourlySymbol(21, 23, `l`, yao.yao.yin),
     ];
 
     
@@ -1037,6 +1062,21 @@ class IChingAstrology_South {
       new HourlyStemBranch(23, 0, {AF: "Ca", BG: "Ea", CH: "Ga", DI: "Ia", EJ: "Aa"})
     ];
 
+    this.hourlySymbols = [
+      new HourlySymbol(23, 1,  `a`, yao.yao.yang),
+      new HourlySymbol(1, 3,  `b`, yao.yao.yang),
+      new HourlySymbol(3, 5,  `c`, yao.yao.yang),
+      new HourlySymbol(5, 7,  `d`, yao.yao.yang),
+      new HourlySymbol(7, 9,  `e`, yao.yao.yang),
+      new HourlySymbol(9, 11, `f`, yao.yao.yang),
+      new HourlySymbol(11, 13, `g`, yao.yao.yin),
+      new HourlySymbol(13, 15, `h`, yao.yao.yin),
+      new HourlySymbol(15, 17, `i`, yao.yao.yin),
+      new HourlySymbol(17, 19, `j`, yao.yao.yin),
+      new HourlySymbol(19, 21, `k`, yao.yao.yin),
+      new HourlySymbol(21, 23, `l`, yao.yao.yin),
+    ];
+
     
 
     /** Heavenly Numbers for the Various Cycles and Genders */
@@ -1562,10 +1602,6 @@ class IChingAstrology_South {
 }
 
 
-
-
-
-
 class IChingConsultation {
   constructor(astrology) {
     this.astrology = astrology; // Instance of IChingAstrology
@@ -1681,6 +1717,17 @@ class IChingConsultation {
         console.log('original heavenlyNumber (' + original + ') adjusted to below 50: ', heavenlyNumber);
       }
 
+      
+      if (earthlyNumber > 60) {
+        // const temp = heavenlyNumber;
+        // heavenlyNumber = earthlyNumber;
+        // earthlyNumber = temp;
+        // console.log('Swapped Numbers as heavenlyNumber > 50');
+        let original = earthlyNumber;
+        earthlyNumber -= 60;
+        console.log('original earthlyNumber (' + original + ') adjusted to below 60: ', earthlyNumber);
+      }
+
      let heavenlyTrigram = null; let earthlyTrigram = null; let preHeavenHexagram = null;
      let birthYearIsOdd = year % 2 !== 0;
 
@@ -1709,7 +1756,14 @@ class IChingConsultation {
         }
         break;
       case 'lower':
-        heavenlyTrigram = this.astrology.heavenlyNumbersLowerCycleFemale.find(trigram => trigram.number === heavenlyNumber);
+        if (gender == Gender.MALE) {
+          heavenlyTrigram = this.astrology.heavenlyNumbersLowerCycleMale.find(trigram => trigram.number === heavenlyNumber);     
+        } 
+        else {
+          heavenlyTrigram = this.astrology.heavenlyNumbersLowerCycleFemale.find(trigram => trigram.number === heavenlyNumber);         
+        }
+        
+        
         break;   
      }
 
