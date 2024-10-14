@@ -33,8 +33,8 @@ export const useBirthdayStore = defineStore('birthday', {
         getBirthdayList() {
             return this.list;
         },
-        getBirthday(state) {
-            return (name) => state.list.find(birthday => _.toLower(birthday.name) === _.toLower(name));
+        getBirthday() {
+            return (name) => this.list.find(birthday => _.toLower(birthday.name) === _.toLower(name)) || {};
         },
     },
     actions: {

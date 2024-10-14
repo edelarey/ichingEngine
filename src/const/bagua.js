@@ -56,7 +56,7 @@ const compassDirection = {
 
 const bagua = {
     kūn: {
-        name: "kūn",
+        name: `kūn`,
         symbol:  "坤",
         trigram: '☷',
         order: 0,
@@ -94,7 +94,7 @@ const bagua = {
         },
     },
     gèn: {
-        name: "gèn",
+        name: `gèn`,
         symbol: "艮",
         trigram: '☶',
         order:1,
@@ -132,7 +132,7 @@ const bagua = {
         },     
     },
     kǎn: {
-        name: "kǎn",
+        name: `kǎn`,
         symbol: "坎",
         trigram: '☵',
         order:2,
@@ -170,7 +170,7 @@ const bagua = {
         },       
     }, 
     xùn: {
-        name: "xùn",
+        name: `xùn`,
         symbol: "巽",
         trigram: '☴',
         order: 3, 
@@ -208,7 +208,7 @@ const bagua = {
         },
     },
     zhèn: {
-        name: "zhèn",
+        name: `zhèn`,
         symbol: "震",
         trigram: '☳',
         order: 4, 
@@ -246,7 +246,7 @@ const bagua = {
         },
     },
     lí:{
-        name: "lí",
+        name: `lí`,
         symbol: "離",
         trigram: '☲',
         order: 5,
@@ -284,7 +284,7 @@ const bagua = {
         },        
     },
     duì: {
-        name: "duì",        
+        name: `duì`,        
         symbol: '兌', 
         trigram: '☱',
         order: 6,  

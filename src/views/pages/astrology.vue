@@ -197,7 +197,7 @@
                     <h5 class="card-title">Celestital Stem - {{formatBirthDay}}</h5>
                     <p class="card-text display-1">{{state.dailyStemsandBranches.celestialStem.name}} {{state.dailyStemsandBranches.celestialStem.symbol}} </p>                      
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.celestialStem.element.name}} {{state.dailyStemsandBranches.celestialStem.element.bodyPart}} </p>                         
-                    <p :style="{color: colorClass}" class="card-text display-6">{{state.dailyStemsandBranches.celestialStem.trigram.name}} {{state.dailyStemsandBranches.celestialStem.trigram.symbol}} {{state.dailyStemsandBranches.celestialStem.trigram.trigram}} {{state.dailyStemsandBranches.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
+                    <p :style="{color: colorClass}" class="card-text display-6">{{state.dailyStemsandBranches.celestialStem.trigram.symbol}} {{state.dailyStemsandBranches.celestialStem.trigram.trigram}} {{state.dailyStemsandBranches.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
                     <br /> &nbsp;
                     <br /> &nbsp;
                     <br /> &nbsp;   

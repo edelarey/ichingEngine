@@ -368,8 +368,8 @@ class IChingAstrology_North {
       new CelestialStem('I', '乙',   2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
       new CelestialStem('Ping', '丙', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
       new CelestialStem('Ting', '丁', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
-      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth, 'E'),
-      new CelestialStem('Chi', '己', 9, bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
+      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.lí,   ealierHeavenElements.Earth, 'E'),
+      new CelestialStem('Chi', '己', 9, bagua.bagua.lí,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
       new CelestialStem('Keng', '庚', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
       new CelestialStem('Hsin', '辛', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
       new CelestialStem('Jen',  '壬', 6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
@@ -978,8 +978,8 @@ class IChingAstrology_South {
       new CelestialStem('I', '乙',   2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
       new CelestialStem('Ping', '丙', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
       new CelestialStem('Ting', '丁', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
-      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth, 'E'),
-      new CelestialStem('Chi', '己', 9, bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
+      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.lí,   ealierHeavenElements.Earth, 'E'),
+      new CelestialStem('Chi', '己', 9, bagua.bagua.lí,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
       new CelestialStem('Keng', '庚', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
       new CelestialStem('Hsin', '辛', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
       new CelestialStem('Jen',  '壬', 6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
@@ -1478,8 +1478,7 @@ class IChingAstrology_South {
 
     getSexagenaryCycleByNumber (number)
       {
-       
-        return this.sexagenaryCycle.find(cycle => cycle.number === number);
+        return this.sexagenaryCycle.find(cycle => Number(cycle.number) === Number(number));
       }
 
      getMonthlyStemBranch(year, month) {
@@ -1629,8 +1628,11 @@ class IChingConsultation {
      let   dailySum = this.astrology.getSexagenaryDay(dateStr);
 
     console.log('dailySum', dailySum);
-      // Step 11: Find daily symbols using the sum
-   const dailyStemBranch = this.astrology.getSexagenaryCycleByNumber(dailySum % 60);
+      // Step 11: Find daily symbols using the sum (dailySum % 60);
+      if (dailySum != 60) {
+        dailySum = dailySum % 60;
+      };
+   const dailyStemBranch = this.astrology.getSexagenaryCycleByNumber(dailySum);
    console.log('dailyStemBranch', dailyStemBranch);
     // Step 12: Convert daily symbols to numbers
    const dailySymbols = dailyStemBranch.celestialStem.alphabeticOrder + dailyStemBranch.horaryBranch.alphabeticOrder;
@@ -1670,10 +1672,13 @@ class IChingConsultation {
       // if heavenly number > 50, swap the numbers around. To Do: Figure out why this happens???!!
       // only seems to happen between 17:00 and 19:00 in 1970 January 17th
       if (heavenlyNumber > 50) {
-        const temp = heavenlyNumber;
-        heavenlyNumber = earthlyNumber;
-        earthlyNumber = temp;
-        console.log('Swapped Numbers as heavenlyNumber > 50');
+        // const temp = heavenlyNumber;
+        // heavenlyNumber = earthlyNumber;
+        // earthlyNumber = temp;
+        // console.log('Swapped Numbers as heavenlyNumber > 50');
+        let original = heavenlyNumber;
+        heavenlyNumber -= 50;
+        console.log('original heavenlyNumber (' + original + ') adjusted to below 50: ', heavenlyNumber);
       }
 
      let heavenlyTrigram = null; let earthlyTrigram = null; let preHeavenHexagram = null;
@@ -1758,10 +1763,9 @@ class IChingConsultation {
         earthlyTrigram,
         preHeavenHexagram,
         stemBranchNumbers: allNumbers,
-      }      
-      
-      
+      }   
      };
+
   }
 
   // Helper function to calculate the daily sum using hoMap numbers from celestialStem and horaryBranch objects
