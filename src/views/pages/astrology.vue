@@ -109,9 +109,8 @@
                     <p class="card-text display-1">{{state.sexagenaryCycle.celestialStem.name}} {{state.sexagenaryCycle.celestialStem.symbol}} </p>                      
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.celestialStem.element.name}} {{state.sexagenaryCycle.celestialStem.element.bodyPart}} </p>                         
                     <p :style="{color: colorClass}" class="card-text display-6">{{state.sexagenaryCycle.celestialStem.trigram.name}} {{state.sexagenaryCycle.celestialStem.trigram.symbol}} {{state.sexagenaryCycle.celestialStem.trigram.trigram}}  {{state.sexagenaryCycle.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
-                    <br /> &nbsp;
-                    <br /> &nbsp;
-                    <br /> &nbsp;                   
+                    <p :style="{color: colorClass}" class="card-text display-6"><br />  </p>           
+                            
                 </div>
             </div>
         </div>
@@ -130,8 +129,6 @@
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.name}} {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>                                                 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].name}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].trigram}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</a></p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].name}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].trigram}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Detail</a></p>  
-                            <br />
-                    &nbsp;
                 </div>
             </div>
         </div>
@@ -154,9 +151,9 @@
                     <p class="card-text display-1">{{state.birthStemsandBranches.celestialStem.name}} {{state.birthStemsandBranches.celestialStem.symbol}} </p>                      
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.celestialStem.element.name}} {{state.birthStemsandBranches.celestialStem.element.bodyPart}} </p>                         
                     <p :style="{color: colorClass}" class="card-text display-6">{{state.birthStemsandBranches.celestialStem.trigram.name}} {{state.birthStemsandBranches.celestialStem.trigram.symbol}} {{state.birthStemsandBranches.celestialStem.trigram.trigram}}  {{state.birthStemsandBranches.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
-                    <br /> &nbsp;
-                    <br /> &nbsp;
-                    <br /> &nbsp;   
+                    <p :style="{color: colorClass}" class="card-text display-6"><br />  </p>    
+                       
+                
                 </div>
             </div>
         </div>
@@ -175,7 +172,7 @@
                     <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.name}} {{state.birthStemsandBranches.horaryBranch.element.bodyPart}} </p>                                                 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].name}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].trigram}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</a></p>  
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].name}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].trigram}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Detail</a></p>  
-                            <br />
+                            <p :style="{color: colorClass}" class="card-text display-6"><br /> </p>               
                 </div>
             </div>
         </div>
