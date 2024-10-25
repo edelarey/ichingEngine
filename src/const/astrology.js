@@ -1220,9 +1220,27 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
    
     if (symbol.includes(birthSymbol)) {    
       switch (index) {
-        case 0: controllingLine = preHeavenHexagram.above.lines.lowerLine; break;
-         case 1: controllingLine = preHeavenHexagram.above.lines.middleLine; break;
-         case 2: controllingLine = preHeavenHexagram.above.lines.upperLine; break;
+        case 0: controllingLine = 
+                { trigram: 'Above',
+                  lineNumber: index,
+                  linePosition: 'Lower',
+                  line: preHeavenHexagram.above.lines.lowerLine
+                }                                                        
+        break;
+         case 1:  controllingLine = 
+         { trigram: 'Above',
+           lineNumber: index,
+           linePosition: 'Middle',
+           line: preHeavenHexagram.above.lines.middleLine
+         };
+           break;
+         case 2: controllingLine = 
+         { trigram: 'Above',
+           lineNumber: index,
+           linePosition: 'Upper',
+           line: preHeavenHexagram.above.lines.upperLine
+         };
+           break;
        }
     }
   });
@@ -1231,19 +1249,34 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
   if (!controllingLine) {
     preHeavenHexagram.below.designation.forEach((symbol, index) => {
     
-      if  (symbol.includes(birthSymbol)) {    
-        switch (index) {
-         case 0: controllingLine = preHeavenHexagram.below.lines.lowerLine; break;
-          case 1: controllingLine = preHeavenHexagram.below.lines.middleLine; break;
-          case 2: controllingLine = preHeavenHexagram.below.lines.upperLine; break;
-        }
-      }
+      switch (index) {
+        case 0: controllingLine = 
+        { trigram: 'Below',
+          lineNumber: index,
+          linePosition: 'Lower',
+          line: preHeavenHexagram.below.lines.lowerLine
+        }                                                        
+            break;
+            case 1:  controllingLine = 
+            { trigram: 'Below',
+              lineNumber: index,
+              linePosition: 'Middle',
+              line: preHeavenHexagram.below.lines.middleLine
+            };
+              break;
+            case 2: controllingLine = 
+            { trigram: 'Below',
+              lineNumber: index,
+              linePosition: 'Upper',
+              line: preHeavenHexagram.below.lines.upperLine
+            };
+              break;
+          }
     });
   }
 
   return controllingLine;
 }
-
 
 mapDesignationsToTrigramLines(preHeavenHexagram)   
 {
@@ -2116,9 +2149,27 @@ class IChingAstrology_South {
      
       if (symbol.includes(birthSymbol)) {    
         switch (index) {
-          case 0: controllingLine = preHeavenHexagram.above.lines.lowerLine; break;
-           case 1: controllingLine = preHeavenHexagram.above.lines.middleLine; break;
-           case 2: controllingLine = preHeavenHexagram.above.lines.upperLine; break;
+          case 0: controllingLine = 
+                  { trigram: 'Above',
+                    lineNumber: index,
+                    linePosition: 'Lower',
+                    line: preHeavenHexagram.above.lines.lowerLine
+                  }                                                        
+          break;
+           case 1:  controllingLine = 
+           { trigram: 'Above',
+             lineNumber: index,
+             linePosition: 'Middle',
+             line: preHeavenHexagram.above.lines.middleLine
+           };
+             break;
+           case 2: controllingLine = 
+           { trigram: 'Above',
+             lineNumber: index,
+             linePosition: 'Upper',
+             line: preHeavenHexagram.above.lines.upperLine
+           };
+             break;
          }
       }
     });
@@ -2127,13 +2178,29 @@ class IChingAstrology_South {
     if (!controllingLine) {
       preHeavenHexagram.below.designation.forEach((symbol, index) => {
       
-        if  (symbol.includes(birthSymbol)) {    
-          switch (index) {
-           case 0: controllingLine = preHeavenHexagram.below.lines.lowerLine; break;
-            case 1: controllingLine = preHeavenHexagram.below.lines.middleLine; break;
-            case 2: controllingLine = preHeavenHexagram.below.lines.upperLine; break;
-          }
-        }
+        switch (index) {
+          case 0: controllingLine = 
+          { trigram: 'Below',
+            lineNumber: index,
+            linePosition: 'Lower',
+            line: preHeavenHexagram.below.lines.lowerLine
+          }                                                        
+              break;
+              case 1:  controllingLine = 
+              { trigram: 'Below',
+                lineNumber: index,
+                linePosition: 'Middle',
+                line: preHeavenHexagram.below.lines.middleLine
+              };
+                break;
+              case 2: controllingLine = 
+              { trigram: 'Below',
+                lineNumber: index,
+                linePosition: 'Upper',
+                line: preHeavenHexagram.below.lines.upperLine
+              };
+                break;
+            }
       });
     }
   
@@ -2328,7 +2395,7 @@ class IChingConsultation {
         
         // determine the line designations and then we can work out the controlling line
         let ans = this.astrology.developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) ;
-        let lineDesignations = this.astrology.getDesignations(preHeavenHexagram);
+        let lineTimeDesignations = this.astrology.getDesignations(preHeavenHexagram);
         this.astrology.mapDesignationsToTrigramLines(preHeavenHexagram);
         let controllingLine = this.astrology.getControllingLine(preHeavenHexagram, timeOfBirthSymbol.symbol);
         
@@ -2366,7 +2433,8 @@ class IChingConsultation {
       iching :{
         heavenlyNumber,
         timeOfBirthSymbol,
-        lineDesignations,
+        lineTimeDesignations,
+        controllingLine,
         earthlyNumber,
         heavenlyTrigram,
         earthlyTrigram,

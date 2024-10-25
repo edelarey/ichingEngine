@@ -228,9 +228,13 @@
                     <h5 class="card-title">Pre-Heaven Hexagram</h5>
                     <p class="card-text display-3">{{state.preHeavenHexagram.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.symbol}} </p>  
-                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.hexagram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.hexagram}} </p>                             
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenHexagram.translation.split(',')[0]}} </p> 
                             <span v-if="state.preHeavenHexagram">
+                                <div class="card-body"  v-if="state.controllingLine">
+                                        <h3 class="card-title">Controlling Line</h3>
+                                        <p class="card-text display-10">{{state.controllingLine.trigram}} Trigram  {{state.controllingLine.linePosition}} Line  ({{state.controllingLine.line.name}})</p>
+                                </div>
                                 <div class="card-body">
                                         <h3 class="card-title">Summary</h3>
                                         <p class="card-text display-10"><span v-html="state.preHeavenHexagram.summary"></span></p>   
@@ -275,7 +279,28 @@
             </div>
         </div>
     </div> 
- 
+    <div class="row">
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.timeOfBirthHexagram">
+                    <h5 class="card-title">Time Of Birth Hexagram</h5>
+                    <p class="card-text display-3">{{state.timeOfBirthHexagram.hexagram.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.timeOfBirthHexagram.hexagram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.timeOfBirthHexagram.hexagram.hexagram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.timeOfBirthHexagram.hexagram.translation.split(',')[0]}} </p> 
+                            <span v-if="state.preHeavenHexagram">
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="state.preHeavenHexagram.summary"></span></p>   
+                                </div>
+                            </span>
+                          
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.preHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 
@@ -335,6 +360,7 @@ export default {
                 preHeavenHexagram:'',
                 heavenlyTrigram:'',
                 earthlyTrigram:'',
+                timeOfBirthHexagram:'',
                 latitude:  -26.39655582357474, 
                 longitude: 27.37679999686307,
                 birthDate:  DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(), 
@@ -403,7 +429,7 @@ export default {
                 const lastBracket = item.english.indexOf(')');            
                 const strippedWord = item.english.substring(firstBracket+1, lastBracket);
                 const thehexagram = hexagram.sequence_binary().filter((item) => _.includes(item.translation,strippedWord));
-                console.log('Stripped Word', strippedWord);
+       
                 if (thehexagram.length > 0)
                 {
                     //state.hexagram = thehexagram[0];
@@ -512,6 +538,8 @@ export default {
                 state.preHeavenHexagram = result.iching.preHeavenHexagram;
                 state.heavenlyTrigram = result.iching.heavenlyTrigram;
                 state.earthlyTrigram = result.iching.earthlyTrigram;
+                state.timeOfBirthHexagram = result.iching.timeOfBirthSymbol;
+                state.controllingLine = result.iching.controllingLine;
 
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
