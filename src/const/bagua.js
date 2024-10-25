@@ -66,6 +66,7 @@ const bagua = {
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yin,
         },
+        lineArray: [yao.yao.yin, yao.yao.yin, yao.yao.yin],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.North,            
@@ -104,6 +105,7 @@ const bagua = {
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yang,
         },   
+        lineArray: [yao.yao.yang, yao.yao.yin, yao.yao.yang],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.NorthWest,            
@@ -142,6 +144,7 @@ const bagua = {
             middleLine: yao.yao.yang,
             lowerLine: yao.yao.yin,
         },
+        lineArray: [yao.yao.yin, yao.yao.yang, yao.yao.yin],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.West,            
@@ -180,6 +183,7 @@ const bagua = {
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yin,
         },  
+        lineArray: [yao.yao.yin, yao.yao.yin, yao.yao.yang],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.SouthWest,            
@@ -218,6 +222,7 @@ const bagua = {
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yang,
         },
+        lineArray: [yao.yao.yang, yao.yao.yin, yao.yao.yin], 
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.NorthEast,            
@@ -256,6 +261,7 @@ const bagua = {
             middleLine: yao.yao.yin,
             lowerLine: yao.yao.yang,
         },
+        lineArray: [yao.yao.yang, yao.yao.yin, yao.yao.yang],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.East,            
@@ -294,6 +300,7 @@ const bagua = {
             middleLine: yao.yao.yang,
             lowerLine: yao.yao.yang,
         },
+        lineArray: [yao.yao.yang, yao.yao.yang, yao.yao.yin],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.SouthEast,            
@@ -332,6 +339,7 @@ const bagua = {
             middleLine: yao.yao.yang,
             lowerLine: yao.yao.yang,
         },
+        lineArray: [yao.yao.yang, yao.yao.yang, yao.yao.yang],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.South,            
