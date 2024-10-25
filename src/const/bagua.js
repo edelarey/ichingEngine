@@ -103,9 +103,9 @@ const bagua = {
         lines:{
             upperLine: yao.yao.yang,        
             middleLine: yao.yao.yin,
-            lowerLine: yao.yao.yang,
+            lowerLine: yao.yao.yin,
         },   
-        lineArray: [yao.yao.yang, yao.yao.yin, yao.yao.yang],
+        lineArray: [yao.yao.yin, yao.yao.yin, yao.yao.yang],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.NorthWest,            
@@ -180,10 +180,10 @@ const bagua = {
         binary: "110", 
         lines:{
             upperLine: yao.yao.yang,
-            middleLine: yao.yao.yin,
+            middleLine: yao.yao.yang,
             lowerLine: yao.yao.yin,
         },  
-        lineArray: [yao.yao.yin, yao.yao.yin, yao.yao.yang],
+        lineArray: [yao.yao.yin, yao.yao.yang, yao.yao.yang],
         earlierHeaven: {
             name: 'Earlier Heaven, Old Family',
             direction: compassDirection.SouthWest,            

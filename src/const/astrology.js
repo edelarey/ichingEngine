@@ -5,6 +5,7 @@ import { name } from 'vue-slide-bar';
 import bagua from '../const/bagua';
 import hexagram from './hexagram';
 import yao from './yao';
+import _ from 'lodash';
 const Color = require("color");
 
 /** Structure to represent gender */
@@ -986,9 +987,275 @@ class IChingAstrology_North {
 }
 
 getHourlySymbolByChar(character)
-  {
-    return this.hourlySymbols.find(item => item.symbol === character);
+{
+  return this.hourlySymbols.find(item => item.symbol === character);
+}
+
+// Helper function to check solstice based on hemisphere
+isBetweenSolstices(hemisphere) {
+  const now = DateTime.now();
+  
+  let winterSolstice, summerSolstice;
+
+  if (hemisphere === 'Northern') {
+    // Northern Hemisphere: Winter Solstice is around December 21, Summer Solstice around June 21
+    winterSolstice = DateTime.fromObject({ year: now.year, month: 12, day: 21 });
+    summerSolstice = winterSolstice.plus({ months: 6 });
+  } else if (hemisphere === 'Southern') {
+    // Southern Hemisphere: Winter Solstice is around June 21, Summer Solstice around December 21
+    winterSolstice = DateTime.fromObject({ year: now.year, month: 6, day: 21 });
+    summerSolstice = winterSolstice.plus({ months: 6 });
+  } else {
+    throw new Error('Invalid hemisphere. Choose either "Northern" or "Southern".');
   }
+
+  return now >= winterSolstice && now < summerSolstice;
+}
+
+assignLines(preHeavenHexagram, lineDesignations) {
+  const { yang, yin } = _.cloneDeep(lineDesignations);
+  
+  preHeavenHexagram.above.designation = [];
+  preHeavenHexagram.below.designation = [];
+
+  // work bottom up
+  preHeavenHexagram.below.lineArray.forEach(line => {
+    if (line.name === 'yang') {
+      let element = yang.shift(); // Remove the first element for yang
+      preHeavenHexagram.below.designation.push(element); // Add to the below designation
+    } else {
+      let element = yin.shift(); // Remove the first element for yin
+      preHeavenHexagram.below.designation.push(element); // Add to the below designation
+    }
+  });
+
+  preHeavenHexagram.above.lineArray.forEach(line => {
+    if (line.name === 'yang') {
+      let element = yang.shift(); // Remove the first element for yang
+      preHeavenHexagram.above.designation.push(element); // Add to the above designation
+    } else {
+      let element = yin.shift(); // Remove the first element for yin
+      preHeavenHexagram.above.designation.push(element); // Add to the above designation
+    }
+  });
+  return preHeavenHexagram;
+}
+
+
+
+
+
+developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) {
+  // Step 1: Count the number of Yin and Yang lines in the pre-heaven hexagram
+  let yinCount = 0;
+  let yangCount = 0;
+  preHeavenHexagram.above.lineArray.forEach(line => {      
+    if (line.name === 'yin') { yinCount++; }
+    else { yangCount++; }
+  });
+
+  preHeavenHexagram.below.lineArray.forEach(line => {
+    if (line.name === 'yin') { yinCount++; }
+    else { yangCount++; }
+  });
+
+  // Step 2: Determine the polarity of the birth time symbol (Yang is true, Yin is false)
+  const polarity = (timeOfBirthSymbol.polarity.name === 'yang');  
+  // Step 3: Determine the correct designations for the lines based on the case
+  let lineDesignations = [];
+  switch (yangCount) {
+    case 0:
+      if (gender.MALE) {
+                if (this.isBetweenSolstices()) {
+                  // Born after Winter Solstice and before Summer Solstice
+                  lineDesignations = {
+                                        yang: [],
+                                        yin: ["ad", "be", "cf", "gj", "hk", "il"]
+
+                                      } ;
+                } else {
+                  // Born after Summer Solstice and before Winter Solstice
+                  lineDesignations = {
+                                      yang: [],
+                                      yin:  ["il", "hk", "gj", "cf", "be", "ad"],
+                                    }
+                }
+              } 
+    else {
+                // Female - default pattern
+                lineDesignations = {
+                                        yang: [],
+                                        yin:  ["ad", "be", "cf", "gj", "hk", "il"],
+                                  }; 
+              }              
+      break;
+
+    case 1:
+            if (polarity) {
+              // Yang hour: a, b for Yang; c, d, e, f for Yin
+              lineDesignations = 
+              {
+                yang: ["ab"],
+                yin: ["c", "d", "e", "f", ""],
+
+              } ;
+            } else {
+              // Yin hour: g, h, i, j, k for Yin; l for Yang
+              lineDesignations = 
+              { yang: ["l"],
+                yin:  ["g", "h", "i", "j", "k"],
+              };
+            }
+            break;
+
+    case 2:
+            if (polarity) {
+              // Yang hour: a, c for lower Yang; b, d for upper Yang; e, f for Yin
+                    lineDesignations = 
+                    { yang: ["ac", "bd"],
+                      yin:  ["e", "f", "", ""],
+                    };          
+            } else {
+              // Yin hour: g, h, j, i for Yin; k, l for Yang               
+              lineDesignations = 
+                    { yang: ["k", "l"],
+                      yin:  ["g", "h", "i", "j"],
+                    };         
+            }
+            break;
+
+    case 3:
+      if (polarity) {
+        // Yang hour: a, d for lower; b, e for middle; c, f for upper
+        lineDesignations = 
+                    { yang: ["ad", "be", "cf"],
+                      yin:  ["", "", ""],
+                    };            
+      } else {
+        // Yin hour: g, j for lower; h, k for middle; i, l for upper
+        lineDesignations = 
+                  { yang: ["", "", ""],
+                    yin:  ["gj", "hk", "il"],
+                  };                      
+      }
+      break;
+
+    case 4:
+      if (polarity) {
+        // Yang hour: natural sequence, a to d for Yang; e, f for Yin
+              lineDesignations = 
+                  { yang: ["a", "b", "c", "d"],
+                    yin:  ["e", "f"],
+                  };  
+      
+      } else {
+        // Yin hour: double-letter Yin lines g, i, h, j; k, l for Yang
+        lineDesignations = 
+                  { yang: ["k", "l", "", ""],
+                    yin:  ["gi", "hj"],
+                  };            
+      }
+      break;
+
+    case 5:
+      if (polarity) {
+        // Yang hour: a to e for Yang; f for Yin
+        lineDesignations = 
+                { yang: ["a", "b", "c", "d", "e"],
+                  yin:  ["f"],
+                };         
+      } else {
+        // Yin hour: double-letter Yin g, h; Yang i to l
+        lineDesignations = 
+                { yang: ["i", "j", "k", "l", ""],
+                  yin:  ["gh"],
+                };                   
+      }
+      break;
+
+    case 6:
+      if (gender.MALE) {
+        // Male: a, d; b, e; c, f; g, j; h, k; i, l
+        lineDesignations = 
+                { yang: ["ad", "be", "cf", "gj", "hk", "il"],
+                  yin:  [],
+                };        
+        
+      } else {
+        if (this.isBetweenSolstices()) {
+          // Born after Winter Solstice and before Summer Solstice
+          lineDesignations = 
+                { yang: ["il", "hk", "gj", "cf", "be", "ad"],
+                  yin:  [],
+                };        
+        
+        } else {
+          // Born after Summer Solstice and before Winter Solstice
+          lineDesignations = 
+          { yang: ["ad", "be", "cf", "gj", "hk", "il"],
+            yin:  [],
+          };                    
+        }
+      }
+      break;
+
+    default:
+      throw new Error('Invalid yang count encountered.');
+  }
+
+  // Step 4: Use the assignLines function to apply the determined line designations
+  return this.assignLines(preHeavenHexagram, lineDesignations);
+}
+
+getDesignations(preHeavenHexagram) {
+  const designations = [...preHeavenHexagram.below.designation, ...preHeavenHexagram.above.designation];
+  return designations;
+}
+
+getControllingLine(preHeavenHexagram, birthSymbol) {
+  let controllingLine = null;
+
+    // Check above trigram lines
+  preHeavenHexagram.above.designation.forEach((symbol, index) => {
+   
+    if (symbol.includes(birthSymbol)) {    
+      switch (index) {
+        case 0: controllingLine = preHeavenHexagram.above.lines.lowerLine; break;
+         case 1: controllingLine = preHeavenHexagram.above.lines.middleLine; break;
+         case 2: controllingLine = preHeavenHexagram.above.lines.upperLine; break;
+       }
+    }
+  });
+
+  // If no match is found in above, check below trigram
+  if (!controllingLine) {
+    preHeavenHexagram.below.designation.forEach((symbol, index) => {
+    
+      if  (symbol.includes(birthSymbol)) {    
+        switch (index) {
+         case 0: controllingLine = preHeavenHexagram.below.lines.lowerLine; break;
+          case 1: controllingLine = preHeavenHexagram.below.lines.middleLine; break;
+          case 2: controllingLine = preHeavenHexagram.below.lines.upperLine; break;
+        }
+      }
+    });
+  }
+
+  return controllingLine;
+}
+
+
+mapDesignationsToTrigramLines(preHeavenHexagram)   
+{
+  preHeavenHexagram.below.lines.lowerLine.timeSymbol = preHeavenHexagram.below.designation[0]; 
+  preHeavenHexagram.below.lines.middleLine.timeSymbol = preHeavenHexagram.below.designation[1]; 
+  preHeavenHexagram.below.lines.upperLine.timeSymbol = preHeavenHexagram.below.designation[2];
+  preHeavenHexagram.above.lines.lowerLine.timeSymbol = preHeavenHexagram.above.designation[3];
+  preHeavenHexagram.above.lines.middleLine.timeSymbol = preHeavenHexagram.above.designation[4];
+  preHeavenHexagram.above.lines.upperLine.timeSymbol = preHeavenHexagram.above.designation[5];
+
+}
+
 
 
 
@@ -1628,253 +1895,189 @@ class IChingAstrology_South {
     return now >= winterSolstice && now < summerSolstice;
   }
 
-  assignLines(preHeavenHexagram, designations) {
-    // Initialize arrays for Yin and Yang line positions
-    const yinLines = [];
-    const yangLines = [];
-  
-    // Step 1: Separate Yin and Yang lines in the preHeavenHexagram
-    preHeavenHexagram.above.lineArray.forEach((line, index) => {
-      if (line.name === 'yin') {
-        yinLines.push({ index, line });
+  assignLines(preHeavenHexagram, lineDesignations) {
+    const { yang, yin } = _.cloneDeep(lineDesignations);
+    
+    preHeavenHexagram.above.designation = [];
+    preHeavenHexagram.below.designation = [];
+
+    // work bottom up
+    preHeavenHexagram.below.lineArray.forEach(line => {
+      if (line.name === 'yang') {
+        let element = yang.shift(); // Remove the first element for yang
+        preHeavenHexagram.below.designation.push(element); // Add to the below designation
       } else {
-        yangLines.push({ index, line });
-      }
-    });
-    preHeavenHexagram.below.lineArray.forEach((line, index) => {
-      if (line.name === 'yin') {
-        yinLines.push({ index: index + 3, line }); // Adjust index for below lines
-      } else {
-        yangLines.push({ index: index + 3, line });
+        let element = yin.shift(); // Remove the first element for yin
+        preHeavenHexagram.below.designation.push(element); // Add to the below designation
       }
     });
   
-    // Step 2: Apply rules to assign designations
-    const assignDesignation = (lineObj, designation) => {
-      lineObj.line.designation = designation;
-    };
-  
-    const yangCount = yangLines.length;
-    switch (yangCount) {
-      case 0:
-        // Case 0: All lines are Yin, assign based on predefined sequences
-        for (let i = 0; i < yinLines.length; i++) {
-          assignDesignation(yinLines[i], designations[i]);
-        }
-        break;
-  
-      case 1:
-        // Case 1: One Yang, the rest Yin
-        if (designations[0].includes('ab')) {
-          assignDesignation(yangLines[0], designations[0]); // Yang line always "a" and "b"
-          for (let i = 1; i < yinLines.length; i++) {
-            assignDesignation(yinLines[i - 1], designations[i]); // Assign Yin lines sequentially
-          }
-        } else {
-          // Default assignment if pattern differs
-          for (let i = 0; i < designations.length; i++) {
-            if (i < yangLines.length) {
-              assignDesignation(yangLines[i], designations[i]);
-            } else {
-              assignDesignation(yinLines[i - yangLines.length], designations[i]);
-            }
-          }
-        }
-        break;
-  
-      case 2:
-        // Case 2: Two Yang lines
-        if (designations[0].includes('ac')) {
-          assignDesignation(yangLines[0], designations[0]); // Lower Yang line "a" and "c"
-          assignDesignation(yangLines[1], designations[1]); // Upper Yang line "b" and "d"
-          for (let i = 2; i < yinLines.length; i++) {
-            assignDesignation(yinLines[i - 2], designations[i]); // Assign Yin lines
-          }
-        } else {
-          // Default assignment
-          for (let i = 0; i < designations.length; i++) {
-            if (i < yangLines.length) {
-              assignDesignation(yangLines[i], designations[i]);
-            } else {
-              assignDesignation(yinLines[i - yangLines.length], designations[i]);
-            }
-          }
-        }
-        break;
-  
-      case 3:
-        // Case 3: Three Yang lines
-        if (designations[0].includes('ad')) {
-          assignDesignation(yangLines[0], designations[0]); // Lowest Yang "a" and "d"
-          assignDesignation(yangLines[1], designations[1]); // Middle Yang "b" and "e"
-          assignDesignation(yangLines[2], designations[2]); // Upper Yang "c" and "f"
-          for (let i = 3; i < yinLines.length; i++) {
-            assignDesignation(yinLines[i - 3], designations[i]);
-          }
-        } else {
-          // Default assignment
-          for (let i = 0; i < designations.length; i++) {
-            if (i < yangLines.length) {
-              assignDesignation(yangLines[i], designations[i]);
-            } else {
-              assignDesignation(yinLines[i - yangLines.length], designations[i]);
-            }
-          }
-        }
-        break;
-  
-      case 4:
-        // Case 4: Four Yang lines
-        if (designations[0].includes('a')) {
-          // Assign from bottom to top Yang lines a-d, Yin lines e and f
-          for (let i = 0; i < 4; i++) {
-            assignDesignation(yangLines[i], designations[i]);
-          }
-          assignDesignation(yinLines[0], designations[4]);
-          assignDesignation(yinLines[1], designations[5]);
-        } else {
-          // Default assignment
-          for (let i = 0; i < designations.length; i++) {
-            if (i < yangLines.length) {
-              assignDesignation(yangLines[i], designations[i]);
-            } else {
-              assignDesignation(yinLines[i - yangLines.length], designations[i]);
-            }
-          }
-        }
-        break;
-  
-      case 5:
-        // Case 5: Five Yang lines
-        if (designations[0].includes('a')) {
-          // Assign from bottom up Yang lines a-e, Yin line f
-          for (let i = 0; i < 5; i++) {
-            assignDesignation(yangLines[i], designations[i]);
-          }
-          assignDesignation(yinLines[0], designations[5]);
-        } else {
-          // Default assignment
-          for (let i = 0; i < designations.length; i++) {
-            if (i < yangLines.length) {
-              assignDesignation(yangLines[i], designations[i]);
-            } else {
-              assignDesignation(yinLines[i - yangLines.length], designations[i]);
-            }
-          }
-        }
-        break;
-  
-      case 6:
-        // Case 6: All lines are Yang, assign based on predefined sequences
-        for (let i = 0; i < yangLines.length; i++) {
-          assignDesignation(yangLines[i], designations[i]);
-        }
-        break;
-  
-      default:
-        throw new Error('Invalid yang count encountered.');
-    }
-  
-    // Return modified preHeavenHexagram with line designations
+    preHeavenHexagram.above.lineArray.forEach(line => {
+      if (line.name === 'yang') {
+        let element = yang.shift(); // Remove the first element for yang
+        preHeavenHexagram.above.designation.push(element); // Add to the above designation
+      } else {
+        let element = yin.shift(); // Remove the first element for yin
+        preHeavenHexagram.above.designation.push(element); // Add to the above designation
+      }
+    });
     return preHeavenHexagram;
   }
+  
+  
+  
   
 
   developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) {
     // Step 1: Count the number of Yin and Yang lines in the pre-heaven hexagram
     let yinCount = 0;
     let yangCount = 0;
-    preHeavenHexagram.above.lineArray.forEach(line => {  
+    preHeavenHexagram.above.lineArray.forEach(line => {      
       if (line.name === 'yin') { yinCount++; }
       else { yangCount++; }
     });
+
     preHeavenHexagram.below.lineArray.forEach(line => {
       if (line.name === 'yin') { yinCount++; }
       else { yangCount++; }
     });
   
     // Step 2: Determine the polarity of the birth time symbol (Yang is true, Yin is false)
-    const polarity = (timeOfBirthSymbol.polarity.name === 'yang');
-  
+    const polarity = (timeOfBirthSymbol.polarity.name === 'yang');  
     // Step 3: Determine the correct designations for the lines based on the case
     let lineDesignations = [];
     switch (yangCount) {
       case 0:
         if (gender.MALE) {
-          if (this.isBetweenSolstices()) {
-            // Born after Winter Solstice and before Summer Solstice
-            lineDesignations = ["ad", "be", "cf", "gj", "hk", "il"];
-          } else {
-            // Born after Summer Solstice and before Winter Solstice
-            lineDesignations = ["il", "hk", "gj", "cf", "be", "ad"];
-          }
-        } else {
-          // Female - default pattern
-          lineDesignations = ["ad", "be", "cf", "gj", "hk", "il"];
-        }
+                  if (this.isBetweenSolstices()) {
+                    // Born after Winter Solstice and before Summer Solstice
+                    lineDesignations = {
+                                          yang: [],
+                                          yin: ["ad", "be", "cf", "gj", "hk", "il"]
+
+                                        } ;
+                  } else {
+                    // Born after Summer Solstice and before Winter Solstice
+                    lineDesignations = {
+                                        yang: [],
+                                        yin:  ["il", "hk", "gj", "cf", "be", "ad"],
+                                      }
+                  }
+                } 
+      else {
+                  // Female - default pattern
+                  lineDesignations = {
+                                          yang: [],
+                                          yin:  ["ad", "be", "cf", "gj", "hk", "il"],
+                                    }; 
+                }              
         break;
   
       case 1:
-        if (polarity) {
-          // Yang hour: a, b for Yang; c, d, e, f for Yin
-          lineDesignations = ["ab", "c", "d", "e", "f", "l"];
-        } else {
-          // Yin hour: g, h, i, j, k for Yin; l for Yang
-          lineDesignations = ["g", "h", "i", "j", "k", "l"];
-        }
-        break;
+              if (polarity) {
+                // Yang hour: a, b for Yang; c, d, e, f for Yin
+                lineDesignations = 
+                {
+                  yang: ["ab"],
+                  yin: ["c", "d", "e", "f", ""],
+
+                } ;
+              } else {
+                // Yin hour: g, h, i, j, k for Yin; l for Yang
+                lineDesignations = 
+                { yang: ["l"],
+                  yin:  ["g", "h", "i", "j", "k"],
+                };
+              }
+              break;
   
       case 2:
-        if (polarity) {
-          // Yang hour: a, c for lower Yang; b, d for upper Yang; e, f for Yin
-          lineDesignations = ["ac", "bd", "e", "f", "k", "l"];
-        } else {
-          // Yin hour: g, h, j, i for Yin; k, l for Yang
-          lineDesignations = ["g", "h", "j", "i", "k", "l"];
-        }
-        break;
+              if (polarity) {
+                // Yang hour: a, c for lower Yang; b, d for upper Yang; e, f for Yin
+                      lineDesignations = 
+                      { yang: ["ac", "bd"],
+                        yin:  ["e", "f", "", ""],
+                      };          
+              } else {
+                // Yin hour: g, h, j, i for Yin; k, l for Yang               
+                lineDesignations = 
+                      { yang: ["k", "l"],
+                        yin:  ["g", "h", "i", "j"],
+                      };         
+              }
+              break;
   
       case 3:
         if (polarity) {
           // Yang hour: a, d for lower; b, e for middle; c, f for upper
-          lineDesignations = ["ad", "be", "cf", "gj", "hk", "il"];
+          lineDesignations = 
+                      { yang: ["ad", "be", "cf"],
+                        yin:  ["", "", ""],
+                      };            
         } else {
           // Yin hour: g, j for lower; h, k for middle; i, l for upper
-          lineDesignations = ["gj", "hk", "il", "ad", "be", "cf"];
+          lineDesignations = 
+                    { yang: ["", "", ""],
+                      yin:  ["gj", "hk", "il"],
+                    };                      
         }
         break;
   
       case 4:
         if (polarity) {
           // Yang hour: natural sequence, a to d for Yang; e, f for Yin
-          lineDesignations = ["a", "b", "c", "d", "e", "f"];
+                lineDesignations = 
+                    { yang: ["a", "b", "c", "d"],
+                      yin:  ["e", "f"],
+                    };  
+        
         } else {
           // Yin hour: double-letter Yin lines g, i, h, j; k, l for Yang
-          lineDesignations = ["gi", "hj", "k", "l", "e", "f"];
+          lineDesignations = 
+                    { yang: ["k", "l", "", ""],
+                      yin:  ["gi", "hj"],
+                    };            
         }
         break;
   
       case 5:
         if (polarity) {
           // Yang hour: a to e for Yang; f for Yin
-          lineDesignations = ["a", "b", "c", "d", "e", "f"];
+          lineDesignations = 
+                  { yang: ["a", "b", "c", "d", "e"],
+                    yin:  ["f"],
+                  };         
         } else {
           // Yin hour: double-letter Yin g, h; Yang i to l
-          lineDesignations = ["gh", "i", "j", "k", "l", "e"];
+          lineDesignations = 
+                  { yang: ["i", "j", "k", "l", ""],
+                    yin:  ["gh"],
+                  };                   
         }
         break;
   
       case 6:
         if (gender.MALE) {
           // Male: a, d; b, e; c, f; g, j; h, k; i, l
-          lineDesignations = ["ad", "be", "cf", "gj", "hk", "il"];
+          lineDesignations = 
+                  { yang: ["ad", "be", "cf", "gj", "hk", "il"],
+                    yin:  [],
+                  };        
+          
         } else {
           if (this.isBetweenSolstices()) {
             // Born after Winter Solstice and before Summer Solstice
-            lineDesignations = ["il", "hk", "gj", "cf", "be", "ad"];
+            lineDesignations = 
+                  { yang: ["il", "hk", "gj", "cf", "be", "ad"],
+                    yin:  [],
+                  };        
+          
           } else {
             // Born after Summer Solstice and before Winter Solstice
-            lineDesignations = ["ad", "be", "cf", "gj", "hk", "il"];
+            lineDesignations = 
+            { yang: ["ad", "be", "cf", "gj", "hk", "il"],
+              yin:  [],
+            };                    
           }
         }
         break;
@@ -1882,31 +2085,60 @@ class IChingAstrology_South {
       default:
         throw new Error('Invalid yang count encountered.');
     }
-  
+    console.log('lineDesignations2', lineDesignations);
     // Step 4: Use the assignLines function to apply the determined line designations
     return this.assignLines(preHeavenHexagram, lineDesignations);
   }
 
   getDesignations(preHeavenHexagram) {
-    const designations = [];
-  
-    // Combine lines from bottom to top: below (3 lines) followed by above (3 lines)
-    const allLines = [...preHeavenHexagram.below.lineArray, ...preHeavenHexagram.above.lineArray];
-  
-    // Iterate through all lines and collect their designations
-    allLines.forEach(line => {
-      if (line.designation) {
-        designations.push(line.designation);
-      } else {
-        designations.push(''); // If no designation, add an empty string or placeholder
+    const designations = [...preHeavenHexagram.below.designation, ...preHeavenHexagram.above.designation];
+    return designations;
+  }
+
+  // Method to map the time symbol designations to the correct upper and lower trigram lines
+
+  mapDesignationsToTrigramLines(preHeavenHexagram)   
+  {
+    preHeavenHexagram.below.lines.lowerLine.timeSymbol = preHeavenHexagram.below.designation[0]; 
+    preHeavenHexagram.below.lines.middleLine.timeSymbol = preHeavenHexagram.below.designation[1]; 
+    preHeavenHexagram.below.lines.upperLine.timeSymbol = preHeavenHexagram.below.designation[2];
+    preHeavenHexagram.above.lines.lowerLine.timeSymbol = preHeavenHexagram.above.designation[3];
+    preHeavenHexagram.above.lines.middleLine.timeSymbol = preHeavenHexagram.above.designation[4];
+    preHeavenHexagram.above.lines.upperLine.timeSymbol = preHeavenHexagram.above.designation[5];
+
+  }
+
+  getControllingLine(preHeavenHexagram, birthSymbol) {
+    let controllingLine = null;
+
+      // Check above trigram lines
+    preHeavenHexagram.above.designation.forEach((symbol, index) => {
+     
+      if (symbol.includes(birthSymbol)) {    
+        switch (index) {
+          case 0: controllingLine = preHeavenHexagram.above.lines.lowerLine; break;
+           case 1: controllingLine = preHeavenHexagram.above.lines.middleLine; break;
+           case 2: controllingLine = preHeavenHexagram.above.lines.upperLine; break;
+         }
       }
     });
   
-    return designations;
-  }
+    // If no match is found in above, check below trigram
+    if (!controllingLine) {
+      preHeavenHexagram.below.designation.forEach((symbol, index) => {
+      
+        if  (symbol.includes(birthSymbol)) {    
+          switch (index) {
+           case 0: controllingLine = preHeavenHexagram.below.lines.lowerLine; break;
+            case 1: controllingLine = preHeavenHexagram.below.lines.middleLine; break;
+            case 2: controllingLine = preHeavenHexagram.below.lines.upperLine; break;
+          }
+        }
+      });
+    }
   
-
-
+    return controllingLine;
+  }
 
 }
 
@@ -2097,9 +2329,9 @@ class IChingConsultation {
         // determine the line designations and then we can work out the controlling line
         let ans = this.astrology.developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) ;
         let lineDesignations = this.astrology.getDesignations(preHeavenHexagram);
-        console.log('Designations',  lineDesignations);
-
-
+        this.astrology.mapDesignationsToTrigramLines(preHeavenHexagram);
+        let controllingLine = this.astrology.getControllingLine(preHeavenHexagram, timeOfBirthSymbol.symbol);
+        
 
 
      return {
