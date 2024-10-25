@@ -2357,7 +2357,7 @@ class IChingConsultation {
       }
 
      let heavenlyTrigram = null; let earthlyTrigram = null; let preHeavenHexagram = null;
-     let birthYearIsOdd = year % 2 !== 0;
+     let birthYearIsOdd = (year % 2 !== 0);
 
      console.log('Year of Birth is Odd? ',birthYearIsOdd);
 
@@ -2376,6 +2376,7 @@ class IChingConsultation {
         // Determine whether the BirthYear is odd or even    
      
         if (  (birthYearIsOdd && gender == Gender.MALE ) || (!birthYearIsOdd && gender == Gender.FEMALE) ) {
+          
           heavenlyTrigram = this.astrology.heavenlyNumbersMiddleCycleMaleOddFemaleEven.find(trigram => trigram.number === heavenlyNumber);          
         }
         if (  (birthYearIsOdd && gender == Gender.FEMALE ) || (!birthYearIsOdd && gender == Gender.MALE) ) {
