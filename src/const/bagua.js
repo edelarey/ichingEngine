@@ -53,7 +53,10 @@ const compassDirection = {
     Imbolc: 'Imbolc', 
   }
 
-
+/** trigrams are read bottom up and the binary value is read left right ( with left being top line and right most bottom line) 
+ * this is because in binary the left most bit is the most significant bit and the right most bit is the least significant bit
+ * while in the trigrams are constructed the bottom up
+*/
 const bagua = {
     kūn: {
         name: `kūn`,

@@ -926,7 +926,7 @@ class IChingAstrology_North {
           // Return the relevant stem and branch for the year group
           return monthEntry.years[yearGroupIndex];
       }
-  
+      // ** Get the daily cycle for a specific date (Table 6)*/
      calculateDailyCycleValue(year, month, day) {
         /** Daily Cycle Values (Table 6) */
         const dailyCycleValues = {
@@ -938,7 +938,7 @@ class IChingAstrology_North {
           6: [31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60], // June
           7: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31], // July
           8: [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2], // August
-          9: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // September
+          9: [ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // September
           10: [33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2, 3], // October
           11: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33], // November
           12: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 1, 2, 3, 4] // December
@@ -948,7 +948,7 @@ class IChingAstrology_North {
         if (this.isLeapYear(year) && month >= 3) {
             day += 1; // Shift day by one for leap years starting in March
         }
-       
+        console.log('cycle month', dailyCycleValues[month], day);
         const dailyCycleValue = dailyCycleValues[month][day-1]; // Get the value based on month and day
 
     
@@ -1216,7 +1216,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
   let controllingLine = null;
 
     // Check above trigram lines
-  preHeavenHexagram.above.designation.forEach((symbol, index) => {
+  preHeavenHexagram.above.designation.forEach((symbol, index) => { 
    
     if (symbol.includes(birthSymbol)) {    
       switch (index) {
@@ -1224,21 +1224,24 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
                 { trigram: 'Above',
                   lineNumber: index,
                   linePosition: 'Lower',
-                  line: preHeavenHexagram.above.lines.lowerLine
+                  line: preHeavenHexagram.above.lines.lowerLine,
+                  letter: symbol
                 }                                                        
         break;
          case 1:  controllingLine = 
          { trigram: 'Above',
            lineNumber: index,
            linePosition: 'Middle',
-           line: preHeavenHexagram.above.lines.middleLine
+           line: preHeavenHexagram.above.lines.middleLine,
+           letter: symbol
          };
            break;
          case 2: controllingLine = 
          { trigram: 'Above',
            lineNumber: index,
            linePosition: 'Upper',
-           line: preHeavenHexagram.above.lines.upperLine
+           line: preHeavenHexagram.above.lines.upperLine,
+           letter: symbol
          };
            break;
        }
@@ -1248,33 +1251,38 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
   // If no match is found in above, check below trigram
   if (!controllingLine) {
     preHeavenHexagram.below.designation.forEach((symbol, index) => {
-    
+      if (symbol.includes(birthSymbol)) {    
       switch (index) {
         case 0: controllingLine = 
         { trigram: 'Below',
           lineNumber: index,
           linePosition: 'Lower',
-          line: preHeavenHexagram.below.lines.lowerLine
+          line: preHeavenHexagram.below.lines.lowerLine,
+          letter: symbol
         }                                                        
             break;
             case 1:  controllingLine = 
             { trigram: 'Below',
               lineNumber: index,
               linePosition: 'Middle',
-              line: preHeavenHexagram.below.lines.middleLine
+              line: preHeavenHexagram.below.lines.middleLine,
+              letter: symbol
             };
+          
               break;
             case 2: controllingLine = 
             { trigram: 'Below',
               lineNumber: index,
               linePosition: 'Upper',
-              line: preHeavenHexagram.below.lines.upperLine
+              line: preHeavenHexagram.below.lines.upperLine,
+              letter: symbol
             };
               break;
           }
+        }
     });
   }
-
+ 
   return controllingLine;
 }
 
@@ -1864,7 +1872,7 @@ class IChingAstrology_South {
         if (this.isLeapYear(year) && month >= 3) {
             day += 1; // Shift day by one for leap years starting in March
         }
-       
+       console.log('cycle month', dailyCycleValues[month]);
         const dailyCycleValue = dailyCycleValues[month][day-1]; // Get the value based on month and day
 
     
@@ -2143,9 +2151,9 @@ class IChingAstrology_South {
 
   getControllingLine(preHeavenHexagram, birthSymbol) {
     let controllingLine = null;
-
+  
       // Check above trigram lines
-    preHeavenHexagram.above.designation.forEach((symbol, index) => {
+    preHeavenHexagram.above.designation.forEach((symbol, index) => { 
      
       if (symbol.includes(birthSymbol)) {    
         switch (index) {
@@ -2153,21 +2161,24 @@ class IChingAstrology_South {
                   { trigram: 'Above',
                     lineNumber: index,
                     linePosition: 'Lower',
-                    line: preHeavenHexagram.above.lines.lowerLine
+                    line: preHeavenHexagram.above.lines.lowerLine,
+                    letter: symbol
                   }                                                        
           break;
            case 1:  controllingLine = 
            { trigram: 'Above',
              lineNumber: index,
              linePosition: 'Middle',
-             line: preHeavenHexagram.above.lines.middleLine
+             line: preHeavenHexagram.above.lines.middleLine,
+             letter: symbol
            };
              break;
            case 2: controllingLine = 
            { trigram: 'Above',
              lineNumber: index,
              linePosition: 'Upper',
-             line: preHeavenHexagram.above.lines.upperLine
+             line: preHeavenHexagram.above.lines.upperLine,
+             letter: symbol
            };
              break;
          }
@@ -2177,33 +2188,38 @@ class IChingAstrology_South {
     // If no match is found in above, check below trigram
     if (!controllingLine) {
       preHeavenHexagram.below.designation.forEach((symbol, index) => {
-      
+        if (symbol.includes(birthSymbol)) {    
         switch (index) {
           case 0: controllingLine = 
           { trigram: 'Below',
             lineNumber: index,
             linePosition: 'Lower',
-            line: preHeavenHexagram.below.lines.lowerLine
+            line: preHeavenHexagram.below.lines.lowerLine,
+            letter: symbol
           }                                                        
               break;
               case 1:  controllingLine = 
               { trigram: 'Below',
                 lineNumber: index,
                 linePosition: 'Middle',
-                line: preHeavenHexagram.below.lines.middleLine
+                line: preHeavenHexagram.below.lines.middleLine,
+                letter: symbol
               };
+            
                 break;
               case 2: controllingLine = 
               { trigram: 'Below',
                 lineNumber: index,
                 linePosition: 'Upper',
-                line: preHeavenHexagram.below.lines.upperLine
+                line: preHeavenHexagram.below.lines.upperLine,
+                letter: symbol
               };
                 break;
             }
+          }
       });
     }
-  
+   
     return controllingLine;
   }
 
