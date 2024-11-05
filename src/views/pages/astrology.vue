@@ -235,6 +235,10 @@
                                         <h3 class="card-title">Controlling Line</h3>
                                         <p class="card-text display-10">{{state.controllingLine.trigram}} Trigram  {{state.controllingLine.linePosition}} Line  ({{state.controllingLine.line.name}})</p>
                                 </div>
+                                <div class="card-body"  v-if="state.preHeavenHexagram.yearRange">
+                                        <h3 class="card-title">Ages</h3>
+                                        <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.yearRange }} </p>                                          
+                                </div>
                                 <div class="card-body">
                                         <h3 class="card-title">Summary</h3>
                                         <p class="card-text display-10"><span v-html="state.preHeavenHexagram.summary"></span></p>   
