@@ -1224,6 +1224,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
                 { trigram: 'Above',
                   lineNumber: index,
                   linePosition: 'Lower',
+                  hexagramLineIndex: 4,
                   line: preHeavenHexagram.above.lines.lowerLine,
                   letter: symbol
                 }                                                        
@@ -1233,6 +1234,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
            lineNumber: index,
            linePosition: 'Middle',
            line: preHeavenHexagram.above.lines.middleLine,
+           hexagramLineIndex: 5,
            letter: symbol
          };
            break;
@@ -1240,6 +1242,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
          { trigram: 'Above',
            lineNumber: index,
            linePosition: 'Upper',
+            hexagramLineIndex: 6,
            line: preHeavenHexagram.above.lines.upperLine,
            letter: symbol
          };
@@ -1257,6 +1260,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
         { trigram: 'Below',
           lineNumber: index,
           linePosition: 'Lower',
+          hexagramLineIndex: 1,
           line: preHeavenHexagram.below.lines.lowerLine,
           letter: symbol
         }                                                        
@@ -1265,6 +1269,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
             { trigram: 'Below',
               lineNumber: index,
               linePosition: 'Middle',
+              hexagramLineIndex: 2,
               line: preHeavenHexagram.below.lines.middleLine,
               letter: symbol
             };
@@ -1274,6 +1279,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
             { trigram: 'Below',
               lineNumber: index,
               linePosition: 'Upper',
+              hexagramLineIndex: 3,
               line: preHeavenHexagram.below.lines.upperLine,
               letter: symbol
             };
@@ -1296,6 +1302,88 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
   preHeavenHexagram.above.lines.upperLine.timeSymbol = preHeavenHexagram.above.designation[5];
 
 }
+
+
+  /** Assign year ranges (determine the sub-cycles of life)  according to the controlling line in the natal hexagram  
+            Calculate Sub-Cycles Of Life based on controlling line in Natal Hexagram (Pre-Heaven Hexagram)
+            If the controlling line is a Yin line, the first sub-cycle is 6 years, if it is a Yang line, the sub-cycle is 9 years. 
+            The other lines are considered one by one moving up from the controlling line and assigning the years line by line until the top line of the hexagram.
+            Then one continues from the bottom of the hexagram until the controlling line is reached again.
+            The numbers that result are representative of the individuals age in years for the sub-cycle.
+            When using these in subsequent calculations, the date of birth should be kept in mind to determine wether positive or negative year rules apply
+            The age of an individual is measured from Winter Solstice to Winter Solstice.
+            The period from the date of birth to the first winter solstice being the first year of life. 
+            The Preheaven hexagram is used to determine the sub-cycles of life for the early stages of life ie from year one forward. 
+            The Later Heaven hexagram is used to determine the sub-cycles of life for the later stages of life ie from year after the last (greatest) year in the preHeaven Hexagram forward.
+ */ 
+
+mapYearRangesToTrigramLines(preHeavenHexagram)   
+{
+  console.log('map', preHeavenHexagram.below.lineArray[1], _.clone(preHeavenHexagram.yearRange[1].yearRange));
+  preHeavenHexagram.below.lineArray[0].yearRange =  _.clone(preHeavenHexagram.yearRange[0].yearRange); 
+  preHeavenHexagram.below.lineArray[1].yearRange  = _.clone(preHeavenHexagram.yearRange[1].yearRange); 
+  preHeavenHexagram.below.lineArray[2].yearRange  = _.clone(preHeavenHexagram.yearRange[2].yearRange);
+  preHeavenHexagram.above.lineArray[0].yearRange  = _.clone(preHeavenHexagram.yearRange[3].yearRange);
+  preHeavenHexagram.above.lineArray[1].yearRange  = _.clone(preHeavenHexagram.yearRange[4].yearRange);
+  preHeavenHexagram.above.lineArray[2].yearRange  = _.clone(preHeavenHexagram.yearRange[5].yearRange);
+
+};
+
+  assignYearRanges(preHeavenHexagram, controllingLine, birthYear) {
+    // Set initial year count based on the polarity of the controlling line
+    let yearvalue = controllingLine.line.name === 'yang' ? 9 : 6;
+    let currentYear = 1;
+    // index 0 = bottom line of hexagram, index 5 = top line of hexagram
+    let yearRange = [];
+
+    //Function to assign year range to a specific line and update the starting year
+    function setYearRange(line) {
+      // The yearCount is based on the polarity of the currentLine
+        yearvalue = line.name === 'yang' ? 9 : 6;        
+        const endYear = currentYear + yearvalue - 1;
+        line.yearRange = [currentYear, endYear];
+        console.log('line', line, 'currentyear', currentYear, '', endYear, 'yearvalue', yearvalue);
+        currentYear += yearvalue;
+        
+    }
+
+    // Find lines in the order, starting from the controlling line, going up and wrapping around
+    const linesOrder = [
+        _.clone(preHeavenHexagram.below.lines.lowerLine),
+        _.clone(preHeavenHexagram.below.lines.middleLine),
+        _.clone(preHeavenHexagram.below.lines.upperLine),
+        _.clone(preHeavenHexagram.above.lines.lowerLine),
+        _.clone(preHeavenHexagram.above.lines.middleLine),
+        _.clone(preHeavenHexagram.above.lines.upperLine),
+    ];
+    // determine the correct starting index based on the controlling line
+
+    let startIndex = controllingLine.hexagramLineIndex - 1;
+
+    console.log('startIndex', startIndex, linesOrder[startIndex], controllingLine.line);
+
+    //Assign year ranges in circular order, starting from the controlling line
+    for (let i = 0; i < linesOrder.length; i++) {
+        const line = linesOrder[(startIndex + i) % linesOrder.length];
+        setYearRange(line);
+    }
+
+    console.log('linesOrder', linesOrder);
+    // contruct yearRange array
+    linesOrder.forEach(line => {
+      yearRange.push({line: line.name, yearRange: line.yearRange});
+    });
+
+     preHeavenHexagram.yearRange = _.clone(yearRange);
+    console.log('yearRange', preHeavenHexagram.yearRange);
+
+    // fix the year range for each line in the above and below triagrams
+    this.mapYearRangesToTrigramLines(preHeavenHexagram);
+
+
+    return preHeavenHexagram;
+}
+
 
 
 
@@ -2223,6 +2311,92 @@ class IChingAstrology_South {
     return controllingLine;
   }
 
+       
+    /** Assign year ranges (determine the sub-cycles of life)  according to the controlling line in the natal hexagram  
+            Calculate Sub-Cycles Of Life based on controlling line in Natal Hexagram (Pre-Heaven Hexagram)
+            If the controlling line is a Yin line, the first sub-cycle is 6 years, if it is a Yang line, the sub-cycle is 9 years. 
+            The other lines are considered one by one moving up from the controlling line and assigning the years line by line until the top line of the hexagram.
+            Then one continues from the bottom of the hexagram until the controlling line is reached again.
+            The numbers that result are representative of the individuals age in years for the sub-cycle.
+            When using these in subsequent calculations, the date of birth should be kept in mind to determine wether positive or negative year rules apply
+            The age of an individual is measured from Winter Solstice to Winter Solstice.
+            The period from the date of birth to the first winter solstice being the first year of life. 
+            The Preheaven hexagram is used to determine the sub-cycles of life for the early stages of life ie from year one forward. 
+            The Later Heaven hexagram is used to determine the sub-cycles of life for the later stages of life ie from year after the last (greatest) year in the preHeaven Hexagram forward.
+ */ 
+
+    mapYearRangesToTrigramLines(preHeavenHexagram)   
+    {
+     
+      preHeavenHexagram.below.lineArray[0].yearRange =  _.cloneDeep(preHeavenHexagram.yearRange[0].yearRange); 
+      console.log('map', preHeavenHexagram.below.lineArray[0], _preHeavenHexagram.yearRange[0].yearRange);
+      preHeavenHexagram.below.lineArray[1].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[1].yearRange); 
+      preHeavenHexagram.below.lineArray[2].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[2].yearRange);
+      preHeavenHexagram.above.lineArray[0].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[3].yearRange);
+      preHeavenHexagram.above.lineArray[1].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[4].yearRange);
+      preHeavenHexagram.above.lineArray[2].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[5].yearRange);
+
+    };
+
+  assignYearRanges(preHeavenHexagram, controllingLine, birthYear) {
+    // Set initial year count based on the polarity of the controlling line
+    let yearvalue = controllingLine.line.name === 'yang' ? 9 : 6;
+    let currentYear = 1;
+    // index 0 = bottom line of hexagram, index 5 = top line of hexagram
+    const yearRange = [];
+
+    //Function to assign year range to a specific line and update the starting year
+    function setYearRange(line) {
+      // The yearCount is based on the polarity of the currentLine
+        yearvalue = line.name === 'yang' ? 9 : 6;        
+        const endYear = currentYear + yearvalue - 1;
+        line.yearRange = [currentYear, endYear];
+        console.log('line', line, 'currentyear', currentYear, '', endYear, 'yearvalue', yearvalue);
+        currentYear += yearvalue;
+        
+    }
+
+    // Find lines in the order, starting from the controlling line, going up and wrapping around
+    const linesOrder = [
+        _.cloneDeep(preHeavenHexagram.below.lines.lowerLine),
+        _.cloneDeep(preHeavenHexagram.below.lines.middleLine),
+        _.cloneDeep(preHeavenHexagram.below.lines.upperLine),
+        _.cloneDeep(preHeavenHexagram.above.lines.lowerLine),
+        _.cloneDeep(preHeavenHexagram.above.lines.middleLine),
+        _.cloneDeep(preHeavenHexagram.above.lines.upperLine),
+    ];
+    // determine the correct starting index based on the controlling line
+
+    let startIndex = controllingLine.hexagramLineIndex - 1;
+
+    console.log('startIndex', startIndex, linesOrder[startIndex], controllingLine.line);
+
+    //Assign year ranges in circular order, starting from the controlling line
+    for (let i = 0; i < linesOrder.length; i++) {
+        //const line = linesOrder[(startIndex + i) % linesOrder.length];
+        setYearRange(linesOrder[(startIndex + i) % linesOrder.length]);
+    }
+
+    console.log('linesOrder', linesOrder);
+    // contruct yearRange array
+    linesOrder.forEach(line => {
+      yearRange.push({line: _.clone(line.name), yearRange: _.clone(line.yearRange)});
+    });
+
+     preHeavenHexagram.yearRange = _.clone(yearRange);
+    console.log('yearRange', preHeavenHexagram.yearRange);
+
+    // fix the year range for each line in the above and below triagrams
+    this.mapYearRangesToTrigramLines(preHeavenHexagram);
+
+
+    return preHeavenHexagram;
+}
+
+          
+
+
+
 }
 
 
@@ -2414,8 +2588,22 @@ class IChingConsultation {
         let ans = this.astrology.developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) ;
         let lineTimeDesignations = this.astrology.getDesignations(preHeavenHexagram);
         this.astrology.mapDesignationsToTrigramLines(preHeavenHexagram);
+        // Time of Birth Symbol is used to determine the controlling line
         let controllingLine = this.astrology.getControllingLine(preHeavenHexagram, timeOfBirthSymbol.symbol);
-        
+         
+        /**Calculate Sub-Cycles Of Life based on controlling line in Natal Hexagram (Pre-Heaven Hexagram)
+            If the controlling line is a Yin line, the first sub-cycle is 6 years, if it is a Yang line, the sub-cycle is 9 years. 
+            The other lines are considered one by one moving up from the controlling line and assigning the years line by line until the top line of the hexagram.
+            Then one continues from the bottom of the hexagram until the controlling line is reached again.
+            The numbers that result are representative of the individuals age in years for the sub-cycle.
+            When using these in subsequent calculations, the date of birth should be kept in mind to determine wether positive or negative year rules apply
+            The age of an individual is measured from Winter Solstice to Winter Solstice.
+            The period from the date of birth to the first winter solstice being the first year of life. 
+         */ 
+
+         this.astrology.assignYearRanges(preHeavenHexagram, controllingLine, year);
+
+        //  console.log('newPreHeavenHexagram', newPreHeavenHexagram);
 
 
      return {

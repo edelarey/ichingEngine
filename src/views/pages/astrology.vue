@@ -225,7 +225,7 @@
         <div class="col-sm-6">                   
             <div class="card text-center">
                 <div class="card-body" v-if="state.preHeavenHexagram">
-                    <h5 class="card-title">Pre-Heaven Hexagram</h5>
+                    <h5 class="card-title">Pre-Heaven (Natal) Hexagram</h5>
                     <p class="card-text display-3">{{state.preHeavenHexagram.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.hexagram}} </p>                             
@@ -363,11 +363,11 @@ export default {
                 timeOfBirthHexagram:'',
                 latitude:  26.39655582357474, 
                 longitude: 27.37679999686307,
-                birthDate:  DateTime.fromObject({ year: 1934, month: 9, day: 18, hour: 0, minute:36}).toISO(), 
+                birthDate:  DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(), 
                 /** DateTime.fromObject({ year: 1972, month: 2, day: 22, hour: 21, minute: 15}).toISO(), Brian */
                 /**  DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute:30}).toISO(), Ed */
-                /** DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(), */
-                /**   DateTime.fromObject({ year: 1934, month: 9, day: 18, hour: 0, minute:36}).toISO(),*/
+                /** DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(), eg 1*/
+                /**   DateTime.fromObject({ year: 1934, month: 9, day: 18, hour: 0, minute:36}).toISO(),eg 2*/
                 minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toISO(), // Later on this is the maximun BC Date Minimum Date: April 20, 271821 BC   (use negative year)
                 maxDate:  DateTime.fromObject({ year: 275760, month:9, day: 13 }).toISO(),
             });
