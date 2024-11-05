@@ -1317,72 +1317,67 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             The Later Heaven hexagram is used to determine the sub-cycles of life for the later stages of life ie from year after the last (greatest) year in the preHeaven Hexagram forward.
  */ 
 
-mapYearRangesToTrigramLines(preHeavenHexagram)   
-{
-  console.log('map', preHeavenHexagram.below.lineArray[1], _.clone(preHeavenHexagram.yearRange[1].yearRange));
-  preHeavenHexagram.below.lineArray[0].yearRange =  _.clone(preHeavenHexagram.yearRange[0].yearRange); 
-  preHeavenHexagram.below.lineArray[1].yearRange  = _.clone(preHeavenHexagram.yearRange[1].yearRange); 
-  preHeavenHexagram.below.lineArray[2].yearRange  = _.clone(preHeavenHexagram.yearRange[2].yearRange);
-  preHeavenHexagram.above.lineArray[0].yearRange  = _.clone(preHeavenHexagram.yearRange[3].yearRange);
-  preHeavenHexagram.above.lineArray[1].yearRange  = _.clone(preHeavenHexagram.yearRange[4].yearRange);
-  preHeavenHexagram.above.lineArray[2].yearRange  = _.clone(preHeavenHexagram.yearRange[5].yearRange);
-
-};
-
-  assignYearRanges(preHeavenHexagram, controllingLine, birthYear) {
-    // Set initial year count based on the polarity of the controlling line
-    let yearvalue = controllingLine.line.name === 'yang' ? 9 : 6;
-    let currentYear = 1;
-    // index 0 = bottom line of hexagram, index 5 = top line of hexagram
-    let yearRange = [];
-
-    //Function to assign year range to a specific line and update the starting year
-    function setYearRange(line) {
-      // The yearCount is based on the polarity of the currentLine
-        yearvalue = line.name === 'yang' ? 9 : 6;        
-        const endYear = currentYear + yearvalue - 1;
-        line.yearRange = [currentYear, endYear];
-        console.log('line', line, 'currentyear', currentYear, '', endYear, 'yearvalue', yearvalue);
-        currentYear += yearvalue;
+            mapYearRangesToTrigramLines(preHeavenHexagram)   
+            {
+             
+              preHeavenHexagram.below.lineArray[0].yearRange =  _.cloneDeep(preHeavenHexagram.yearRange[0].yearRange); 
+              preHeavenHexagram.below.lineArray[1].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[1].yearRange); 
+              preHeavenHexagram.below.lineArray[2].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[2].yearRange);
+              preHeavenHexagram.above.lineArray[0].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[3].yearRange);
+              preHeavenHexagram.above.lineArray[1].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[4].yearRange);
+              preHeavenHexagram.above.lineArray[2].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[5].yearRange);
         
-    }
-
-    // Find lines in the order, starting from the controlling line, going up and wrapping around
-    const linesOrder = [
-        _.clone(preHeavenHexagram.below.lines.lowerLine),
-        _.clone(preHeavenHexagram.below.lines.middleLine),
-        _.clone(preHeavenHexagram.below.lines.upperLine),
-        _.clone(preHeavenHexagram.above.lines.lowerLine),
-        _.clone(preHeavenHexagram.above.lines.middleLine),
-        _.clone(preHeavenHexagram.above.lines.upperLine),
-    ];
-    // determine the correct starting index based on the controlling line
-
-    let startIndex = controllingLine.hexagramLineIndex - 1;
-
-    console.log('startIndex', startIndex, linesOrder[startIndex], controllingLine.line);
-
-    //Assign year ranges in circular order, starting from the controlling line
-    for (let i = 0; i < linesOrder.length; i++) {
-        const line = linesOrder[(startIndex + i) % linesOrder.length];
-        setYearRange(line);
-    }
-
-    console.log('linesOrder', linesOrder);
-    // contruct yearRange array
-    linesOrder.forEach(line => {
-      yearRange.push({line: line.name, yearRange: line.yearRange});
-    });
-
-     preHeavenHexagram.yearRange = _.clone(yearRange);
-    console.log('yearRange', preHeavenHexagram.yearRange);
-
-    // fix the year range for each line in the above and below triagrams
-    this.mapYearRangesToTrigramLines(preHeavenHexagram);
-
-
-    return preHeavenHexagram;
-}
+            };
+        
+          assignYearRanges(preHeavenHexagram, controllingLine, birthYear) {
+            // Set initial year count based on the polarity of the controlling line
+            let yearvalue = controllingLine.line.name === 'yang' ? 9 : 6;
+            let currentYear = 1;
+            // index 0 = bottom line of hexagram, index 5 = top line of hexagram
+            const yearRange = [];
+        
+            //Function to assign year range to a specific line and update the starting year
+            function setYearRange(line) {
+              // The yearCount is based on the polarity of the currentLine
+                yearvalue = line.name === 'yang' ? 9 : 6;        
+                const endYear = currentYear + yearvalue - 1;
+                line.yearRange = [currentYear, endYear];
+                console.log('line', line, 'currentyear', currentYear, '', endYear, 'yearvalue', yearvalue);
+                currentYear += yearvalue;
+                
+            }
+        
+            // Find lines in the order, starting from the controlling line, going up and wrapping around
+            const linesOrder = [
+                _.cloneDeep(preHeavenHexagram.below.lines.lowerLine),
+                _.cloneDeep(preHeavenHexagram.below.lines.middleLine),
+                _.cloneDeep(preHeavenHexagram.below.lines.upperLine),
+                _.cloneDeep(preHeavenHexagram.above.lines.lowerLine),
+                _.cloneDeep(preHeavenHexagram.above.lines.middleLine),
+                _.cloneDeep(preHeavenHexagram.above.lines.upperLine),
+            ];
+            // determine the correct starting index based on the controlling line
+        
+            let startIndex = controllingLine.hexagramLineIndex - 1;
+        
+            console.log('startIndex', startIndex, linesOrder[startIndex], controllingLine.line);
+        
+            //Assign year ranges in circular order, starting from the controlling line
+            for (let i = 0; i < linesOrder.length; i++) {
+                //const line = linesOrder[(startIndex + i) % linesOrder.length];
+                setYearRange(linesOrder[(startIndex + i) % linesOrder.length]);
+            }
+        
+            console.log('linesOrder', linesOrder);
+            // contruct yearRange array
+            linesOrder.forEach(thing => {
+              yearRange.push({line: _.clone(thing.name), yearRange: _.clone(thing.yearRange)});
+            });
+        
+             preHeavenHexagram.yearRange = _.cloneDeep(yearRange);
+            console.log('yearRange', preHeavenHexagram.yearRange);
+            return preHeavenHexagram;
+        }
 
 
 
@@ -2329,7 +2324,6 @@ class IChingAstrology_South {
     {
      
       preHeavenHexagram.below.lineArray[0].yearRange =  _.cloneDeep(preHeavenHexagram.yearRange[0].yearRange); 
-      console.log('map', preHeavenHexagram.below.lineArray[0], _preHeavenHexagram.yearRange[0].yearRange);
       preHeavenHexagram.below.lineArray[1].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[1].yearRange); 
       preHeavenHexagram.below.lineArray[2].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[2].yearRange);
       preHeavenHexagram.above.lineArray[0].yearRange  = _.cloneDeep(preHeavenHexagram.yearRange[3].yearRange);
@@ -2379,17 +2373,12 @@ class IChingAstrology_South {
 
     console.log('linesOrder', linesOrder);
     // contruct yearRange array
-    linesOrder.forEach(line => {
-      yearRange.push({line: _.clone(line.name), yearRange: _.clone(line.yearRange)});
+    linesOrder.forEach(thing => {
+      yearRange.push({line: _.clone(thing.name), yearRange: _.clone(thing.yearRange)});
     });
 
      preHeavenHexagram.yearRange = _.clone(yearRange);
     console.log('yearRange', preHeavenHexagram.yearRange);
-
-    // fix the year range for each line in the above and below triagrams
-    this.mapYearRangesToTrigramLines(preHeavenHexagram);
-
-
     return preHeavenHexagram;
 }
 
@@ -2602,8 +2591,8 @@ class IChingConsultation {
          */ 
 
          this.astrology.assignYearRanges(preHeavenHexagram, controllingLine, year);
-
-        //  console.log('newPreHeavenHexagram', newPreHeavenHexagram);
+         //this.astrology.mapYearRangesToTrigramLines(preHeavenHexagram);
+        
 
 
      return {
