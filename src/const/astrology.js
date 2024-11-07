@@ -1402,28 +1402,28 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             The Later Heaven hexagram is used to determine the sub-cycles of life for the later stages of life ie from year after the last (greatest) year in the preHeaven Hexagram forward.
  */ 
 
-            mapYearRangesToTrigramLines(preHeavenHexagram, linesOrder)   
+            mapYearRangesToTrigramLines(hexagram, linesOrder)   
             {
               /** Below */
-              preHeavenHexagram.below.lineArray[0] =      linesOrder[0];
-              preHeavenHexagram.below.lines.lowerLine =   linesOrder[0];  
-              preHeavenHexagram.below.lineArray[1]  =     linesOrder[1]; 
-              preHeavenHexagram.below.lines.middleLine =  linesOrder[1]; 
-              preHeavenHexagram.below.lineArray[2]  =     linesOrder[2]; 
-              preHeavenHexagram.below.lines.upperLine =  linesOrder[2];
+              hexagram.below.lineArray[0] =      linesOrder[0];
+              hexagram.below.lines.lowerLine =   linesOrder[0];  
+              hexagram.below.lineArray[1]  =     linesOrder[1]; 
+              hexagram.below.lines.middleLine =  linesOrder[1]; 
+              hexagram.below.lineArray[2]  =     linesOrder[2]; 
+              hexagram.below.lines.upperLine =  linesOrder[2];
               /** Above */
-              preHeavenHexagram.above.lineArray[0] =      linesOrder[3];
-              preHeavenHexagram.above.lines.lowerLine =   linesOrder[3];  
-              preHeavenHexagram.above.lineArray[1]  =     linesOrder[4]; 
-              preHeavenHexagram.above.lines.middleLine =  linesOrder[4]; 
-              preHeavenHexagram.above.lineArray[2]  =     linesOrder[5]; 
-              preHeavenHexagram.above.lines.upperLine =  linesOrder[5];              
+              hexagram.above.lineArray[0] =      linesOrder[3];
+              hexagram.above.lines.lowerLine =   linesOrder[3];  
+              hexagram.above.lineArray[1]  =     linesOrder[4]; 
+              hexagram.above.lines.middleLine =  linesOrder[4]; 
+              hexagram.above.lineArray[2]  =     linesOrder[5]; 
+              hexagram.above.lines.upperLine =   linesOrder[5];              
         
             };
         
-          assignPreHeavenYearRanges(preHeavenHexagram, preHeavenControllingLine, birthYear) {
+          assignPreHeavenYearRanges(preHeavenHexagram, birthYear) {
             // Set initial year count based on the polarity of the controlling line
-            let yearvalue = preHeavenControllingLine.line.name === 'yang' ? 9 : 6;
+            let yearvalue = preHeavenHexagram.controllingLine.line.name === 'yang' ? 9 : 6;
             let currentYear = 1;
             // index 0 = bottom line of hexagram, index 5 = top line of hexagram
             const yearRange = [];
@@ -1450,7 +1450,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             ];
             // determine the correct starting index based on the controlling line
         
-            let startIndex = preHeavenControllingLine.hexagramLineIndex - 1;
+            let startIndex = preHeavenHexagram.controllingLine.hexagramLineIndex - 1;
         
          
         
@@ -2389,7 +2389,7 @@ getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
                   linePosition: 'Lower',
                   hexagramLineIndex: 4,
                   line: preHeavenHexagram.above.lines.lowerLine,
-                  letter: symbol
+                  letter: symbol                  
                 }                                                        
         break;
          case 1:  preHeavenControllingLine = 
@@ -2451,9 +2451,10 @@ getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
         }
     });
   }
-    preHeavenHexagram.controllingLine = preHeavenControllingLine;
+  preHeavenHexagram.controllingLine = preHeavenControllingLine;
   return preHeavenControllingLine;
 }
+
 
    /** Construct The Later Heaven Hexagram swapping the trigrams and inverting the controlling line polarity
          */ 
@@ -2482,11 +2483,10 @@ getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
     // and the original controlling line is now the opposite polarity
     let laterHeavenControllingLine = null;
     // Check above trigram lines
-    console.log ('lineIndex',preHeavenControllingLine.hexagramLineIndex);
     switch (preHeavenControllingLine.hexagramLineIndex) {
-         case 1: laterHeavenControllingLine = 
+        case 1: laterHeavenControllingLine = 
                 { trigram: 'Above',
-                  lineNumber: 0,
+                  lineNumber: 3,
                   linePosition: 'Lower',
                   hexagramLineIndex: 4,
                   line: laterHeavenHexagram.above.lines.lowerLine,
@@ -2495,7 +2495,7 @@ getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
         break;
         case 2: laterHeavenControllingLine = 
                 { trigram: 'Above',
-                  lineNumber: 1,
+                  lineNumber: 4,
                   linePosition: 'Middle',          
                   hexagramLineIndex: 5,
                   line: laterHeavenHexagram.above.lines.middleLine,
@@ -2504,7 +2504,7 @@ getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
           break;
         case 3: laterHeavenControllingLine = 
                 { trigram: 'Above',
-                  lineNumber: 2,
+                  lineNumber: 5,
                   linePosition: 'Upper',
                   hexagramLineIndex: 6,
                   line: laterHeavenHexagram.above.lines.upperLine,       
@@ -2538,6 +2538,7 @@ getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
      laterHeavenHexagram.controllingLine = laterHeavenControllingLine;
      return laterHeavenControllingLine;
   }
+ 
 
 mapDesignationsToTrigramLines(preHeavenHexagram)   
 {
@@ -2564,28 +2565,28 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             The Later Heaven hexagram is used to determine the sub-cycles of life for the later stages of life ie from year after the last (greatest) year in the preHeaven Hexagram forward.
  */ 
 
-            mapYearRangesToTrigramLines(preHeavenHexagram, linesOrder)   
+            mapYearRangesToTrigramLines(hexagram, linesOrder)   
             {
               /** Below */
-              preHeavenHexagram.below.lineArray[0] =      linesOrder[0];
-              preHeavenHexagram.below.lines.lowerLine =   linesOrder[0];  
-              preHeavenHexagram.below.lineArray[1]  =     linesOrder[1]; 
-              preHeavenHexagram.below.lines.middleLine =  linesOrder[1]; 
-              preHeavenHexagram.below.lineArray[2]  =     linesOrder[2]; 
-              preHeavenHexagram.below.lines.upperLine =  linesOrder[2];
+              hexagram.below.lineArray[0] =      linesOrder[0];
+              hexagram.below.lines.lowerLine =   linesOrder[0];  
+              hexagram.below.lineArray[1]  =     linesOrder[1]; 
+              hexagram.below.lines.middleLine =  linesOrder[1]; 
+              hexagram.below.lineArray[2]  =     linesOrder[2]; 
+              hexagram.below.lines.upperLine =  linesOrder[2];
               /** Above */
-              preHeavenHexagram.above.lineArray[0] =      linesOrder[3];
-              preHeavenHexagram.above.lines.lowerLine =   linesOrder[3];  
-              preHeavenHexagram.above.lineArray[1]  =     linesOrder[4]; 
-              preHeavenHexagram.above.lines.middleLine =  linesOrder[4]; 
-              preHeavenHexagram.above.lineArray[2]  =     linesOrder[5]; 
-              preHeavenHexagram.above.lines.upperLine =  linesOrder[5];              
+              hexagram.above.lineArray[0] =      linesOrder[3];
+              hexagram.above.lines.lowerLine =   linesOrder[3];  
+              hexagram.above.lineArray[1]  =     linesOrder[4]; 
+              hexagram.above.lines.middleLine =  linesOrder[4]; 
+              hexagram.above.lineArray[2]  =     linesOrder[5]; 
+              hexagram.above.lines.upperLine =   linesOrder[5];              
         
             };
         
-          assignPreHeavenYearRanges(preHeavenHexagram, preHeavenControllingLine, birthYear) {
+          assignPreHeavenYearRanges(preHeavenHexagram, birthYear) {
             // Set initial year count based on the polarity of the controlling line
-            let yearvalue = preHeavenControllingLine.line.name === 'yang' ? 9 : 6;
+            let yearvalue = preHeavenHexagram.controllingLine.line.name === 'yang' ? 9 : 6;
             let currentYear = 1;
             // index 0 = bottom line of hexagram, index 5 = top line of hexagram
             const yearRange = [];
@@ -2596,7 +2597,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                 yearvalue = line.name === 'yang' ? 9 : 6;        
                 const endYear = currentYear + yearvalue - 1;
                 line.yearRange = [currentYear, endYear];
-      
+             
                 currentYear += yearvalue;
                 
             }
@@ -2612,27 +2613,89 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             ];
             // determine the correct starting index based on the controlling line
         
-            let startIndex = preHeavenControllingLine.hexagramLineIndex - 1;
+            let startIndex = preHeavenHexagram.controllingLine.hexagramLineIndex - 1;
         
-        
+         
         
             //Assign year ranges in circular order, starting from the controlling line
             for (let i = 0; i < linesOrder.length; i++) {
                 //const line = linesOrder[(startIndex + i) % linesOrder.length];
                 setYearRange(linesOrder[(startIndex + i) % linesOrder.length]);
             }
-
+        
+          
             // contruct yearRange array
             linesOrder.forEach(thing => {
               yearRange.push({line: _.clone(thing.name), yearRange: _.clone(thing.yearRange)});
             });
         
              preHeavenHexagram.yearRange = _.cloneDeep(yearRange);
-        
+    
             this.mapYearRangesToTrigramLines(preHeavenHexagram, linesOrder);
             return preHeavenHexagram;
         }
+
+        assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram,  birthYear) {
+          //remember to set the current year to the last year of the preHeavenHexagram
+          // Set initial year count based on the polarity of the controlling line
+          let yearvalue = laterHeavenHexagram.controllingLine.line.name === 'yang' ? 9 : 6;
+         
+
+          // find the maximun number in  preHeavenHexagram.yearRange array
+          let max1 = Math.max.apply(Math, preHeavenHexagram.yearRange.map(function(o) { return o.yearRange[1]; }));
+          let max2 = Math.max.apply(Math, preHeavenHexagram.yearRange.map(function(o) { return o.yearRange[0]; })); 
+
+          let currentYear = max1 > max2 ? max1 : max2;
+
+          currentYear++;
+
           
+          // index 0 = bottom line of hexagram, index 5 = top line of hexagram
+          const yearRange = [];
+      
+          //Function to assign year range to a specific line and update the starting year
+          function setYearRange(line) {
+            // The yearCount is based on the polarity of the currentLine
+              yearvalue = line.name === 'yang' ? 9 : 6;        
+              const endYear = currentYear + yearvalue - 1;
+              line.yearRange = [currentYear, endYear];
+           
+              currentYear += yearvalue;
+              
+          }
+      
+          // Find lines in the order, starting from the controlling line, going up and wrapping around
+          const linesOrder = [
+              _.cloneDeep(laterHeavenHexagram.below.lines.lowerLine),
+              _.cloneDeep(laterHeavenHexagram.below.lines.middleLine),
+              _.cloneDeep(laterHeavenHexagram.below.lines.upperLine),
+              _.cloneDeep(laterHeavenHexagram.above.lines.lowerLine),
+              _.cloneDeep(laterHeavenHexagram.above.lines.middleLine),
+              _.cloneDeep(laterHeavenHexagram.above.lines.upperLine),
+          ];
+          // determine the correct starting index based on the controlling line
+      
+          let startIndex = laterHeavenHexagram.controllingLine.hexagramLineIndex - 1;
+      
+       
+      
+          //Assign year ranges in circular order, starting from the controlling line
+          for (let i = 0; i < linesOrder.length; i++) {
+              //const line = linesOrder[(startIndex + i) % linesOrder.length];
+              setYearRange(linesOrder[(startIndex + i) % linesOrder.length]);
+          }
+      
+        
+          // contruct yearRange array
+          linesOrder.forEach(thing => {
+            yearRange.push({line: _.clone(thing.name), yearRange: _.clone(thing.yearRange)});
+          });
+      
+          laterHeavenHexagram.yearRange = _.cloneDeep(yearRange);
+  
+          this.mapYearRangesToTrigramLines(laterHeavenHexagram, linesOrder);
+          return laterHeavenHexagram;
+      }
 
 
 
