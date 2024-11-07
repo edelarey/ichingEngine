@@ -2879,12 +2879,12 @@ class IChingConsultation {
 
       if ((!birthYearIsOdd && gender == Gender.MALE ) || (birthYearIsOdd && gender == Gender.FEMALE))
         {          
-          preHeavenHexagram = await hexagram.getHexagramByAboveBelow(heavenlyTrigram.trigram, earthlyTrigram.trigram);   
+          preHeavenHexagram = _.cloneDeep(await hexagram.getHexagramByAboveBelow(heavenlyTrigram.trigram, earthlyTrigram.trigram));   
           
         }
       if ((birthYearIsOdd && gender === Gender.MALE) || (!birthYearIsOdd && gender == Gender.FEMALE))
         {       
-         preHeavenHexagram = await hexagram.getHexagramByAboveBelow(earthlyTrigram.trigram, heavenlyTrigram.trigram);
+         preHeavenHexagram = _.cloneDeep(await hexagram.getHexagramByAboveBelow(earthlyTrigram.trigram, heavenlyTrigram.trigram));
          
         }
         
