@@ -230,66 +230,62 @@
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.symbol}} </p>  
                              <!-- Heavenly Trigram -->
                         <div class=".center-content">
-                        <svg ref="canvas" :width="state.graphics.svgWidth" :height="state.graphics.svgHeight" :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`">
-                        <g :transform="`translate(${state.graphics.svgWidth / 2 - state.graphics.lineLength / 2}, 20)`">
-                            
-                            <!-- Heavenly Trigram -->
-                            <g v-for="(line, index) in [...state.preHeavenHexagram.above.lineArray].reverse()" :key="'heaven' + index" 
-                            :transform="`translate(0, ${index * state.graphics.lineSpacing})`">
-                            
-                            <!-- Line Drawing -->
-                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
-                                    :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
-                                    :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
-                                    :x2="state.graphics.lineLength" :y2="0"  
-                                    :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
-                                    :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
-                                    :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
-                                    :x2="state.graphics.lineLength" :y2="0" 
-                                    :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
-
-                            <!-- Year Range Text -->
-                            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" font-size="12" fill="black">
-                                {{ line.yearRange[0] }} - {{ line.yearRange[1] }}
-                            </text>
-                            <text>{{ updateGlobalIndex() }}</text>
-                            </g>
-
-                            <!-- Earthly Trigram, positioned below Heavenly Trigram -->
-                            <g v-for="(line, index) in [...state.preHeavenHexagram.below.lineArray].reverse()" :key="'earth' + index" 
-                            :transform="`translate(0, ${(index + 3) * state.graphics.lineSpacing + 20})`">
-                            
-                            <!-- Line Drawing -->
-                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
-                                     :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
-                                    :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
-                                    :x2="state.graphics.lineLength" :y2="0" 
-                                    :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
-                                    :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
-                                    :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
-                                    :x2="state.graphics.lineLength" :y2="0" 
-                                    :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
-                            
-                            
-                            <!-- Year Range Text -->
-                            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" font-size="12" fill="black">
-                                {{ line.yearRange[0] }} - {{ line.yearRange[1] }}
-                            </text>
-                           <text>{{ updateGlobalIndex() }}</text>
-                           
-                            </g>
-                        </g>
-                        </svg>
+                            <svg ref="canvas" :width="state.graphics.svgWidth" :height="state.graphics.svgHeight" :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`">
+        <g :transform="`translate(${state.graphics.svgWidth / 2 - state.graphics.lineLength / 2}, 20)`">
+          <!-- Heavenly Trigram -->
+          <g v-for="(line, index) in [...state.preHeavenHexagram.above.lineArray].reverse()" :key="'heaven' + index" 
+            :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`">
+            <!-- Line Drawing -->
+            <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="'white'" :stroke-width="state.graphics.lineWidth" />
+            <text v-if="index === 0" :x="state.graphics.lineLength + 10" y="-20" dy=".35em" font-size="16" fill="black">
+                Age
+            </text>    <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+              :x2="state.graphics.lineLength" :y2="0"  
+              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+              :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <!-- Year Range Text -->
+            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" font-size="14" fill="black">
+              {{ line.yearRange[0] }} - {{ line.yearRange[1] }}
+            </text>
+            <text>{{ updateGlobalIndex() }}</text>
+          </g>
+          <!-- Earthly Trigram, positioned below Heavenly Trigram -->
+          <g v-for="(line, index) in [...state.preHeavenHexagram.below.lineArray].reverse()" :key="'earth' + index" 
+            :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`">
+            <!-- Line Drawing -->
+            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+              :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+              :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <!-- Year Range Text -->
+            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" font-size="12" fill="black">
+              {{ line.yearRange[0] }} - {{ line.yearRange[1] }}
+            </text>
+            <text>{{ updateGlobalIndex() }}</text>
+          </g>
+        </g>
+      </svg>
 
 
                     </div>                          
