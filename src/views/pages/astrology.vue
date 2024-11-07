@@ -241,48 +241,48 @@
             <text v-if="index === 0" :x="state.graphics.lineLength + 10" y="-20" dy=".35em" font-size="16" fill="black">
                 Age
             </text>    <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
-              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
-              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
               :x2="state.graphics.lineLength" :y2="0"  
-              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
-              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
-              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
               :x2="state.graphics.lineLength" :y2="0" 
-              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
             <!-- Year Range Text -->
             <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" font-size="14" fill="black">
               {{ line.yearRange[0] }} - {{ line.yearRange[1] }}
             </text>
-            <text>{{ updateGlobalIndex() }}</text>
+            <text>{{ updateGlobalPreHeavenLineIndex() }}</text>
           </g>
           <!-- Earthly Trigram, positioned below Heavenly Trigram -->
           <g v-for="(line, index) in [...state.preHeavenHexagram.below.lineArray].reverse()" :key="'earth' + index" 
             :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`">
             <!-- Line Drawing -->
             <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
-              :stroke="determineLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
-              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
               :x2="state.graphics.lineLength" :y2="0" 
-              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
-              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
-              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
             <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
               :x2="state.graphics.lineLength" :y2="0" 
-              :stroke="determineLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+              :stroke="determinePreHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
             <!-- Year Range Text -->
             <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" font-size="12" fill="black">
               {{ line.yearRange[0] }} - {{ line.yearRange[1] }}
             </text>
-            <text>{{ updateGlobalIndex() }}</text>
+            <text>{{ updateGlobalPreHeavenLineIndex() }}</text>
           </g>
         </g>
       </svg>
@@ -291,9 +291,9 @@
                     </div>                          
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenHexagram.translation.split(',')[0]}} </p> 
                             <span v-if="state.preHeavenHexagram">
-                                <div class="card-body"  v-if="state.controllingLine">
+                                <div class="card-body"  v-if="state.preHeavenControllingLine">
                                         <h3 class="card-title">Controlling Line</h3>
-                                        <p class="card-text display-10">{{state.controllingLine.trigram}} Trigram  {{state.controllingLine.linePosition}} Line  ({{state.controllingLine.line.name}})</p>
+                                        <p class="card-text display-10">{{state.preHeavenControllingLine.trigram}} Trigram  {{state.preHeavenControllingLine.linePosition}} Line  ({{state.preHeavenControllingLine.line.name}})</p>
                                 </div>                                
                                 <div class="card-body">
                                         <h3 class="card-title">Summary</h3>
@@ -306,13 +306,93 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="col-sm-2 mt-auto">
+        <div class="col-sm-6">                   
             <div class="card text-center">
-                <div class="card-body">
-                <p class="card-text display-1">→</p>
+                <div class="card-body" v-if="state.laterHeavenHexagram">
+                    <h5 class="card-title">Later-Heaven (Natal) Hexagram</h5>
+                    <p class="card-text display-3">{{state.laterHeavenHexagram.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.laterHeavenHexagram.symbol}} </p>  
+                             <!-- Heavenly Trigram -->
+                        <div class=".center-content">
+                            <svg ref="canvas" :width="state.graphics.svgWidth" :height="state.graphics.svgHeight" :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`">
+        <g :transform="`translate(${state.graphics.svgWidth / 2 - state.graphics.lineLength / 2}, 20)`">
+          <!-- Heavenly Trigram -->
+          <g v-for="(line, index) in [...state.laterHeavenHexagram.above.lineArray].reverse()" :key="'heaven' + index" 
+            :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`">
+            <!-- Line Drawing -->
+            <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="'white'" :stroke-width="state.graphics.lineWidth" />
+            <text v-if="index === 0" :x="state.graphics.lineLength + 10" y="-20" dy=".35em" font-size="16" fill="black">
+                Age
+            </text>    <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+              :x2="state.graphics.lineLength" :y2="0"  
+              :stroke="determineLaterHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+              :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <!-- Year Range Text -->
+            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" font-size="14" fill="black">
+              {{ line.yearRange[0] }} - {{ line.yearRange[1] }}
+            </text>
+            <text>{{ updateGlobalLaterHeavenLineIndex() }}</text>
+          </g>
+          <!-- Earthly Trigram, positioned below Heavenly Trigram -->
+          <g v-for="(line, index) in [...state.laterHeavenHexagram.below.lineArray].reverse()" :key="'earth' + index" 
+            :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`">
+            <!-- Line Drawing -->
+            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+              :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+              :x2="state.graphics.lineLength" :y2="0" 
+              :stroke="determineLaterHeavenLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+            <!-- Year Range Text -->
+            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" font-size="12" fill="black">
+              {{ line.yearRange[0] }} - {{ line.yearRange[1] }}
+            </text>
+            <text>{{ updateGlobalLaterHeavenLineIndex() }}</text>
+          </g>
+        </g>
+      </svg>
+
+
+                    </div>                          
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.laterHeavenHexagram.translation.split(',')[0]}} </p> 
+                            <span v-if="state.laterHeavenHexagram">
+                                <div class="card-body"  v-if="state.preHeavenControllingLine">
+                                        <h3 class="card-title">Controlling Line</h3>
+                                        <p class="card-text display-10">{{state.laterHeavenHexagram.controllingLine.trigram}} Trigram  {{state.laterHeavenHexagram.controllingLine.linePosition}} Line  ({{state.laterHeavenHexagram.controllingLine.line.name}})</p>
+                                </div>                                
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="state.laterHeavenHexagram.summary"></span></p>   
+                                </div>
+                            </span>
+                          
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.laterHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
                 </div>
-            </div>    
-        </div> -->
+            </div>
+        </div>
+       
+    </div> 
+    <div class="row">
         <div class="col-sm-6">
             <div class="card text-center">
                 <div class="card-body" v-if="state.heavenlyTrigram">
@@ -338,8 +418,6 @@
                 </div>
             </div>
         </div>
-    </div> 
-    <div class="row">
         <div class="col-sm-6">                   
             <div class="card text-center">
                 <div class="card-body" v-if="state.timeOfBirthHexagram">
@@ -422,10 +500,11 @@ export default {
                 hexagramTransformed: [],
                 natalHexagram:'',
                 preHeavenHexagram:'',
+                laterHeavenHexagram:'',
                 heavenlyTrigram:'',
                 earthlyTrigram:'',
                 timeOfBirthHexagram:'',
-                controllingLine:'',
+                preHeavenControllingLine:'',
                 latitude:  26.39655582357474, 
                 longitude: 27.37679999686307,
                 birthDate:  DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(), 
@@ -450,8 +529,8 @@ export default {
             });
 
             const form = {
-                globalLineIndex: 5,
-                shouldDraw: true,  // Index for tracking the absolute line number we are drawing of the hexagram
+                globalPreHeavenLineIndex: 5,
+                globalLaterHeavenLineIndex: 5,           
             };
 
         const dateTimeFormatSimple = (date) =>  {
@@ -508,20 +587,49 @@ export default {
             return value.toString();
             };         
             
-        const updateGlobalIndex =  () => {
+        const updateGlobalPreHeavenLineIndex =  () => {
             
           
            
-            if (form.globalLineIndex < 0) {
-                form.globalLineIndex = 5;
+            if (form.globalPreHeavenLineIndex < 0) {
+                form.globalPreHeavenLineIndex = 5;
             }
-            form.globalLineIndex--;
+            form.globalPreHeavenLineIndex--;
         };
 
-        const determineLineColor = (line ) => {
-  
+        const updateGlobalLaterHeavenLineIndex =  () => {
+            
+          
+           
+            if (form.globalLaterHeavenLineIndex < 0) {
+                form.globalLaterHeavenLineIndex = 5;
+            }
+            form.globalLaterHeavenLineIndex--;
+        };
+        
+        const determinePreHeavenLineColor = (line ) => {
+            
+            if (line)
+
              // default            
-            if ((state.controllingLine !='') && (form.globalLineIndex  === state.controllingLine.hexagramLineIndex -1))
+            if ((state.preHeavenHexagram.controllingLine !='') && (form.globalPreHeavenLineIndex  === state.preHeavenHexagram.controllingLine.hexagramLineIndex -1))
+            {
+                return state.graphics.LineColorControlling;
+            }
+            else if (line.alternate === 'OLDYANG' || line.alternate === 'OLDYIN') {
+                return state.graphics.lineColorBroken;
+            }
+            return state.graphics.lineColor;
+            
+           
+        };
+
+        const determineLaterHeavenLineColor = (line ) => {
+            
+            if (line)
+
+             // default            
+            if ((state.laterHeavenHexagram.controllingLine !='') && (form.globalLaterHeavenLineIndex  === state.laterHeavenHexagram.controllingLine.hexagramLineIndex -1))
             {
                 return state.graphics.LineColorControlling;
             }
@@ -587,7 +695,8 @@ export default {
         const  consult = async() => {          
 
             let astrology = null;
-            form.globalLineIndex = 5;
+            form.globalPreHeavenLineIndex = 5;
+            form.globalLaterHeavenLineIndex = 5;
             const hemisphere = getHemisphere(state.latitude);
 
             if (hemisphere === "Northern") {
@@ -654,7 +763,8 @@ export default {
                 state.heavenlyTrigram = result.iching.heavenlyTrigram;
                 state.earthlyTrigram = result.iching.earthlyTrigram;
                 state.timeOfBirthHexagram = result.iching.timeOfBirthSymbol;
-                state.controllingLine = result.iching.controllingLine;
+                state.preHeavenControllingLine = result.iching.preHeavenHexagram.controllingLine;
+                state.laterHeavenHexagram = result.iching.laterHeavenHexagram;
 
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
@@ -717,7 +827,7 @@ export default {
         };
 
         watch(() => state.name, (newName) => {
-            form.globalLineIndex = 5;
+            form.globalPreHeavenLineIndex = 5;
             const selectedBirthday = birthdayList.value.find(b => b.name === newName);
             if (selectedBirthday) {              
                 state.birthDate = selectedBirthday.birthday;
@@ -733,7 +843,7 @@ export default {
             consult();
         });
        
-        return {clearCanvas, nextTick, determineLineColor, form, updateGlobalIndex, birthdayList, birthdayStore,  saveBirthday, dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
+        return {determineLaterHeavenLineColor, clearCanvas, nextTick, determinePreHeavenLineColor, form, updateGlobalPreHeavenLineIndex, updateGlobalLaterHeavenLineIndex, birthdayList, birthdayStore,  saveBirthday, dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
 }
 }
 </script>

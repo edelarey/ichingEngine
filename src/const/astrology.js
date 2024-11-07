@@ -1045,7 +1045,7 @@ assignLines(preHeavenHexagram, lineDesignations) {
 
 
 
-developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) {
+developPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol, gender) {
   // Step 1: Count the number of Yin and Yang lines in the pre-heaven hexagram
   let yinCount = 0;
   let yangCount = 0;
@@ -1207,29 +1207,29 @@ developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) {
   return this.assignLines(preHeavenHexagram, lineDesignations);
 }
 
-getDesignations(preHeavenHexagram) {
+getPreHeavenDesignations(preHeavenHexagram) {
   const designations = [...preHeavenHexagram.below.designation, ...preHeavenHexagram.above.designation];
   return designations;
 }
 
-getControllingLine(preHeavenHexagram, birthSymbol) {
-  let controllingLine = null;
+getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
+  let preHeavenControllingLine = null;
 
     // Check above trigram lines
   preHeavenHexagram.above.designation.forEach((symbol, index) => { 
    
     if (symbol.includes(birthSymbol)) {    
       switch (index) {
-        case 0: controllingLine = 
+        case 0: preHeavenControllingLine = 
                 { trigram: 'Above',
                   lineNumber: index,
                   linePosition: 'Lower',
                   hexagramLineIndex: 4,
                   line: preHeavenHexagram.above.lines.lowerLine,
-                  letter: symbol
+                  letter: symbol                  
                 }                                                        
         break;
-         case 1:  controllingLine = 
+         case 1:  preHeavenControllingLine = 
          { trigram: 'Above',
            lineNumber: index,
            linePosition: 'Middle',
@@ -1238,7 +1238,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
            letter: symbol
          };
            break;
-         case 2: controllingLine = 
+         case 2: preHeavenControllingLine = 
          { trigram: 'Above',
            lineNumber: index,
            linePosition: 'Upper',
@@ -1252,11 +1252,11 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
   });
 
   // If no match is found in above, check below trigram
-  if (!controllingLine) {
+  if (!preHeavenControllingLine) {
     preHeavenHexagram.below.designation.forEach((symbol, index) => {
       if (symbol.includes(birthSymbol)) {    
       switch (index) {
-        case 0: controllingLine = 
+        case 0: preHeavenControllingLine = 
         { trigram: 'Below',
           lineNumber: index,
           linePosition: 'Lower',
@@ -1265,7 +1265,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
           letter: symbol
         }                                                        
             break;
-            case 1:  controllingLine = 
+            case 1:  preHeavenControllingLine = 
             { trigram: 'Below',
               lineNumber: index,
               linePosition: 'Middle',
@@ -1275,7 +1275,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
             };
           
               break;
-            case 2: controllingLine = 
+            case 2: preHeavenControllingLine = 
             { trigram: 'Below',
               lineNumber: index,
               linePosition: 'Upper',
@@ -1288,9 +1288,94 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
         }
     });
   }
- 
-  return controllingLine;
+  preHeavenHexagram.controllingLine = preHeavenControllingLine;
+  return preHeavenControllingLine;
 }
+
+
+   /** Construct The Later Heaven Hexagram swapping the trigrams and inverting the controlling line polarity
+         */ 
+   getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine) {
+    // the controlling line must take into account that the trigrams have swapped positions
+    // also if it is yang it must become yin and vice vera
+    let laterHeavenBinary = preHeavenHexagram.binary.split('').reverse();
+    laterHeavenBinary[preHeavenControllingLine.hexagramLineIndex-1] = preHeavenControllingLine.line.name === 'yang' ? '0' : '1';
+    laterHeavenBinary = laterHeavenBinary.reverse().join('');
+    // now swap the first 3 and the last 3 binary digits
+    let finalLaterHeavenBinary = laterHeavenBinary.slice(3) + laterHeavenBinary.slice(0, 3); 
+    console.log('laterHeavenBinary', laterHeavenBinary);
+    console.log('finalLaterHeavenBinary', finalLaterHeavenBinary);
+    // now find which hexagram that matchs
+    let laterHeavenHexagramCheck = hexagram.getHexagramByBinary(finalLaterHeavenBinary);
+
+    // change the binary to reflect the later heaven hexagram by replacing the preHeavenControllingLine[hexagramLineIndex-1] with its opposite binary designation
+    console.log('laterHeavenHexagram', laterHeavenHexagramCheck);
+   
+    return laterHeavenHexagramCheck;
+  
+  }
+
+  getLaterHeavenControllingLine(laterHeavenHexagram,  preHeavenControllingLine) {
+    // the controlling line must take into account that the trigrams have swapped positions
+    // and the original controlling line is now the opposite polarity
+    let laterHeavenControllingLine = null;
+    // Check above trigram lines
+    switch (preHeavenControllingLine.hexagramLineIndex) {
+        case 1: laterHeavenControllingLine = 
+                { trigram: 'Above',
+                  lineNumber: 3,
+                  linePosition: 'Lower',
+                  hexagramLineIndex: 4,
+                  line: laterHeavenHexagram.above.lines.lowerLine,
+                                 
+                }                                                        
+        break;
+        case 2: laterHeavenControllingLine = 
+                { trigram: 'Above',
+                  lineNumber: 4,
+                  linePosition: 'Middle',          
+                  hexagramLineIndex: 5,
+                  line: laterHeavenHexagram.above.lines.middleLine,
+                
+                };
+          break;
+        case 3: laterHeavenControllingLine = 
+                { trigram: 'Above',
+                  lineNumber: 5,
+                  linePosition: 'Upper',
+                  hexagramLineIndex: 6,
+                  line: laterHeavenHexagram.above.lines.upperLine,       
+                };
+          break;
+        case 4: laterHeavenControllingLine = 
+                { trigram: 'Below',
+                  lineNumber: 0,
+                  linePosition: 'Lower',
+                  hexagramLineIndex: 1,
+                  line: laterHeavenHexagram.below.lines.lowerLine,                                  
+                }                                                        
+        break;
+        case 5:  laterHeavenControllingLine = 
+              { trigram: 'Below',
+                lineNumber: 1,
+                linePosition: 'Middle',
+                hexagramLineIndex: 2,
+                line: laterHeavenHexagram.below.lines.middleLine,
+              };
+          break;
+        case 6: laterHeavenControllingLine = 
+            { trigram: 'Below',
+              lineNumber: 2,
+              linePosition: 'Upper',
+              hexagramLineIndex: 3,
+              line: laterHeavenHexagram.below.lines.upperLine,   
+            };
+          break;
+     }
+     laterHeavenHexagram.controllingLine = laterHeavenControllingLine;
+     return laterHeavenControllingLine;
+  }
+ 
 
 mapDesignationsToTrigramLines(preHeavenHexagram)   
 {
@@ -1336,9 +1421,9 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         
             };
         
-          assignYearRanges(preHeavenHexagram, controllingLine, birthYear) {
+          assignPreHeavenYearRanges(preHeavenHexagram, preHeavenControllingLine, birthYear) {
             // Set initial year count based on the polarity of the controlling line
-            let yearvalue = controllingLine.line.name === 'yang' ? 9 : 6;
+            let yearvalue = preHeavenControllingLine.line.name === 'yang' ? 9 : 6;
             let currentYear = 1;
             // index 0 = bottom line of hexagram, index 5 = top line of hexagram
             const yearRange = [];
@@ -1365,7 +1450,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             ];
             // determine the correct starting index based on the controlling line
         
-            let startIndex = controllingLine.hexagramLineIndex - 1;
+            let startIndex = preHeavenControllingLine.hexagramLineIndex - 1;
         
          
         
@@ -1386,6 +1471,69 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             this.mapYearRangesToTrigramLines(preHeavenHexagram, linesOrder);
             return preHeavenHexagram;
         }
+
+        assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram,  birthYear) {
+          //remember to set the current year to the last year of the preHeavenHexagram
+          // Set initial year count based on the polarity of the controlling line
+          let yearvalue = laterHeavenHexagram.controllingLine.line.name === 'yang' ? 9 : 6;
+         
+
+          // find the maximun number in  preHeavenHexagram.yearRange array
+          let max1 = Math.max.apply(Math, preHeavenHexagram.yearRange.map(function(o) { return o.yearRange[1]; }));
+          let max2 = Math.max.apply(Math, preHeavenHexagram.yearRange.map(function(o) { return o.yearRange[0]; })); 
+
+          let currentYear = max1 > max2 ? max1 : max2;
+
+          currentYear++;
+
+          
+          // index 0 = bottom line of hexagram, index 5 = top line of hexagram
+          const yearRange = [];
+      
+          //Function to assign year range to a specific line and update the starting year
+          function setYearRange(line) {
+            // The yearCount is based on the polarity of the currentLine
+              yearvalue = line.name === 'yang' ? 9 : 6;        
+              const endYear = currentYear + yearvalue - 1;
+              line.yearRange = [currentYear, endYear];
+           
+              currentYear += yearvalue;
+              
+          }
+      
+          // Find lines in the order, starting from the controlling line, going up and wrapping around
+          const linesOrder = [
+              _.cloneDeep(laterHeavenHexagram.below.lines.lowerLine),
+              _.cloneDeep(laterHeavenHexagram.below.lines.middleLine),
+              _.cloneDeep(laterHeavenHexagram.below.lines.upperLine),
+              _.cloneDeep(laterHeavenHexagram.above.lines.lowerLine),
+              _.cloneDeep(laterHeavenHexagram.above.lines.middleLine),
+              _.cloneDeep(laterHeavenHexagram.above.lines.upperLine),
+          ];
+          // determine the correct starting index based on the controlling line
+      
+          let startIndex = laterHeavenHexagram.controllingLine.hexagramLineIndex - 1;
+      
+       
+      
+          //Assign year ranges in circular order, starting from the controlling line
+          for (let i = 0; i < linesOrder.length; i++) {
+              //const line = linesOrder[(startIndex + i) % linesOrder.length];
+              setYearRange(linesOrder[(startIndex + i) % linesOrder.length]);
+          }
+      
+        
+          // contruct yearRange array
+          linesOrder.forEach(thing => {
+            yearRange.push({line: _.clone(thing.name), yearRange: _.clone(thing.yearRange)});
+          });
+      
+          laterHeavenHexagram.yearRange = _.cloneDeep(yearRange);
+  
+          this.mapYearRangesToTrigramLines(laterHeavenHexagram, linesOrder);
+          return laterHeavenHexagram;
+      }
+
 
 
 
@@ -2060,7 +2208,7 @@ assignLines(preHeavenHexagram, lineDesignations) {
 
 
 
-developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) {
+developPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol, gender) {
   // Step 1: Count the number of Yin and Yang lines in the pre-heaven hexagram
   let yinCount = 0;
   let yangCount = 0;
@@ -2222,20 +2370,20 @@ developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) {
   return this.assignLines(preHeavenHexagram, lineDesignations);
 }
 
-getDesignations(preHeavenHexagram) {
+getPreHeavenDesignations(preHeavenHexagram) {
   const designations = [...preHeavenHexagram.below.designation, ...preHeavenHexagram.above.designation];
   return designations;
 }
 
-getControllingLine(preHeavenHexagram, birthSymbol) {
-  let controllingLine = null;
+getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
+  let preHeavenControllingLine = null;
 
     // Check above trigram lines
   preHeavenHexagram.above.designation.forEach((symbol, index) => { 
    
     if (symbol.includes(birthSymbol)) {    
       switch (index) {
-        case 0: controllingLine = 
+        case 0: preHeavenControllingLine = 
                 { trigram: 'Above',
                   lineNumber: index,
                   linePosition: 'Lower',
@@ -2244,7 +2392,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
                   letter: symbol
                 }                                                        
         break;
-         case 1:  controllingLine = 
+         case 1:  preHeavenControllingLine = 
          { trigram: 'Above',
            lineNumber: index,
            linePosition: 'Middle',
@@ -2253,7 +2401,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
            letter: symbol
          };
            break;
-         case 2: controllingLine = 
+         case 2: preHeavenControllingLine = 
          { trigram: 'Above',
            lineNumber: index,
            linePosition: 'Upper',
@@ -2267,11 +2415,11 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
   });
 
   // If no match is found in above, check below trigram
-  if (!controllingLine) {
+  if (!preHeavenControllingLine) {
     preHeavenHexagram.below.designation.forEach((symbol, index) => {
       if (symbol.includes(birthSymbol)) {    
       switch (index) {
-        case 0: controllingLine = 
+        case 0: preHeavenControllingLine = 
         { trigram: 'Below',
           lineNumber: index,
           linePosition: 'Lower',
@@ -2280,7 +2428,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
           letter: symbol
         }                                                        
             break;
-            case 1:  controllingLine = 
+            case 1:  preHeavenControllingLine = 
             { trigram: 'Below',
               lineNumber: index,
               linePosition: 'Middle',
@@ -2290,7 +2438,7 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
             };
           
               break;
-            case 2: controllingLine = 
+            case 2: preHeavenControllingLine = 
             { trigram: 'Below',
               lineNumber: index,
               linePosition: 'Upper',
@@ -2303,9 +2451,93 @@ getControllingLine(preHeavenHexagram, birthSymbol) {
         }
     });
   }
- 
-  return controllingLine;
+    preHeavenHexagram.controllingLine = preHeavenControllingLine;
+  return preHeavenControllingLine;
 }
+
+   /** Construct The Later Heaven Hexagram swapping the trigrams and inverting the controlling line polarity
+         */ 
+   getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine) {
+    // the controlling line must take into account that the trigrams have swapped positions
+    // also if it is yang it must become yin and vice vera
+    let laterHeavenBinary = preHeavenHexagram.binary.split('').reverse();
+    laterHeavenBinary[preHeavenControllingLine.hexagramLineIndex-1] = preHeavenControllingLine.line.name === 'yang' ? '0' : '1';
+    laterHeavenBinary = laterHeavenBinary.reverse().join('');
+    // now swap the first 3 and the last 3 binary digits
+    let finalLaterHeavenBinary = laterHeavenBinary.slice(3) + laterHeavenBinary.slice(0, 3); 
+    console.log('laterHeavenBinary', laterHeavenBinary);
+    console.log('finalLaterHeavenBinary', finalLaterHeavenBinary);
+    // now find which hexagram that matchs
+    let laterHeavenHexagramCheck = hexagram.getHexagramByBinary(finalLaterHeavenBinary);
+
+    // change the binary to reflect the later heaven hexagram by replacing the preHeavenControllingLine[hexagramLineIndex-1] with its opposite binary designation
+    console.log('laterHeavenHexagram', laterHeavenHexagramCheck);
+   
+    return laterHeavenHexagramCheck;
+  
+  }
+
+  getLaterHeavenControllingLine(laterHeavenHexagram,  preHeavenControllingLine) {
+    // the controlling line must take into account that the trigrams have swapped positions
+    // and the original controlling line is now the opposite polarity
+    let laterHeavenControllingLine = null;
+    // Check above trigram lines
+    console.log ('lineIndex',preHeavenControllingLine.hexagramLineIndex);
+    switch (preHeavenControllingLine.hexagramLineIndex) {
+         case 1: laterHeavenControllingLine = 
+                { trigram: 'Above',
+                  lineNumber: 0,
+                  linePosition: 'Lower',
+                  hexagramLineIndex: 4,
+                  line: laterHeavenHexagram.above.lines.lowerLine,
+                                 
+                }                                                        
+        break;
+        case 2: laterHeavenControllingLine = 
+                { trigram: 'Above',
+                  lineNumber: 1,
+                  linePosition: 'Middle',          
+                  hexagramLineIndex: 5,
+                  line: laterHeavenHexagram.above.lines.middleLine,
+                
+                };
+          break;
+        case 3: laterHeavenControllingLine = 
+                { trigram: 'Above',
+                  lineNumber: 2,
+                  linePosition: 'Upper',
+                  hexagramLineIndex: 6,
+                  line: laterHeavenHexagram.above.lines.upperLine,       
+                };
+          break;
+        case 4: laterHeavenControllingLine = 
+                { trigram: 'Below',
+                  lineNumber: 0,
+                  linePosition: 'Lower',
+                  hexagramLineIndex: 1,
+                  line: laterHeavenHexagram.below.lines.lowerLine,                                  
+                }                                                        
+        break;
+        case 5:  laterHeavenControllingLine = 
+              { trigram: 'Below',
+                lineNumber: 1,
+                linePosition: 'Middle',
+                hexagramLineIndex: 2,
+                line: laterHeavenHexagram.below.lines.middleLine,
+              };
+          break;
+        case 6: laterHeavenControllingLine = 
+            { trigram: 'Below',
+              lineNumber: 2,
+              linePosition: 'Upper',
+              hexagramLineIndex: 3,
+              line: laterHeavenHexagram.below.lines.upperLine,   
+            };
+          break;
+     }
+     laterHeavenHexagram.controllingLine = laterHeavenControllingLine;
+     return laterHeavenControllingLine;
+  }
 
 mapDesignationsToTrigramLines(preHeavenHexagram)   
 {
@@ -2351,9 +2583,9 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         
             };
         
-          assignYearRanges(preHeavenHexagram, controllingLine, birthYear) {
+          assignPreHeavenYearRanges(preHeavenHexagram, preHeavenControllingLine, birthYear) {
             // Set initial year count based on the polarity of the controlling line
-            let yearvalue = controllingLine.line.name === 'yang' ? 9 : 6;
+            let yearvalue = preHeavenControllingLine.line.name === 'yang' ? 9 : 6;
             let currentYear = 1;
             // index 0 = bottom line of hexagram, index 5 = top line of hexagram
             const yearRange = [];
@@ -2380,7 +2612,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             ];
             // determine the correct starting index based on the controlling line
         
-            let startIndex = controllingLine.hexagramLineIndex - 1;
+            let startIndex = preHeavenControllingLine.hexagramLineIndex - 1;
         
         
         
@@ -2576,38 +2808,42 @@ class IChingConsultation {
         break;   
      }
 
-     earthlyTrigram = this.astrology.earthlyNumbers.find(trigram => trigram.number === earthlyNumber);
-
+        earthlyTrigram = this.astrology.earthlyNumbers.find(trigram => trigram.number === earthlyNumber);
+    
      // Now determine which trigram goes on top and which on the bottom to construct the Pre-Heaven Hexagram
      // The rule is as follows: For Gender.MALE if the year of birth is even, the heavenly trigram goes on top and earthly at the bottom, for odd years the earthly trigram goes on top and the heavenly at the bottom
      // For Gender.FEMALE if the year of birth is even, the heavenly trigram goes at the bottom and earthly on top. For odd years the heavenly trigram is on top earthly trigram goes on bottom
 
       if ((!birthYearIsOdd && gender == Gender.MALE ) || (birthYearIsOdd && gender == Gender.FEMALE))
         {          
-          preHeavenHexagram = hexagram.getHexagramByAboveBelow(heavenlyTrigram.trigram, earthlyTrigram.trigram);          
+          preHeavenHexagram = await hexagram.getHexagramByAboveBelow(heavenlyTrigram.trigram, earthlyTrigram.trigram);   
+          
         }
       if ((birthYearIsOdd && gender === Gender.MALE) || (!birthYearIsOdd && gender == Gender.FEMALE))
         {       
-         preHeavenHexagram = hexagram.getHexagramByAboveBelow(earthlyTrigram.trigram, heavenlyTrigram.trigram);
+         preHeavenHexagram = await hexagram.getHexagramByAboveBelow(earthlyTrigram.trigram, heavenlyTrigram.trigram);
+         
         }
         
         // determine the line designations and then we can work out the controlling line
-        let ans = this.astrology.developControllingLines(preHeavenHexagram, timeOfBirthSymbol, gender) ;
-        let lineTimeDesignations = this.astrology.getDesignations(preHeavenHexagram);
+        let ans = this.astrology.developPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol, gender) ;
+        let lineTimeDesignations = this.astrology.getPreHeavenDesignations(preHeavenHexagram);
         this.astrology.mapDesignationsToTrigramLines(preHeavenHexagram);
         // Time of Birth Symbol is used to determine the controlling line
-        let controllingLine = this.astrology.getControllingLine(preHeavenHexagram, timeOfBirthSymbol.symbol);
+        const preHeavenControllingLine = this.astrology.getPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol.symbol);
          
-        /**Calculate Sub-Cycles Of Life based on controlling line in Natal Hexagram (Pre-Heaven Hexagram)
-            If the controlling line is a Yin line, the first sub-cycle is 6 years, if it is a Yang line, the sub-cycle is 9 years. 
-            The other lines are considered one by one moving up from the controlling line and assigning the years line by line until the top line of the hexagram.
-            Then one continues from the bottom of the hexagram until the controlling line is reached again.
-            The numbers that result are representative of the individuals age in years for the sub-cycle.
-            When using these in subsequent calculations, the date of birth should be kept in mind to determine wether positive or negative year rules apply
-            The age of an individual is measured from Winter Solstice to Winter Solstice.
-            The period from the date of birth to the first winter solstice being the first year of life. 
-         */ 
-         this.astrology.assignYearRanges(preHeavenHexagram, controllingLine, year);       
+     
+         this.astrology.assignPreHeavenYearRanges(preHeavenHexagram, preHeavenControllingLine, year);    
+
+         
+         
+         let laterHeavenHexagram = this.astrology.getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine) ;
+         let laterHeavenControllingLine = this.astrology.getLaterHeavenControllingLine(laterHeavenHexagram, preHeavenControllingLine);
+        this.astrology.assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram, year);  
+        
+          
+     
+         
 
 
      return {
@@ -2642,12 +2878,12 @@ class IChingConsultation {
       iching :{
         heavenlyNumber,
         timeOfBirthSymbol,
-        lineTimeDesignations,
-        controllingLine,
+        lineTimeDesignations, 
         earthlyNumber,
         heavenlyTrigram,
         earthlyTrigram,
         preHeavenHexagram,
+        laterHeavenHexagram,
         stemBranchNumbers: allNumbers,
       }   
      };
