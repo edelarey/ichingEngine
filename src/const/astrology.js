@@ -2354,7 +2354,7 @@ class IChingAstrology_South {
             // index 0 = bottom line of hexagram, index 5 = top line of hexagram
             const yearRange = [];
         
-            //Function to assign year range to a specific line and update the starting year
+            //Function to assign year range to a specific line and update the starting yea
             function setYearRange(line) {
               // The yearCount is based on the polarity of the currentLine
                 yearvalue = line.name === 'yang' ? 9 : 6;        

@@ -234,11 +234,7 @@
                                 <div class="card-body"  v-if="state.controllingLine">
                                         <h3 class="card-title">Controlling Line</h3>
                                         <p class="card-text display-10">{{state.controllingLine.trigram}} Trigram  {{state.controllingLine.linePosition}} Line  ({{state.controllingLine.line.name}})</p>
-                                </div>
-                                <div class="card-body"  v-if="state.preHeavenHexagram.yearRange">
-                                        <h3 class="card-title">Ages</h3>
-                                        <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenHexagram.yearRange }} </p>                                          
-                                </div>
+                                </div>                                
                                 <div class="card-body">
                                         <h3 class="card-title">Summary</h3>
                                         <p class="card-text display-10"><span v-html="state.preHeavenHexagram.summary"></span></p>   
@@ -305,6 +301,46 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenHexagram">
+                    <h5 class="card-title">Pre-Heaven SVG</h5>
+                    <p class="card-text display-3">{{state.preHeavenHexagram.name}}</p>
+                    <div class=".center-content">
+                        <svg :width="state.graphics.svgWidth" :height="state.graphics.svgHeight" :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`">
+                        <g v-for="(line, index) in state.heavenlyTrigram.trigram.lineArray" :key="index" :transform="`translate(0, ${index * state.graphics.lineSpacing})`">
+                            <!-- Yang Line -->
+                       
+                            <line  v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="state.graphics.lineColor" :stroke-width="state.graphics.lineWidth" />
+                    
+
+                            <!-- Yin Line -->
+                        
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="state.graphics.lineColor" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="state.graphics.lineColor" :stroke-width="state.graphics.lineWidth" />
+                           
+
+                            <!-- Changing Line (Yang) -->
+                     
+                            <line  v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="state.graphics.lineColor" :stroke-width="state.graphics.lineWidth" />
+                        
+
+                            <!-- Changing Line (Yin) -->
+                 
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" stroke="blue" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" stroke="blue" :stroke-width="state.graphics.lineWidth" />
+                      
+                        </g>
+                      
+                        </svg>
+                    </div>
+                    <a  :href="`/hexagram_detail?hexagram=${state.preHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>
+   
 </template>
 
 
@@ -374,6 +410,15 @@ export default {
                 /**   DateTime.fromObject({ year: 1934, month: 9, day: 18, hour: 0, minute:36}).toISO(),eg 2*/
                 minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toISO(), // Later on this is the maximun BC Date Minimum Date: April 20, 271821 BC   (use negative year)
                 maxDate:  DateTime.fromObject({ year: 275760, month:9, day: 13 }).toISO(),
+                graphics: {
+                    svgWidth: 1000,
+                    svgHeight: 1000,
+                    lineLength: 100,
+                    lineSpacing: 20,
+                    gapWidth: 10,
+                    lineWidth: 5,
+                    lineColor: 'black',
+                },
             });
 
         const dateTimeFormatSimple = (date) =>  {
@@ -631,4 +676,5 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 </style>
