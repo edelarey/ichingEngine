@@ -95,129 +95,8 @@
         <div class="col-sm-12">                   
             <div class="card text-center">  
                 <h3 class="card-header">
-                Yearly Cycle
+                Pre-Heaven and Later Heaven Hexagrams
                 </h3> 
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="card text-center">  
-                                
-                <div class="card-body" v-if="state.sexagenaryCycle">
-                    <h5 class="card-title">Celestital Stem  - {{formatBirthYear}}</h5>
-                    <p class="card-text display-1">{{state.sexagenaryCycle.celestialStem.name}} {{state.sexagenaryCycle.celestialStem.symbol}} </p>                      
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.celestialStem.element.name}} {{state.sexagenaryCycle.celestialStem.element.bodyPart}} </p>                         
-                    <p :style="{color: colorClass}" class="card-text display-6">{{state.sexagenaryCycle.celestialStem.trigram.name}} {{state.sexagenaryCycle.celestialStem.trigram.symbol}} {{state.sexagenaryCycle.celestialStem.trigram.trigram}}  {{state.sexagenaryCycle.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
-                    <p :style="{color: colorClass}" class="card-text display-6"><br />  </p>           
-                            
-                </div>
-            </div>
-        </div>
-        <!-- <div class="col-sm-2 mt-auto">
-            <div class="card text-center">
-                <div class="card-body">
-                <p class="card-text display-1">→</p>
-                </div>
-            </div>    
-        </div> -->
-        <div class="col-sm-6">
-            <div class="card text-center">
-                <div class="card-body" v-if="state.sexagenaryCycle">
-                    <h5 class="card-title">Horary Branch - {{formatBirthYear}}</h5>
-                    <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}} {{state.sexagenaryCycle.horaryBranch.symbol}} {{state.sexagenaryCycle.horaryBranch.animal}}</p> 
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.name}} {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>                                                 
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].name}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].trigram}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</a></p>  
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].name}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].trigram}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Detail</a></p>  
-                </div>
-            </div>
-        </div>
-    </div>   
-    <div class="row"  v-if="state.cycle">
-        <div class="col-sm-12">                   
-            <div class="card text-center">  
-                <h3 class="card-header">
-                Monthly Cycle
-                </h3> 
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="card text-center">
-                <div class="card-body" v-if="state.birthStemsandBranches">
-                    <h5 class="card-title">Celestital Stem - {{formatBirthMonth}}</h5>
-                    <p class="card-text display-1">{{state.birthStemsandBranches.celestialStem.name}} {{state.birthStemsandBranches.celestialStem.symbol}} </p>                      
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.celestialStem.element.name}} {{state.birthStemsandBranches.celestialStem.element.bodyPart}} </p>                         
-                    <p :style="{color: colorClass}" class="card-text display-6">{{state.birthStemsandBranches.celestialStem.trigram.name}} {{state.birthStemsandBranches.celestialStem.trigram.symbol}} {{state.birthStemsandBranches.celestialStem.trigram.trigram}}  {{state.birthStemsandBranches.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
-                    <p :style="{color: colorClass}" class="card-text display-6"><br />  </p>    
-                       
-                
-                </div>
-            </div>
-        </div>
-        <!-- <div class="col-sm-2 mt-auto">
-            <div class="card text-center">
-                <div class="card-body">
-                <p class="card-text display-1">→</p>
-                </div>
-            </div>    
-        </div> -->
-        <div class="col-sm-6">
-            <div class="card text-center">
-                <div class="card-body" v-if="state.birthStemsandBranches">
-                    <h5 class="card-title">Horary Branch - {{formatBirthMonth}}</h5>
-                    <p class="card-text display-3">{{state.birthStemsandBranches.horaryBranch.name}} {{state.birthStemsandBranches.horaryBranch.symbol}} {{state.birthStemsandBranches.horaryBranch.animal}}</p> 
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.name}} {{state.birthStemsandBranches.horaryBranch.element.bodyPart}} </p>                                                 
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].name}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].trigram}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</a></p>  
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].name}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].trigram}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Detail</a></p>  
-                            <p :style="{color: colorClass}" class="card-text display-6"><br /> </p>               
-                </div>
-            </div>
-        </div>
-    </div>   
-
-    <div class="row"  v-if="state.cycle">
-        <div class="col-sm-12">                   
-            <div class="card text-center">  
-                <h3 class="card-header">
-                Daily Cycle
-                </h3> 
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="card text-center">
-                <div class="card-body" v-if="state.dailyStemsandBranches">
-                    <h5 class="card-title">Celestital Stem - {{formatBirthDay}}</h5>
-                    <p class="card-text display-1">{{state.dailyStemsandBranches.celestialStem.name}} {{state.dailyStemsandBranches.celestialStem.symbol}} </p>                      
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.celestialStem.element.name}} {{state.dailyStemsandBranches.celestialStem.element.bodyPart}} </p>                         
-                    <p :style="{color: colorClass}" class="card-text display-6">{{state.dailyStemsandBranches.celestialStem.trigram.symbol}} {{state.dailyStemsandBranches.celestialStem.trigram.trigram}} {{state.dailyStemsandBranches.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
-                    <br /> &nbsp;
-                    <br /> &nbsp;
-                    <br /> &nbsp;   
-                </div>
-            </div>
-        </div>
-        <!-- <div class="col-sm-2 mt-auto">
-            <div class="card text-center">
-                <div class="card-body">
-                <p class="card-text display-1">→</p>
-                </div>
-            </div>    
-        </div> -->
-        <div class="col-sm-6">
-            <div class="card text-center">
-                <div class="card-body" v-if="state.dailyStemsandBranches">
-                    <h5 class="card-title">Horary Branch - {{formatBirthDay}}</h5>
-                    <p class="card-text display-3">{{state.dailyStemsandBranches.horaryBranch.name}} {{state.dailyStemsandBranches.horaryBranch.symbol}} {{state.dailyStemsandBranches.horaryBranch.animal}}</p> 
-                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.horaryBranch.element.name}} {{state.dailyStemsandBranches.horaryBranch.element.bodyPart}} </p>                                                 
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].name}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].trigram}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</a></p>  
-                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].name}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].trigram}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Detail</a></p>  
-                            <br />
-                </div>
             </div>
         </div>
     </div>
@@ -309,7 +188,7 @@
         <div class="col-sm-6">                   
             <div class="card text-center">
                 <div class="card-body" v-if="state.laterHeavenHexagram">
-                    <h5 class="card-title">Later-Heaven (Natal) Hexagram</h5>
+                    <h5 class="card-title">Later-Heaven Hexagram</h5>
                     <p class="card-text display-3">{{state.laterHeavenHexagram.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.laterHeavenHexagram.symbol}} </p>  
                              <!-- Heavenly Trigram -->
@@ -439,6 +318,137 @@
             </div>
         </div>
     </div>
+    <div class="row"  v-if="state.cycle">
+        <div class="col-sm-12">                   
+            <div class="card text-center">  
+                <h3 class="card-header">
+                Yearly Cycle
+                </h3> 
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card text-center">  
+                                
+                <div class="card-body" v-if="state.sexagenaryCycle">
+                    <h5 class="card-title">Celestital Stem  - {{formatBirthYear}}</h5>
+                    <p class="card-text display-1">{{state.sexagenaryCycle.celestialStem.name}} {{state.sexagenaryCycle.celestialStem.symbol}} </p>                      
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.celestialStem.element.name}} {{state.sexagenaryCycle.celestialStem.element.bodyPart}} </p>                         
+                    <p :style="{color: colorClass}" class="card-text display-6">{{state.sexagenaryCycle.celestialStem.trigram.name}} {{state.sexagenaryCycle.celestialStem.trigram.symbol}} {{state.sexagenaryCycle.celestialStem.trigram.trigram}}  {{state.sexagenaryCycle.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
+                    <p :style="{color: colorClass}" class="card-text display-6"><br />  </p>           
+                            
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-sm-2 mt-auto">
+            <div class="card text-center">
+                <div class="card-body">
+                <p class="card-text display-1">→</p>
+                </div>
+            </div>    
+        </div> -->
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.sexagenaryCycle">
+                    <h5 class="card-title">Horary Branch - {{formatBirthYear}}</h5>
+                    <p class="card-text display-3">{{state.sexagenaryCycle.horaryBranch.name}} {{state.sexagenaryCycle.horaryBranch.symbol}} {{state.sexagenaryCycle.horaryBranch.animal}}</p> 
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.name}} {{state.sexagenaryCycle.horaryBranch.element.bodyPart}} </p>                                                 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].name}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].trigram}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[0].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</a></p>  
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].name}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].trigram}} {{state.sexagenaryCycle.horaryBranch.element.trigrams[1].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Detail</a></p>  
+                </div>
+            </div>
+        </div>
+    </div>   
+    <div class="row"  v-if="state.cycle">
+        <div class="col-sm-12">                   
+            <div class="card text-center">  
+                <h3 class="card-header">
+                Monthly Cycle
+                </h3> 
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.birthStemsandBranches">
+                    <h5 class="card-title">Celestital Stem - {{formatBirthMonth}}</h5>
+                    <p class="card-text display-1">{{state.birthStemsandBranches.celestialStem.name}} {{state.birthStemsandBranches.celestialStem.symbol}} </p>                      
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.celestialStem.element.name}} {{state.birthStemsandBranches.celestialStem.element.bodyPart}} </p>                         
+                    <p :style="{color: colorClass}" class="card-text display-6">{{state.birthStemsandBranches.celestialStem.trigram.name}} {{state.birthStemsandBranches.celestialStem.trigram.symbol}} {{state.birthStemsandBranches.celestialStem.trigram.trigram}}  {{state.birthStemsandBranches.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
+                    <p :style="{color: colorClass}" class="card-text display-6"><br />  </p>    
+                       
+                
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-sm-2 mt-auto">
+            <div class="card text-center">
+                <div class="card-body">
+                <p class="card-text display-1">→</p>
+                </div>
+            </div>    
+        </div> -->
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.birthStemsandBranches">
+                    <h5 class="card-title">Horary Branch - {{formatBirthMonth}}</h5>
+                    <p class="card-text display-3">{{state.birthStemsandBranches.horaryBranch.name}} {{state.birthStemsandBranches.horaryBranch.symbol}} {{state.birthStemsandBranches.horaryBranch.animal}}</p> 
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.name}} {{state.birthStemsandBranches.horaryBranch.element.bodyPart}} </p>                                                 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].name}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].trigram}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</a></p>  
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].name}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].trigram}} {{state.birthStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Detail</a></p>  
+                            <p :style="{color: colorClass}" class="card-text display-6"><br /> </p>               
+                </div>
+            </div>
+        </div>
+    </div>   
+
+    <div class="row"  v-if="state.cycle">
+        <div class="col-sm-12">                   
+            <div class="card text-center">  
+                <h3 class="card-header">
+                Daily Cycle
+                </h3> 
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.dailyStemsandBranches">
+                    <h5 class="card-title">Celestital Stem - {{formatBirthDay}}</h5>
+                    <p class="card-text display-1">{{state.dailyStemsandBranches.celestialStem.name}} {{state.dailyStemsandBranches.celestialStem.symbol}} </p>                      
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.celestialStem.element.name}} {{state.dailyStemsandBranches.celestialStem.element.bodyPart}} </p>                         
+                    <p :style="{color: colorClass}" class="card-text display-6">{{state.dailyStemsandBranches.celestialStem.trigram.symbol}} {{state.dailyStemsandBranches.celestialStem.trigram.trigram}} {{state.dailyStemsandBranches.celestialStem.trigram.description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</a></p>           
+                    <br /> &nbsp;
+                    <br /> &nbsp;
+                    <br /> &nbsp;   
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-sm-2 mt-auto">
+            <div class="card text-center">
+                <div class="card-body">
+                <p class="card-text display-1">→</p>
+                </div>
+            </div>    
+        </div> -->
+        <div class="col-sm-6">
+            <div class="card text-center">
+                <div class="card-body" v-if="state.dailyStemsandBranches">
+                    <h5 class="card-title">Horary Branch - {{formatBirthDay}}</h5>
+                    <p class="card-text display-3">{{state.dailyStemsandBranches.horaryBranch.name}} {{state.dailyStemsandBranches.horaryBranch.symbol}} {{state.dailyStemsandBranches.horaryBranch.animal}}</p> 
+                    <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.horaryBranch.element.name}} {{state.dailyStemsandBranches.horaryBranch.element.bodyPart}} </p>                                                 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].name}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].trigram}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</a></p>  
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].name}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].symbol}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].trigram}} {{state.dailyStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0]}} <a  :href="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary">Detail</a></p>  
+                            <br />
+                </div>
+            </div>
+        </div>
+    </div>
+
 
    
 </template>

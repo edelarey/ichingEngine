@@ -2889,7 +2889,7 @@ class IChingConsultation {
         }
         
         // determine the line designations and then we can work out the controlling line
-        let ans = this.astrology.developPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol, gender) ;
+        this.astrology.developPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol, gender) ;
         let lineTimeDesignations = this.astrology.getPreHeavenDesignations(preHeavenHexagram);
         this.astrology.mapDesignationsToTrigramLines(preHeavenHexagram);
         // Time of Birth Symbol is used to determine the controlling line
@@ -2900,8 +2900,8 @@ class IChingConsultation {
 
          
          
-         let laterHeavenHexagram = this.astrology.getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine) ;
-         let laterHeavenControllingLine = this.astrology.getLaterHeavenControllingLine(laterHeavenHexagram, preHeavenControllingLine);
+        let laterHeavenHexagram = this.astrology.getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine) ;
+        this.astrology.getLaterHeavenControllingLine(laterHeavenHexagram, preHeavenControllingLine);
         this.astrology.assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram, year);  
         
           
