@@ -733,7 +733,7 @@ class IChingAstrology_North {
       if (!monthlyStemBranch) {
         throw new Error('Invalid month or structure not found.');
       }
-      console.log('monthlySteamAndBranch', monthlyStemBranch);
+
       // Find the correct applicableYear key that contains the yearSymbol
       const applicableYearKey = Object.keys(monthlyStemBranch.years).find(key => key.includes(yearSymbol));
     
@@ -948,7 +948,7 @@ class IChingAstrology_North {
         if (this.isLeapYear(year) && month >= 3) {
             day += 1; // Shift day by one for leap years starting in March
         }
-        console.log('cycle month', dailyCycleValues[month], day);
+
         const dailyCycleValue = dailyCycleValues[month][day-1]; // Get the value based on month and day
 
     
@@ -1349,7 +1349,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                 yearvalue = line.name === 'yang' ? 9 : 6;        
                 const endYear = currentYear + yearvalue - 1;
                 line.yearRange = [currentYear, endYear];
-                console.log('line', line, 'currentyear', currentYear, '', endYear, 'yearvalue', yearvalue);
+             
                 currentYear += yearvalue;
                 
             }
@@ -1367,7 +1367,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         
             let startIndex = controllingLine.hexagramLineIndex - 1;
         
-            console.log('startIndex', startIndex, linesOrder[startIndex], controllingLine.line);
+         
         
             //Assign year ranges in circular order, starting from the controlling line
             for (let i = 0; i < linesOrder.length; i++) {
@@ -1375,14 +1375,14 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                 setYearRange(linesOrder[(startIndex + i) % linesOrder.length]);
             }
         
-            console.log('linesOrder', linesOrder);
+          
             // contruct yearRange array
             linesOrder.forEach(thing => {
               yearRange.push({line: _.clone(thing.name), yearRange: _.clone(thing.yearRange)});
             });
         
              preHeavenHexagram.yearRange = _.cloneDeep(yearRange);
-            console.log('yearRange', preHeavenHexagram.yearRange);
+    
             this.mapYearRangesToTrigramLines(preHeavenHexagram, linesOrder);
             return preHeavenHexagram;
         }
@@ -1751,7 +1751,7 @@ class IChingAstrology_South {
       if (!monthlyStemBranch) {
         throw new Error('Invalid month or structure not found.');
       }
-      console.log('monthlySteamAndBranch', monthlyStemBranch);
+
       // Find the correct applicableYear key that contains the yearSymbol
       const applicableYearKey = Object.keys(monthlyStemBranch.years).find(key => key.includes(yearSymbol));
     
@@ -1963,7 +1963,7 @@ class IChingAstrology_South {
         if (this.isLeapYear(year) && month >= 3) {
             day += 1; // Shift day by one for leap years starting in March
         }
-       console.log('cycle month', dailyCycleValues[month]);
+
         const dailyCycleValue = dailyCycleValues[month][day-1]; // Get the value based on month and day
 
     
@@ -2364,7 +2364,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                 yearvalue = line.name === 'yang' ? 9 : 6;        
                 const endYear = currentYear + yearvalue - 1;
                 line.yearRange = [currentYear, endYear];
-                console.log('line', line, 'currentyear', currentYear, '', endYear, 'yearvalue', yearvalue);
+      
                 currentYear += yearvalue;
                 
             }
@@ -2382,22 +2382,21 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         
             let startIndex = controllingLine.hexagramLineIndex - 1;
         
-            console.log('startIndex', startIndex, linesOrder[startIndex], controllingLine.line);
+        
         
             //Assign year ranges in circular order, starting from the controlling line
             for (let i = 0; i < linesOrder.length; i++) {
                 //const line = linesOrder[(startIndex + i) % linesOrder.length];
                 setYearRange(linesOrder[(startIndex + i) % linesOrder.length]);
             }
-        
-            console.log('linesOrder', linesOrder);
+
             // contruct yearRange array
             linesOrder.forEach(thing => {
               yearRange.push({line: _.clone(thing.name), yearRange: _.clone(thing.yearRange)});
             });
         
              preHeavenHexagram.yearRange = _.cloneDeep(yearRange);
-            console.log('yearRange', preHeavenHexagram.yearRange);
+        
             this.mapYearRangesToTrigramLines(preHeavenHexagram, linesOrder);
             return preHeavenHexagram;
         }
@@ -2608,10 +2607,7 @@ class IChingConsultation {
             The age of an individual is measured from Winter Solstice to Winter Solstice.
             The period from the date of birth to the first winter solstice being the first year of life. 
          */ 
-
-         this.astrology.assignYearRanges(preHeavenHexagram, controllingLine, year);
-         //this.astrology.mapYearRangesToTrigramLines(preHeavenHexagram);
-        
+         this.astrology.assignYearRanges(preHeavenHexagram, controllingLine, year);       
 
 
      return {
@@ -3696,7 +3692,7 @@ async function calculateNatalHexagram(birthDate, birthTime) {
   
   const sexagenaryCycle = await this.computeSexagenaryCycle(birthDate, birthTime);
   const subCycle = await this.determineSubCycle(birthDate, birthTime);
-  console.log('sexagenaryCycle', sexagenaryCycle.earthlyBranch, sexagenaryCycle.heavenlyStem, subCycle);
+
   const heavenlyStem = sexagenaryCycle.heavenlyStem.english;
   const earthlyBranch = sexagenaryCycle.earthlyBranch.english;
   // find the correct hexagram buy searching for the heavenlyStem and earthlyBranch in the hexagram const
