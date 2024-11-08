@@ -745,8 +745,9 @@ class IChingAstrology_North {
       const stemBranch = monthlyStemBranch.years[applicableYearKey];
     
       return {
-        month: month,        
+        month: month,                
         monthName: targetMonth,
+        polarity: monthlyStemBranch.polarity,
         symbols:stemBranch,
         celestialStem: this.getCelestialStemByAlpha(stemBranch.charAt(0)), // First character is the celestial stem
         horaryBranch:  this.getHoraryBranchByAlpha(stemBranch.charAt(1)),   // Second character is the horary branch
@@ -1295,22 +1296,51 @@ getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
 
    /** Construct The Later Heaven Hexagram swapping the trigrams and inverting the controlling line polarity
          */ 
-   getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine) {
+   getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine, monthlyStemBranch) {
     // the controlling line must take into account that the trigrams have swapped positions
     // also if it is yang it must become yin and vice vera
-    let laterHeavenBinary = preHeavenHexagram.binary.split('').reverse();
-    laterHeavenBinary[preHeavenControllingLine.hexagramLineIndex-1] = preHeavenControllingLine.line.name === 'yang' ? '0' : '1';
-    laterHeavenBinary = laterHeavenBinary.reverse().join('');
-    // now swap the first 3 and the last 3 binary digits
-    let finalLaterHeavenBinary = laterHeavenBinary.slice(3) + laterHeavenBinary.slice(0, 3); 
-    console.log('laterHeavenBinary', laterHeavenBinary);
-    console.log('finalLaterHeavenBinary', finalLaterHeavenBinary);
-    // now find which hexagram that matchs
-    let laterHeavenHexagramCheck = hexagram.getHexagramByBinary(finalLaterHeavenBinary);
+        // now find which hexagram that matchs
+     
+        // deal with exceptions first according to the rules (King Wen Sequence)
 
-    // change the binary to reflect the later heaven hexagram by replacing the preHeavenControllingLine[hexagramLineIndex-1] with its opposite binary designation
-    console.log('laterHeavenHexagram', laterHeavenHexagramCheck);
-   
+        let finalLaterHeavenBinary = ''; let laterHeavenBinary;
+ 
+    // When the fifth line is the contolling line and an individual is born in a negative month (polarity)
+    // and hexagram 29 = kǎn = 010010 , 3 = zhūn = 010001 or 39 = jiǎn = 010100 pg 45
+    if ((preHeavenHexagram.binary === '010100' || preHeavenHexagram.binary === '010001' || preHeavenHexagram.binary === '010100')
+        && preHeavenControllingLine.hexagramLineIndex === 5 && monthlyStemBranch.polarity === '-') 
+      {
+          switch (preHeavenHexagram.binary) {
+            case '010010': finalLaterHeavenBinary = '000010'; // return hexagram 7 shī
+            case '010001': finalLaterHeavenBinary = '000001'; // return hexagram 24 fù
+            case '010100': finalLaterHeavenBinary = '000100'; // return hexagram 15 qiān
+          }
+      }
+      else
+      { 
+        if ((preHeavenHexagram.binary === '010100' || preHeavenHexagram.binary === '010001' || preHeavenHexagram.binary === '010100')
+        && preHeavenControllingLine.hexagramLineIndex === 6 && monthlyStemBranch.polarity === '+') 
+            {
+              switch (preHeavenHexagram.binary) {
+                case '010010': finalLaterHeavenBinary = '110010'; // return hexagram 59 huàn
+                case '010001': finalLaterHeavenBinary = '110001'; // return hexagram 42 yì
+                case '010100': finalLaterHeavenBinary = '110100'; // return hexagram 53 jiàn
+              }
+            }
+        else 
+        {
+          // default rules
+          laterHeavenBinary = preHeavenHexagram.binary.split('').reverse();
+          // change the binary to reflect the later heaven hexagram by replacing the preHeavenControllingLine[hexagramLineIndex-1] with its opposite binary designation
+          laterHeavenBinary[preHeavenControllingLine.hexagramLineIndex-1] = preHeavenControllingLine.line.name === 'yang' ? '0' : '1';
+          laterHeavenBinary = laterHeavenBinary.reverse().join('');      
+          // now swap the first 3 and the last 3 binary digits
+          finalLaterHeavenBinary = laterHeavenBinary.slice(3) + laterHeavenBinary.slice(0, 3); 
+        }
+
+      }
+
+    let laterHeavenHexagramCheck = hexagram.getHexagramByBinary(finalLaterHeavenBinary);
     return laterHeavenHexagramCheck;
   
   }
@@ -1911,14 +1941,14 @@ class IChingAstrology_South {
       const stemBranch = monthlyStemBranch.years[applicableYearKey];
     
       return {
-        month: month,        
+        month: month,                
         monthName: targetMonth,
+        polarity: monthlyStemBranch.polarity,
         symbols:stemBranch,
         celestialStem: this.getCelestialStemByAlpha(stemBranch.charAt(0)), // First character is the celestial stem
         horaryBranch:  this.getHoraryBranchByAlpha(stemBranch.charAt(1)),   // Second character is the horary branch
       };
     }
-
     getHourlyStemABranchForTimeAndSymbol(hour, minute, dailyStemSymbol) {
       // Convert time to hour integer
        // Find the matching hourly stem branch object
@@ -2458,26 +2488,54 @@ getPreHeavenControllingLine(preHeavenHexagram, birthSymbol) {
 
    /** Construct The Later Heaven Hexagram swapping the trigrams and inverting the controlling line polarity
          */ 
-   getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine) {
+   getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine, monthlyStemBranch) {
     // the controlling line must take into account that the trigrams have swapped positions
     // also if it is yang it must become yin and vice vera
-    let laterHeavenBinary = preHeavenHexagram.binary.split('').reverse();
-    laterHeavenBinary[preHeavenControllingLine.hexagramLineIndex-1] = preHeavenControllingLine.line.name === 'yang' ? '0' : '1';
-    laterHeavenBinary = laterHeavenBinary.reverse().join('');
-    // now swap the first 3 and the last 3 binary digits
-    let finalLaterHeavenBinary = laterHeavenBinary.slice(3) + laterHeavenBinary.slice(0, 3); 
-    console.log('laterHeavenBinary', laterHeavenBinary);
-    console.log('finalLaterHeavenBinary', finalLaterHeavenBinary);
-    // now find which hexagram that matchs
-    let laterHeavenHexagramCheck = hexagram.getHexagramByBinary(finalLaterHeavenBinary);
+        // now find which hexagram that matchs
+     
+        // deal with exceptions first according to the rules (King Wen Sequence)
 
-    // change the binary to reflect the later heaven hexagram by replacing the preHeavenControllingLine[hexagramLineIndex-1] with its opposite binary designation
-    console.log('laterHeavenHexagram', laterHeavenHexagramCheck);
-   
+        let finalLaterHeavenBinary = ''; let laterHeavenBinary;
+ 
+    // When the fifth line is the contolling line and an individual is born in a negative month (polarity)
+    // and hexagram 29 = kǎn = 010010 , 3 = zhūn = 010001 or 39 = jiǎn = 010100 pg 45
+    if ((preHeavenHexagram.binary === '010100' || preHeavenHexagram.binary === '010001' || preHeavenHexagram.binary === '010100')
+        && preHeavenControllingLine.hexagramLineIndex === 5 && monthlyStemBranch.polarity === '-') 
+      {
+          switch (preHeavenHexagram.binary) {
+            case '010010': finalLaterHeavenBinary = '000010'; // return hexagram 7 shī
+            case '010001': finalLaterHeavenBinary = '000001'; // return hexagram 24 fù
+            case '010100': finalLaterHeavenBinary = '000100'; // return hexagram 15 qiān
+          }
+      }
+      else
+      { 
+        if ((preHeavenHexagram.binary === '010100' || preHeavenHexagram.binary === '010001' || preHeavenHexagram.binary === '010100')
+        && preHeavenControllingLine.hexagramLineIndex === 6 && monthlyStemBranch.polarity === '+') 
+            {
+              switch (preHeavenHexagram.binary) {
+                case '010010': finalLaterHeavenBinary = '110010'; // return hexagram 59 huàn
+                case '010001': finalLaterHeavenBinary = '110001'; // return hexagram 42 yì
+                case '010100': finalLaterHeavenBinary = '110100'; // return hexagram 53 jiàn
+              }
+            }
+        else 
+        {
+          // default rules
+          laterHeavenBinary = preHeavenHexagram.binary.split('').reverse();
+          // change the binary to reflect the later heaven hexagram by replacing the preHeavenControllingLine[hexagramLineIndex-1] with its opposite binary designation
+          laterHeavenBinary[preHeavenControllingLine.hexagramLineIndex-1] = preHeavenControllingLine.line.name === 'yang' ? '0' : '1';
+          laterHeavenBinary = laterHeavenBinary.reverse().join('');      
+          // now swap the first 3 and the last 3 binary digits
+          finalLaterHeavenBinary = laterHeavenBinary.slice(3) + laterHeavenBinary.slice(0, 3); 
+        }
+
+      }
+
+    let laterHeavenHexagramCheck = hexagram.getHexagramByBinary(finalLaterHeavenBinary);
     return laterHeavenHexagramCheck;
   
   }
-
   getLaterHeavenControllingLine(laterHeavenHexagram,  preHeavenControllingLine) {
     // the controlling line must take into account that the trigrams have swapped positions
     // and the original controlling line is now the opposite polarity
@@ -2900,7 +2958,7 @@ class IChingConsultation {
 
          
          
-        let laterHeavenHexagram = this.astrology.getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine) ;
+        let laterHeavenHexagram = this.astrology.getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine, monthlyStemBranch) ;
         this.astrology.getLaterHeavenControllingLine(laterHeavenHexagram, preHeavenControllingLine);
         this.astrology.assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram, year);  
         
