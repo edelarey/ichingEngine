@@ -2832,6 +2832,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
       calculateBirthYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
         let heavenYears = [];
         let newHexagramBinary = aHexagram.binary;
+     
         let isYin = line => line.name === 'yin';
         const counterPositions = { 0: 3, 1: 4, 2: 5, 3: 0, 4: 1, 5: 2 };
     
@@ -2903,7 +2904,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
 
           // order the years in ascending order
           heavenYears.sort((a, b) => a.age - b.age);
-          let polarity = yearlyCycle.cycle.polarity.polarityString;
+          let polarity = yearlyCycle.cycle.polarity === 'yang' ? '-ve' : '-ve';
           heavenYears.forEach(year => {
             year.polarity = polarity;
             polarity = polarity === '+ve' ? '-ve' : '+ve';
