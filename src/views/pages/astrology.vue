@@ -348,6 +348,35 @@
                 </div>
             </div>
         </div>
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenBirthSubCycles !=[]">
+                    <h5 class="card-title">Later Life</h5>
+                    <p class="card-text display-3">    </p>
+                    <select v-model="state.selectedLaterHeavenYear" class="form-control">
+                        <option v-for="subCycle in state.laterHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">
+                            {{ subCycle.year + ' - ' + subCycle.age }}
+                        </option>
+                    </select> 
+                    <span v-if="state.laterHeavenBirthSubCycleHexagram">
+                    <p class="card-text display-3">{{state.laterHeavenBirthSubCycleHexagram.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.laterHeavenBirthSubCycleHexagram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.laterHeavenBirthSubCycleHexagram.hexagram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.laterHeavenBirthSubCycleHexagram.translation.split(',')[0]}} </p> 
+
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="state.laterHeavenBirthSubCycleHexagram.summary"></span></p>   
+                                </div>
+                            
+                          
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.laterHeavenBirthSubCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                     </span>
+                   
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row"  v-if="state.cycle">
         <div class="col-sm-12">                   
@@ -754,8 +783,14 @@ export default {
             let astrology = null;
             form.globalPreHeavenLineIndex = 5;
             form.globalLaterHeavenLineIndex = 5;
-            const hemisphere = getHemisphere(state.latitude);
 
+            const hemisphere = getHemisphere(state.latitude);
+                state.selectedLaterHeavenYear = '';
+                state.selectedPreHeavenYear = '';
+                state.preHeavenBirthSubCycleHexagram = '';
+                state.laterHeavenBirthSubCycleHexagram = '';
+                state.preHeavenBirthSubCycles = [];
+                state.laterHeavenBirthSubCycles = [];
             if (hemisphere === "Northern") {
                 astrology = new astro.IChingAstrology_North();
             } else {
@@ -888,6 +923,14 @@ export default {
             const selectedSubCycle = state.preHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
             if (selectedSubCycle) {
                 state.preHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram;                
+            }
+        });
+
+        watch (() => state.selectedLaterHeavenYear, (newYear) => {
+            
+            const selectedSubCycle = state.laterHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
+            if (selectedSubCycle) {
+                state.laterHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram;                
             }
         });
 
