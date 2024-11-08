@@ -1558,120 +1558,94 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
       }
 
       /** Implement Birth Cycle Rules on PreHeaven or Later Heaven Hexagrams pg 45-49*/
-      calculatePreHeavenYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
+      /** Implement Birth Cycle Rules on PreHeaven or Later Heaven Hexagrams */
+      /** Implement Birth Cycle Rules on PreHeaven or Later Heaven Hexagrams */
 
-        console.log('PreHeaven');
-        console.log('yearly cycle polarity', yearlyCycle.cycle.polarity);
-        console.log('below');
+      calculateBirthYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
         let heavenYears = [];
-        /** Years are determined to run from winter solstice to winter solstice */
-        
         let newHexagramBinary = aHexagram.binary;
-        //Determine whether the first line of the Hexagram is a yin or yang line
-        let yinLine = aHexagram.below.lineArray[0].name === 'yin' ? true : false;
-        // if the first line is a yin line change it to a yang line
-        
-        aHexagram.below.lineArray.forEach((line,index) => {
-          if (yinLine & index === 0)
-            {   // change the first line to a yang line and use this new hexagram for subsequent calculations
-                newHexagramBinary = aHexagram.binary.slice(0, 5) + '1';
-                console.log('yin index 0', newHexagramBinary);
-            }             
-            let iteration =0;        
-          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
-             
-            // determine the hexagram for the year in question using the following rules
-            if (yinLine && index == 0 && iteration === 0) {
-                            // change the line from yin to yan and yang to yin
-                  // remember the binary is read from left to right, so the first line is the 6th digit from the left ie the last digit
-                  // if the digit it 0 make it 1 if its 1 make it 0, so the line is inverted    
-                  heavenYears.push({year: (birthYear + i), age: i, hexagramBinary: newHexagramBinary ,  hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))});
-                  
-                  
-              }
-              else { if (yinLine && index == 0 && iteration > 0)
-                {
-                  // only flip the binary value in the iteration position from 0 to 1 or vice versa, preserve the rest of the string as is
-                  newHexagramBinary = newHexagramBinary.slice(0, 5 - iteration) + (newHexagramBinary.charAt(5 - iteration) === '0' ? '1' : '0') + newHexagramBinary.slice(6 - iteration);
-                  heavenYears.push({year: (birthYear + i), age: i, hexagramBinary: newHexagramBinary, hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))});
-                }
-                else
-                {
-                  heavenYears.push({year: (birthYear + i), age: i, hexagramBinary: newHexagramBinary});
-                }
-            
-              }
-
-              iteration++;
-          
+        let isYin = line => line.name === 'yin';
+        const counterPositions = { 0: 3, 1: 4, 2: 5, 3: 0, 4: 1, 5: 2 };
+    
+        [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
+            trigram.forEach((line, index) => {
+                if (isYin(line)) {
+                    // Yin line rules
+                    newHexagramBinary = aHexagram.binary;
+                    let iteration = 0;
+                    for (let i = line.yearRange[0]; i <= line.yearRange[1]; i++) {
+                        if (iteration === 0) {
+                            newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) + '1' +
+                                                newHexagramBinary.slice(6 - (index + trigramIndex * 3));
+                        } else {
+                            newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) +
+                                                (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
+                                                newHexagramBinary.slice(6 - (index + trigramIndex * 3));
+                        }
+    
+                        heavenYears.push({
+                            year: birthYear + i,
+                            age: i,
+                            hexagramBinary: newHexagramBinary,
+                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
+                        });
+                        iteration++;
+                    }
+                } else {
+                    // Yang line rules, separate handling for Odd and Even years
+                    let controllingLine = index + trigramIndex * 3;
+                    let iteration = 0;
+                    for (let i = line.yearRange[0]; i <= line.yearRange[1]; i++) {
+                        if (birthYearIsOdd) {
+                            // Odd-year handling
+                            if (iteration % 3 === 0) {
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) +
+                                                    (iteration === 0 ? '0' : '1') +
+                                                    newHexagramBinary.slice(6 - controllingLine);
+                            } else if (iteration % 3 === 1) {
+                                const counterIndex = counterPositions[controllingLine];
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - counterIndex) +
+                                                    (newHexagramBinary.charAt(5 - counterIndex) === '0' ? '1' : '0') +
+                                                    newHexagramBinary.slice(6 - counterIndex);
+                            }
+                        } else {
+                            // Even-year handling
+                            if (iteration === 0) {
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) + '1' +
+                                                    newHexagramBinary.slice(6 - controllingLine);
+                            } else {
+                                controllingLine = (controllingLine + 1) % 6;
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) +
+                                                    (newHexagramBinary.charAt(5 - controllingLine) === '0' ? '1' : '0') +
+                                                    newHexagramBinary.slice(6 - controllingLine);
+                            }
+                        }
                         
-            
-          }
-          
-
-        });
-        console.log('above');
-        aHexagram.above.lineArray.forEach(line => {
-          
-          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
-
-            heavenYears.push({year: (birthYear + i), age: i});
-          }
-
+                        heavenYears.push({
+                            year: birthYear + i,
+                            age: i,
+                            hexagramBinary: newHexagramBinary,
+                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
+                        });
+                        iteration++;
+                    }
+                }
+            });
         });
 
-        // order the years in ascending order
-        heavenYears.sort((a, b) => a.age - b.age);
-        let polarity = yearlyCycle.cycle.polarity.polarityString;
-        heavenYears.forEach(year => {
-          year.polarity = polarity;
-          polarity = polarity === '+ve' ? '-ve' : '+ve';
-        });
-        console.log('preHeavenYears', heavenYears);
+          // order the years in ascending order
+          heavenYears.sort((a, b) => a.age - b.age);
+          let polarity = yearlyCycle.cycle.polarity.polarityString;
+          heavenYears.forEach(year => {
+            year.polarity = polarity;
+            polarity = polarity === '+ve' ? '-ve' : '+ve';
+          });
+          console.log('Birth SubCycle Years', heavenYears);
+         
+    
         return heavenYears;
-
-      
-      }
-
-      calculateLaterHeavenYearlySubCycles(hexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
-        console.log('LaterHeaven');
-        console.log('yearly cycle polarity', yearlyCycle.cycle.polarity);
-        console.log('below');
-        let heavenYears = [];
-        hexagram.below.lineArray.forEach(line => {
-          
-          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
-        
-            heavenYears.push({year: (birthYear + i), age: i});
-          }
-
-        });
-        console.log('above');
-        hexagram.above.lineArray.forEach(line => {
-          
-          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
-
-            heavenYears.push({year: (birthYear + i), age: i});
-          }
-
-        });
-
-        // order the years in ascending order
-        heavenYears.sort((a, b) => a.age - b.age);
-        // add in the yearly cycle polarity for each year. Use the polarity of the yearly cycle and then alternate the polarity for each year
-        let polarity = yearlyCycle.cycle.polarity.polarityString;
-        heavenYears.forEach(year => {
-          year.polarity = polarity;
-          polarity = polarity === '+ve' ? '-ve' : '+ve';
-        });
-
-        console.log('LaterHeavenYears', heavenYears);
-
-        return heavenYears;
-        
-
-      
-      }
+    }
+  
     }
       
 
@@ -2855,62 +2829,90 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
           return laterHeavenHexagram;
       }
 
-
-      calculatePreHeavenYearlySubCycles(hexagram, birthYear, yearlyCycle, birthYearIsOdd) {
-
-        console.log('PreHeaven');
-        console.log('yearly cycle polarity', yearlyCycle.cycle.polarity);
-        console.log('below');
-        PreheavenYears = [];
-        hexagram.below.lineArray.forEach(line => {
-          
-          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
-            // determine the hexagram for the year in question using the following rules
-            // if the line is a yin line change it to a yang 
-            console.log('line', line);
-            PreheavenYears.push({year: (birthYear + i), age: i});
-          }
-
+      calculateBirthYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
+        let heavenYears = [];
+        let newHexagramBinary = aHexagram.binary;
+        let isYin = line => line.name === 'yin';
+        const counterPositions = { 0: 3, 1: 4, 2: 5, 3: 0, 4: 1, 5: 2 };
+    
+        [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
+            trigram.forEach((line, index) => {
+                if (isYin(line)) {
+                    // Yin line rules
+                    newHexagramBinary = aHexagram.binary;
+                    let iteration = 0;
+                    for (let i = line.yearRange[0]; i <= line.yearRange[1]; i++) {
+                        if (iteration === 0) {
+                            newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) + '1' +
+                                                newHexagramBinary.slice(6 - (index + trigramIndex * 3));
+                        } else {
+                            newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) +
+                                                (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
+                                                newHexagramBinary.slice(6 - (index + trigramIndex * 3));
+                        }
+    
+                        heavenYears.push({
+                            year: birthYear + i,
+                            age: i,
+                            hexagramBinary: newHexagramBinary,
+                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
+                        });
+                        iteration++;
+                    }
+                } else {
+                    // Yang line rules, separate handling for Odd and Even years
+                    let controllingLine = index + trigramIndex * 3;
+                    let iteration = 0;
+                    for (let i = line.yearRange[0]; i <= line.yearRange[1]; i++) {
+                        if (birthYearIsOdd) {
+                            // Odd-year handling
+                            if (iteration % 3 === 0) {
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) +
+                                                    (iteration === 0 ? '0' : '1') +
+                                                    newHexagramBinary.slice(6 - controllingLine);
+                            } else if (iteration % 3 === 1) {
+                                const counterIndex = counterPositions[controllingLine];
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - counterIndex) +
+                                                    (newHexagramBinary.charAt(5 - counterIndex) === '0' ? '1' : '0') +
+                                                    newHexagramBinary.slice(6 - counterIndex);
+                            }
+                        } else {
+                            // Even-year handling
+                            if (iteration === 0) {
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) + '1' +
+                                                    newHexagramBinary.slice(6 - controllingLine);
+                            } else {
+                                controllingLine = (controllingLine + 1) % 6;
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) +
+                                                    (newHexagramBinary.charAt(5 - controllingLine) === '0' ? '1' : '0') +
+                                                    newHexagramBinary.slice(6 - controllingLine);
+                            }
+                        }
+                        
+                        heavenYears.push({
+                            year: birthYear + i,
+                            age: i,
+                            hexagramBinary: newHexagramBinary,
+                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
+                        });
+                        iteration++;
+                    }
+                }
+            });
         });
-        console.log('above');
-        hexagram.above.lineArray.forEach(line => {
-          
-          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
 
-            PreheavenYears.push({year: (birthYear + i), age: i});
-          }
-
-        });
-
-        // order the years in ascending order
-        PreheavenYears.sort((a, b) => a.age - b.age);
-        console.log('preHeavenYears', PreheavenYears);
-
-      
-      }
-
-      calculateLaterHeavenYearlySubCycles(hexagram, birthYear, yearlyCycle, birthYearIsOdd) {
-
-        console.log('LaterHeaven');
-        console.log('yearly cycle polarity', yearlyCycle.cycle.polarity);
-        console.log('below');
-        hexagram.below.lineArray.forEach(line => {
-          
-          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
-            console.log('year in consideration', (birthYear + i), 'age', i);
-          }
-
-        });
-        console.log('above');
-        hexagram.above.lineArray.forEach(line => {
-          
-          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
-            console.log('year in consideration', (birthYear + i), 'age', i);
-          }
-
-        });
-      
-      }
+          // order the years in ascending order
+          heavenYears.sort((a, b) => a.age - b.age);
+          let polarity = yearlyCycle.cycle.polarity.polarityString;
+          heavenYears.forEach(year => {
+            year.polarity = polarity;
+            polarity = polarity === '+ve' ? '-ve' : '+ve';
+          });
+          console.log('Birth SubCycle Years', heavenYears);
+         
+    
+        return heavenYears;
+    }
 
 }
 
@@ -3109,8 +3111,8 @@ class IChingConsultation {
         this.astrology.assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram, year);  
 
         /** Now calculate the yearly sub-sycles for each age range in the preHeaven and Later Heaven Hexagrams */
-        let preHeavenSubCycles = this.astrology.calculatePreHeavenYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd);
-        let laterHeavenSubCycles = this.astrology.calculateLaterHeavenYearlySubCycles  (laterHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd);
+        let preHeavenSubCycles = this.astrology.calculateBirthYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd);
+        let laterHeavenSubCycles = this.astrology.calculateBirthYearlySubCycles  (laterHeavenHexagram,  yearlyCycle, year, month, day, birthYearIsOdd);
         
         
           
