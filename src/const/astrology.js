@@ -1640,7 +1640,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             year.polarity = polarity;
             polarity = polarity === '+ve' ? '-ve' : '+ve';
           });
-          console.log('Birth SubCycle Years', heavenYears);
+         
          
     
         return heavenYears;
@@ -2909,7 +2909,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             year.polarity = polarity;
             polarity = polarity === '+ve' ? '-ve' : '+ve';
           });
-          console.log('Birth SubCycle Years', heavenYears);
+         
          
     
         return heavenYears;
@@ -3112,8 +3112,8 @@ class IChingConsultation {
         this.astrology.assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram, year);  
 
         /** Now calculate the yearly sub-sycles for each age range in the preHeaven and Later Heaven Hexagrams */
-        let preHeavenSubCycles = this.astrology.calculateBirthYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd);
-        let laterHeavenSubCycles = this.astrology.calculateBirthYearlySubCycles  (laterHeavenHexagram,  yearlyCycle, year, month, day, birthYearIsOdd);
+        let preHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd);
+        let laterHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (laterHeavenHexagram,  yearlyCycle, year, month, day, birthYearIsOdd);
         
         
           
@@ -3158,7 +3158,9 @@ class IChingConsultation {
         heavenlyTrigram,
         earthlyTrigram,
         preHeavenHexagram,
+        preHeavenBirthSubCycles,
         laterHeavenHexagram,
+        laterHeavenBirthSubCycles,
         stemBranchNumbers: allNumbers,
       }   
      };

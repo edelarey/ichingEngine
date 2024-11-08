@@ -318,6 +318,37 @@
             </div>
         </div>
     </div>
+    <div class="row"> 
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenBirthSubCycles !=[]">
+                    <h5 class="card-title">Early Life</h5>
+                    <p class="card-text display-3">    </p>
+                    <select v-model="state.selectedPreHeavenYear" class="form-control">
+                        <option v-for="subCycle in state.preHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">
+                            {{ subCycle.year + ' - ' + subCycle.age }}
+                        </option>
+                    </select> 
+                    <span v-if="state.preHeavenBirthSubCycleHexagram">
+                    <p class="card-text display-3">{{state.preHeavenBirthSubCycleHexagram.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenBirthSubCycleHexagram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenBirthSubCycleHexagram.hexagram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenBirthSubCycleHexagram.translation.split(',')[0]}} </p> 
+
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="state.preHeavenBirthSubCycleHexagram.summary"></span></p>   
+                                </div>
+                            
+                          
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.preHeavenBirthSubCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                     </span>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row"  v-if="state.cycle">
         <div class="col-sm-12">                   
             <div class="card text-center">  
@@ -460,7 +491,7 @@ import hexagram from '@/const/hexagram';
 import  bagua  from '@/const/bagua';
 import coin from '@/const/coin';
 import { Icon } from '@iconify/vue';
-import _ from 'lodash';
+import _, { get } from 'lodash';
 import { useHexagramStore } from '@/stores/storeHexagram';
 import { useBirthdayStore } from '@/stores/storeBirthday';
 import astro from '@/const/astrology';
@@ -510,7 +541,14 @@ export default {
                 hexagramTransformed: [],
                 natalHexagram:'',
                 preHeavenHexagram:'',
+                preHeavenBirthSubCycleHexagram:'',
+                preHeavenBirthSubCycles: [],
+                selectedPreHeavenYear: '',
+                selectedLaterHeavenYear: '',
                 laterHeavenHexagram:'',
+                laterHeavenBirthSubCycleHexagram:'',
+                laterHeavenBirthSubCycles:[],
+                selectedPreHeavenSubCycle: null,
                 heavenlyTrigram:'',
                 earthlyTrigram:'',
                 timeOfBirthHexagram:'',        
@@ -650,6 +688,15 @@ export default {
            
         };
 
+        const getPreHeavenBirthSubCycles = () => {
+            return state.preHeavenBirthSubCycles.map(subCycle => {
+                return {
+                    value: subCycle.year,
+                    label: `${subCycle.year} - ${subCycle.age}`,
+                };
+            });
+        };
+
         const mapAstroHexagram = () => {
             
             // loop through astrological hexagrams contain in astro
@@ -700,6 +747,7 @@ export default {
             );
         }
 
+        
 
         const  consult = async() => {          
 
@@ -773,6 +821,8 @@ export default {
                 state.earthlyTrigram = result.iching.earthlyTrigram;
                 state.timeOfBirthHexagram = result.iching.timeOfBirthSymbol;            
                 state.laterHeavenHexagram = result.iching.laterHeavenHexagram;
+                state.preHeavenBirthSubCycles = result.iching.preHeavenBirthSubCycles;
+                state.laterHeavenBirthSubCycles = result.iching.laterHeavenBirthSubCycles;
 
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
@@ -833,6 +883,13 @@ export default {
             
    
         };
+        watch (() => state.selectedPreHeavenYear, (newYear) => {
+            
+            const selectedSubCycle = state.preHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
+            if (selectedSubCycle) {
+                state.preHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram;                
+            }
+        });
 
         watch(() => state.name, (newName) => {
             form.globalPreHeavenLineIndex = 5;
@@ -851,7 +908,7 @@ export default {
             consult();
         });
        
-        return {determineLaterHeavenLineColor, clearCanvas, nextTick, determinePreHeavenLineColor, form, updateGlobalPreHeavenLineIndex, updateGlobalLaterHeavenLineIndex, birthdayList, birthdayStore,  saveBirthday, dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
+        return {getPreHeavenBirthSubCycles, determineLaterHeavenLineColor, clearCanvas, nextTick, determinePreHeavenLineColor, form, updateGlobalPreHeavenLineIndex, updateGlobalLaterHeavenLineIndex, birthdayList, birthdayStore,  saveBirthday, dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
 }
 }
 </script>
