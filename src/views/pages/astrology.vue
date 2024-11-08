@@ -170,9 +170,9 @@
                     </div>                          
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenHexagram.translation.split(',')[0]}} </p> 
                             <span v-if="state.preHeavenHexagram">
-                                <div class="card-body"  v-if="state.preHeavenControllingLine">
+                                <div class="card-body"  v-if="state.preHeavenHexagram.controllingLine">
                                         <h3 class="card-title">Controlling Line</h3>
-                                        <p class="card-text display-10">{{state.preHeavenControllingLine.trigram}} Trigram  {{state.preHeavenControllingLine.linePosition}} Line  ({{state.preHeavenControllingLine.line.name}})</p>
+                                        <p class="card-text display-10">{{state.preHeavenHexagram.controllingLine.trigram}} Trigram  {{state.preHeavenHexagram.controllingLine.linePosition}} Line  ({{state.preHeavenHexagram.controllingLine.line.name}})</p>
                                 </div>                                
                                 <div class="card-body">
                                         <h3 class="card-title">Summary</h3>
@@ -254,7 +254,7 @@
                     </div>                          
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.laterHeavenHexagram.translation.split(',')[0]}} </p> 
                             <span v-if="state.laterHeavenHexagram">
-                                <div class="card-body"  v-if="state.preHeavenControllingLine">
+                                <div class="card-body"  v-if="state.laterHeavenHexagram.controllingLine">
                                         <h3 class="card-title">Controlling Line</h3>
                                         <p class="card-text display-10">{{state.laterHeavenHexagram.controllingLine.trigram}} Trigram  {{state.laterHeavenHexagram.controllingLine.linePosition}} Line  ({{state.laterHeavenHexagram.controllingLine.line.name}})</p>
                                 </div>                                
@@ -513,8 +513,7 @@ export default {
                 laterHeavenHexagram:'',
                 heavenlyTrigram:'',
                 earthlyTrigram:'',
-                timeOfBirthHexagram:'',
-                preHeavenControllingLine:'',
+                timeOfBirthHexagram:'',        
                 latitude:  26.39655582357474, 
                 longitude: 27.37679999686307,
                 birthDate:  DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute:50}).toISO(), 
@@ -772,8 +771,7 @@ export default {
                 state.preHeavenHexagram = result.iching.preHeavenHexagram;
                 state.heavenlyTrigram = result.iching.heavenlyTrigram;
                 state.earthlyTrigram = result.iching.earthlyTrigram;
-                state.timeOfBirthHexagram = result.iching.timeOfBirthSymbol;
-                state.preHeavenControllingLine = result.iching.preHeavenHexagram.controllingLine;
+                state.timeOfBirthHexagram = result.iching.timeOfBirthSymbol;            
                 state.laterHeavenHexagram = result.iching.laterHeavenHexagram;
 
 
