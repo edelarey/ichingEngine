@@ -227,7 +227,7 @@ class EarthlyNumberTrigram {
  * Winter Solstice is the Starting point for the Celestial Stems
  */
 class CelestialStem {
-  constructor(name, symbol, hoMapNumber, trigram, oppositeTrigram, element, alphabeticOrder) {
+  constructor(name, symbol, hoMapNumber, trigram, oppositeTrigram, element, alphabeticOrder, polarity) {
     this.name = name;
     this.symbol = symbol;
     this.hoMapNumber = hoMapNumber;
@@ -235,6 +235,7 @@ class CelestialStem {
     this.trigram = trigram;
     this.oppositeTrigram = oppositeTrigram;
     this.alphabeticOrder = alphabeticOrder;
+    this.polarity = polarity;
   }
 
   getName() {
@@ -268,13 +269,14 @@ class CelestialStem {
 }
 
 class HoraryBranch {
-  constructor(name, symbol, hoMapNumbers,element, alphabeticOrder, animal) {
+  constructor(name, symbol, hoMapNumbers,element, alphabeticOrder, animal, polarity) {
     this.name = name;
     this.symbol = symbol;
     this.element = element;    
     this.hoMapNumbers = hoMapNumbers;
     this.alphabeticOrder = alphabeticOrder;
     this.animal = animal;
+    this.polarity = polarity;
   }
 
   getName() {
@@ -376,31 +378,31 @@ class IChingAstrology_North {
     /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
      * contributes to the element, yoa indicates if it is positive or negative contribution */
     this.celestialStems = [
-      new CelestialStem('Chia','甲', 6, bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A'),
-      new CelestialStem('I', '乙',   2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
-      new CelestialStem('Ping', '丙', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
-      new CelestialStem('Ting', '丁', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
-      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.lí,   ealierHeavenElements.Earth, 'E'),
-      new CelestialStem('Chi', '己', 9, bagua.bagua.lí,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
-      new CelestialStem('Keng', '庚', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
-      new CelestialStem('Hsin', '辛', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
-      new CelestialStem('Jen',  '壬', 6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
-      new CelestialStem('Kuei', '癸', 2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J'), 
+      new CelestialStem('Chia','甲', 6, bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A', '+'),
+      new CelestialStem('I', '乙',   2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B', '-'),
+      new CelestialStem('Ping', '丙', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C', '+'),
+      new CelestialStem('Ting', '丁', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D', '-'), 
+      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.lí,   ealierHeavenElements.Earth, 'E', '+'),
+      new CelestialStem('Chi', '己', 9, bagua.bagua.lí,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F', '-'),
+      new CelestialStem('Keng', '庚', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G', '+'),
+      new CelestialStem('Hsin', '辛', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H', '-'),
+      new CelestialStem('Jen',  '壬', 6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I', '+'),
+      new CelestialStem('Kuei', '癸', 2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J', '-'),  
     ];
     /** The numbers in the horary branch are from the Ho Map */
     this.horaryBranches = [
-      new HoraryBranch('Tzu', '子',   [1, 6] , ealierHeavenElements.Water, 'a', 'Rat' ),
-      new HoraryBranch(`Ch'ou`, '丑',  [5, 10], ealierHeavenElements.Earth, 'b', 'Ox' ),
-      new HoraryBranch('Yin','寅',   [3,8], ealierHeavenElements.Wood, 'c', 'Tiger'),
-      new HoraryBranch('Mao', '卯',   [3,8], ealierHeavenElements.Wood, 'd', 'Rabbit' ),
-      new HoraryBranch(`Ch'en`, '辰', [5, 10] , ealierHeavenElements.Earth, 'e', 'Dragon' ),
-      new HoraryBranch('Szu', '巳', [2,7], ealierHeavenElements.Fire, 'f', 'Snake' ),
-      new HoraryBranch('Wu', '午',   [2,7], ealierHeavenElements.Fire, 'g', 'Horse' ),
-      new HoraryBranch('Wei', '未',   [5, 10], ealierHeavenElements.Earth, 'h', 'Goat' ),
-      new HoraryBranch('Shen', '申',  [4,9], ealierHeavenElements.Metal, 'i', 'Monkey' ),
-      new HoraryBranch('Yu', '酉',   [4,9], ealierHeavenElements.Metal, 'j', 'Rooster' ),
-      new HoraryBranch('Hsu', '戌',  [5, 10], ealierHeavenElements.Earth, 'k', 'Dog' ),
-      new HoraryBranch('Hai', '亥',  [1, 6], ealierHeavenElements.Water, 'l', 'Pig' ),      
+      new HoraryBranch('Tzu', '子',   [1, 6] , ealierHeavenElements.Water, 'a', 'Rat', '+'),
+      new HoraryBranch(`Ch'ou`, '丑',  [5, 10], ealierHeavenElements.Earth, 'b', 'Ox', '-'),
+      new HoraryBranch('Yin','寅',   [3,8], ealierHeavenElements.Wood, 'c', 'Tiger', '+'),
+      new HoraryBranch('Mao', '卯',   [3,8], ealierHeavenElements.Wood, 'd', 'Rabbit', '-'),
+      new HoraryBranch(`Ch'en`, '辰', [5, 10] , ealierHeavenElements.Earth, 'e', 'Dragon', '+'),
+      new HoraryBranch('Szu', '巳', [2,7], ealierHeavenElements.Fire, 'f', 'Snake', '-'),
+      new HoraryBranch('Wu', '午',   [2,7], ealierHeavenElements.Fire, 'g', 'Horse', '+'),
+      new HoraryBranch('Wei', '未',   [5, 10], ealierHeavenElements.Earth, 'h', 'Goat', '-'),
+      new HoraryBranch('Shen', '申',  [4,9], ealierHeavenElements.Metal, 'i', 'Monkey', '+'),
+      new HoraryBranch('Yu', '酉',   [4,9], ealierHeavenElements.Metal, 'j', 'Rooster', '-'),
+      new HoraryBranch('Hsu', '戌',  [5, 10], ealierHeavenElements.Earth, 'k', 'Dog', '+'),
+      new HoraryBranch('Hai', '亥',  [1, 6], ealierHeavenElements.Water, 'l', 'Pig', '-'),      
     ];
     /** Static Stems and Branches Stem is Upper Case, Branch is lower case, ApplicABLE Year - Stem and Branch */
     
@@ -570,12 +572,7 @@ class IChingAstrology_North {
     new EarthlyNumberTrigram(56, bagua.bagua.qián ),
     new EarthlyNumberTrigram(58, bagua.bagua.gèn ),
     new EarthlyNumberTrigram(60, bagua.bagua.zhèn ),    
-  ];
-
-    
-
-
-
+  ];    
 
     /** Compute Sexagenary Cycles based on combinations of Celestial stems and Horary Branches */
     this.sexagenaryCycle = [];
@@ -1041,10 +1038,6 @@ assignLines(preHeavenHexagram, lineDesignations) {
   });
   return preHeavenHexagram;
 }
-
-
-
-
 
 developPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol, gender) {
   // Step 1: Count the number of Yin and Yang lines in the pre-heaven hexagram
@@ -1564,14 +1557,123 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
           return laterHeavenHexagram;
       }
 
+      /** Implement Birth Cycle Rules on PreHeaven or Later Heaven Hexagrams pg 45-49*/
+      calculatePreHeavenYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
 
+        console.log('PreHeaven');
+        console.log('yearly cycle polarity', yearlyCycle.cycle.polarity);
+        console.log('below');
+        let heavenYears = [];
+        /** Years are determined to run from winter solstice to winter solstice */
+        
+        let newHexagramBinary = aHexagram.binary;
+        //Determine whether the first line of the Hexagram is a yin or yang line
+        let yinLine = aHexagram.below.lineArray[0].name === 'yin' ? true : false;
+        // if the first line is a yin line change it to a yang line
+        
+        aHexagram.below.lineArray.forEach((line,index) => {
+          if (yinLine & index === 0)
+            {   // change the first line to a yang line and use this new hexagram for subsequent calculations
+                newHexagramBinary = aHexagram.binary.slice(0, 5) + '1';
+                console.log('yin index 0', newHexagramBinary);
+            }             
+            let iteration =0;        
+          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
+             
+            // determine the hexagram for the year in question using the following rules
+            if (yinLine && index == 0 && iteration === 0) {
+                            // change the line from yin to yan and yang to yin
+                  // remember the binary is read from left to right, so the first line is the 6th digit from the left ie the last digit
+                  // if the digit it 0 make it 1 if its 1 make it 0, so the line is inverted    
+                  heavenYears.push({year: (birthYear + i), age: i, hexagramBinary: newHexagramBinary ,  hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))});
+                  
+                  
+              }
+              else { if (yinLine && index == 0 && iteration > 0)
+                {
+                  // only flip the binary value in the iteration position from 0 to 1 or vice versa, preserve the rest of the string as is
+                  newHexagramBinary = newHexagramBinary.slice(0, 5 - iteration) + (newHexagramBinary.charAt(5 - iteration) === '0' ? '1' : '0') + newHexagramBinary.slice(6 - iteration);
+                  heavenYears.push({year: (birthYear + i), age: i, hexagramBinary: newHexagramBinary, hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))});
+                }
+                else
+                {
+                  heavenYears.push({year: (birthYear + i), age: i, hexagramBinary: newHexagramBinary});
+                }
+            
+              }
 
+              iteration++;
+          
+                        
+            
+          }
+          
 
+        });
+        console.log('above');
+        aHexagram.above.lineArray.forEach(line => {
+          
+          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
 
+            heavenYears.push({year: (birthYear + i), age: i});
+          }
 
+        });
 
+        // order the years in ascending order
+        heavenYears.sort((a, b) => a.age - b.age);
+        let polarity = yearlyCycle.cycle.polarity.polarityString;
+        heavenYears.forEach(year => {
+          year.polarity = polarity;
+          polarity = polarity === '+ve' ? '-ve' : '+ve';
+        });
+        console.log('preHeavenYears', heavenYears);
+        return heavenYears;
 
-}
+      
+      }
+
+      calculateLaterHeavenYearlySubCycles(hexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
+        console.log('LaterHeaven');
+        console.log('yearly cycle polarity', yearlyCycle.cycle.polarity);
+        console.log('below');
+        let heavenYears = [];
+        hexagram.below.lineArray.forEach(line => {
+          
+          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
+        
+            heavenYears.push({year: (birthYear + i), age: i});
+          }
+
+        });
+        console.log('above');
+        hexagram.above.lineArray.forEach(line => {
+          
+          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
+
+            heavenYears.push({year: (birthYear + i), age: i});
+          }
+
+        });
+
+        // order the years in ascending order
+        heavenYears.sort((a, b) => a.age - b.age);
+        // add in the yearly cycle polarity for each year. Use the polarity of the yearly cycle and then alternate the polarity for each year
+        let polarity = yearlyCycle.cycle.polarity.polarityString;
+        heavenYears.forEach(year => {
+          year.polarity = polarity;
+          polarity = polarity === '+ve' ? '-ve' : '+ve';
+        });
+
+        console.log('LaterHeavenYears', heavenYears);
+
+        return heavenYears;
+        
+
+      
+      }
+    }
+      
 
 class IChingAstrology_South {
   constructor() {
@@ -1581,32 +1683,34 @@ class IChingAstrology_South {
 
     /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
      * contributes to the element, yoa indicates if it is positive or negative contribution */
+    /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
+     * contributes to the element, yoa indicates if it is positive or negative contribution */
     this.celestialStems = [
-      new CelestialStem('Chia','甲', 6, bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A'),
-      new CelestialStem('I', '乙',   2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
-      new CelestialStem('Ping', '丙', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
-      new CelestialStem('Ting', '丁', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
-      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.lí,   ealierHeavenElements.Earth, 'E'),
-      new CelestialStem('Chi', '己', 9, bagua.bagua.lí,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
-      new CelestialStem('Keng', '庚', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
-      new CelestialStem('Hsin', '辛', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
-      new CelestialStem('Jen',  '壬', 6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
-      new CelestialStem('Kuei', '癸', 2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J'), 
+      new CelestialStem('Chia','甲', 6, bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A', '+'),
+      new CelestialStem('I', '乙',   2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B', '-'),
+      new CelestialStem('Ping', '丙', 8, bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C', '+'),
+      new CelestialStem('Ting', '丁', 7, bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D', '-'), 
+      new CelestialStem('Wu',  '戊', 1, bagua.bagua.kǎn,  bagua.bagua.lí,   ealierHeavenElements.Earth, 'E', '+'),
+      new CelestialStem('Chi', '己', 9, bagua.bagua.lí,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F', '-'),
+      new CelestialStem('Keng', '庚', 3, bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G', '+'),
+      new CelestialStem('Hsin', '辛', 4, bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H', '-'),
+      new CelestialStem('Jen',  '壬', 6, bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I', '+'),
+      new CelestialStem('Kuei', '癸', 2, bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J', '-'),  
     ];
     /** The numbers in the horary branch are from the Ho Map */
     this.horaryBranches = [
-      new HoraryBranch('Tzu', '子',   [1, 6] , ealierHeavenElements.Water, 'a', 'Rat' ),
-      new HoraryBranch(`Ch'ou`, '丑',  [5, 10], ealierHeavenElements.Earth, 'b', 'Ox' ),
-      new HoraryBranch('Yin','寅',   [3,8], ealierHeavenElements.Wood, 'c', 'Tiger'),
-      new HoraryBranch('Mao', '卯',   [3,8], ealierHeavenElements.Wood, 'd', 'Rabbit' ),
-      new HoraryBranch(`Ch'en`, '辰', [5, 10] , ealierHeavenElements.Earth, 'e', 'Dragon' ),
-      new HoraryBranch('Szu', '巳', [2,7], ealierHeavenElements.Fire, 'f', 'Snake' ),
-      new HoraryBranch('Wu', '午',   [2,7], ealierHeavenElements.Fire, 'g', 'Horse' ),
-      new HoraryBranch('Wei', '未',   [5, 10], ealierHeavenElements.Earth, 'h', 'Goat' ),
-      new HoraryBranch('Shen', '申',  [4,9], ealierHeavenElements.Metal, 'i', 'Monkey' ),
-      new HoraryBranch('Yu', '酉',   [4,9], ealierHeavenElements.Metal, 'j', 'Rooster' ),
-      new HoraryBranch('Hsu', '戌',  [5, 10], ealierHeavenElements.Earth, 'k', 'Dog' ),
-      new HoraryBranch('Hai', '亥',  [1, 6], ealierHeavenElements.Water, 'l', 'Pig' ),      
+      new HoraryBranch('Tzu', '子',   [1, 6] , ealierHeavenElements.Water, 'a', 'Rat', '+'),
+      new HoraryBranch(`Ch'ou`, '丑',  [5, 10], ealierHeavenElements.Earth, 'b', 'Ox', '-'),
+      new HoraryBranch('Yin','寅',   [3,8], ealierHeavenElements.Wood, 'c', 'Tiger', '+'),
+      new HoraryBranch('Mao', '卯',   [3,8], ealierHeavenElements.Wood, 'd', 'Rabbit', '-'),
+      new HoraryBranch(`Ch'en`, '辰', [5, 10] , ealierHeavenElements.Earth, 'e', 'Dragon', '+'),
+      new HoraryBranch('Szu', '巳', [2,7], ealierHeavenElements.Fire, 'f', 'Snake', '-'),
+      new HoraryBranch('Wu', '午',   [2,7], ealierHeavenElements.Fire, 'g', 'Horse', '+'),
+      new HoraryBranch('Wei', '未',   [5, 10], ealierHeavenElements.Earth, 'h', 'Goat', '-'),
+      new HoraryBranch('Shen', '申',  [4,9], ealierHeavenElements.Metal, 'i', 'Monkey', '+'),
+      new HoraryBranch('Yu', '酉',   [4,9], ealierHeavenElements.Metal, 'j', 'Rooster', '-'),
+      new HoraryBranch('Hsu', '戌',  [5, 10], ealierHeavenElements.Earth, 'k', 'Dog', '+'),
+      new HoraryBranch('Hai', '亥',  [1, 6], ealierHeavenElements.Water, 'l', 'Pig', '-'),      
     ];
     /** Static Stems and Branches Stem is Upper Case, Branch is lower case, ApplicABLE Year - Stem and Branch */
     
@@ -2234,10 +2338,6 @@ assignLines(preHeavenHexagram, lineDesignations) {
   return preHeavenHexagram;
 }
 
-
-
-
-
 developPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol, gender) {
   // Step 1: Count the number of Yin and Yang lines in the pre-heaven hexagram
   let yinCount = 0;
@@ -2756,6 +2856,61 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
       }
 
 
+      calculatePreHeavenYearlySubCycles(hexagram, birthYear, yearlyCycle, birthYearIsOdd) {
+
+        console.log('PreHeaven');
+        console.log('yearly cycle polarity', yearlyCycle.cycle.polarity);
+        console.log('below');
+        PreheavenYears = [];
+        hexagram.below.lineArray.forEach(line => {
+          
+          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
+            // determine the hexagram for the year in question using the following rules
+            // if the line is a yin line change it to a yang 
+            console.log('line', line);
+            PreheavenYears.push({year: (birthYear + i), age: i});
+          }
+
+        });
+        console.log('above');
+        hexagram.above.lineArray.forEach(line => {
+          
+          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
+
+            PreheavenYears.push({year: (birthYear + i), age: i});
+          }
+
+        });
+
+        // order the years in ascending order
+        PreheavenYears.sort((a, b) => a.age - b.age);
+        console.log('preHeavenYears', PreheavenYears);
+
+      
+      }
+
+      calculateLaterHeavenYearlySubCycles(hexagram, birthYear, yearlyCycle, birthYearIsOdd) {
+
+        console.log('LaterHeaven');
+        console.log('yearly cycle polarity', yearlyCycle.cycle.polarity);
+        console.log('below');
+        hexagram.below.lineArray.forEach(line => {
+          
+          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
+            console.log('year in consideration', (birthYear + i), 'age', i);
+          }
+
+        });
+        console.log('above');
+        hexagram.above.lineArray.forEach(line => {
+          
+          for (let i= line.yearRange[0]; i<=line.yearRange[1]; i++) {
+            console.log('year in consideration', (birthYear + i), 'age', i);
+          }
+
+        });
+      
+      }
 
 }
 
@@ -2838,13 +2993,6 @@ class IChingConsultation {
      // Step 13: Find hourly symbols
      const hourlyStemBranch = this.astrology.getHourlyStemABranchForTimeAndSymbol(hour, minute,   dailyStemBranch.celestialStem.alphabeticOrder);
     console.log('hourlyStemBranch', hourlyStemBranch); 
-     
-    //  return {
-    //   time: time24hr,
-    //   symbols:applicableYearKey,
-    //   celestialStem: this.getCelestialStemByAlpha(stemBranchSymbol.charAt(0)), // First character is the celestial stem
-    //   horaryBranch:  this.getHoraryBranchByAlpha(stemBranchSymbol.charAt(1)),   // Second character is the horary branch
-    // };
 
      const hourlySymbols = hourlyStemBranch.celestialStem.alphabeticOrder + hourlyStemBranch.horaryBranch.alphabeticOrder;
 
@@ -2895,6 +3043,7 @@ class IChingConsultation {
 
      console.log('Year of Birth is Odd? ',birthYearIsOdd);
 
+     /**  Heavenly and Earthly Trigrams and PreHeaven hexagaram */
      // determine which cycle we are in and based on that calculate the correct heavenly and earthly trigrams
      // also include the gender to determine the correct heavenly trigram
      switch (fullCycle.cycleName) {
@@ -2951,16 +3100,18 @@ class IChingConsultation {
         let lineTimeDesignations = this.astrology.getPreHeavenDesignations(preHeavenHexagram);
         this.astrology.mapDesignationsToTrigramLines(preHeavenHexagram);
         // Time of Birth Symbol is used to determine the controlling line
-        const preHeavenControllingLine = this.astrology.getPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol.symbol);
-         
-     
-         this.astrology.assignPreHeavenYearRanges(preHeavenHexagram, preHeavenControllingLine, year);    
-
-         
-         
+        const preHeavenControllingLine = this.astrology.getPreHeavenControllingLine(preHeavenHexagram, timeOfBirthSymbol.symbol);         
+        this.astrology.assignPreHeavenYearRanges(preHeavenHexagram, preHeavenControllingLine, year);    
+        
+        /** Later Heaven Calculations */  
         let laterHeavenHexagram = this.astrology.getLaterHeavenHexagram(preHeavenHexagram, preHeavenControllingLine, monthlyStemBranch) ;
         this.astrology.getLaterHeavenControllingLine(laterHeavenHexagram, preHeavenControllingLine);
         this.astrology.assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram, year);  
+
+        /** Now calculate the yearly sub-sycles for each age range in the preHeaven and Later Heaven Hexagrams */
+        let preHeavenSubCycles = this.astrology.calculatePreHeavenYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd);
+        let laterHeavenSubCycles = this.astrology.calculateLaterHeavenYearlySubCycles  (laterHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd);
+        
         
           
      
