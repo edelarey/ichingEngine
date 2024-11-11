@@ -858,7 +858,34 @@ export default {
                 state.laterHeavenHexagram = result.iching.laterHeavenHexagram;
                 state.preHeavenBirthSubCycles = result.iching.preHeavenBirthSubCycles;
                 state.laterHeavenBirthSubCycles = result.iching.laterHeavenBirthSubCycles;
-
+                
+                // get the current date and work out the persons age
+                const birthDate = DateTime.fromJSDate(new Date(state.birthDate));
+                const currentDate = DateTime.now();
+                let age = currentDate.diff(birthDate, 'years').years;
+                   age = Math.floor(age);
+                // find the correct year index in the later heaven birth sub cycles
+                let correctYear = result.iching.laterHeavenBirthSubCycles.find(subCycle => subCycle.age === age);  
+              
+                if (correctYear)
+                {
+                    state.selectedLaterHeavenYear = correctYear.year;
+                }
+                else
+                {
+                    state.selectedLaterHeavenYear = result.iching.laterHeavenBirthSubCycles[0].year;
+                }  
+                
+                // check if the age is found in the pre heaven birth sub cycles
+                correctYear = result.iching.preHeavenBirthSubCycles.find(subCycle => subCycle.age === age);
+                if (correctYear)
+                {
+                    state.selectedPreHeavenYear = correctYear.year;
+                }
+                else    
+                {   state.selectedPreHeavenYear = result.iching.preHeavenBirthSubCycles[0].year;}
+                
+   
 
                 // console.log(astrology.getFullSexagenaryCycle(1867)); // { cycle: "upper", startYear: 1804, endYear: 1863, year: 1820 }
                 // console.log(astrology.getFullSexagenaryCycle(1900)); // { cycle: "upper", startYear: 1864, endYear: 1923, year: 1900 }
