@@ -1558,33 +1558,37 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
       }
 
       /** Implement Birth Cycle Rules on PreHeaven or Later Heaven Hexagrams pg 45-49*/
-      /** Implement Birth Cycle Rules on PreHeaven or Later Heaven Hexagrams */
-      /** Implement Birth Cycle Rules on PreHeaven or Later Heaven Hexagrams */
 
-      calculateBirthYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
+      calculateBirthYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
         let heavenYears = [];
         let newHexagramBinary = aHexagram.binary;
         let isYin = line => line.name === 'yin';
         const counterPositions = { 0: 3, 1: 4, 2: 5, 3: 0, 4: 1, 5: 2 };
     
+        const winterSolstice = isNorthernHemisphere 
+            ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 }) 
+            : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
+    
+        const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
+        let adjustedYear = birthDate < winterSolstice ? birthYear : birthYear + 1;
+    
         [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
             trigram.forEach((line, index) => {
                 if (isYin(line)) {
-                    // Yin line rules
                     newHexagramBinary = aHexagram.binary;
                     let iteration = 0;
                     for (let i = line.yearRange[0]; i <= line.yearRange[1]; i++) {
                         if (iteration === 0) {
-                            newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) + '1' +
+                            newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) + '1' + 
                                                 newHexagramBinary.slice(6 - (index + trigramIndex * 3));
                         } else {
                             newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) +
-                                                (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
-                                                newHexagramBinary.slice(6 - (index + trigramIndex * 3));
+                                (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
+                                newHexagramBinary.slice(6 - (index + trigramIndex * 3));
                         }
-    
+                        
                         heavenYears.push({
-                            year: birthYear + i,
+                            year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
                             hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
@@ -1592,14 +1596,12 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                         iteration++;
                     }
                 } else {
-                    // Yang line rules, separate handling for Odd and Even years
                     let controllingLine = index + trigramIndex * 3;
                     let iteration = 0;
                     for (let i = line.yearRange[0]; i <= line.yearRange[1]; i++) {
                         if (birthYearIsOdd) {
-                            // Odd-year handling
                             if (iteration % 3 === 0) {
-                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) +
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) + 
                                                     (iteration === 0 ? '0' : '1') +
                                                     newHexagramBinary.slice(6 - controllingLine);
                             } else if (iteration % 3 === 1) {
@@ -1609,7 +1611,6 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                                                     newHexagramBinary.slice(6 - counterIndex);
                             }
                         } else {
-                            // Even-year handling
                             if (iteration === 0) {
                                 newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) + '1' +
                                                     newHexagramBinary.slice(6 - controllingLine);
@@ -1622,7 +1623,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                         }
                         
                         heavenYears.push({
-                            year: birthYear + i,
+                            year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
                             hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
@@ -1633,18 +1634,19 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             });
         });
 
-          // order the years in ascending order
-          heavenYears.sort((a, b) => a.age - b.age);
-          let polarity = yearlyCycle.cycle.polarity.polarityString;
-          heavenYears.forEach(year => {
-            year.polarity = polarity;
-            polarity = polarity === '+ve' ? '-ve' : '+ve';
-          });
-         
-         
+        heavenYears.sort((a, b) => a.age - b.age);
+        let polarity = yearlyCycle.cycle.polarity === 'yang' ? '-ve' : '-ve';
+        heavenYears.forEach(year => {
+          year.polarity = polarity;
+          polarity = polarity === '+ve' ? '-ve' : '+ve';
+        });
+       
     
         return heavenYears;
     }
+
+            
+    
   
     }
       
@@ -2829,31 +2831,36 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
           return laterHeavenHexagram;
       }
 
-      calculateBirthYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd) {
+      calculateBirthYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
         let heavenYears = [];
         let newHexagramBinary = aHexagram.binary;
-     
         let isYin = line => line.name === 'yin';
         const counterPositions = { 0: 3, 1: 4, 2: 5, 3: 0, 4: 1, 5: 2 };
+    
+        const winterSolstice = isNorthernHemisphere 
+            ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 }) 
+            : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
+    
+        const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
+        let adjustedYear = birthDate < winterSolstice ? birthYear : birthYear + 1;
     
         [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
             trigram.forEach((line, index) => {
                 if (isYin(line)) {
-                    // Yin line rules
                     newHexagramBinary = aHexagram.binary;
                     let iteration = 0;
                     for (let i = line.yearRange[0]; i <= line.yearRange[1]; i++) {
                         if (iteration === 0) {
-                            newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) + '1' +
+                            newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) + '1' + 
                                                 newHexagramBinary.slice(6 - (index + trigramIndex * 3));
                         } else {
                             newHexagramBinary = newHexagramBinary.slice(0, 5 - (index + trigramIndex * 3)) +
-                                                (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
-                                                newHexagramBinary.slice(6 - (index + trigramIndex * 3));
+                                (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
+                                newHexagramBinary.slice(6 - (index + trigramIndex * 3));
                         }
-    
+                        
                         heavenYears.push({
-                            year: birthYear + i,
+                            year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
                             hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
@@ -2861,14 +2868,12 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                         iteration++;
                     }
                 } else {
-                    // Yang line rules, separate handling for Odd and Even years
                     let controllingLine = index + trigramIndex * 3;
                     let iteration = 0;
                     for (let i = line.yearRange[0]; i <= line.yearRange[1]; i++) {
                         if (birthYearIsOdd) {
-                            // Odd-year handling
                             if (iteration % 3 === 0) {
-                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) +
+                                newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) + 
                                                     (iteration === 0 ? '0' : '1') +
                                                     newHexagramBinary.slice(6 - controllingLine);
                             } else if (iteration % 3 === 1) {
@@ -2878,7 +2883,6 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                                                     newHexagramBinary.slice(6 - counterIndex);
                             }
                         } else {
-                            // Even-year handling
                             if (iteration === 0) {
                                 newHexagramBinary = newHexagramBinary.slice(0, 5 - controllingLine) + '1' +
                                                     newHexagramBinary.slice(6 - controllingLine);
@@ -2891,7 +2895,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                         }
                         
                         heavenYears.push({
-                            year: birthYear + i,
+                            year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
                             hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
@@ -2902,18 +2906,18 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
             });
         });
 
-          // order the years in ascending order
-          heavenYears.sort((a, b) => a.age - b.age);
-          let polarity = yearlyCycle.cycle.polarity === 'yang' ? '-ve' : '-ve';
-          heavenYears.forEach(year => {
-            year.polarity = polarity;
-            polarity = polarity === '+ve' ? '-ve' : '+ve';
-          });
-         
-         
+        heavenYears.sort((a, b) => a.age - b.age);
+        let polarity = yearlyCycle.cycle.polarity === 'yang' ? '-ve' : '-ve';
+        heavenYears.forEach(year => {
+          year.polarity = polarity;
+          polarity = polarity === '+ve' ? '-ve' : '+ve';
+        });
+       
     
         return heavenYears;
     }
+    
+
 
 }
 
@@ -2941,6 +2945,7 @@ class IChingConsultation {
     const day = trueLocalDateTime.day;
     const hour = trueLocalDateTime.hour;
     const minute = trueLocalDateTime.minute;
+    const isNorthernHemisphere = (this.getHemisphere(latitude) === 'Northern');
 
     const fullCycle = this.astrology.getFullSexagenaryCycle(year);
     console.log('fullCycle', fullCycle);
@@ -3112,8 +3117,8 @@ class IChingConsultation {
         this.astrology.assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram, year);  
 
         /** Now calculate the yearly sub-sycles for each age range in the preHeaven and Later Heaven Hexagrams */
-        let preHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd);
-        let laterHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (laterHeavenHexagram,  yearlyCycle, year, month, day, birthYearIsOdd);
+        let preHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd, isNorthernHemisphere);
+        let laterHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (laterHeavenHexagram,  yearlyCycle, year, month, day, birthYearIsOdd, isNorthernHemisphere);
         
         
           
@@ -3166,6 +3171,14 @@ class IChingConsultation {
      };
 
   }
+
+  getHemisphere (latitude)  {
+    if (latitude >= 0) {
+        return "Northern";
+    } else {
+        return "Southern";
+    } 
+};
 
   // Helper function to calculate the daily sum using hoMap numbers from celestialStem and horaryBranch objects
   calculateDailySum(dailyCycleValue, dailyCycle) {
