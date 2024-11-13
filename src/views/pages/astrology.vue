@@ -350,7 +350,7 @@
         </div>
         <div class="col-sm-6">                   
             <div class="card text-center">
-                <div class="card-body" v-if="state.preHeavenBirthSubCycles !=[]">
+                <div class="card-body" v-if="state.laterHeavenBirthSubCycles !=[]">
                     <h5 class="card-title">Later Life</h5>
                     <p class="card-text display-3">    </p>
                     <select v-model="state.selectedLaterHeavenYear" class="form-control">
@@ -372,6 +372,66 @@
                           
                             <br />
                     <a  :href="`/hexagram_detail?hexagram=${state.laterHeavenBirthSubCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                     </span>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row"> 
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenDailyCycle !=[]">
+                    <h5 class="card-title">Daily Early Life</h5>
+                    <p class="card-text display-3">    </p>
+                    <select v-model="state.selectedPreHeavenDailyCycleDate" class="form-control">
+                        <option v-for="subCycle in state.preHeavenDailyCycle" :key="subCycle.date" :value="subCycle.date">
+                            {{ subCycle.date }}
+                        </option>
+                    </select> 
+                    <span v-if="state.preHeavenDailyCycleHexagram">
+                    <p class="card-text display-3">{{state.preHeavenDailyCycleHexagram.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenDailyCycleHexagram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenDailyCycleHexagram.hexagram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenDailyCycleHexagram.translation.split(',')[0]}} </p> 
+
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="state.preHeavenDailyCycleHexagram.summary"></span></p>   
+                                </div>
+                            
+                          
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.preHeavenDailyCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                     </span>
+                   
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.laterHeavenDailyCycle !=[]">
+                    <h5 class="card-title">Daily Later Life</h5>
+                    <p class="card-text display-3">    </p>
+                    <select v-model="state.selectedLaterHeavenDailyCycleDate" class="form-control">
+                        <option v-for="subCycle in state.laterHeavenDailyCycle" :key="subCycle.date" :value="subCycle.date">
+                            {{ subCycle.date }}
+                        </option>
+                    </select> 
+                    <span v-if="state.laterHeavenDailyCycleHexagram">
+                    <p class="card-text display-3">{{state.laterHeavenDailyCycleHexagram.name}}</p>
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.laterHeavenDailyCycleHexagram.symbol}} </p>  
+                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.laterHeavenDailyCycleHexagram.hexagram}} </p> 
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.laterHeavenDailyCycleHexagram.translation.split(',')[0]}} </p> 
+
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="state.laterHeavenDailyCycleHexagram.summary"></span></p>   
+                                </div>
+                            
+                          
+                            <br />
+                    <a  :href="`/hexagram_detail?hexagram=${state.laterHeavenDailyCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
                      </span>
                    
                 </div>
@@ -557,6 +617,7 @@ export default {
                     },
                 ]);
              const state = reactive({
+                
                 hemisphere: 'Northern',
                 cycle: null,
                 sexagenaryCycle: null,     
@@ -572,12 +633,18 @@ export default {
                 preHeavenHexagram:'',
                 preHeavenBirthSubCycleHexagram:'',
                 preHeavenBirthSubCycles: [],
+                preHeavenDailyCycle:[],
+                preHeavenDailyCycleHexagram:'',
+                selectedPreHeavenDailyCycleDate:'',
                 selectedPreHeavenYear: '',
                 selectedLaterHeavenYear: '',
                 laterHeavenHexagram:'',
                 laterHeavenBirthSubCycleHexagram:'',
                 laterHeavenBirthSubCycles:[],
+                laterHeavenDailyCycle:[],
                 selectedPreHeavenSubCycle: null,
+                laterHeavenDailyCycleHexagram:'',
+                selectedLaterHeavenDailyCycleDate: '',
                 heavenlyTrigram:'',
                 earthlyTrigram:'',
                 timeOfBirthHexagram:'',        
@@ -603,8 +670,9 @@ export default {
                     
                 },
             });
-
+            
             const form = {
+                consultation: null,
                 globalPreHeavenLineIndex: 5,
                 globalLaterHeavenLineIndex: 5,           
             };
@@ -787,6 +855,8 @@ export default {
             const hemisphere = getHemisphere(state.latitude);
                 state.selectedLaterHeavenYear = '';
                 state.selectedPreHeavenYear = '';
+                state.selectedPreHeavenDailyCycleDate = '';
+                state.selectedLaterHeavenDailyCycleDate ='';
                 state.preHeavenBirthSubCycleHexagram = '';
                 state.laterHeavenBirthSubCycleHexagram = '';
                 state.preHeavenBirthSubCycles = [];
@@ -836,7 +906,7 @@ export default {
 
                 // console.log('Birth Stems and Branches', state.birthStemsandBranches);
 
-                const consultation = new astro.IChingConsultation(astrology);
+                form.consultation = new astro.IChingConsultation(astrology);
                 // get the date part and the time part from brithdate
                 let theGender = astro.Gender.MALE;
                 if (state.gender === 'FEMALE')
@@ -844,7 +914,7 @@ export default {
                     theGender = astro.Gender.FEMALE;
                 }
             
-                const result = await consultation.consultOracle(state.birthDate, theGender,  state.latitude, state.longitude); // Example date, time, and location
+                const result = await form.consultation.consultOracle(state.birthDate, theGender,  state.latitude, state.longitude); // Example date, time, and location
                 console.log('consultation', result);
                 state.cycle = result.sexagenaryCycle;
                 state.sexagenaryCycle = result.yearly.yearlyCycle.cycle;
@@ -858,6 +928,7 @@ export default {
                 state.laterHeavenHexagram = result.iching.laterHeavenHexagram;
                 state.preHeavenBirthSubCycles = result.iching.preHeavenBirthSubCycles;
                 state.laterHeavenBirthSubCycles = result.iching.laterHeavenBirthSubCycles;
+
                 
                 // get the current date and work out the persons age
                 const birthDate = DateTime.fromJSDate(new Date(state.birthDate));
@@ -884,6 +955,8 @@ export default {
                 }
                 else    
                 {   state.selectedPreHeavenYear = result.iching.preHeavenBirthSubCycles[0].year;}
+
+                
                 
    
 
@@ -945,19 +1018,45 @@ export default {
             
    
         };
-        watch (() => state.selectedPreHeavenYear, (newYear) => {
+
+
+        watch (() => state.selectedPreHeavenDailyCycleDate, async (newDate) => {
             
-            const selectedSubCycle = state.preHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
+            const selectedSubCycle = state.preHeavenDailyCycle.find(subCycle => subCycle.date === newDate);
             if (selectedSubCycle) {
-                state.preHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram;                
+                state.preHeavenDailyCycleHexagram = selectedSubCycle.hexagram;  
             }
         });
 
-        watch (() => state.selectedLaterHeavenYear, (newYear) => {
+        watch (() => state.selectedLaterHeavenDailyCycleDate, async (newDate) => {
+            
+            const selectedSubCycle = state.laterHeavenDailyCycle.find(subCycle => subCycle.date === newDate);
+            if (selectedSubCycle) {
+                state.laterHeavenDailyCycleHexagram = selectedSubCycle.hexagram;  
+            }
+        });
+       
+
+        watch (() => state.selectedPreHeavenYear, async (newYear) => {
+            
+            const selectedSubCycle = state.preHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
+            if (selectedSubCycle) {
+                state.preHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram;  
+                state.preHeavenDailyCycle = await form.consultation.calculateDailyCycles(selectedSubCycle.hexagram, selectedSubCycle.controllingLine, state.birthDate, state.latitude );
+                     
+            }
+        });
+
+        watch (() => state.selectedLaterHeavenYear, async (newYear) => {
+
+         
             
             const selectedSubCycle = state.laterHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
             if (selectedSubCycle) {
-                state.laterHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram;                
+                state.laterHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram; 
+                console.log('selectedLaterHeavenYear', newYear, selectedSubCycle.hexagram);
+                state.laterHeavenDailyCycle = await form.consultation.calculateDailyCycles(selectedSubCycle.hexagram, selectedSubCycle.controllingLine, state.birthDate, state.latitude );                
+                   
             }
         });
 

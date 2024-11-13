@@ -1574,8 +1574,8 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
             trigram.forEach((line, index) => {
                 const controllingLineData = {
-                    trigram: trigramIndex === 0 ? "below" : "above",
-                    linePosition: index === 0 ? "lower" : index === 1 ? "middle" : "upper",
+                    trigram: trigramIndex === 0 ? "Below" : "Above",
+                    linePosition: index === 0 ? "Lower" : index === 1 ? "Middle" : "Upper",
                     lineType: isYin(line) ? "yin" : "yang"
                 };
     
@@ -1651,8 +1651,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         return heavenYears;
     }
     
-
-         /**
+      /**
      * Calculate daily cycles for a given year based on yearly hexagram and HoMap rules.
      * @param {Object} yearlyHexagram - The yearly hexagram including the controlling line data.
      * @param {number} birthYear - Year of birth for determining initial hexagram cycle.
@@ -1661,63 +1660,70 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
      * @param {boolean} birthYearIsOdd - True if birth year is odd.
      * @param {boolean} isNorthernHemisphere - True if the individual was born in the Northern Hemisphere.
      */
-     calculateDailyCycles(yearlyHexagram, controllingLine, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
-      const daysPerElement = {
-          Water: 72,
-          Earth1: 18,
-          Wood: 72,
-          Earth2: 20,
-          Fire: 72,
-          Earth3: 21,
-          Metal: 72,
-          Earth4: 18
-      };
-  
-      const dailyCycles = [];
-      const winterSolstice = isNorthernHemisphere
-          ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 })
-          : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
-      const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
-      let yearStart = (birthDate < winterSolstice) ? birthDate : birthDate.plus({ days: 1 });
-      let currentHexagram = yearlyHexagram;
-      let currentLine = this.mapControllingLine(controllingLine);
-      let elementOrder = ['Water', 'Earth1', 'Wood', 'Earth2', 'Fire', 'Earth3', 'Metal', 'Earth4'];
-      let totalDays = 0;
-  
-      for (const element of elementOrder) {
-          let elementDays = daysPerElement[element];
-          let daysInHexagram = 6;
-  
-          for (let day = 0; day < elementDays; day++) {
-              if (day % daysInHexagram === 0 && day !== 0) {
-                  currentHexagram = this.getNextHexagram(currentHexagram, currentLine, element);
-              }
-              const date = yearStart.plus({ days: totalDays });
-  
-              dailyCycles.push({
-                  date: date.toISODate(),
-                  hexagram: _.cloneDeep(currentHexagram),
-                  controllingLine: currentLine
-              });
-  
-              currentLine = (currentLine + 1) % 6;
-              totalDays++;
-          }
+      calculateDailyCycles(yearlyHexagram, controllingLine, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
+        const daysPerElement = {
+            Water: 72,
+            Earth1: 18,
+            Wood: 72,
+            Earth2: 20,
+            Fire: 72,
+            Earth3: 21,
+            Metal: 72,
+            Earth4: 18
+        };
+    
+        const dailyCycles = [];
+        const winterSolstice = isNorthernHemisphere
+            ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 })
+            : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
+        const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
+        let yearStart = (birthDate < winterSolstice) ? birthDate : birthDate.plus({ days: 1 });
+        let currentHexagram = yearlyHexagram;
+        let currentLine = this.mapControllingLine(controllingLine);
+        let elementOrder = ['Water', 'Earth1', 'Wood', 'Earth2', 'Fire', 'Earth3', 'Metal', 'Earth4'];
+        let totalDays = 0;
+    
+        for (const element of elementOrder) {
+            let elementDays = daysPerElement[element];
+            let daysInHexagram = 6;
+    
+            for (let day = 0; day < elementDays; day++) {
+                if (day % daysInHexagram === 0 && day !== 0) {
+                    currentHexagram = this.getNextHexagram(currentHexagram, currentLine, element);
+                }
+                const date = yearStart.plus({ days: totalDays });
+    
+                dailyCycles.push({
+                    date: date.toISODate(),
+                    hexagram: _.cloneDeep(currentHexagram),
+                    controllingLine: currentLine
+                });
+    
+                currentLine = (currentLine + 1) % 6;
+                totalDays++;
+            }
+        }
+    
+        return dailyCycles;
       }
-  
-      return dailyCycles;
-    }
 
 
     mapControllingLine(controllingLine) {
+      try{
+       
       const { trigram, linePosition } = controllingLine;
       const linePositionMapping = {
-          lower: 0,
-          middle: 1,
-          upper: 2
+          Lower: 0,
+          Middle: 1,
+          Upper: 2
       };
-      const baseIndex = trigram === "above" ? 3 : 0;
+      const baseIndex = trigram === "Above" ? 3 : 0;
       return baseIndex + linePositionMapping[linePosition];
+    } catch (error) {
+      console.log(controllingLine, ' error', error);
+      return 3;
+      
+    }
     }
 
        /**
@@ -2947,8 +2953,8 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
             trigram.forEach((line, index) => {
                 const controllingLineData = {
-                    trigram: trigramIndex === 0 ? "below" : "above",
-                    linePosition: index === 0 ? "lower" : index === 1 ? "middle" : "upper",
+                    trigram: trigramIndex === 0 ? "Below" : "Above",
+                    linePosition: index === 0 ? "Lower" : index === 1 ? "Middle" : "Upper",
                     lineType: isYin(line) ? "yin" : "yang"
                 };
     
@@ -3082,14 +3088,19 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
   
   
       mapControllingLine(controllingLine) {
+        try{
         const { trigram, linePosition } = controllingLine;
         const linePositionMapping = {
-            lower: 0,
-            middle: 1,
-            upper: 2
+            Lower: 0,
+            Middle: 1,
+            Upper: 2
         };
-        const baseIndex = trigram === "above" ? 3 : 0;
+        const baseIndex = trigram === "Above" ? 3 : 0;
+
         return baseIndex + linePositionMapping[linePosition];
+      } catch (error) {
+        console.log(controllingLine, ' error', error);
+      }
       }
   
          /**
@@ -3128,6 +3139,27 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
 class IChingConsultation {
   constructor(astrology) {
     this.astrology = astrology; // Instance of IChingAstrology
+  }
+
+  async calculateDailyCycles(yearlyHexagram, controllingLine, birthDateTime, latitude) {
+
+    const jsDate = new Date(birthDateTime);
+    const trueLocalDateTime = DateTime.fromJSDate(jsDate);    
+    const dateStr = trueLocalDateTime.toFormat("yyyy-MM-dd'T'HH:mm:ss").toString();
+
+    
+
+    // Extract year, month, day, and hour for further calculations
+    const year = trueLocalDateTime.year;
+    const month = trueLocalDateTime.month;
+    const day = trueLocalDateTime.day;
+    const hour = trueLocalDateTime.hour;
+    const minute = trueLocalDateTime.minute;
+    const isNorthernHemisphere = (this.getHemisphere(latitude) === 'Northern');
+    let birthYearIsOdd = (year % 2 !== 0);
+    let dailyCycles = this.astrology.calculateDailyCycles(yearlyHexagram, controllingLine, year, month, day, birthYearIsOdd, isNorthernHemisphere);
+     return dailyCycles;
+
   }
 
   async consultOracle(birthDateTime, gender = Gender.MALE, latitude, longitude) {
@@ -3320,13 +3352,10 @@ class IChingConsultation {
         this.astrology.assignLaterHeavenYearRanges(laterHeavenHexagram, preHeavenHexagram, year);  
 
         /** Now calculate the yearly sub-sycles for each age range in the preHeaven and Later Heaven Hexagrams */
-        let preHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd, isNorthernHemisphere);
-        let laterHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (laterHeavenHexagram,  yearlyCycle, year, month, day, birthYearIsOdd, isNorthernHemisphere);
+        let preHeavenBirthSubCycles = _.cloneDeep(this.astrology.calculateBirthYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd, isNorthernHemisphere));
+        let laterHeavenBirthSubCycles = _.cloneDeep(this.astrology.calculateBirthYearlySubCycles  (laterHeavenHexagram,  yearlyCycle, year, month, day, birthYearIsOdd, isNorthernHemisphere));
 
-        let preHeavenDailyCycle = this.astrology.calculateDailyCycles(preHeavenBirthSubCycles[0].hexagram, preHeavenBirthSubCycles[0].controllingLine, year, month, day, birthYearIsOdd, isNorthernHemisphere);
-        let laterHeavenDailyCycle = this.astrology.calculateDailyCycles(laterHeavenBirthSubCycles[0].hexagram, laterHeavenBirthSubCycles[0].controllingLine, year, month, day, birthYearIsOdd, isNorthernHemisphere);
-        console.log('preHeavenDailyCycle', preHeavenDailyCycle);
-        console.log('laterHeavenDailyCycle', laterHeavenDailyCycle);
+        
         
 
      return {
