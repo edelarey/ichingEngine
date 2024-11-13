@@ -1660,7 +1660,8 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
      * @param {boolean} birthYearIsOdd - True if birth year is odd.
      * @param {boolean} isNorthernHemisphere - True if the individual was born in the Northern Hemisphere.
      */
-      calculateDailyCycles(yearlyHexagram, controllingLine, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
+      calculateDailyCycles(yearlyHexagram, controllingLine, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere, yearToCalculate) {
+        // fix this so that it has the calculation for a particular year which may not be the birth year
         const daysPerElement = {
             Water: 72,
             Earth1: 18,
@@ -1676,8 +1677,9 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         const winterSolstice = isNorthernHemisphere
             ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 })
             : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
-        const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
+        const birthDate = DateTime.fromObject({ year: yearToCalculate, month: birthMonth, day: birthDay });
         let yearStart = (birthDate < winterSolstice) ? birthDate : birthDate.plus({ days: 1 });
+        
         let currentHexagram = yearlyHexagram;
         let currentLine = this.mapControllingLine(controllingLine);
         let elementOrder = ['Water', 'Earth1', 'Wood', 'Earth2', 'Fire', 'Earth3', 'Metal', 'Earth4'];
@@ -3039,7 +3041,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
      * @param {boolean} birthYearIsOdd - True if birth year is odd.
      * @param {boolean} isNorthernHemisphere - True if the individual was born in the Northern Hemisphere.
      */
-      calculateDailyCycles(yearlyHexagram, controllingLine, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
+      calculateDailyCycles(yearlyHexagram, controllingLine, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere, yearToCalculate) {
         const daysPerElement = {
             Water: 72,
             Earth1: 18,
@@ -3055,7 +3057,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         const winterSolstice = isNorthernHemisphere
             ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 })
             : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
-        const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
+        const birthDate = DateTime.fromObject({ year: yearToCalculate, month: birthMonth, day: birthDay });
         let yearStart = (birthDate < winterSolstice) ? birthDate : birthDate.plus({ days: 1 });
         let currentHexagram = yearlyHexagram;
         let currentLine = this.mapControllingLine(controllingLine);
@@ -3141,7 +3143,7 @@ class IChingConsultation {
     this.astrology = astrology; // Instance of IChingAstrology
   }
 
-  async calculateDailyCycles(yearlyHexagram, controllingLine, birthDateTime, latitude) {
+  async calculateDailyCycles(yearlyHexagram, controllingLine, birthDateTime, latitude, yearToCalculate) {
 
     const jsDate = new Date(birthDateTime);
     const trueLocalDateTime = DateTime.fromJSDate(jsDate);    
@@ -3157,7 +3159,7 @@ class IChingConsultation {
     const minute = trueLocalDateTime.minute;
     const isNorthernHemisphere = (this.getHemisphere(latitude) === 'Northern');
     let birthYearIsOdd = (year % 2 !== 0);
-    let dailyCycles = this.astrology.calculateDailyCycles(yearlyHexagram, controllingLine, year, month, day, birthYearIsOdd, isNorthernHemisphere);
+    let dailyCycles = this.astrology.calculateDailyCycles(yearlyHexagram, controllingLine, year, month, day, birthYearIsOdd, isNorthernHemisphere, yearToCalculate);
      return dailyCycles;
 
   }

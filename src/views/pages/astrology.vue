@@ -1042,7 +1042,7 @@ export default {
             const selectedSubCycle = state.preHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
             if (selectedSubCycle) {
                 state.preHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram;  
-                state.preHeavenDailyCycle = await form.consultation.calculateDailyCycles(selectedSubCycle.hexagram, selectedSubCycle.controllingLine, state.birthDate, state.latitude );
+                state.preHeavenDailyCycle = await form.consultation.calculateDailyCycles(selectedSubCycle.hexagram, selectedSubCycle.controllingLine, state.birthDate, state.latitude, newYear );
                      
             }
         });
@@ -1055,7 +1055,7 @@ export default {
             if (selectedSubCycle) {
                 state.laterHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram; 
                 console.log('selectedLaterHeavenYear', newYear, selectedSubCycle.hexagram);
-                state.laterHeavenDailyCycle = await form.consultation.calculateDailyCycles(selectedSubCycle.hexagram, selectedSubCycle.controllingLine, state.birthDate, state.latitude );                
+                state.laterHeavenDailyCycle = await form.consultation.calculateDailyCycles(selectedSubCycle.hexagram, selectedSubCycle.controllingLine, state.birthDate, state.latitude, newYear );                
                    
             }
         });
