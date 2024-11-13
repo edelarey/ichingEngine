@@ -1379,6 +1379,7 @@ const seq_GreyCode = [
 function getHexagramByBinary(binary)
 {
     let hexagram = this.sequence_binary().filter((item) => item.binary == binary);
+
     if (hexagram.length > 0)
     {
         return this.sequence_binary().filter((item) => item.binary == binary)[0];
@@ -1386,6 +1387,44 @@ function getHexagramByBinary(binary)
     else return this.hexagram.kūn;
    
 }
+/** Reverse the hexagram binary and return the new hexagram */
+function reverseHexagram(binary)
+{
+    let newHexBinary = binary.split('').reverse().join('');
+    return this.getHexagramByBinary(newHexBinary);
+
+}
+/** get the opposite hexagram from binary */
+function oppositeHexagram(binary)
+{
+    let newHexBinary = binary.split('').map((bit) => bit == 0 ? 1 : 0).join('');
+    return this.getHexagramByBinary(newHexBinary);
+
+}
+
+/** get the opposite reverse hexagram from binary */
+function oppositeReverseHexagram(binary)
+{
+    let newHexBinary = binary.split('').map((bit) => bit == 0 ? 1 : 0).reverse().join('');
+    return this.getHexagramByBinary(newHexBinary);
+}
+
+/** Get the inner hexagram, which consists of bits 1,2,3 and 2,3,4 (where the first bit is index 0*/
+function innerHexagram(binary)
+{
+    let newHexBinary = binary.substring(1,4) + binary.substring(2,5);
+    return this.getHexagramByBinary(newHexBinary);
+}
+
+/** Get the inner opposite hexagram */
+function innerOppositeHexagram(binary)
+{
+
+    let newHexBinary = binary.substring(1,4).split('').map((bit) => bit == 0 ? 1 : 0).join('') + binary.substring(2,5).split('').map((bit) => bit == 0 ? 1 : 0).join('');
+
+    return this.getHexagramByBinary(newHexBinary);
+}
+
  function sequence_kingwen()
  {
     return _.sortBy(hexagram, ['kingwen'],['asc']);
@@ -1424,6 +1463,11 @@ export default
 {
     hexagram,
     getHexagramByBinary,
+    reverseHexagram,
+    oppositeHexagram,
+    oppositeReverseHexagram,    
+    innerHexagram,
+    innerOppositeHexagram,
     sequence_binary,
     sequence_kingwen,
     sequence_greycode,
