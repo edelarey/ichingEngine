@@ -1568,12 +1568,17 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         const winterSolstice = isNorthernHemisphere 
             ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 }) 
             : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
-    
         const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
         let adjustedYear = birthDate < winterSolstice ? birthYear : birthYear + 1;
     
         [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
             trigram.forEach((line, index) => {
+                const controllingLineData = {
+                    trigram: trigramIndex === 0 ? "below" : "above",
+                    linePosition: index === 0 ? "lower" : index === 1 ? "middle" : "upper",
+                    lineType: isYin(line) ? "yin" : "yang"
+                };
+    
                 if (isYin(line)) {
                     newHexagramBinary = aHexagram.binary;
                     let iteration = 0;
@@ -1586,12 +1591,13 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                                 (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
                                 newHexagramBinary.slice(6 - (index + trigramIndex * 3));
                         }
-                        
+    
                         heavenYears.push({
                             year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
-                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
+                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary)),
+                            controllingLine: _.cloneDeep(controllingLineData)
                         });
                         iteration++;
                     }
@@ -1621,31 +1627,126 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                                                     newHexagramBinary.slice(6 - controllingLine);
                             }
                         }
-                        
+    
                         heavenYears.push({
                             year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
-                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
+                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary)),
+                            controllingLine: _.cloneDeep(controllingLineData)
                         });
                         iteration++;
                     }
                 }
             });
         });
-
+    
         heavenYears.sort((a, b) => a.age - b.age);
         let polarity = yearlyCycle.cycle.polarity === 'yang' ? '-ve' : '-ve';
         heavenYears.forEach(year => {
-          year.polarity = polarity;
-          polarity = polarity === '+ve' ? '-ve' : '+ve';
+            year.polarity = polarity;
+            polarity = polarity === '+ve' ? '-ve' : '+ve';
         });
-       
     
         return heavenYears;
     }
+    
 
-            
+         /**
+     * Calculate daily cycles for a given year based on yearly hexagram and HoMap rules.
+     * @param {Object} yearlyHexagram - The yearly hexagram including the controlling line data.
+     * @param {number} birthYear - Year of birth for determining initial hexagram cycle.
+     * @param {number} birthMonth - Month of birth.
+     * @param {number} birthDay - Day of birth.
+     * @param {boolean} birthYearIsOdd - True if birth year is odd.
+     * @param {boolean} isNorthernHemisphere - True if the individual was born in the Northern Hemisphere.
+     */
+     calculateDailyCycles(yearlyHexagram, controllingLine, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
+      const daysPerElement = {
+          Water: 72,
+          Earth1: 18,
+          Wood: 72,
+          Earth2: 20,
+          Fire: 72,
+          Earth3: 21,
+          Metal: 72,
+          Earth4: 18
+      };
+  
+      const dailyCycles = [];
+      const winterSolstice = isNorthernHemisphere
+          ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 })
+          : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
+      const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
+      let yearStart = (birthDate < winterSolstice) ? birthDate : birthDate.plus({ days: 1 });
+      let currentHexagram = yearlyHexagram;
+      let currentLine = this.mapControllingLine(controllingLine);
+      let elementOrder = ['Water', 'Earth1', 'Wood', 'Earth2', 'Fire', 'Earth3', 'Metal', 'Earth4'];
+      let totalDays = 0;
+  
+      for (const element of elementOrder) {
+          let elementDays = daysPerElement[element];
+          let daysInHexagram = 6;
+  
+          for (let day = 0; day < elementDays; day++) {
+              if (day % daysInHexagram === 0 && day !== 0) {
+                  currentHexagram = this.getNextHexagram(currentHexagram, currentLine, element);
+              }
+              const date = yearStart.plus({ days: totalDays });
+  
+              dailyCycles.push({
+                  date: date.toISODate(),
+                  hexagram: _.cloneDeep(currentHexagram),
+                  controllingLine: currentLine
+              });
+  
+              currentLine = (currentLine + 1) % 6;
+              totalDays++;
+          }
+      }
+  
+      return dailyCycles;
+    }
+
+
+    mapControllingLine(controllingLine) {
+      const { trigram, linePosition } = controllingLine;
+      const linePositionMapping = {
+          lower: 0,
+          middle: 1,
+          upper: 2
+      };
+      const baseIndex = trigram === "above" ? 3 : 0;
+      return baseIndex + linePositionMapping[linePosition];
+    }
+
+       /**
+      * Determine the next hexagram based on the yearly hexagram and element phase.
+      * @param {Object} hexagram - Current hexagram.
+      * @param {number} controllingLine - Current controlling line number.
+      * @param {string} element - Current element for the hexagram phase.
+      * @returns {Object} - The next hexagram variation.
+      */
+       getNextHexagram(ahexagram, controllingLine, element) {
+        switch (element) {
+            case 'Water':
+                return  _.cloneDeep(ahexagram); // Default to yearly hexagram.
+            case 'Fire':
+                return  _.cloneDeep(hexagram.oppositeHexagram(ahexagram.binary)) ; // Opposite hexagram for Fire.
+            case 'Wood':
+                return  _.cloneDeep(hexagram.reverseHexagram(ahexagram.binary)); // Reverse for Wood.
+            case 'Metal':
+                return  _.cloneDeep(hexagram.oppositeReverseHexagram(ahexagram.binary)); // Opposite Reverse for Metal.
+            case 'Earth1':
+            case 'Earth2':
+            case 'Earth3':
+            case 'Earth4':
+                return (controllingLine < 3) ?  _.cloneDeep(hexagram.innerHexagram(ahexagram.binary)) :  _.cloneDeep(hexagram.innerOppositeHexagram(ahexagram.binary)); // Inner for Earth.
+            default:
+                throw new Error('Unknown element phase.');
+        }
+      
+    }     
     
   
     }
@@ -2840,12 +2941,17 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
         const winterSolstice = isNorthernHemisphere 
             ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 }) 
             : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
-    
         const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
         let adjustedYear = birthDate < winterSolstice ? birthYear : birthYear + 1;
     
         [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
             trigram.forEach((line, index) => {
+                const controllingLineData = {
+                    trigram: trigramIndex === 0 ? "below" : "above",
+                    linePosition: index === 0 ? "lower" : index === 1 ? "middle" : "upper",
+                    lineType: isYin(line) ? "yin" : "yang"
+                };
+    
                 if (isYin(line)) {
                     newHexagramBinary = aHexagram.binary;
                     let iteration = 0;
@@ -2858,12 +2964,13 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                                 (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
                                 newHexagramBinary.slice(6 - (index + trigramIndex * 3));
                         }
-                        
+    
                         heavenYears.push({
                             year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
-                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
+                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary)),
+                            controllingLine: _.cloneDeep(controllingLineData)
                         });
                         iteration++;
                     }
@@ -2893,29 +3000,125 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                                                     newHexagramBinary.slice(6 - controllingLine);
                             }
                         }
-                        
+    
                         heavenYears.push({
                             year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
-                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary))
+                            hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary)),
+                            controllingLine: _.cloneDeep(controllingLineData)
                         });
                         iteration++;
                     }
                 }
             });
         });
-
+    
         heavenYears.sort((a, b) => a.age - b.age);
         let polarity = yearlyCycle.cycle.polarity === 'yang' ? '-ve' : '-ve';
         heavenYears.forEach(year => {
-          year.polarity = polarity;
-          polarity = polarity === '+ve' ? '-ve' : '+ve';
+            year.polarity = polarity;
+            polarity = polarity === '+ve' ? '-ve' : '+ve';
         });
-       
     
         return heavenYears;
     }
+    
+      /**
+     * Calculate daily cycles for a given year based on yearly hexagram and HoMap rules.
+     * @param {Object} yearlyHexagram - The yearly hexagram including the controlling line data.
+     * @param {number} birthYear - Year of birth for determining initial hexagram cycle.
+     * @param {number} birthMonth - Month of birth.
+     * @param {number} birthDay - Day of birth.
+     * @param {boolean} birthYearIsOdd - True if birth year is odd.
+     * @param {boolean} isNorthernHemisphere - True if the individual was born in the Northern Hemisphere.
+     */
+      calculateDailyCycles(yearlyHexagram, controllingLine, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
+        const daysPerElement = {
+            Water: 72,
+            Earth1: 18,
+            Wood: 72,
+            Earth2: 20,
+            Fire: 72,
+            Earth3: 21,
+            Metal: 72,
+            Earth4: 18
+        };
+    
+        const dailyCycles = [];
+        const winterSolstice = isNorthernHemisphere
+            ? DateTime.fromObject({ year: birthYear, month: 12, day: 21 })
+            : DateTime.fromObject({ year: birthYear, month: 6, day: 21 });
+        const birthDate = DateTime.fromObject({ year: birthYear, month: birthMonth, day: birthDay });
+        let yearStart = (birthDate < winterSolstice) ? birthDate : birthDate.plus({ days: 1 });
+        let currentHexagram = yearlyHexagram;
+        let currentLine = this.mapControllingLine(controllingLine);
+        let elementOrder = ['Water', 'Earth1', 'Wood', 'Earth2', 'Fire', 'Earth3', 'Metal', 'Earth4'];
+        let totalDays = 0;
+    
+        for (const element of elementOrder) {
+            let elementDays = daysPerElement[element];
+            let daysInHexagram = 6;
+    
+            for (let day = 0; day < elementDays; day++) {
+                if (day % daysInHexagram === 0 && day !== 0) {
+                    currentHexagram = this.getNextHexagram(currentHexagram, currentLine, element);
+                }
+                const date = yearStart.plus({ days: totalDays });
+    
+                dailyCycles.push({
+                    date: date.toISODate(),
+                    hexagram: _.cloneDeep(currentHexagram),
+                    controllingLine: currentLine
+                });
+    
+                currentLine = (currentLine + 1) % 6;
+                totalDays++;
+            }
+        }
+    
+        return dailyCycles;
+      }
+  
+  
+      mapControllingLine(controllingLine) {
+        const { trigram, linePosition } = controllingLine;
+        const linePositionMapping = {
+            lower: 0,
+            middle: 1,
+            upper: 2
+        };
+        const baseIndex = trigram === "above" ? 3 : 0;
+        return baseIndex + linePositionMapping[linePosition];
+      }
+  
+         /**
+        * Determine the next hexagram based on the yearly hexagram and element phase.
+        * @param {Object} hexagram - Current hexagram.
+        * @param {number} controllingLine - Current controlling line number.
+        * @param {string} element - Current element for the hexagram phase.
+        * @returns {Object} - The next hexagram variation.
+        */
+         getNextHexagram(ahexagram, controllingLine, element) {
+          switch (element) {
+              case 'Water':
+                  return  _.cloneDeep(ahexagram); // Default to yearly hexagram.
+              case 'Fire':
+                  return  _.cloneDeep(hexagram.oppositeHexagram(ahexagram.binary)) ; // Opposite hexagram for Fire.
+              case 'Wood':
+                  return  _.cloneDeep(hexagram.reverseHexagram(ahexagram.binary)); // Reverse for Wood.
+              case 'Metal':
+                  return  _.cloneDeep(hexagram.oppositeReverseHexagram(ahexagram.binary)); // Opposite Reverse for Metal.
+              case 'Earth1':
+              case 'Earth2':
+              case 'Earth3':
+              case 'Earth4':
+                  return (controllingLine < 3) ?  _.cloneDeep(hexagram.innerHexagram(ahexagram.binary)) :  _.cloneDeep(hexagram.innerOppositeHexagram(ahexagram.binary)); // Inner for Earth.
+              default:
+                  throw new Error('Unknown element phase.');
+          }
+        
+      }
     
 
 
@@ -3119,12 +3322,12 @@ class IChingConsultation {
         /** Now calculate the yearly sub-sycles for each age range in the preHeaven and Later Heaven Hexagrams */
         let preHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (preHeavenHexagram, yearlyCycle, year, month, day, birthYearIsOdd, isNorthernHemisphere);
         let laterHeavenBirthSubCycles = this.astrology.calculateBirthYearlySubCycles  (laterHeavenHexagram,  yearlyCycle, year, month, day, birthYearIsOdd, isNorthernHemisphere);
-        
-        
-          
-     
-         
 
+        let preHeavenDailyCycle = this.astrology.calculateDailyCycles(preHeavenBirthSubCycles[0].hexagram, preHeavenBirthSubCycles[0].controllingLine, year, month, day, birthYearIsOdd, isNorthernHemisphere);
+        let laterHeavenDailyCycle = this.astrology.calculateDailyCycles(laterHeavenBirthSubCycles[0].hexagram, laterHeavenBirthSubCycles[0].controllingLine, year, month, day, birthYearIsOdd, isNorthernHemisphere);
+        console.log('preHeavenDailyCycle', preHeavenDailyCycle);
+        console.log('laterHeavenDailyCycle', laterHeavenDailyCycle);
+        
 
      return {
       birthDateTime,
