@@ -1576,7 +1576,9 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                 const controllingLineData = {
                     trigram: trigramIndex === 0 ? "Below" : "Above",
                     linePosition: index === 0 ? "Lower" : index === 1 ? "Middle" : "Upper",
-                    lineType: isYin(line) ? "yin" : "yang"
+                    lineNumber: index,
+                    line: isYin(line) ? _.cloneDeep(yao.yao.yin)  : _.cloneDeep(yao.yao.yang),
+                    hexagramLineIndex: index + trigramIndex * 3,
                 };
     
                 if (isYin(line)) {
@@ -2957,7 +2959,9 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                 const controllingLineData = {
                     trigram: trigramIndex === 0 ? "Below" : "Above",
                     linePosition: index === 0 ? "Lower" : index === 1 ? "Middle" : "Upper",
-                    lineType: isYin(line) ? "yin" : "yang"
+                    lineNumber: index,
+                    line: isYin(line) ? _.cloneDeep(yao.yao.yin)  : _.cloneDeep(yao.yao.yang),
+                    hexagramLineIndex: index + trigramIndex * 3,
                 };
     
                 if (isYin(line)) {

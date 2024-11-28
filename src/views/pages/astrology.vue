@@ -110,7 +110,7 @@
                              <!-- Heavenly Trigram -->
                         <div class=".center-content">
                             <svg ref="canvas" :width="state.graphics.svgWidth" :height="state.graphics.svgHeight" :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`">
-        <g :transform="`translate(${state.graphics.svgWidth / 2 - state.graphics.lineLength / 2}, 20)`">
+        <g :transform="`translate(${state.graphics.svgWidth / state.zoomAdjust - state.graphics.lineLength / state.zoomAdjust}, 20)`">
           <!-- Heavenly Trigram -->
           <g v-for="(line, index) in [...state.preHeavenHexagram.above.lineArray].reverse()" :key="'heaven' + index" 
             :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`">
@@ -194,7 +194,7 @@
                              <!-- Heavenly Trigram -->
                         <div class=".center-content">
                             <svg ref="canvas" :width="state.graphics.svgWidth" :height="state.graphics.svgHeight" :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`">
-        <g :transform="`translate(${state.graphics.svgWidth / 2 - state.graphics.lineLength / 2}, 20)`">
+        <g :transform="`translate(${state.graphics.svgWidth / state.zoomAdjust - state.graphics.lineLength / state.zoomAdjust}, 20)`">
           <!-- Heavenly Trigram -->
           <g v-for="(line, index) in [...state.laterHeavenHexagram.above.lineArray].reverse()" :key="'heaven' + index" 
             :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`">
@@ -318,6 +318,182 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenBirthSubCycles !=[]">
+                    <h5 class="card-title">Early Life</h5>
+                    <p class="card-text display-3">    </p>
+                    <select v-model="state.selectedPreHeavenYear" class="form-control">
+                        <option v-for="subCycle in state.preHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">
+                            {{ subCycle.year + ' - ' + subCycle.age }}
+                        </option>
+                    </select> 
+                    <span v-if="state.preHeavenBirthSubCycleHexagram">
+
+                                    <p class="card-text display-3">{{state.preHeavenBirthSubCycleHexagram.name}}</p>
+                                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenBirthSubCycleHexagram.symbol}} </p>  
+
+                                            <!-- Heavenly Trigram -->
+                     <div class=".center-content">
+                                <svg ref="canvas" :width="state.graphics.svgWidth" :height="state.graphics.svgHeight" :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`">
+                                <g :transform="`translate(${state.graphics.svgWidth / state.zoomAdjust - state.graphics.lineLength / state.zoomAdjust}, 20)`">
+                        <!-- Heavenly Trigram -->
+                                <g v-for="(line, index) in [...state.preHeavenBirthSubCycleHexagram.above.lineArray].reverse()" :key="'heaven' + index" 
+                                    :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`">
+                                    <!-- Line Drawing -->
+                                    <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                    :stroke="'white'" :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+                                    :x2="state.graphics.lineLength" :y2="0"  
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+                                    :x2="state.graphics.lineLength" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                   
+                                    <text>{{ updateGlobalEarlyLifeLineIndex() }}</text>
+                                </g>
+                                <!-- Earthly Trigram, positioned below Heavenly Trigram -->
+                                <g v-for="(line, index) in [...state.preHeavenBirthSubCycleHexagram.below.lineArray].reverse()" :key="'earth' + index" 
+                                    :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`">
+                                    <!-- Line Drawing -->
+                                    <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+                                    :x2="state.graphics.lineLength" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                    <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+                                    :x2="state.graphics.lineLength" :y2="0" 
+                                    :stroke="determineSelectedPreHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                    <!-- Year Range Text -->                                   
+                                    <text>{{ updateGlobalEarlyLifeLineIndex() }}</text>
+                                </g>
+                                </g>
+                         </svg>
+
+
+                     </div>                          
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenBirthSubCycleHexagram.translation.split(',')[0]}} </p> 
+                            <span v-if="state.preHeavenBirthSubCycleHexagram">
+                                <div class="card-body"  v-if="state.selectedPreHeavenBirthSubCycle">
+                                        <h3 class="card-title">Controlling Line</h3>
+                                        <p class="card-text display-10">Age {{state.selectedPreHeavenBirthSubCycle.age}}</p>
+                                        <p class="card-text display-10">{{state.selectedPreHeavenBirthSubCycle.controllingLine.trigram}} Trigram  {{state.selectedPreHeavenBirthSubCycle.controllingLine.linePosition}} Line  ({{state.selectedPreHeavenBirthSubCycle.controllingLine.line.name}})</p>
+                                </div>                                
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="state.preHeavenBirthSubCycleHexagram.summary"></span></p>   
+                                </div>
+                            </span>
+                          
+                            <br />
+                        <a  :href="`/hexagram_detail?hexagram=${state.preHeavenBirthSubCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">                   
+            <div class="card text-center">
+                <div class="card-body" v-if="state.laterHeavenBirthSubCycles !=[]">
+                    <h5 class="card-title">Later Life</h5>
+                    <p class="card-text display-3">    </p>
+                    <select v-model="state.selectedLaterHeavenYear" class="form-control">
+                        <option v-for="subCycle in state.laterHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">
+                            {{ subCycle.year + ' - ' + subCycle.age }}
+                        </option>
+                    </select> 
+                    <span v-if="state.laterHeavenBirthSubCycleHexagram">
+                        <p class="card-text display-3">{{state.laterHeavenBirthSubCycleHexagram.name}}</p>
+                                            <p :style="{color: colorClass}" class="card-text display-1"> {{state.laterHeavenBirthSubCycleHexagram.symbol}} </p>  
+
+                        
+                        <div class=".center-content">
+                            <svg ref="canvas" :width="state.graphics.svgWidth" :height="state.graphics.svgHeight" 
+                                :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`"
+                                style="display: block; margin: 0 auto;">
+                            <g :transform="`translate(${state.graphics.svgWidth / state.zoomAdjust - state.graphics.lineLength / state.zoomAdjust}, 20)`">
+                            <!-- Heavenly Trigram -->
+                            <g v-for="(line, index) in [...state.laterHeavenBirthSubCycleHexagram.above.lineArray].reverse()" :key="'heaven' + index" 
+                                :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`">
+                                <!-- Line Drawing -->
+                                <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                :stroke="'white'" :stroke-width="state.graphics.lineWidth" />
+                               <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+                                :x2="state.graphics.lineLength" :y2="0"  
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+                                :x2="state.graphics.lineLength" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />                               
+                                <text>{{ updateGlobalLaterLifeLineIndex() }}</text>
+                            </g>
+                            <!-- Earthly Trigram, positioned below Heavenly Trigram -->
+                            <g v-for="(line, index) in [...state.laterHeavenBirthSubCycleHexagram.below.lineArray].reverse()" :key="'earth' + index" 
+                                :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`">
+                                <!-- Line Drawing -->
+                                <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)" :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+                                :x2="state.graphics.lineLength" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" 
+                                :x2="state.graphics.lineLength" :y2="0" 
+                                :stroke="determineSelectedlaterHeavenBirthSubCycleLineColor(line, index)"  :stroke-width="state.graphics.lineWidth" />
+                                <text>{{ updateGlobalLaterLifeLineIndex() }}</text>
+                            </g>
+                            </g>
+                            </svg>
+
+
+                         </div>                          
+                            <p :style="{color: colorClass}" class="card-text display-6"> {{state.laterHeavenBirthSubCycleHexagram.translation.split(',')[0]}} </p> 
+                            <span v-if="state.laterHeavenBirthSubCycleHexagram">
+                                <div class="card-body"  v-if="state.selectedLaterHeavenBirthSubCycle">
+                                        <h3 class="card-title">Controlling Line</h3>
+                                        <p class="card-text display-10">Age {{state.selectedLaterHeavenBirthSubCycle.age}}</p>
+                                        <p class="card-text display-10">{{state.selectedLaterHeavenBirthSubCycle.controllingLine.trigram}} Trigram  {{state.selectedLaterHeavenBirthSubCycle.controllingLine.linePosition}} Line  ({{state.selectedLaterHeavenBirthSubCycle.controllingLine.line.name}})</p>
+                                </div>                                
+                                <div class="card-body">
+                                        <h3 class="card-title">Summary</h3>
+                                        <p class="card-text display-10"><span v-html="state.laterHeavenBirthSubCycleHexagram.summary"></span></p>   
+                                </div>
+                            </span>
+                          
+                            <br />
+                             <a  :href="`/hexagram_detail?hexagram=${state.laterHeavenBirthSubCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+       
+    </div> 
     <div class="row"> 
         <div class="col-sm-6">                   
             <div class="card text-center">
@@ -330,7 +506,8 @@
                         </option>
                     </select> 
                     <span v-if="state.preHeavenBirthSubCycleHexagram">
-                    <p class="card-text display-3">{{state.preHeavenBirthSubCycleHexagram.name}}</p>
+                    
+                        <p class="card-text display-3">{{state.preHeavenBirthSubCycleHexagram.name}}</p>
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenBirthSubCycleHexagram.symbol}} </p>  
                             <p :style="{color: colorClass}" class="card-text display-1"> {{state.preHeavenBirthSubCycleHexagram.hexagram}} </p> 
                             <p :style="{color: colorClass}" class="card-text display-6"> {{state.preHeavenBirthSubCycleHexagram.translation.split(',')[0]}} </p> 
@@ -633,6 +810,7 @@ export default {
                 preHeavenHexagram:'',
                 preHeavenBirthSubCycleHexagram:'',
                 preHeavenBirthSubCycles: [],
+                selectedPreHeavenBirthSubCycle: null,
                 preHeavenDailyCycle:[],
                 preHeavenDailyCycleHexagram:'',
                 selectedPreHeavenDailyCycleDate:'',
@@ -641,8 +819,9 @@ export default {
                 laterHeavenHexagram:'',
                 laterHeavenBirthSubCycleHexagram:'',
                 laterHeavenBirthSubCycles:[],
+                selectedLaterHeavenBirthSubCycle:[],
                 laterHeavenDailyCycle:[],
-                selectedPreHeavenSubCycle: null,
+               
                 laterHeavenDailyCycleHexagram:'',
                 selectedLaterHeavenDailyCycleDate: '',
                 heavenlyTrigram:'',
@@ -669,12 +848,15 @@ export default {
                     LineColorControlling: 'red',
                     
                 },
+                zoomAdjust: 2.7,
             });
             
             const form = {
                 consultation: null,
                 globalPreHeavenLineIndex: 5,
-                globalLaterHeavenLineIndex: 5,           
+                globalLaterHeavenLineIndex: 5,  
+                globalEarlyLifeLineIndex: 5,
+                globalLaterLifeLineIndex: 5,
             };
 
         const dateTimeFormatSimple = (date) =>  {
@@ -729,8 +911,22 @@ export default {
             
             const format = (value) => {
             return value.toString();
-            };         
-            
+            };        
+        
+        const updateGlobalEarlyLifeLineIndex =  () => {
+                if (form.globalEarlyLifeLineIndex < 0) {
+                    form.globalEarlyLifeLineIndex = 5;
+                }
+                form.globalEarlyLifeLineIndex--;
+        }
+
+        const updateGlobalLaterLifeLineIndex =  () => {
+            if (form.globalLaterLifeLineIndex < 0) {
+                form.globalLaterLifeLineIndex = 5;
+            }
+            form.globalLaterLifeLineIndex--;
+        }
+
         const updateGlobalPreHeavenLineIndex =  () => {
             
           
@@ -751,6 +947,38 @@ export default {
             form.globalLaterHeavenLineIndex--;
         };
         
+        const determineSelectedlaterHeavenBirthSubCycleLineColor = (line ) => {
+            
+            if (line)
+           // default            
+            if ((state.selectedLaterHeavenBirthSubCycle.controllingLine !='') && (form.globalLaterLifeLineIndex  === state.selectedLaterHeavenBirthSubCycle.controllingLine.hexagramLineIndex -1))
+            {
+                return state.graphics.LineColorControlling;
+            }
+            else if (line.alternate === 'OLDYANG' || line.alternate === 'OLDYIN') {
+                return state.graphics.lineColorBroken;
+            }
+            return state.graphics.lineColor;
+            
+           
+        };
+
+        const determineSelectedPreHeavenBirthSubCycleLineColor = (line ) => {
+            
+            if (line)
+             // default            
+            if ((state.selectedPreHeavenBirthSubCycle.controllingLine !='') && (form.globalEarlyLifeLineIndex  === state.selectedPreHeavenBirthSubCycle.controllingLine.hexagramLineIndex -1))
+            {
+                return state.graphics.LineColorControlling;
+            }
+            else if (line.alternate === 'OLDYANG' || line.alternate === 'OLDYIN') {
+                return state.graphics.lineColorBroken;
+            }
+            return state.graphics.lineColor;
+            
+           
+        };
+
         const determinePreHeavenLineColor = (line ) => {
             
             if (line)
@@ -1024,6 +1252,7 @@ export default {
             
             const selectedSubCycle = state.preHeavenDailyCycle.find(subCycle => subCycle.date === newDate);
             if (selectedSubCycle) {
+         
                 state.preHeavenDailyCycleHexagram = selectedSubCycle.hexagram;  
             }
         });
@@ -1032,6 +1261,7 @@ export default {
             
             const selectedSubCycle = state.laterHeavenDailyCycle.find(subCycle => subCycle.date === newDate);
             if (selectedSubCycle) {
+             
                 state.laterHeavenDailyCycleHexagram = selectedSubCycle.hexagram;  
             }
         });
@@ -1041,7 +1271,9 @@ export default {
             
             const selectedSubCycle = state.preHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
             if (selectedSubCycle) {
-                state.preHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram;  
+                state.preHeavenBirthSubCycleHexagram = _.cloneDeep(selectedSubCycle.hexagram);  
+                state.selectedPreHeavenBirthSubCycle = _.cloneDeep(selectedSubCycle);
+                console.log('selectedPreHeavenYear', newYear, selectedSubCycle);
                 state.preHeavenDailyCycle = await form.consultation.calculateDailyCycles(selectedSubCycle.hexagram, selectedSubCycle.controllingLine, state.birthDate, state.latitude, newYear );
                      
             }
@@ -1053,8 +1285,9 @@ export default {
             
             const selectedSubCycle = state.laterHeavenBirthSubCycles.find(subCycle => subCycle.year === newYear);
             if (selectedSubCycle) {
-                state.laterHeavenBirthSubCycleHexagram = selectedSubCycle.hexagram; 
-                console.log('selectedLaterHeavenYear', newYear, selectedSubCycle.hexagram);
+                state.selectedLaterHeavenBirthSubCycle =  _.cloneDeep(selectedSubCycle);
+                state.laterHeavenBirthSubCycleHexagram = _.cloneDeep(selectedSubCycle.hexagram);
+                console.log('selectedLaterHeavenYear', newYear, selectedSubCycle);
                 state.laterHeavenDailyCycle = await form.consultation.calculateDailyCycles(selectedSubCycle.hexagram, selectedSubCycle.controllingLine, state.birthDate, state.latitude, newYear );                
                    
             }
@@ -1077,7 +1310,7 @@ export default {
             consult();
         });
        
-        return {getPreHeavenBirthSubCycles, determineLaterHeavenLineColor, clearCanvas, nextTick, determinePreHeavenLineColor, form, updateGlobalPreHeavenLineIndex, updateGlobalLaterHeavenLineIndex, birthdayList, birthdayStore,  saveBirthday, dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
+        return {getPreHeavenBirthSubCycles, determineLaterHeavenLineColor, clearCanvas, nextTick,determineSelectedPreHeavenBirthSubCycleLineColor, determineSelectedlaterHeavenBirthSubCycleLineColor, determinePreHeavenLineColor, form, updateGlobalEarlyLifeLineIndex, updateGlobalLaterLifeLineIndex, updateGlobalPreHeavenLineIndex, updateGlobalLaterHeavenLineIndex, birthdayList, birthdayStore,  saveBirthday, dateTimeFormatSimple, title, items, state, textClass, colorClass, format, consult, formatBirthMonth, formatBirthYear, formatBirthDay };
 }
 }
 </script>
