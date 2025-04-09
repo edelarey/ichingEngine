@@ -1,11 +1,19 @@
 {
-    "allowJs":true,
-    "compilerOptions": {
-      "module": "commonjs",
-      "target": "es6",
-      "jsx": "preserve"
-    },
-      "include": [
-        "./src/**/*"
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "baseUrl": "./",
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": [
+        "src/*"
       ]
-    }
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
+  }
+}

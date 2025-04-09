@@ -1,6 +1,5 @@
 const { DateTime } = require('luxon');
 const SunCalc = require('suncalc');
-import { name } from 'vue-slide-bar';
 // import { name } from 'vue-slide-bar';
 import bagua from '../const/bagua';
 import hexagram from './hexagram';
@@ -1573,6 +1572,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
     
         [aHexagram.below.lineArray, aHexagram.above.lineArray].forEach((trigram, trigramIndex) => {
             trigram.forEach((line, index) => {
+         
                 const controllingLineData = {
                     trigram: trigramIndex === 0 ? "Below" : "Above",
                     linePosition: index === 0 ? "Lower" : index === 1 ? "Middle" : "Upper",
@@ -1593,13 +1593,18 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
                                 (newHexagramBinary.charAt(5 - (index + trigramIndex * 3)) === '0' ? '1' : '0') +
                                 newHexagramBinary.slice(6 - (index + trigramIndex * 3));
                         }
-    
+                        /**  To Do:
+                         should the controlling line here not be calculated and shown as the new hexagram that results from the change in the line
+                         else the controlling line will always be the same as the original hexagram and the new hexagram will not match when drawing the hexagram
+                         basically the controlling line is the ORIGINAL hexagrams controlling line, not the resulting hexagrams line and do not necessarily match polarities
+                         */
+
                         heavenYears.push({
                             year: adjustedYear + i,
                             age: i,
                             hexagramBinary: newHexagramBinary,
                             hexagram: _.cloneDeep(hexagram.getHexagramByBinary(newHexagramBinary)),
-                            controllingLine: _.cloneDeep(controllingLineData)
+                            controllingLine: _.cloneDeep(controllingLineData) // original hexagrams controlling line
                         });
                         iteration++;
                     }
@@ -2942,6 +2947,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
           return laterHeavenHexagram;
       }
 
+      /*** Calculate the Yearly Subcycles based on the original yearly birth hexagram (pre or later heaven) */
       calculateBirthYearlySubCycles(aHexagram, yearlyCycle, birthYear, birthMonth, birthDay, birthYearIsOdd, isNorthernHemisphere) {
         let heavenYears = [];
         let newHexagramBinary = aHexagram.binary;
@@ -3174,8 +3180,8 @@ class IChingConsultation {
 
     const jsDate = new Date(birthDateTime);
     console.log('raw', jsDate);
-    const trueLocalDateTime = DateTime.fromJSDate(jsDate);
-    //const trueLocalDateTime = this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
+    //const trueLocalDateTime = DateTime.fromJSDate(jsDate);
+    const trueLocalDateTime = this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
     console.log('trueLocalDateTime', trueLocalDateTime);
     const dateStr = trueLocalDateTime.toFormat("yyyy-MM-dd'T'HH:mm:ss").toString()
     console.log('trueLocalDateTime',dateStr);
@@ -3212,8 +3218,10 @@ class IChingConsultation {
     const monthNumbers = this.getSymbolNumbers(monthlyStemBranch.celestialStem, monthlyStemBranch.horaryBranch);
     console.log('monthNumbers', monthNumbers);
      // Step 8: Find daily cycle Value
-    const dailyCycleValue = this.astrology.calculateDailyCycleValue(year, month, day);
-    console.log('dailyCycleValue', dailyCycleValue);
+         // dailyCycleValue is not used as dailySum has replaced it
+        //  const dailyCycleValue = this.astrology.calculateDailyCycleValue(year, month, day);
+        //  console.log('dailyCycleValue', dailyCycleValue);
+
     // Step 9: Find daily cycle number for the year
     const dailyCycle = this.astrology.getYearSexagenaryDailyCycle(year, dateStr);
     console.log('dailyCycle', dailyCycle);
@@ -3264,28 +3272,44 @@ class IChingConsultation {
      let earthlyNumber = allNumbers.filter(n => n % 2 === 0).reduce((acc, val) => acc + val, 0); // Sum of even numbers
       console.log('earthlyNumber', earthlyNumber);
 
-      // if heavenly number > 50, swap the numbers around. To Do: Figure out why this happens???!!
-      // only seems to happen between 17:00 and 19:00 in 1970 January 17th
+      /** Grok Change */
       if (heavenlyNumber > 50) {
-        // const temp = heavenlyNumber;
-        // heavenlyNumber = earthlyNumber;
-        // earthlyNumber = temp;
-        // console.log('Swapped Numbers as heavenlyNumber > 50');
-        let original = heavenlyNumber;
-        heavenlyNumber -= 50;
-        console.log('original heavenlyNumber (' + original + ') adjusted to below 50: ', heavenlyNumber);
+        const temp = heavenlyNumber;
+        heavenlyNumber = earthlyNumber;
+        earthlyNumber = temp;
+      }
+      if (earthlyNumber > 60) {
+        const temp = heavenlyNumber;
+        heavenlyNumber = earthlyNumber;
+        earthlyNumber = temp;
       }
 
+      // // if heavenly number > 50, swap the numbers around. 
+      // To Do: Figure out why this happens???!!
+      // // only seems to happen between 17:00 and 19:00 in 1970 January 17th
+      // Seems to have been fixed with the tru local time correction
+      // if (heavenlyNumber > 50) {
+      //   // const temp = heavenlyNumber;
+      //   // heavenlyNumber = earthlyNumber;
+      //   // earthlyNumber = temp;
+      //   // console.log('Swapped Numbers as heavenlyNumber > 50');
+      //   let original = heavenlyNumber;
+      //   heavenlyNumber -= 50;
+      //   console.log('original heavenlyNumber (' + original + ') adjusted to below 50: ', heavenlyNumber);
+      // }
+
       
-      if (earthlyNumber > 60) {
-        // const temp = heavenlyNumber;
-        // heavenlyNumber = earthlyNumber;
-        // earthlyNumber = temp;
-        // console.log('Swapped Numbers as heavenlyNumber > 50');
-        let original = earthlyNumber;
-        earthlyNumber -= 60;
-        console.log('original earthlyNumber (' + original + ') adjusted to below 60: ', earthlyNumber);
-      }
+      // if (earthlyNumber > 60) {
+      //   // const temp = heavenlyNumber;
+      //   // heavenlyNumber = earthlyNumber;
+      //   // earthlyNumber = temp;
+      //   // console.log('Swapped Numbers as heavenlyNumber > 50');
+      //   let original = earthlyNumber;
+      //   earthlyNumber -= 60;
+      //   console.log('original earthlyNumber (' + original + ') adjusted to below 60: ', earthlyNumber);
+      // }
+
+   
 
      let heavenlyTrigram = null; let earthlyTrigram = null; let preHeavenHexagram = null;
      let birthYearIsOdd = (year % 2 !== 0);
@@ -3379,8 +3403,7 @@ class IChingConsultation {
         monthSymbols,
         monthNumbers,
       },
-      daily:{
-        dailyCycleValue,
+      daily:{        
         dailyCycle,
         dailySum,
         dailyStemBranch,
@@ -3434,27 +3457,11 @@ class IChingConsultation {
 
   // Function to calculate the true local time
   calculateTrueLocalTime(birthDateUTC, latitude, longitude) {
-    // Constants
     const referenceLongitude = 120; // 120 degrees east
     const degreesPerHour = 15; // 360 degrees / 24 hours
-    const utcOffset = (longitude - referenceLongitude) / degreesPerHour; // Offset in hours
-  
-    // Create a Luxon DateTime object from the UTC birth date
-    const utcDateTime = DateTime.fromISO(birthDateUTC, { zone: 'utc' });
-  
-    // Adjust the time by the UTC offset
-    let localDateTime = utcDateTime.plus({ hours: utcOffset });
-  
-    // Determine if DST is applicable
-    // Check if the date falls in a region that observes DST and adjust accordingly
-    const isDST = localDateTime.isInDST; // Note: You'll need to define DST rules for specific regions
-  
-    // Example of applying DST (this may vary based on the specific region)
-    if (isDST) {
-      localDateTime = localDateTime.plus({ hours: 1 }); // Adjust for DST
-    }
-  
-    return localDateTime; // Return the true local time as a string
+    const offset = (longitude - referenceLongitude) / degreesPerHour; // Offset in hours
+    let localDateTime = birthDateUTC.setZone('UTC').plus({ hours: offset });
+    return localDateTime; // Luxon handles DST if zone is set
   }
 }
 
@@ -4465,177 +4472,6 @@ async function calculateNatalHexagram(birthDate, birthTime) {
   return hex;
 };
 
-class IChingAstrologyManual {
-  constructor() {
-    this.elements = ealierHeavenElements;
-
-    /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
-     * contributes to the element, yoa indicates if it is positive or negative contribution */
-    this.celestialStems = [
-      new CelestialStem('Chia', bagua.bagua.qián, bagua.bagua.kūn, ealierHeavenElements.Wood, 'A'),
-      new CelestialStem('I',    bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Wood, 'B'),
-      new CelestialStem('Ping', bagua.bagua.gèn,  bagua.bagua.duì,  ealierHeavenElements.Fire, 'C'),
-      new CelestialStem('Ting', bagua.bagua.duì,  bagua.bagua.gèn,  ealierHeavenElements.Fire, 'D'), 
-      new CelestialStem('Wu',   bagua.bagua.kǎn,  bagua.bagua.li,   ealierHeavenElements.Earth, 'E'),
-      new CelestialStem('Chi',  bagua.bagua.li,   bagua.bagua.kǎn,  ealierHeavenElements.Earth, 'F'),
-      new CelestialStem('Keng', bagua.bagua.zhèn, bagua.bagua.xùn,  ealierHeavenElements.Metal, 'G'),
-      new CelestialStem('Hsin', bagua.bagua.xùn,  bagua.bagua.zhèn, ealierHeavenElements.Metal, 'H'),
-      new CelestialStem('Jen',  bagua.bagua.qián,  bagua.bagua.kūn, ealierHeavenElements.Water, 'I'),
-      new CelestialStem('Kuei', bagua.bagua.kūn,  bagua.bagua.qián, ealierHeavenElements.Water, 'J'), 
-    ];
-    /** The numbers in the horary branch are from the Ho Map */
-    this.horaryBranches = [
-      new HoraryBranch('Tzu',    [1, 6] , ealierHeavenElements.Water, 'a' ),
-      new HoraryBranch(`Ch'ou`,  [5, 10], ealierHeavenElements.Earth, 'b' ),
-      new HoraryBranch('Yin',   [5, 8], ealierHeavenElements.Wood, 'c' ),
-      new HoraryBranch('Mao',   [5, 8], ealierHeavenElements.Wood, 'd' ),
-      new HoraryBranch(`Ch'en`, [5, 10] , ealierHeavenElements.Earth, 'e' ),
-      new HoraryBranch('Szu',   [2, 7], ealierHeavenElements.Fire, 'f' ),
-      new HoraryBranch('Wu',    [2, 7], ealierHeavenElements.Fire, 'g' ),
-      new HoraryBranch('Wei',   [5, 10], ealierHeavenElements.Earth, 'h' ),
-      new HoraryBranch('Shen',  [4, 9], ealierHeavenElements.Metal, 'i' ),
-      new HoraryBranch('Yu',    [4, 9], ealierHeavenElements.Metal, 'j' ),
-      new HoraryBranch('Hsu',   [5, 10], ealierHeavenElements.Earth, 'k' ),
-      new HoraryBranch('Hai',   [1, 6], ealierHeavenElements.Water, 'l' ),      
-    ];
-    /** Sexagenary Cycles based on combinations of Celestial stems and Horary Branches */
-    this.sexagenaryCycle = [
-      new SexagenaryCycle(1, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(2, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
-      new SexagenaryCycle(3, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(4, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
-      new SexagenaryCycle(5, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(6, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
-      new SexagenaryCycle(7, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(8, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
-      new SexagenaryCycle(9, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(10, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
-
-      new SexagenaryCycle(11, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(12, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('l'), yao.yao.yin),
-      new SexagenaryCycle(13, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(14, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
-      new SexagenaryCycle(15, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(16, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
-      new SexagenaryCycle(17, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(18, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
-      new SexagenaryCycle(19, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(20, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
-
-      new SexagenaryCycle(21, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(22, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
-      new SexagenaryCycle(23, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(24, this.getCelestialStemByAlpha('D'), this.getCelestialStemByAlpha('l'), yao.yao.yin),
-      new SexagenaryCycle(25, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(26, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
-      new SexagenaryCycle(27, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(28, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
-      new SexagenaryCycle(29, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(30, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
-     
-      new SexagenaryCycle(31, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(32, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
-      new SexagenaryCycle(33, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(34, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
-      new SexagenaryCycle(35, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(36, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('l'), yao.yao.yin),
-      new SexagenaryCycle(37, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(38, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
-      new SexagenaryCycle(39, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(40, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
-
-      new SexagenaryCycle(41, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(42, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
-      new SexagenaryCycle(43, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(44, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
-      new SexagenaryCycle(45, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(46, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
-      new SexagenaryCycle(47, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(48, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('l'), yao.yao.yin),
-      new SexagenaryCycle(49, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('a'), yao.yao.yang),
-      new SexagenaryCycle(50, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('b'), yao.yao.yin),
-
-      new SexagenaryCycle(51, this.getCelestialStemByAlpha('A'), this.getHoraryBranchByAlpha('c'), yao.yao.yang),
-      new SexagenaryCycle(52, this.getCelestialStemByAlpha('B'), this.getHoraryBranchByAlpha('d'), yao.yao.yin),
-      new SexagenaryCycle(53, this.getCelestialStemByAlpha('C'), this.getHoraryBranchByAlpha('e'), yao.yao.yang),
-      new SexagenaryCycle(54, this.getCelestialStemByAlpha('D'), this.getHoraryBranchByAlpha('f'), yao.yao.yin),
-      new SexagenaryCycle(55, this.getCelestialStemByAlpha('E'), this.getHoraryBranchByAlpha('g'), yao.yao.yang),
-      new SexagenaryCycle(56, this.getCelestialStemByAlpha('F'), this.getHoraryBranchByAlpha('h'), yao.yao.yin),
-      new SexagenaryCycle(57, this.getCelestialStemByAlpha('G'), this.getHoraryBranchByAlpha('i'), yao.yao.yang),
-      new SexagenaryCycle(58, this.getCelestialStemByAlpha('H'), this.getHoraryBranchByAlpha('j'), yao.yao.yin),
-      new SexagenaryCycle(59, this.getCelestialStemByAlpha('I'), this.getHoraryBranchByAlpha('k'), yao.yao.yang),
-      new SexagenaryCycle(60, this.getCelestialStemByAlpha('J'), this.getHoraryBranchByAlpha('l'), yao.yao.yin),
-      ];
-    
-  }
-
-  getCelestialStem(name) {
-    return this.celestialStems.find(stem => stem.name === name);
-  }
-
-  getAllCelestialStems() {
-    return this.celestialStems;
-  }
-  
-  getHoraryBranch(name) {
-    return this.horaryBranches.find(branch => branch.name === name);
-  }
-
-  getAllHoraryBranches() {
-    return this.horaryBranches;
-  }
-
-  getAllSexagenaryCycles() {
-    return this.sexagenaryCycle;
-  };
-
-  getCelestialStemByAlpha (alphabeticOrder)
-    {
-      return this.celestialStems.find(stem => stem.alphabeticOrder === alphabeticOrder);
-    }
-  
-  getHoraryBranchByAlpha (alphabeticOrder)
-    {
-      return this.horaryBranches.find(branch => branch.alphabeticOrder === alphabeticOrder);
-    }
-
-  getSexagenaryCycleByNumber (number)
-    {
-      return this.sexagenaryCycle.find(cycle => cycle.number === number);
-    }
-
-    
-
-  generateYearlyDailyCycles(year, startingDay) {
-    const daysInYear = this.isLeapYear(year) ? 366 : 365; // Handle leap years
-    let dailyCycles = [];
-
-    for (let day = 1; day <= daysInYear; day++) {
-        const date = this.calculateDateFromDayOfYear(year, day);
-        const [yearPart, monthPart, dayPart] = date.split('-').map(Number);
-
-        // Get daily cycle value
-        const dailyCycle = this.calculateDailyCycleValue(yearPart, monthPart, dayPart);
-
-        // Get hourly cycles for this day
-        const hourlyCycles = [];
-        for (let hour = 0; hour < 24; hour += 2) {
-            hourlyCycles.push(this.calculateHourlyCycleForDate(DateTime.fromObject({ year: yearPart, month: monthPart, day: dayPart }), hour));
-        }
-
-        dailyCycles.push({
-            day: day,
-            date: date,
-            ...dailyCycle,
-            hourlyCycles
-        });
-    }
-    return dailyCycles;
-  }
-
-
-}
-
 export default {
   magicSquareOfThree,
   laterHeavenElements,
@@ -4646,7 +4482,6 @@ export default {
   IChingAstrology_North,
   IChingAstrology_South,
   IChingConsultation,
-  IChingAstrologyManual,
   hexagramAstrology,
   calculateTrueLocalTime,
   getSolarTerm,

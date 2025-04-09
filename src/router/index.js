@@ -1,21 +1,65 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/home.vue';
+import Consult from '../views/consult.vue';
+import Astrology from '../views/astrology.vue';
+import HexagramDetail from '../views/hexagram_detail.vue';
+import HexagramSequence from '../views/hexagram_sequence.vue';
+import Hexagrams from '../views/hexagrams.vue';
+import Trigram from '../views/trigrams.vue';
+import TrigramDetail from '../views/trigram_detail.vue';
+import About from '../views/about.vue'; 
 
-import routes from './routes';
-//import store from '@/state/store';
+const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: Home,
+  },
+  {
+    path: '/consult',
+    name: 'Consult',
+    component: Consult,
+  },
+  {
+    path: '/astrology',
+    name: 'Astrology',
+    component: Astrology,
+  },
+  {
+    path: '/hexagram_detail',
+    name: 'HexagramDetail',
+    component: HexagramDetail,
+  },
+  {
+    path: '/hexagram_sequence',
+    name: 'HexagramSequence',
+    component: HexagramSequence,
+  },
+  {
+    path: '/hexagrams',
+    name: 'Hexagrams',
+    component: Hexagrams,
+  },
+  {
+    path: '/trigrams',
+    name: 'Trigrams',
+    component: Trigram,
+  },
+  {
+    path: '/trigram_detail',
+    name: 'TrigramDetail',
+    component: TrigramDetail,
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About,
+  },
+];
 
 const router = createRouter({
-    history: createWebHistory(process.env.VUE_APP_API_URL),
-    routes,
-    scrollBehavior(to, from, savedPosition) {
-        if (savedPosition) {
-            return savedPosition;
-        }
-        return {
-            x: 0,
-            y: 0,
-        };
-    },
+  history: createWebHistory(),
+  routes,
 });
-
 
 export default router;

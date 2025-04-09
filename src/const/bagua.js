@@ -83,7 +83,7 @@ const bagua = {
             direction: compassDirection.SouthWest,            
             number: 2,
             season: season.Lughnasadh,
-            polarity: yao.yao.yang,   
+            polarity: yao.yao.yin,   
             relationship: "mother",        
         },
         description: {
@@ -367,7 +367,7 @@ const bagua = {
         state: "creative, strong-willed",
         animal: "horse, " + "馬",
         nature:"heaven, sky, " + "天",
-        color:Color.rgb(	255, 255, 255), // white
+        color: Color.rgb(	0, 0, 0), // black
         },
         
     },

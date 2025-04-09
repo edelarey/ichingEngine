@@ -1,50 +1,42 @@
-
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import App from './App.vue';
-import store from '@/state/store';
 import router from './router';
-import BootstrapVue from 'bootstrap-vue-3';
-import { createI18n } from 'vue-i18n';
-import VueSlideBar from 'vue-slide-bar';
 import VueGoodTablePlugin from 'vue-good-table-next';
-import PrimeVue from 'primevue/config';
-import Tree from 'primevue/tree';
-import Simplebar from './components/SimpleBar';
-import 'primevue/resources/themes/luna-amber/theme.css';
-import 'primevue/resources/primevue.min.css';
-import 'primeicons/primeicons.css';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+
+// Import Bootstrap CSS and JS
+import 'bootstrap/dist/css/bootstrap.min.css';
+import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Ensure bundle includes Popper.js
+
+// Import vue-good-table-next CSS
 import 'vue-good-table-next/dist/vue-good-table-next.css';
-import 'simplebar/dist/simplebar.min.css';
-import '@/assets/scss/app.scss';
-import './assets/multiselect-default.css';
-import 'vue-search-input/dist/styles.css';
-import SearchInput from 'vue-search-input';
-import { createPinia } from 'pinia' // Import
-import { createApp, h } from 'vue';
-
-const app = createApp({
-    render: () => h(App),
-});
-
-const i18n = createI18n({
-    locale: 'en', // set locale
-    fallbackLocale: 'en', // set fallback locale
-    //messages, // set locale messages
-});
 
 
-app.use(createPinia()) // Create the root store
+const app = createApp(App);
+
+// Make Bootstrap available globally
+window.bootstrap = bootstrap;
+
+// Use plugins
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+app.use(pinia);
 app.use(router);
-app.use(store);
-app.use(i18n);
-app.component('VueSlideBar', VueSlideBar);
-app.use(BootstrapVue);
-app.component('simplebar', Simplebar);
 app.use(VueGoodTablePlugin);
-app.use(PrimeVue);
-app.use(SearchInput);
-//app.component('Datepicker', Datepicker);
-app.component('Tree', Tree);
 
-router.isReady().then(() => {   
-    app.mount('#app');
-});
+// Mount the app
+app.mount('#app');
+
+const savedColor = localStorage.getItem('backgroundColor');
+if (savedColor) {
+  document.body.style.backgroundColor = savedColor;
+} else {
+  document.body.style.backgroundColor = '#3f41c2'; // Default from app.scss
+}
+
+
+document.title = process.env.VUE_APP_TITLE;
+
+// Debug Bootstrap loading
+console.log('Bootstrap loaded:', typeof bootstrap !== 'undefined' && typeof bootstrap.Collapse !== 'undefined');

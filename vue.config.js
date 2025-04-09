@@ -1,23 +1,83 @@
-module.exports = {
+const { defineConfig } = require('@vue/cli-service');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
+
+module.exports = defineConfig({
+  transpileDependencies: true,
+
     devServer: {
-        allowedHosts: 'all',
-        port: process.env.DEV_PORT || 8088,
+      historyApiFallback: true,
     },
 
-    chainWebpack: config => {
-        config.plugins.delete('prefetch');
+  // Configure Webpack
+  configureWebpack: {
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: 'css/[name].[contenthash].css',
+        chunkFilename: 'css/[id].[contenthash].css',
+      }),
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
     },
+  },
 
-    pwa: {
-        name: 'i-ching-engine',
-        themeColor: '#1141e1',
-        msTileColor: '#000000',
-        appleMobileWebAppCapable: 'yes',
-        appleMobileWebAppStatusBarStyle: 'black',
-        manifestFile: 'manifest.json',       
+  // Customize CSS handling
+  css: {
+    extract: {
+      ignoreOrder: true,
     },
+    loaderOptions: {
+      sass: {
+        additionalData: `@import "@/assets/scss/app.scss"; @import "@/assets/scss/app.scss";`
+      },
+    },
+  },
 
-    publicPath: '/',
+  // Chain Webpack for advanced customization
+  chainWebpack: (config) => {
+    config.module
+      .rule('css')
+      .oneOf('vue')
+      .use('extract-css')
+      .loader(MiniCssExtractPlugin.loader)
+      .before('css-loader')
+      .end();
 
-    lintOnSave: false,
-};
+    config.module
+      .rule('scss')
+      .oneOf('vue')
+      .use('extract-css')
+      .loader(MiniCssExtractPlugin.loader)
+      .before('css-loader')
+      .end();
+
+      config.plugin('define').tap((args) => {
+        args[0]['__VUE_PROD_HYDRATION_MISMATCH_DETAILS__'] = JSON.stringify(false);
+        // args[0]['__VUE_OPTIONS_API__'] = JSON.stringify(false); // Set to false if you only use Composition API
+        args[0]['__VUE_PROD_DEVTOOLS__'] = JSON.stringify(false);
+        return args;
+      });
+
+    if (process.env.NODE_ENV === 'production') {
+      config.optimization.splitChunks({
+        chunks: 'all',
+        cacheGroups: {
+          styles: {
+            name: 'styles',
+            test: /\.css$/,
+            chunks: 'all',
+            enforce: true,
+          },
+        },
+      });
+    }
+  },
+
+  // Capacitor/Android compatibility
+  outputDir: 'dist',
+  assetsDir: 'assets',
+  publicPath: process.env.VUE_APP_BASE_URL || (process.env.NODE_ENV === 'production' ? './' : '/'),
+});
