@@ -1,7 +1,7 @@
 {
-  "name": "ichingengine-new",
+  "name": "IChingEngine",
   "version": "1.0.0",
-  "description": "A fresh iChing Engine app for Android",
+  "description": "A fresh iChing Web App",
   "main": "src/main.js",
   "scripts": {
     "serve": "vue-cli-service serve",
