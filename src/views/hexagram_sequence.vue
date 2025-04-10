@@ -102,7 +102,7 @@
               </div>
               <div class="card-footer" :class="{ 'text-dark': chkColorCode }">
                 <template v-if="!chkShowDetail">
-                  <p class="card-text display-8 text-center">{{ hexagram.order }}</p>
+                  <p class="card-text display-8 text-center">{{ hexagram.kingwen}}</p>
                 </template>
               </div>
             </div>
@@ -125,7 +125,7 @@ export default {
   components: {  },
   setup() {
     // Reactive state
-    const sequence = ref(['King Wen', 'Binary', 'Grey Code', 'Consultation History']);
+    const sequence = ref(['King Wen', 'Binary', 'Grey Code', 'Shoa Yung', 'Consultation History']);
     const chosenSequence = ref('King Wen');
     const chkColorCode = ref(false);
     const chkShowDetail = ref(false);
@@ -141,7 +141,7 @@ export default {
       animating.value = !animating.value;
       if (animating.value) {
         animationTime = setInterval(() => {
-          counter = counter < 4 ? counter + 1 : 1;
+          counter = counter < 5 ? counter + 1 : 1;
           chosenSequence.value = sequence.value[counter - 1];
         }, 2000);
       } else {
@@ -205,6 +205,9 @@ export default {
           break;
         case 'Grey Code':
           state.hexagrams = _.chunk(hexagram.sequence_greycode(), 8) || [];
+          break;
+        case 'Shoa Yung':
+          state.hexagrams = _.chunk(hexagram.sequence_shoayung(), 8) || [];
           break;
           case 'Consultation History':
           state.hexagrams = loadFullSequence() || [];

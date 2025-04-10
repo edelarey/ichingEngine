@@ -110,6 +110,7 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue';
+import { useHead } from '@vueuse/head';
 
 export default {
   name: 'App',
@@ -117,6 +118,25 @@ export default {
     const isSidebarOpen = ref(true); // Default to open for initial visibility
     const isBootstrapLoaded = ref(false);
     const backgroundColor = ref('#3f41c2');
+
+    // Add SEO meta tags
+    useHead({
+      title: 'iChing Engine - Online Divination and Astrology Tool',
+      meta: [
+        {
+          name: 'description',
+          content: 'Explore the iChing Engine for online iChing consultations, astrology insights, trigrams, hexagrams, and spiritual and relationship guidance.',
+        },
+        {
+          name: 'keywords',
+          content: 'iChing, iChing oracle, iChing consultation, astrology, trigrams, hexagrams, divination, spiritual guidance, relationship',
+        },
+        {
+          name: 'robots',
+          content: 'index, follow',
+        },
+      ],
+    });
 
     const toggleSidebar = () => {
       isSidebarOpen.value = !isSidebarOpen.value;

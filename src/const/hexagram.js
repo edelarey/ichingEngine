@@ -1617,6 +1617,17 @@ const seq_GreyCode = [
     52,22,26,18,4,41,27,23
     ];
 
+const seq_ShoaYung= [
+        1,43,14,34,9,5,26,11,
+        10,58,38,54,61,60,41,19,
+        13,49,30,55,37,63,22,36,
+        27,17,21,51,42,3,27,2,
+        44,28,50,32,57,48,18,46,
+        6,47,64,40,59,29,4,7,
+        33,31,56,62,53,39,52,15,
+        12,45,35,16,20,8,23,2
+        ];
+
 function getHexagramByBinary(binary)
 {
     let hexagram = this.sequence_binary().filter((item) => item.binary == binary);
@@ -1686,6 +1697,19 @@ function innerOppositeHexagram(binary)
     
     return sequence_GreyCode;
  }
+ function sequence_shoayung()
+ {
+    let start = sequence_kingwen();
+    let sequence_Shoa = [];
+
+    for (let i = 0; i <= start.length-1; i++)
+    {     
+        let hex = start.find((item) => item.kingwen == seq_ShoaYung[i]);
+        sequence_Shoa.push(hex);
+    }
+    
+    return sequence_Shoa;
+ }
 
  function getHexagramByAboveBelow(above, below)
  {
@@ -1711,6 +1735,7 @@ export default
     sequence_binary,
     sequence_kingwen,
     sequence_greycode,
+    sequence_shoayung,
     getHexagramByAboveBelow,
 
 }
