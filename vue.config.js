@@ -76,8 +76,4 @@ module.exports = defineConfig({
     }
   },
 
-  // Capacitor/Android compatibility
-  outputDir: 'dist',
-  assetsDir: 'assets',
-  publicPath: process.env.VUE_APP_BASE_URL || (process.env.NODE_ENV === 'production' ? './' : '/'),
 });
