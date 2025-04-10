@@ -1,4 +1,4 @@
-# ichingengine-new
+# ichingengine
 
 ## Project setup
 ```
