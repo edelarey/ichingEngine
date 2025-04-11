@@ -96,10 +96,10 @@
                 <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
                 <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
                 <div>
-                  <button @click="loadBirthday(birthday)" class="btn btn-primary btn-sm me-2">Load</button>
-                  <button @click="editBirthday(birthday)" class="btn btn-primary btn-sm me-2">Edit</button>
-                  <button @click="birthdayStore.removeBirthday(birthday.id)" class="btn btn-danger btn-sm">Delete</button>
-                </div>
+                <button @click="loadBirthday(birthday)" class="btn btn-primary btn-sm me-2">Load</button>
+                <button @click="startEditingBirthday(birthday)" class="btn btn-primary btn-sm me-2">Edit</button>
+                <button @click="birthdayStore.removeBirthday(birthday.id)" class="btn btn-danger btn-sm">Delete</button>
+              </div>
               </div>
             </div>
           </div>
@@ -170,19 +170,21 @@
                 </select>
               </div>
 
-              <!-- Latitude and Longitude -->
+               <!-- Latitude and Longitude -->
               <div class="col-12 col-md-8 col-lg-6 mb-3">
                 <div class="row justify-content-center">
                   <div class="col-12 col-md-6 mb-3 mb-md-0">
                     <h6 :style="{ color: colorClass }" class="card-text mb-2">Latitude</h6>
-                    <input v-model="state.latitude" class="form-control input-narrow" placeholder="0.00 Latitude" />
+                    <input v-model.number="state.latitude" class="form-control input-narrow" placeholder="0.00 Latitude" />
                   </div>
                   <div class="col-12 col-md-6">
                     <h6 :style="{ color: colorClass }" class="card-text mb-2">Longitude</h6>
-                    <input v-model="state.longitude" class="form-control input-narrow" placeholder="0.00 Longitude" />
+                    <input v-model.number="state.longitude" class="form-control input-narrow" placeholder="0.00 Longitude" />
                   </div>
                 </div>
               </div>
+
+
             </div>
 
             <!-- Buttons Section -->
@@ -191,9 +193,15 @@
                 <button @click="consult" class="btn btn-primary btn-narrow">Consult</button>
               </div>
               <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <button @click="saveBirthday" class="btn btn-primary btn-narrow">Save Birthday</button>
+                <button v-if="!state.editingBirthday" @click="saveBirthday" class="btn btn-primary btn-narrow">Save Birthday</button>
+                <div v-else>
+                  <button @click="updateBirthday" class="btn btn-success btn-narrow">Update Birthday</button>
+                  <button @click="cancelEditing" class="btn btn-secondary btn-narrow">Cancel</button>
+                </div>
               </div>
             </div>
+
+
           </div>
         </div>
       </div>
@@ -755,6 +763,7 @@
         showYearlyCycle: true,
         showMonthlyCycle: true,
         showDailyCycle: true,
+        editingBirthday: null, // Track the birthday being edited
       });
 
       const form = {
@@ -884,40 +893,116 @@
         return latitude >= 0 ? 'Northern' : 'Southern';
       };
 
+      const validateState = () => {
+          const errors = [];
+
+          if (!state.name || state.name.trim() === '') {
+            errors.push('Name is required.');
+          }
+
+          console.log('birthDate', DateTime.fromJSDate(state.birthDate));
+
+          if (!DateTime.fromISO(state.birthDate).isValid) {
+            errors.push('Birth date must be a valid date.');
+          }
+
+          if (!['MALE', 'FEMALE'].includes(state.gender)) {
+            errors.push('Gender must be either "MALE" or "FEMALE".');
+          }
+
+          if (typeof state.latitude !== 'number' || isNaN(state.latitude) || state.latitude < -90 || state.latitude > 90) {
+            errors.push('Latitude must be a number (including decimals) between -90 and 90.');
+          }
+
+          if (typeof state.longitude !== 'number' || isNaN(state.longitude) || state.longitude < -180 || state.longitude > 180) {
+            errors.push('Longitude must be a number (including decimals) between -180 and 180.');
+          }
+
+          return errors;
+        };
+
       const saveBirthday = () => {
+      try {
+        // Validate the state before saving
+        const errors = validateState();
+        if (errors.length > 0) {
+          throw new Error(errors.join(' '));
+        }
+
         birthdayStore.addBirthday({
           id: Date.now(),
           name: state.name,
-          birthday: state.birthDate,
+          birthday: DateTime.fromJSDate(state.birthDate).toISO(),
           gender: state.gender,
           coords: { latitude: state.latitude, longitude: state.longitude },
         });
-      };
+        alert('Birthday saved successfully!');
+      } catch (error) {
+        console.error('Error saving birthday:', error);
+        alert(`Failed to save birthday: ${error.message}`);
+      }
+    };
 
-      const loadBirthday = (birthday) => {
-        state.name = birthday.name;
-        state.birthDate = birthday.birthday;
-        state.gender = birthday.gender;
-        state.latitude = birthday.coords.latitude;
-        state.longitude = birthday.coords.longitude;
-        console.log('loadBirthday', birthday.coords.latitude);
-        consult();
-        toggleHistory();
-      };
+    const loadBirthday = (birthday) => {
+      console.log('Birthhhhh',DateTime.fromISO(birthday.birthday));
+      state.name = birthday.name;
+      state.birthDate = DateTime.fromISO(birthday.birthday);
+      state.gender = birthday.gender;
+      state.latitude = birthday.coords.latitude;
+      state.longitude = birthday.coords.longitude;
+      consult();
+      toggleHistory();
+    };
 
-      const editBirthday = (birthday) => {
+    const startEditingBirthday = (birthday) => {
+      state.editingBirthday = birthday;
+      state.name = birthday.name;
+      state.birthDate = birthday.birthday;
+      state.gender = birthday.gender;
+      state.latitude = birthday.coords.latitude;
+      state.longitude = birthday.coords.longitude;
+    };
+
+
+    const updateBirthday = () => {
+      try {
         const updatedBirthday = {
-          id: birthday.id,
+          id: state.editingBirthday.id,
           name: state.name,
           birthday: state.birthDate,
           gender: state.gender,
           coords: { latitude: state.latitude, longitude: state.longitude },
         };
+
         birthdayStore.updateBirthday(updatedBirthday);
-        toggleHistory();
-      };
+        alert('Birthday updated successfully!');
+        cancelEditing();
+      } catch (error) {
+        console.error('Error updating birthday:', error);
+        alert(`Failed to update birthday: ${error.message}`);
+      }
+    };
+
+    const cancelEditing = () => {
+      state.editingBirthday = null;
+    };
+
+    const handleImport = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        birthdayStore.importBirthdays(file);
+        event.target.value = '';
+      }
+    };
+
 
       const consult = async () => {
+
+        const errors = validateState();
+        if (errors.length > 0) {
+          throw new Error(errors.join(' '));
+        }
+
         const hemisphere = getHemisphere(state.latitude);
         state.hemisphere = hemisphere;
         state.selectedLaterHeavenYear = '';
@@ -963,13 +1048,7 @@
         showHistory.value = !showHistory.value;
       };
 
-      const handleImport = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-          birthdayStore.importBirthdays(file);
-          event.target.value = '';
-        }
-      };
+ 
 
       watch(() => state.selectedPreHeavenDailyCycleDate, (newDate) => {
         const selectedSubCycle = state.preHeavenDailyCycle.find(subCycle => subCycle.date === newDate);
@@ -1042,9 +1121,11 @@
         consult,
         saveBirthday,
         loadBirthday,
-        editBirthday,
-        toggleHistory,
+        startEditingBirthday,
+        updateBirthday,
+        cancelEditing,
         handleImport,
+        toggleHistory,        
         determinePreHeavenLineColor,
         determineLaterHeavenLineColor,
         determineSelectedPreHeavenBirthSubCycleLineColor,
