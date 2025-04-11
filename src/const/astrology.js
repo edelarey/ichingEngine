@@ -66,6 +66,50 @@ const hoMap = {
   }    
 };
 
+/** Elemental Relationships for Compatibility */
+const elementRelationships = {
+  generatingCycle: {
+    Wood: 'Fire',
+    Fire: 'Earth',
+    Earth: 'Metal',
+    Metal: 'Water',
+    Water: 'Wood',
+  },
+  controllingCycle: {
+    Wood: 'Earth',
+    Fire: 'Metal',
+    Earth: 'Water',
+    Metal: 'Wood',
+    Water: 'Fire',
+  },
+};
+
+/** Function to determine elemental compatibility score */
+function calculateElementalCompatibility(element1, element2) {
+  let score = 0;
+  const generatingCycle = elementRelationships.generatingCycle;
+  const controllingCycle = elementRelationships.controllingCycle;
+
+  // Check if element1 generates element2 or vice versa (positive relationship)
+  if (generatingCycle[element1] === element2 || generatingCycle[element2] === element1) {
+    score += 3; // Strong positive compatibility
+  }
+  // Check if element1 controls element2 or vice versa (challenging relationship)
+  else if (controllingCycle[element1] === element2 || controllingCycle[element2] === element1) {
+    score -= 2; // Challenging relationship
+  }
+  // If elements are the same, they are neutral but harmonious
+  else if (element1 === element2) {
+    score += 1; // Neutral but harmonious
+  }
+  // Otherwise, neutral relationship
+  else {
+    score += 0; // Neutral
+  }
+
+  return score;
+}
+
 
 
 /** Elements in Relation to Celestial Stems Fu Hsi's Later Heaven Sequence
@@ -371,7 +415,7 @@ class HourlySymbol{
 class IChingAstrology_North {
   constructor() {
     this.sexagenarySubCycle = new SexagenarySubCycle( Number(1864), Number(1924), Number(1984));
-
+    this.hemisphere = 'Northern';
     this.elements = ealierHeavenElements;
 
     /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
@@ -990,6 +1034,7 @@ getHourlySymbolByChar(character)
 
 // Helper function to check solstice based on hemisphere
 isBetweenSolstices(hemisphere) {
+
   const now = DateTime.now();
   
   let winterSolstice, summerSolstice;
@@ -1770,7 +1815,7 @@ mapDesignationsToTrigramLines(preHeavenHexagram)
 class IChingAstrology_South {
   constructor() {
     this.sexagenarySubCycle = new SexagenarySubCycle(Number(1869), Number(1929), Number(1989));
-
+    this.hemisphere = 'Southern';
     this.elements = ealierHeavenElements;
 
     /** The trigram, (bagua) shows which part of the Stem(when paired with another Stem) 
@@ -2381,16 +2426,16 @@ class IChingAstrology_South {
   }
 
  // Helper function to check solstice based on hemisphere
-isBetweenSolstices(hemisphere) {
+isBetweenSolstices() {
   const now = DateTime.now();
   
   let winterSolstice, summerSolstice;
 
-  if (hemisphere === 'Northern') {
+  if (this.hemisphere === 'Northern') {
     // Northern Hemisphere: Winter Solstice is around December 21, Summer Solstice around June 21
     winterSolstice = DateTime.fromObject({ year: now.year, month: 12, day: 21 });
     summerSolstice = winterSolstice.plus({ months: 6 });
-  } else if (hemisphere === 'Southern') {
+  } else if (this.hemisphere === 'Southern') {
     // Southern Hemisphere: Winter Solstice is around June 21, Summer Solstice around December 21
     winterSolstice = DateTime.fromObject({ year: now.year, month: 6, day: 21 });
     summerSolstice = winterSolstice.plus({ months: 6 });
@@ -3463,6 +3508,212 @@ class IChingConsultation {
     let localDateTime = birthDateUTC.setZone('UTC').plus({ hours: offset });
     return localDateTime; // Luxon handles DST if zone is set
   }
+
+  /** Relationship Classes */
+  /** Main function to calculate compatibility between two individuals */
+
+  static async calculateCompatibility(birthDateTime1, gender1, latitude1, longitude1, birthDateTime2, gender2, latitude2, longitude2) {
+    // Determine the appropriate astrology class for each person based on their latitude
+    const astrology1 = latitude1 >= 0 ? new IChingAstrology_North() : new IChingAstrology_South();
+    const astrology2 = latitude2 >= 0 ? new IChingAstrology_North() : new IChingAstrology_South();
+
+    // Create separate consultation instances for each person
+    const consultation1 = new IChingConsultation(astrology1);
+    const consultation2 = new IChingConsultation(astrology2);
+
+    // Calculate astrological profiles for both individuals
+    const person1 = await consultation1.consultOracle(birthDateTime1, gender1, latitude1, longitude1);
+    const person2 = await consultation2.consultOracle(birthDateTime2, gender2, latitude2, longitude2);
+
+    // Create a temporary consultation instance to call instance methods for compatibility calculations
+    const tempConsultation = new IChingConsultation(astrology1); // Astrology instance doesn't matter here
+
+    // Calculate compatibility scores for each aspect
+    const elementalScore = calculateElementalCompatibility(
+      person1.yearly.yearlyCycle.cycle.celestialStem.element.name,
+      person2.yearly.yearlyCycle.cycle.celestialStem.element.name
+    );
+    const trigramHexagramScore = tempConsultation.calculateTrigramHexagramCompatibility(person1, person2);
+    const sexagenaryScore = tempConsultation.calculateSexagenaryCompatibility(person1, person2);
+    const subCycleScore = tempConsultation.calculateSubCycleCompatibility(person1, person2);
+
+    // Combine scores into an overall compatibility score
+    const overallScore = elementalScore + trigramHexagramScore + sexagenaryScore + subCycleScore;
+
+    // Provide a detailed analysis
+    const analysis = {
+      elementalCompatibility: {
+        score: elementalScore,
+        description: elementalScore > 0 ? 'Harmonious elemental relationship' : elementalScore < 0 ? 'Challenging elemental relationship' : 'Neutral elemental relationship',
+      },
+      trigramHexagramCompatibility: {
+        score: trigramHexagramScore,
+        description: trigramHexagramScore > 0 ? 'Harmonious trigrams and hexagrams' : trigramHexagramScore < 0 ? 'Challenging trigrams and hexagrams' : 'Neutral trigrams and hexagrams',
+      },
+      sexagenaryCompatibility: {
+        score: sexagenaryScore,
+        description: sexagenaryScore > 0 ? 'Harmonious sexagenary cycles' : sexagenaryScore < 0 ? 'Challenging sexagenary cycles' : 'Neutral sexagenary cycles',
+      },
+      subCycleCompatibility: {
+        score: subCycleScore,
+        description: subCycleScore > 0 ? 'Harmonious life stage alignment' : subCycleScore < 0 ? 'Challenging life stage alignment' : 'Neutral life stage alignment',
+      },
+      overallCompatibility: {
+        score: overallScore,
+        description: overallScore > 5 ? 'Highly compatible' : overallScore > 0 ? 'Moderately compatible' : overallScore < -5 ? 'Highly challenging' : overallScore < 0 ? 'Moderately challenging' : 'Neutral compatibility',
+      },
+    };
+
+    return {
+      person1,
+      person2,
+      compatibility: analysis,
+    };
+  }
+
+    /** Function to calculate trigram and hexagram compatibility */
+  calculateTrigramHexagramCompatibility(person1, person2) {
+    const preHeavenHex1 = person1.iching.preHeavenHexagram;
+    const preHeavenHex2 = person2.iching.preHeavenHexagram;
+    const laterHeavenHex1 = person1.iching.laterHeavenHexagram;
+    const laterHeavenHex2 = person2.iching.laterHeavenHexagram;
+
+    let score = 0;
+
+    // Compare pre-heaven trigrams
+    const preHeavenTrigram1Above = preHeavenHex1.above.name;
+    const preHeavenTrigram1Below = preHeavenHex1.below.name;
+    const preHeavenTrigram2Above = preHeavenHex2.above.name;
+    const preHeavenTrigram2Below = preHeavenHex2.below.name;
+
+    // Check if trigrams match (indicating harmony)
+    if (preHeavenTrigram1Above === preHeavenTrigram2Above || preHeavenTrigram1Below === preHeavenTrigram2Below) {
+      score += 2; // Harmony in trigrams
+    }
+
+    // Compare elements of trigrams
+    const trigram1AboveElement = this.getTrigramElement(preHeavenTrigram1Above);
+    const trigram1BelowElement = this.getTrigramElement(preHeavenTrigram1Below);
+    const trigram2AboveElement = this.getTrigramElement(preHeavenTrigram2Above);
+    const trigram2BelowElement = this.getTrigramElement(preHeavenTrigram2Below);
+
+    score += calculateElementalCompatibility(trigram1AboveElement, trigram2AboveElement);
+    score += calculateElementalCompatibility(trigram1BelowElement, trigram2BelowElement);
+
+    // Compare controlling lines
+    const controllingLine1 = preHeavenHex1.controllingLine;
+    const controllingLine2 = preHeavenHex2.controllingLine;
+    if (controllingLine1.line.name === controllingLine2.line.name) {
+      score += 1; // Same polarity in controlling lines (harmony)
+    } else {
+      score -= 1; // Different polarity (potential conflict)
+    }
+
+    // Compare later-heaven hexagrams for long-term compatibility
+    if (laterHeavenHex1.binary === laterHeavenHex2.binary) {
+      score += 2; // Same later-heaven hexagram (strong long-term alignment)
+    }
+
+    return score;
+  }
+
+  /** Helper function to get the element of a trigram */
+  getTrigramElement(trigramName) {
+    for (const element in laterHeavenElements) {
+      if (laterHeavenElements[element].trigrams.some(t => t.name === trigramName)) {
+        return element;
+      }
+    }
+    return null; // Fallback if no element is found
+  }
+
+  /** Function to calculate sexagenary cycle compatibility */
+  calculateSexagenaryCompatibility(person1, person2) {
+    let score = 0;
+
+    // Compare yearly cycles
+    const stem1 = person1.yearly.yearlyCycle.cycle.celestialStem;
+    const branch1 = person1.yearly.yearlyCycle.cycle.horaryBranch;
+    const stem2 = person2.yearly.yearlyCycle.cycle.celestialStem;
+    const branch2 = person2.yearly.yearlyCycle.cycle.horaryBranch;
+
+    // Compare elements of stems and branches
+    const stemElement1 = stem1.element.name;
+    const stemElement2 = stem2.element.name;
+    const branchElement1 = branch1.element.name;
+    const branchElement2 = branch2.element.name;
+
+    score += calculateElementalCompatibility(stemElement1, stemElement2);
+    score += calculateElementalCompatibility(branchElement1, branchElement2);
+
+    // Compare polarities
+    if (stem1.polarity === stem2.polarity) {
+      score += 1; // Same polarity in stems (harmony)
+    } else {
+      score -= 1; // Different polarity (potential conflict)
+    }
+
+    if (branch1.polarity === branch2.polarity) {
+      score += 1; // Same polarity in branches (harmony)
+    } else {
+      score -= 1; // Different polarity (potential conflict)
+    }
+
+    return score;
+  }
+
+  /** Function to calculate sub-cycle compatibility */
+  calculateSubCycleCompatibility(person1, person2) {
+    let score = 0;
+
+    // Compare pre-heaven sub-cycles
+    const preHeavenSubCycles1 = person1.iching.preHeavenBirthSubCycles;
+    const preHeavenSubCycles2 = person2.iching.preHeavenBirthSubCycles;
+
+    // Compare hexagrams in overlapping age ranges
+    for (let i = 0; i < preHeavenSubCycles1.length; i++) {
+      const cycle1 = preHeavenSubCycles1[i];
+      const cycle2 = preHeavenSubCycles2[i];
+
+      if (cycle1 && cycle2) {
+        // Check if hexagrams match in the same age range
+        if (cycle1.hexagramBinary === cycle2.hexagramBinary) {
+          score += 2; // Same hexagram in the same life stage (strong alignment)
+        }
+
+        // Compare polarities
+        if (cycle1.polarity === cycle2.polarity) {
+          score += 1; // Same polarity (harmony)
+        } else {
+          score -= 1; // Different polarity (potential conflict)
+        }
+      }
+    }
+
+    // Compare later-heaven sub-cycles (long-term compatibility)
+    const laterHeavenSubCycles1 = person1.iching.laterHeavenBirthSubCycles;
+    const laterHeavenSubCycles2 = person2.iching.laterHeavenBirthSubCycles;
+
+    for (let i = 0; i < laterHeavenSubCycles1.length; i++) {
+      const cycle1 = laterHeavenSubCycles1[i];
+      const cycle2 = laterHeavenSubCycles2[i];
+
+      if (cycle1 && cycle2) {
+        if (cycle1.hexagramBinary === cycle2.hexagramBinary) {
+          score += 2; // Same hexagram in the same life stage (strong alignment)
+        }
+
+        if (cycle1.polarity === cycle2.polarity) {
+          score += 1; // Same polarity (harmony)
+        } else {
+          score -= 1; // Different polarity (potential conflict)
+        }
+      }
+    }
+
+    return score;
+  }
+
 }
 
 
@@ -4488,5 +4739,6 @@ export default {
   determineSubCycle,
   computeSexagenaryCycle,
   calculateNatalHexagram,
+  calculateCompatibility: IChingConsultation.calculateCompatibility,  
   Gender,  
 }

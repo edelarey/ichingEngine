@@ -900,6 +900,7 @@
         state.gender = birthday.gender;
         state.latitude = birthday.coords.latitude;
         state.longitude = birthday.coords.longitude;
+        console.log('loadBirthday', birthday.coords.latitude);
         consult();
         toggleHistory();
       };

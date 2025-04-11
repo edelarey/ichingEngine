@@ -17,3 +17,5 @@ npm run build
 ### Added Google Verification File
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+# Added Relationship Compatibility

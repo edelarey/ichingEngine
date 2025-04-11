@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/home.vue';
 import Consult from '../views/consult.vue';
 import Astrology from '../views/astrology.vue';
+import Relationship from '../views/relationship.vue';
 import HexagramDetail from '../views/hexagram_detail.vue';
 import HexagramSequence from '../views/hexagram_sequence.vue';
 import Hexagrams from '../views/hexagrams.vue';
@@ -24,6 +25,11 @@ const routes = [
     path: '/astrology',
     name: 'Astrology',
     component: Astrology,
+  },
+  {
+    path: '/relationship',
+    name: 'relationship',
+    component: Relationship,
   },
   {
     path: '/hexagram_detail',

@@ -54,6 +54,11 @@
                 </router-link>
               </li>
               <li class="nav-item">
+                <router-link class="nav-link" to="/relationship" exact-active-class="active">
+                  <span class="align-middle">Relationships</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
                 <router-link class="nav-link" to="/trigrams" exact-active-class="active">
                   <span class="align-middle">Trigrams</span>
                 </router-link>
