@@ -900,8 +900,7 @@
             errors.push('Name is required.');
           }
 
-          console.log('birthDate', DateTime.fromJSDate(state.birthDate));
-
+          
           if (!DateTime.fromISO(state.birthDate).isValid) {
             errors.push('Birth date must be a valid date.');
           }
@@ -944,7 +943,7 @@
     };
 
     const loadBirthday = (birthday) => {
-      console.log('Birthhhhh',DateTime.fromISO(birthday.birthday));
+  
       state.name = birthday.name;
       state.birthDate = DateTime.fromISO(birthday.birthday);
       state.gender = birthday.gender;

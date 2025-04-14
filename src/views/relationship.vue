@@ -364,7 +364,7 @@ export default {
       if (!['MALE', 'FEMALE'].includes(person.gender)) {
         errors.push('Gender must be either "MALE" or "FEMALE".');
       }
-      console.log('person', person);
+
       if (typeof person.latitude !== 'number' || person.latitude < -90 || person.latitude > 90) {
         errors.push('Latitude must be a number between -90 and 90.');
       }
@@ -418,7 +418,7 @@ export default {
     const loadBirthday = (birthday, personNumber) => {
       const person = personNumber === 1 ? state.person1 : state.person2;
       person.name = birthday.name;
-      person.birthDate = birthday.birthday;
+       person.birthDate = DateTime.fromISO(birthday.birthday);
       person.gender = birthday.gender;
       person.latitude = birthday.coords.latitude;
       person.longitude = birthday.coords.longitude;
@@ -444,7 +444,7 @@ export default {
         const updatedBirthday = {
           id: state.editingBirthday.id,
           name: person.name,
-          birthday: person.birthDate,
+          birthday: DateTime.fromISO(person.birthDate),
           gender: person.gender,
           coords: {
             latitude: person.latitude,
