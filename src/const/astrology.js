@@ -3221,15 +3221,15 @@ class IChingConsultation {
 
   async consultOracle(birthDateTime, gender = Gender.MALE, latitude, longitude) {
     // Step 1: Calculate the true astrological local time
-    console.log('-----------------------------------------');
+    //console.log('-----------------------------------------');
 
     const jsDate = new Date(birthDateTime);
-    console.log('raw', jsDate);
+    //console.log('raw', jsDate);
     //const trueLocalDateTime = DateTime.fromJSDate(jsDate);
     const trueLocalDateTime = this.calculateTrueLocalTime(DateTime.fromJSDate(jsDate), latitude, longitude);
-    console.log('trueLocalDateTime', trueLocalDateTime);
+    //console.log('trueLocalDateTime', trueLocalDateTime);
     const dateStr = trueLocalDateTime.toFormat("yyyy-MM-dd'T'HH:mm:ss").toString()
-    console.log('trueLocalDateTime',dateStr);
+    //console.log('trueLocalDateTime',dateStr);
 
     // Extract year, month, day, and hour for further calculations
     const year = trueLocalDateTime.year;
@@ -3240,28 +3240,28 @@ class IChingConsultation {
     const isNorthernHemisphere = (this.getHemisphere(latitude) === 'Northern');
 
     const fullCycle = this.astrology.getFullSexagenaryCycle(year);
-    console.log('fullCycle', fullCycle);
+    //console.log('fullCycle', fullCycle);
     // Step 2: Get the yearly cycle number
     const yearlyCycle = this.astrology.getYearSexagenaryObject(fullCycle, year);
-    console.log('yearlyCycle', yearlyCycle);
-    console.log('yearly Cycle Number', yearlyCycle.cycle.number);
+    //console.log('yearlyCycle', yearlyCycle);
+    //console.log('yearly Cycle Number', yearlyCycle.cycle.number);
 
     // Step 3: Find symbols for the year
     const yearSymbols = yearlyCycle.cycle.celestialStem.alphabeticOrder + yearlyCycle.cycle.horaryBranch.alphabeticOrder;
-    console.log('yearSymbols', yearSymbols);
+    //console.log('yearSymbols', yearSymbols);
 
     // Step 4: Convert yearly symbols to numbers
     const yearNumbers = this.getSymbolNumbers(yearlyCycle.cycle.celestialStem, yearlyCycle.cycle.horaryBranch);
-    console.log('yearNumbers', yearNumbers);
+    //console.log('yearNumbers', yearNumbers);
     // Step 5: Determine the astrological month
     const monthlyStemBranch = this.astrology.getMonthlyStemBranchForaYear(yearlyCycle.cycle.celestialStem.alphabeticOrder, month, day);
-    console.log('monthlyStemBranch', monthlyStemBranch);
+    //console.log('monthlyStemBranch', monthlyStemBranch);
     // Step 6: Find monthly symbols
     const monthSymbols = monthlyStemBranch.celestialStem.alphabeticOrder + monthlyStemBranch.horaryBranch.alphabeticOrder;
-    console.log('monthSymbols', monthSymbols);
+    //console.log('monthSymbols', monthSymbols);
     // Step 7: Convert monthly symbols to numbers
     const monthNumbers = this.getSymbolNumbers(monthlyStemBranch.celestialStem, monthlyStemBranch.horaryBranch);
-    console.log('monthNumbers', monthNumbers);
+    //console.log('monthNumbers', monthNumbers);
      // Step 8: Find daily cycle Value
          // dailyCycleValue is not used as dailySum has replaced it
         //  const dailyCycleValue = this.astrology.calculateDailyCycleValue(year, month, day);
@@ -3269,7 +3269,7 @@ class IChingConsultation {
 
     // Step 9: Find daily cycle number for the year
     const dailyCycle = this.astrology.getYearSexagenaryDailyCycle(year, dateStr);
-    console.log('dailyCycle', dailyCycle);
+    //console.log('dailyCycle', dailyCycle);
 
    
 
@@ -3279,43 +3279,43 @@ class IChingConsultation {
 
      let   dailySum = this.astrology.getSexagenaryDay(dateStr);
 
-    console.log('dailySum', dailySum);
+    //console.log('dailySum', dailySum);
       // Step 11: Find daily symbols using the sum (dailySum % 60);
       if (dailySum != 60) {
         dailySum = dailySum % 60;
       };
    const dailyStemBranch = this.astrology.getSexagenaryCycleByNumber(dailySum);
-   console.log('dailyStemBranch', dailyStemBranch);
+   //console.log('dailyStemBranch', dailyStemBranch);
     // Step 12: Convert daily symbols to numbers
    const dailySymbols = dailyStemBranch.celestialStem.alphabeticOrder + dailyStemBranch.horaryBranch.alphabeticOrder;
-    console.log('dailySymbols', dailySymbols);    
+    //console.log('dailySymbols', dailySymbols);    
    // Step 12: Convert daily symbols to numbers
     const dailyNumbers = this.getSymbolNumbers(dailyStemBranch.celestialStem, dailyStemBranch.horaryBranch);
-    console.log('dailyNumbers', dailyNumbers);
+    //console.log('dailyNumbers', dailyNumbers);
      // Step 13: Find hourly symbols
      const hourlyStemBranch = this.astrology.getHourlyStemABranchForTimeAndSymbol(hour, minute,   dailyStemBranch.celestialStem.alphabeticOrder);
-    console.log('hourlyStemBranch', hourlyStemBranch); 
+    //console.log('hourlyStemBranch', hourlyStemBranch); 
 
      const hourlySymbols = hourlyStemBranch.celestialStem.alphabeticOrder + hourlyStemBranch.horaryBranch.alphabeticOrder;
 
     const timeOfBirthSymbol = this.astrology.getHourlySymbolByChar(hourlySymbols.charAt(1)); 
 
-      console.log('hourlySymbols', hourlySymbols);
+      //console.log('hourlySymbols', hourlySymbols);
      // Step 14: Convert hourly symbols to numbers
      const hourlyNumbers = this.getSymbolNumbers(hourlyStemBranch.celestialStem, hourlyStemBranch.horaryBranch);
-      console.log('hourlyNumbers', hourlyNumbers);
+      //console.log('hourlyNumbers', hourlyNumbers);
  
      // Step 15-16: Calculate heavenly and earthly numbers
      const allNumbers = [...yearNumbers, ...monthNumbers, ...dailyNumbers, ...hourlyNumbers];
 
-     console.log('allNumbers', allNumbers);
+     //console.log('allNumbers', allNumbers);
      
 
      let heavenlyNumber = allNumbers.filter(n => n % 2 !== 0).reduce((acc, val) => acc + val, 0); // Sum of odd numbers
-     console.log('heavenlyNumber', heavenlyNumber);
+     //console.log('heavenlyNumber', heavenlyNumber);
 
      let earthlyNumber = allNumbers.filter(n => n % 2 === 0).reduce((acc, val) => acc + val, 0); // Sum of even numbers
-      console.log('earthlyNumber', earthlyNumber);
+      //console.log('earthlyNumber', earthlyNumber);
 
       /** Grok Change */
       if (heavenlyNumber > 50) {
@@ -3359,7 +3359,7 @@ class IChingConsultation {
      let heavenlyTrigram = null; let earthlyTrigram = null; let preHeavenHexagram = null;
      let birthYearIsOdd = (year % 2 !== 0);
 
-     console.log('Year of Birth is Odd? ',birthYearIsOdd);
+     //console.log('Year of Birth is Odd? ',birthYearIsOdd);
 
      /**  Heavenly and Earthly Trigrams and PreHeaven hexagaram */
      // determine which cycle we are in and based on that calculate the correct heavenly and earthly trigrams

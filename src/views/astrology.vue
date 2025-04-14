@@ -740,9 +740,9 @@
         timeOfBirthHexagram: '',
         latitude: 26.39655582357474,
         longitude: 27.37679999686307,
-        birthDate: DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute: 50 }).toISO(),
-        minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toISO(),
-        maxDate: DateTime.fromObject({ year: 275760, month: 9, day: 13 }).toISO(),
+        birthDate: DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute: 50 }).toJSDate(),
+        minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toJSDate(),
+        maxDate: DateTime.fromObject({ year: 275760, month: 9, day: 13 }).toJSDate(),
         graphics: {
           svgWidth: 400,
           svgHeight: 200,
@@ -869,7 +869,7 @@
       };
 
       const determinePreHeavenLineColor = (line) => {
-      console.log('line', line, 'controllingline', state.preHeavenHexagram?.controllingLine, 'globalPreHeavenLineIndex', form.globalPreHeavenLineIndex, 'controllingLine.hexagramLineIndex-1', Number(state.preHeavenHexagram?.controllingLine?.hexagramLineIndex)-1);
+     // console.log('line', line, 'controllingline', state.preHeavenHexagram?.controllingLine, 'globalPreHeavenLineIndex', form.globalPreHeavenLineIndex, 'controllingLine.hexagramLineIndex-1', Number(state.preHeavenHexagram?.controllingLine?.hexagramLineIndex)-1);
         if (line && state.preHeavenHexagram?.controllingLine && (Number(form.globalPreHeavenLineIndex) === (Number(state.preHeavenHexagram.controllingLine.hexagramLineIndex) - 1))) {
           return state.graphics.lineColorControlling;
         } else if (line.alternate === 'OLDYANG' || line.alternate === 'OLDYIN') {
@@ -879,7 +879,7 @@
       };
 
       const determineLaterHeavenLineColor = (line) => {
-        console.log(line, state.laterHeavenHexagram?.controllingLine, form.globalLaterHeavenLineIndex, state.laterHeavenHexagram?.controllingLine?.hexagramLineIndex);
+       // console.log(line, state.laterHeavenHexagram?.controllingLine, form.globalLaterHeavenLineIndex, state.laterHeavenHexagram?.controllingLine?.hexagramLineIndex);
 
         if (line && state.laterHeavenHexagram?.controllingLine && form.globalLaterHeavenLineIndex === state.laterHeavenHexagram.controllingLine.hexagramLineIndex - 1) {
           return state.graphics.lineColorControlling;
@@ -893,15 +893,16 @@
         return latitude >= 0 ? 'Northern' : 'Southern';
       };
 
-      const validateState = () => {
+      const validateState = async () => {
           const errors = [];
 
           if (!state.name || state.name.trim() === '') {
             errors.push('Name is required.');
           }
 
-          
-          if (!DateTime.fromISO(state.birthDate).isValid) {
+
+     
+          if (!DateTime.fromJSDate(state.birthDate).isValid) {
             errors.push('Birth date must be a valid date.');
           }
 
@@ -944,8 +945,8 @@
 
     const loadBirthday = (birthday) => {
   
-      state.name = birthday.name;
-      state.birthDate = DateTime.fromISO(birthday.birthday);
+      state.name = birthday.name;  
+      state.birthDate = DateTime.fromISO(birthday.birthday).toJSDate();
       state.gender = birthday.gender;
       state.latitude = birthday.coords.latitude;
       state.longitude = birthday.coords.longitude;
@@ -968,7 +969,7 @@
         const updatedBirthday = {
           id: state.editingBirthday.id,
           name: state.name,
-          birthday: state.birthDate,
+          birthday: DateTime.fromJSDate(state.birthDate).toISO(),
           gender: state.gender,
           coords: { latitude: state.latitude, longitude: state.longitude },
         };
@@ -996,11 +997,11 @@
 
 
       const consult = async () => {
-
-        const errors = validateState();
-        if (errors.length > 0) {
-          throw new Error(errors.join(' '));
-        }
+        console.log('consult', state);
+        // const errors = await validateState();
+        // if (errors.length > 0) {
+        //   throw new Error(errors.join(' '));
+        // }
 
         const hemisphere = getHemisphere(state.latitude);
         state.hemisphere = hemisphere;
