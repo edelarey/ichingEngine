@@ -313,20 +313,20 @@ export default {
       id: Date.now(),
       person1: {
         name: 'Person 1',
-        birthDate: DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute: 30 }).toISO(),
+        birthDate: DateTime.fromObject({ year: 1971, month: 3, day: 3, hour: 10, minute: 30 }).toJSDate(),
         gender: 'MALE',
         latitude: -26.396599069608687,
         longitude: 27.37679999686307,
       },
       person2: {
         name: 'Person 2',
-        birthDate: DateTime.fromObject({ year: 1973, month: 6, day: 13, hour: 10, minute: 30 }).toISO(),
+        birthDate: DateTime.fromObject({ year: 1973, month: 6, day: 13, hour: 10, minute: 30 }).toJSDate(),
         gender: 'FEMALE',
         latitude: -26.174204189162413, 
         longitude: 28.047192783369983,
       },
-      minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toISO(),
-      maxDate: DateTime.fromObject({ year: 275760, month: 9, day: 13 }).toISO(),
+      minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toJSDate(),
+      maxDate: DateTime.fromObject({ year: 275760, month: 9, day: 13 }).toJSDate(),
       compatibilityResult: null,
       showBirthdayHistory: false,
       showBirthdayEntry: true,
@@ -357,7 +357,7 @@ export default {
         errors.push('Name is required.');
       }
 
-      if (!DateTime.fromISO(person.birthDate).isValid) {
+      if (!DateTime.fromJSDate(person.birthDate).isValid) {
         errors.push('Birth date must be a valid date.');
       }
 
@@ -394,7 +394,7 @@ export default {
         birthdayStore.addBirthday({
           id: Date.now(),
           name: state.person1.name,
-          birthday: state.person1.birthDate,
+          birthday: DateTime.fromJSDate(state.person1.birthDate).toISO(),
           gender: state.person1.gender,
           coords: { latitude: state.person1.latitude, longitude: state.person1.longitude },
         });
@@ -403,7 +403,7 @@ export default {
         birthdayStore.addBirthday({
           id: Date.now() + 1,
           name: state.person2.name,
-          birthday: state.person2.birthDate,
+          birthday: DateTime.fromJSDate(state.person2.birthDate).toISO(),
           gender: state.person2.gender,
           coords: { latitude: state.person2.latitude, longitude: state.person2.longitude },
         });
@@ -418,7 +418,7 @@ export default {
     const loadBirthday = (birthday, personNumber) => {
       const person = personNumber === 1 ? state.person1 : state.person2;
       person.name = birthday.name;
-       person.birthDate = DateTime.fromISO(birthday.birthday);
+       person.birthDate = DateTime.fromISO(birthday.birthday).toJSDate();
       person.gender = birthday.gender;
       person.latitude = birthday.coords.latitude;
       person.longitude = birthday.coords.longitude;
@@ -444,7 +444,7 @@ export default {
         const updatedBirthday = {
           id: state.editingBirthday.id,
           name: person.name,
-          birthday: DateTime.fromISO(person.birthDate),
+          birthday: DateTime.fromJSDate(person.birthDate).toISO(),
           gender: person.gender,
           coords: {
             latitude: person.latitude,
