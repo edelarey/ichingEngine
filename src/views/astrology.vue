@@ -997,7 +997,7 @@
 
 
       const consult = async () => {
-        console.log('consult', state);
+    
         // const errors = await validateState();
         // if (errors.length > 0) {
         //   throw new Error(errors.join(' '));
