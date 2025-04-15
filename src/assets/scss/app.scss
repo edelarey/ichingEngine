@@ -27,6 +27,16 @@ body {
   }
 }
 
+img.animal-image {
+  width: 100px !important;
+  height: 100px !important;
+  max-width: none !important; /* Override Bootstrap's max-width: 100% */
+  height: auto !important; /* Ensure height scales proportionally if needed */
+  margin-left: 10px;
+  vertical-align: middle;
+  object-fit: cover; /* Ensure the image fits within the dimensions */
+}
+
 
 // Sidebar styling (merged)
 .sidebar {
