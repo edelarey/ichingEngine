@@ -52,40 +52,40 @@
       <div class="tab-content" id="astrologyTabContent">
         <!-- Summary Tab -->
         <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
-          <div class="row justify-content-center mt-4">
-            <div class="col-12 col-md-10 col-lg-8">
-              <div class="card text-center">
-                <h3 class="card-header py-3">I Ching Astrology Summary</h3>
-                <div class="card-body">
-                  <div v-if="state.cycle">
-                    <h5 class="card-title mb-3">Personal Details</h5>
-                    <p><strong>Name:</strong> {{ state.name }}</p>
-                    <p><strong>Birth Date:</strong> {{ dateTimeFormatSimple(state.birthDate) }}</p>
-                    <p><strong>Gender:</strong> {{ state.gender }}</p>
-                    <p><strong>Hemisphere:</strong> {{ state.hemisphere }}</p>
-                    <h5 class="card-title mt-4 mb-3">Core Hexagrams</h5>
-                    <p><strong>Pre-Heaven Hexagram:</strong> {{ state.preHeavenHexagram?.name }} ({{ state.preHeavenHexagram?.symbol }}) ({{ state.preHeavenHexagram?.hexagram }})</p>
-                    <p><strong>Later-Heaven Hexagram:</strong> {{ state.laterHeavenHexagram?.name }} ({{ state.laterHeavenHexagram?.symbol }}) ({{ state.laterHeavenHexagram?.hexagram }})</p>
-                    <p><strong>Time of Birth Hexagram:</strong> {{ state.timeOfBirthHexagram?.hexagram.name }} ({{ state.timeOfBirthHexagram?.hexagram.symbol }}) ({{ state.timeOfBirthHexagram?.hexagram.hexagram}})</p>
-                    <h5 class="card-title mt-4 mb-3">Trigrams</h5>
-                    <p><strong>Heavenly Trigram:</strong> {{ state.heavenlyTrigram?.trigram.name }} ({{ state.heavenlyTrigram?.trigram.trigram }})</p>
-                    <p><strong>Earthly Trigram:</strong> {{ state.earthlyTrigram?.trigram.name }} ({{ state.earthlyTrigram?.trigram.trigram }})</p>
-                    <h5 class="card-title mt-4 mb-3">Current Life Stage</h5>
-                    <p v-if="state.selectedPreHeavenBirthSubCycle"><strong>Early Life:</strong> {{ state.selectedPreHeavenBirthSubCycle.hexagram.name }} ({{ state.selectedPreHeavenBirthSubCycle.hexagram.hexagram }}) (Age {{ state.selectedPreHeavenBirthSubCycle.age }})</p>
-                    <p v-if="state.selectedLaterHeavenBirthSubCycle"><strong>Later Life:</strong> {{ state.laterHeavenBirthSubCycleHexagram?.name }} ({{ state.laterHeavenBirthSubCycleHexagram?.hexagram }}) (Age {{ state.selectedLaterHeavenBirthSubCycle.age }})</p>
-                    <h5 class="card-title mt-4 mb-3">Cycles</h5>
-                    <p><strong>Yearly Cycle ({{ formatBirthYear }}):</strong> {{ state.sexagenaryCycle?.celestialStem.name }} ({{state.sexagenaryCycle.celestialStem.trigram.trigram}}) - {{ state.sexagenaryCycle?.horaryBranch.name }} ({{ state.sexagenaryCycle?.horaryBranch.animal }})</p>
-                    <p><strong>Monthly Cycle ({{ formatBirthMonth }}):</strong> {{ state.birthStemsandBranches?.celestialStem.name }} ({{ state.birthStemsandBranches?.celestialStem.trigram.trigram }}) - {{ state.birthStemsandBranches?.horaryBranch.name }} ({{ state.birthStemsandBranches?.horaryBranch.animal }})</p>
-                    <p><strong>Daily Cycle ({{ formatBirthDay }}):</strong> {{ state.dailyStemsandBranches?.celestialStem.name }} ({{ state.dailyStemsandBranches?.celestialStem.trigram.trigram }}) - {{ state.dailyStemsandBranches?.horaryBranch.name }} ({{ state.dailyStemsandBranches?.horaryBranch.animal }})</p>
-                  </div>
-                  <div v-else>
-                    <p>Please enter birth details and consult to view your summary.</p>
-                  </div>
+        <div class="row justify-content-center mt-4">
+          <div class="col-12 col-md-10 col-lg-8">
+            <div class="card text-center">
+              <h3 class="card-header py-3">I Ching Astrology Summary</h3>
+              <div class="card-body">
+                <div v-if="state.cycle">
+                  <h5 class="card-title mb-3">Personal Details</h5>
+                  <p><strong>Name:</strong> {{ state.name }}</p>
+                  <p><strong>Birth Date:</strong> {{ dateTimeFormatSimple(state.birthDate) }}</p>
+                  <p><strong>Gender:</strong> {{ state.gender }}</p>
+                  <p><strong>Hemisphere:</strong> {{ state.hemisphere }}</p>
+                  <h5 class="card-title mt-4 mb-3">Core Hexagrams</h5>
+                  <p><strong>Pre-Heaven Hexagram:</strong> <router-link :to="`/hexagram_detail?hexagram=${state.preHeavenHexagram?.binary}`">{{ state.preHeavenHexagram?.name }}</router-link> ({{ state.preHeavenHexagram?.symbol }}) ({{ state.preHeavenHexagram?.hexagram }})</p>
+                  <p><strong>Later-Heaven Hexagram:</strong> <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenHexagram?.binary}`">{{ state.laterHeavenHexagram?.name }}</router-link> ({{ state.laterHeavenHexagram?.symbol }}) ({{ state.laterHeavenHexagram?.hexagram }})</p>
+                  <p><strong>Time of Birth Hexagram:</strong> <router-link :to="`/hexagram_detail?hexagram=${state.timeOfBirthHexagram?.hexagram.binary}`">{{ state.timeOfBirthHexagram?.hexagram.name }}</router-link> ({{ state.timeOfBirthHexagram?.hexagram.symbol }}) ({{ state.timeOfBirthHexagram?.hexagram.hexagram }})</p>
+                  <h5 class="card-title mt-4 mb-3">Trigrams</h5>
+                  <p><strong>Heavenly Trigram:</strong> <router-link :to="`/trigram_detail?trigram=${state.heavenlyTrigram?.trigram.binary}`">{{ state.heavenlyTrigram?.trigram.name }}</router-link> ({{ state.heavenlyTrigram?.trigram.trigram }})</p>
+                  <p><strong>Earthly Trigram:</strong> <router-link :to="`/trigram_detail?trigram=${state.earthlyTrigram?.trigram.binary}`">{{ state.earthlyTrigram?.trigram.name }}</router-link> ({{ state.earthlyTrigram?.trigram.trigram }})</p>
+                  <h5 class="card-title mt-4 mb-3">Current Life Stage</h5>
+                  <p v-if="state.selectedPreHeavenBirthSubCycle"><strong>Early Life:</strong> <router-link :to="`/hexagram_detail?hexagram=${state.selectedPreHeavenBirthSubCycle.hexagram.binary}`">{{ state.selectedPreHeavenBirthSubCycle.hexagram.name }}</router-link> ({{ state.selectedPreHeavenBirthSubCycle.hexagram.hexagram }}) (Age {{ state.selectedPreHeavenBirthSubCycle.age }})</p>
+                  <p v-if="state.selectedLaterHeavenBirthSubCycle"><strong>Later Life:</strong> <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenBirthSubCycleHexagram?.binary}`">{{ state.laterHeavenBirthSubCycleHexagram?.name }}</router-link> ({{ state.laterHeavenBirthSubCycleHexagram?.hexagram }}) (Age {{ state.selectedLaterHeavenBirthSubCycle.age }})</p>
+                  <h5 class="card-title mt-4 mb-3">Cycles</h5>
+                  <p><strong>Yearly Cycle ({{ formatBirthYear }}):</strong> {{ state.sexagenaryCycle?.celestialStem.name }} ({{ state.sexagenaryCycle.celestialStem.trigram.trigram }}) - {{ state.sexagenaryCycle?.horaryBranch.name }} ({{ state.sexagenaryCycle?.horaryBranch.animal }})</p>
+                  <p><strong>Monthly Cycle ({{ formatBirthMonth }}):</strong> {{ state.birthStemsandBranches?.celestialStem.name }} ({{ state.birthStemsandBranches?.celestialStem.trigram.trigram }}) - {{ state.birthStemsandBranches?.horaryBranch.name }} ({{ state.birthStemsandBranches?.horaryBranch.animal }})</p>
+                  <p><strong>Daily Cycle ({{ formatBirthDay }}):</strong> {{ state.dailyStemsandBranches?.celestialStem.name }} ({{ state.dailyStemsandBranches?.celestialStem.trigram.trigram }}) - {{ state.dailyStemsandBranches?.horaryBranch.name }} ({{ state.dailyStemsandBranches?.horaryBranch.animal }})</p>
+                </div>
+                <div v-else>
+                  <p>Please enter birth details and consult to view your summary.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
          <!-- Birthday History Tab -->
         <div class="tab-pane fade" id="birthday-history" role="tabpanel" aria-labelledby="birthday-history-tab">
           <div class="row justify-content-center mt-4">
