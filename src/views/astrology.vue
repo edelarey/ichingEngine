@@ -50,7 +50,6 @@
       </ul>
 
       <div class="tab-content" id="astrologyTabContent">
-        <!-- Summary Tab -->
         <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
         <div class="row justify-content-center mt-4">
           <div class="col-12 col-md-10 col-lg-8">
@@ -74,9 +73,9 @@
                   <p v-if="state.selectedPreHeavenBirthSubCycle"><strong>Early Life:</strong> <router-link :to="`/hexagram_detail?hexagram=${state.selectedPreHeavenBirthSubCycle.hexagram.binary}`">{{ state.selectedPreHeavenBirthSubCycle.hexagram.name }}</router-link> ({{ state.selectedPreHeavenBirthSubCycle.hexagram.hexagram }}) (Age {{ state.selectedPreHeavenBirthSubCycle.age }})</p>
                   <p v-if="state.selectedLaterHeavenBirthSubCycle"><strong>Later Life:</strong> <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenBirthSubCycleHexagram?.binary}`">{{ state.laterHeavenBirthSubCycleHexagram?.name }}</router-link> ({{ state.laterHeavenBirthSubCycleHexagram?.hexagram }}) (Age {{ state.selectedLaterHeavenBirthSubCycle.age }})</p>
                   <h5 class="card-title mt-4 mb-3">Cycles</h5>
-                  <p><strong>Yearly Cycle ({{ formatBirthYear }}):</strong> {{ state.sexagenaryCycle?.celestialStem.name }} ({{ state.sexagenaryCycle.celestialStem.trigram.trigram }}) - {{ state.sexagenaryCycle?.horaryBranch.name }} ({{ state.sexagenaryCycle?.horaryBranch.animal }})</p>
-                  <p><strong>Monthly Cycle ({{ formatBirthMonth }}):</strong> {{ state.birthStemsandBranches?.celestialStem.name }} ({{ state.birthStemsandBranches?.celestialStem.trigram.trigram }}) - {{ state.birthStemsandBranches?.horaryBranch.name }} ({{ state.birthStemsandBranches?.horaryBranch.animal }})</p>
-                  <p><strong>Daily Cycle ({{ formatBirthDay }}):</strong> {{ state.dailyStemsandBranches?.celestialStem.name }} ({{ state.dailyStemsandBranches?.celestialStem.trigram.trigram }}) - {{ state.dailyStemsandBranches?.horaryBranch.name }} ({{ state.dailyStemsandBranches?.horaryBranch.animal }})</p>
+                  <p><strong>Yearly Cycle ({{ formatBirthYear }}):</strong> {{ state.sexagenaryCycle?.celestialStem.name }} (<router-link :to="`/trigram_detail?trigram=${state.sexagenaryCycle?.celestialStem.trigram.binary}`">{{ state.sexagenaryCycle?.celestialStem.trigram.trigram }}</router-link>) - {{ state.sexagenaryCycle?.horaryBranch.name }} ({{ state.sexagenaryCycle?.horaryBranch.animal }})</p>
+                  <p><strong>Monthly Cycle ({{ formatBirthMonth }}):</strong> {{ state.birthStemsandBranches?.celestialStem.name }} (<router-link :to="`/trigram_detail?trigram=${state.birthStemsandBranches?.celestialStem.trigram.binary}`">{{ state.birthStemsandBranches?.celestialStem.trigram.trigram }}</router-link>) - {{ state.birthStemsandBranches?.horaryBranch.name }} ({{ state.birthStemsandBranches?.horaryBranch.animal }})</p>
+                  <p><strong>Daily Cycle ({{ formatBirthDay }}):</strong> {{ state.dailyStemsandBranches?.celestialStem.name }} (<router-link :to="`/trigram_detail?trigram=${state.dailyStemsandBranches?.celestialStem.trigram.binary}`">{{ state.dailyStemsandBranches?.celestialStem.trigram.trigram }}</router-link>) - {{ state.dailyStemsandBranches?.horaryBranch.name }} ({{ state.dailyStemsandBranches?.horaryBranch.animal }})</p>
                 </div>
                 <div v-else>
                   <p>Please enter birth details and consult to view your summary.</p>
