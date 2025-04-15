@@ -17,10 +17,13 @@
     <div class="container my-6">
       <ul class="nav nav-tabs" id="astrologyTabs" role="tablist">
         <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab" aria-controls="summary" aria-selected="true">Summary</button>
+       </li>
+        <li class="nav-item" role="presentation">
           <button class="nav-link" id="birthday-history-tab" data-bs-toggle="tab" data-bs-target="#birthday-history" type="button" role="tab" aria-controls="birthday-history" aria-selected="false">Birthday History</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="birthday-entry-tab" data-bs-toggle="tab" data-bs-target="#birthday-entry" type="button" role="tab" aria-controls="birthday-entry" aria-selected="true">Birthday Entry</button>
+          <button class="nav-link" id="birthday-entry-tab" data-bs-toggle="tab" data-bs-target="#birthday-entry" type="button" role="tab" aria-controls="birthday-entry" aria-selected="false">Birthday Entry</button>
          </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="hexagrams-tab" data-bs-toggle="tab" data-bs-target="#hexagrams" type="button" role="tab" aria-controls="hexagrams" aria-selected="false">Hexagrams</button>
@@ -46,7 +49,43 @@
       </ul>
 
       <div class="tab-content" id="astrologyTabContent">
-        <!-- Birthday History Tab -->
+        <!-- Summary Tab -->
+        <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
+          <div class="row justify-content-center mt-4">
+            <div class="col-12 col-md-10 col-lg-8">
+              <div class="card text-center">
+                <h3 class="card-header py-3">I Ching Astrology Summary</h3>
+                <div class="card-body">
+                  <div v-if="state.cycle">
+                    <h5 class="card-title mb-3">Personal Details</h5>
+                    <p><strong>Name:</strong> {{ state.name }}</p>
+                    <p><strong>Birth Date:</strong> {{ dateTimeFormatSimple(state.birthDate) }}</p>
+                    <p><strong>Gender:</strong> {{ state.gender }}</p>
+                    <p><strong>Hemisphere:</strong> {{ state.hemisphere }}</p>
+                    <h5 class="card-title mt-4 mb-3">Core Hexagrams</h5>
+                    <p><strong>Pre-Heaven Hexagram:</strong> {{ state.preHeavenHexagram?.name }} ({{ state.preHeavenHexagram?.symbol }})</p>
+                    <p><strong>Later-Heaven Hexagram:</strong> {{ state.laterHeavenHexagram?.name }} ({{ state.laterHeavenHexagram?.symbol }})</p>
+                    <p><strong>Time of Birth Hexagram:</strong> {{ state.timeOfBirthHexagram?.hexagram.name }} ({{ state.timeOfBirthHexagram?.hexagram.symbol }})</p>
+                    <h5 class="card-title mt-4 mb-3">Trigrams</h5>
+                    <p><strong>Heavenly Trigram:</strong> {{ state.heavenlyTrigram?.trigram.name }}</p>
+                    <p><strong>Earthly Trigram:</strong> {{ state.earthlyTrigram?.trigram.name }}</p>
+                    <h5 class="card-title mt-4 mb-3">Current Life Stage</h5>
+                    <p v-if="state.selectedPreHeavenBirthSubCycle"><strong>Early Life:</strong> {{ state.selectedPreHeavenBirthSubCycle.hexagram.name }} (Age {{ state.selectedPreHeavenBirthSubCycle.age }})</p>
+                    <p v-if="state.selectedLaterHeavenBirthSubCycle"><strong>Later Life:</strong> {{ state.laterHeavenBirthSubCycleHexagram?.name }} (Age {{ state.selectedLaterHeavenBirthSubCycle.age }})</p>
+                    <h5 class="card-title mt-4 mb-3">Cycles</h5>
+                    <p><strong>Yearly Cycle ({{ formatBirthYear }}):</strong> {{ state.sexagenaryCycle?.celestialStem.name }} - {{ state.sexagenaryCycle?.horaryBranch.name }} ({{ state.sexagenaryCycle?.horaryBranch.animal }})</p>
+                    <p><strong>Monthly Cycle ({{ formatBirthMonth }}):</strong> {{ state.birthStemsandBranches?.celestialStem.name }} - {{ state.birthStemsandBranches?.horaryBranch.name }} ({{ state.birthStemsandBranches?.horaryBranch.animal }})</p>
+                    <p><strong>Daily Cycle ({{ formatBirthDay }}):</strong> {{ state.dailyStemsandBranches?.celestialStem.name }} - {{ state.dailyStemsandBranches?.horaryBranch.name }} ({{ state.dailyStemsandBranches?.horaryBranch.animal }})</p>
+                  </div>
+                  <div v-else>
+                    <p>Please enter birth details and consult to view your summary.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+         <!-- Birthday History Tab -->
         <div class="tab-pane fade" id="birthday-history" role="tabpanel" aria-labelledby="birthday-history-tab">
           <div class="row justify-content-center mt-4">
             <div class="col-12 col-md-8 col-lg-6">
