@@ -13,673 +13,654 @@
       </div>
     </header>
 
-    <!-- Control Panel: The Cosmic Remote Control -->
+    <!-- Tabbed Interface -->
     <div class="container my-6">
-      <div class="card">
-        <div class="card-header bg-dark text-white">
-          <h5 class="mb-0">Control Your Cosmic Cards</h5>
-        </div>
-        <div class="card-body">
-          <div class="row g-2 justify-content-center">
-            <div class="col-auto">
-              <button @click="state.showBirthdayHistory = !state.showBirthdayHistory" class="btn btn-sm" :class="state.showBirthdayHistory ? 'btn-success' : 'btn-secondary'">
-                {{ state.showBirthdayHistory ? 'Hide' : 'Show' }} Birthday History
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showBirthdayEntry = !state.showBirthdayEntry" class="btn btn-sm" :class="state.showBirthdayEntry ? 'btn-success' : 'btn-secondary'">
-                {{ state.showBirthdayEntry ? 'Hide' : 'Show' }} Birthday Entry
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showHexagrams = !state.showHexagrams" class="btn btn-sm" :class="state.showHexagrams ? 'btn-success' : 'btn-secondary'">
-                {{ state.showHexagrams ? 'Hide' : 'Show' }} Hexagrams
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showTrigrams = !state.showTrigrams" class="btn btn-sm" :class="state.showTrigrams ? 'btn-success' : 'btn-secondary'">
-                {{ state.showTrigrams ? 'Hide' : 'Show' }} Trigrams
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showEarlyLaterLife = !state.showEarlyLaterLife" class="btn btn-sm" :class="state.showEarlyLaterLife ? 'btn-success' : 'btn-secondary'">
-                {{ state.showEarlyLaterLife ? 'Hide' : 'Show' }} Early/Later Life
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showDailyCycles = !state.showDailyCycles" class="btn btn-sm" :class="state.showDailyCycles ? 'btn-success' : 'btn-secondary'">
-                {{ state.showDailyCycles ? 'Hide' : 'Show' }} Daily Early Cycles
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showYearlyCycle = !state.showYearlyCycle" class="btn btn-sm" :class="state.showYearlyCycle ? 'btn-success' : 'btn-secondary'">
-                {{ state.showYearlyCycle ? 'Hide' : 'Show' }} Yearly Cycle
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showMonthlyCycle = !state.showMonthlyCycle" class="btn btn-sm" :class="state.showMonthlyCycle ? 'btn-success' : 'btn-secondary'">
-                {{ state.showMonthlyCycle ? 'Hide' : 'Show' }} Monthly Cycle
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showDailyCycle = !state.showDailyCycle" class="btn btn-sm" :class="state.showDailyCycle ? 'btn-success' : 'btn-secondary'">
-                {{ state.showDailyCycle ? 'Hide' : 'Show' }} Daily Cycle
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <ul class="nav nav-tabs" id="astrologyTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="birthday-history-tab" data-bs-toggle="tab" data-bs-target="#birthday-history" type="button" role="tab" aria-controls="birthday-history" aria-selected="false">Birthday History</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="birthday-entry-tab" data-bs-toggle="tab" data-bs-target="#birthday-entry" type="button" role="tab" aria-controls="birthday-entry" aria-selected="true">Birthday Entry</button>
+         </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="hexagrams-tab" data-bs-toggle="tab" data-bs-target="#hexagrams" type="button" role="tab" aria-controls="hexagrams" aria-selected="false">Hexagrams</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="trigrams-tab" data-bs-toggle="tab" data-bs-target="#trigrams" type="button" role="tab" aria-controls="trigrams" aria-selected="false">Trigrams</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="early-later-life-tab" data-bs-toggle="tab" data-bs-target="#early-later-life" type="button" role="tab" aria-controls="early-later-life" aria-selected="false">Early/Later Life</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="daily-cycles-tab" data-bs-toggle="tab" data-bs-target="#daily-cycles" type="button" role="tab" aria-controls="daily-cycles" aria-selected="false">Daily Cycles</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="yearly-cycle-tab" data-bs-toggle="tab" data-bs-target="#yearly-cycle" type="button" role="tab" aria-controls="yearly-cycle" aria-selected="false">Yearly Cycle</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="monthly-cycle-tab" data-bs-toggle="tab" data-bs-target="#monthly-cycle" type="button" role="tab" aria-controls="monthly-cycle" aria-selected="false">Monthly Cycle</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="daily-cycle-tab" data-bs-toggle="tab" data-bs-target="#daily-cycle" type="button" role="tab" aria-controls="daily-cycle" aria-selected="false">Daily Cycle</button>
+        </li>
+      </ul>
 
-    <!-- Birthday History Display -->
-    <div v-if="state.showBirthdayHistory" class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-title">Birthday History</h5>
-            <div class="mb-3">
-              <button @click="birthdayStore.exportBirthdays" class="btn btn-success btn-sm me-2">Export Birthdays</button>
-              <label for="importFile" class="btn btn-primary btn-sm">
-                Import Birthdays
-                <input type="file" id="importFile" @change="handleImport" hidden accept=".json">
-              </label>
-              <button @click="birthdayStore.clearBirthdays" class="btn btn-danger btn-sm ms-2">Clear All</button>
-            </div>
-            <div v-if="birthdayList.length === 0">
-              <p>No birthdays recorded yet.</p>
-            </div>
-            <div v-else>
-              <div v-for="birthday in birthdayList" :key="birthday.id" class="mb-3">
-                <p><strong>Date:</strong> {{ dateTimeFormatSimple(birthday.birthday) }}</p>
-                <p><strong>Name:</strong> {{ birthday.name || 'Unnamed' }}</p>
-                <p><strong>Gender:</strong> {{ birthday.gender }}</p>
-                <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
-                <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
-                <div>
-                <button @click="loadBirthday(birthday)" class="btn btn-primary btn-sm me-2">Load</button>
-                <button @click="startEditingBirthday(birthday)" class="btn btn-primary btn-sm me-2">Edit</button>
-                <button @click="birthdayStore.removeBirthday(birthday.id)" class="btn btn-danger btn-sm">Delete</button>
-              </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Birthday Entry Interface -->
-    <div v-if="state.showBirthdayEntry" class="row justify-content-center">
-      <div class="col-12 col-md-10 col-lg-8">
-        <div class="card text-center">
-          <h3 class="card-header py-3">Astrological Hexagrams in the I Ching Sexagenary Cycle</h3>
-          <div class="card-body" v-if="state.cycle">
-            <div class="row">
-              <div class="col-12">
-                <h5 class="card-title mb-2">Gender</h5>
-                <p :style="{ color: colorClass }" class="card-text display-5 mb-3">{{ state.gender }}</p>
-                <h5 class="card-title mb-2">Birth Date</h5>
-                <p :style="{ color: colorClass }" class="card-text display-6 mb-3">{{ dateTimeFormatSimple(state.birthDate) }}</p>
-                <h6 class="card-subtitle mb-2">Hemisphere</h6>
-                <p :style="{ color: colorClass }" class="card-text display-5 mb-3">{{ state.hemisphere }}</p>
-                <h6 class="card-subtitle mb-2">Sexagenary Cycle</h6>
-                <p :style="{ color: colorClass }" class="card-text display-5 mb-2">{{ state.cycle.cycleName }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-6">{{ state.cycle.startYear }} - {{ state.cycle.endYear }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="card-body">
-            <h5 class="card-title mb-3">Birth Details</h5>
-            <div class="row justify-content-center">
-              <!-- Name Input -->
-              <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <h6 :style="{ color: colorClass }" class="card-text mb-2">Name</h6>
-                <input
-                  v-model="state.name"
-                  :list="`saved-names-${state.id}`"
-                  class="form-control input-narrow"
-                  placeholder="Type your name or select from the list"
-                />
-                <datalist :id="`saved-names-${state.id}`">
-                  <option v-for="birthday in birthdayList" :key="birthday.id" :value="birthday.name">{{ birthday.name }}</option>
-                </datalist>
-              </div>
-
-              <!-- Birth Date Input -->
-              <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <h6 :style="{ color: colorClass }" class="card-text mb-2">Birth Date</h6>
-                <Datepicker
-                  placeholder="Birth Date"
-                  v-model="state.birthDate"
-                  format="yyyy-MM-dd HH:mm"
-                  previewFormat="yyyy-MM-dd HH:mm"
-                  :enableTimePicker="true"
-                  :disabled="false"
-                  :min-date="state.minDate"
-                  :max-date="state.maxDate"
-                  class="w-100 input-narrow"
-                />
-              </div>
-
-              <!-- Gender Select -->
-              <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <h6 :style="{ color: colorClass }" class="card-text mb-2">Gender</h6>
-                <select v-model="state.gender" class="form-control input-narrow">
-                  <option value="MALE">MALE</option>
-                  <option value="FEMALE">FEMALE</option>
-                </select>
-              </div>
-
-               <!-- Latitude and Longitude -->
-              <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <div class="row justify-content-center">
-                  <div class="col-12 col-md-6 mb-3 mb-md-0">
-                    <h6 :style="{ color: colorClass }" class="card-text mb-2">Latitude</h6>
-                    <input v-model.number="state.latitude" class="form-control input-narrow" placeholder="0.00 Latitude" />
+      <div class="tab-content" id="astrologyTabContent">
+        <!-- Birthday History Tab -->
+        <div class="tab-pane fade" id="birthday-history" role="tabpanel" aria-labelledby="birthday-history-tab">
+          <div class="row justify-content-center mt-4">
+            <div class="col-12 col-md-8 col-lg-6">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h5 class="card-title">Birthday History</h5>
+                  <div class="mb-3">
+                    <button @click="birthdayStore.exportBirthdays" class="btn btn-success btn-sm me-2">Export Birthdays</button>
+                    <label for="importFile" class="btn btn-primary btn-sm">
+                      Import Birthdays
+                      <input type="file" id="importFile" @change="handleImport" hidden accept=".json">
+                    </label>
+                    <button @click="birthdayStore.clearBirthdays" class="btn btn-danger btn-sm ms-2">Clear All</button>
                   </div>
-                  <div class="col-12 col-md-6">
-                    <h6 :style="{ color: colorClass }" class="card-text mb-2">Longitude</h6>
-                    <input v-model.number="state.longitude" class="form-control input-narrow" placeholder="0.00 Longitude" />
+                  <div v-if="birthdayList.length === 0">
+                    <p>No birthdays recorded yet.</p>
+                  </div>
+                  <div v-else>
+                    <div v-for="birthday in birthdayList" :key="birthday.id" class="mb-3">
+                      <p><strong>Date:</strong> {{ dateTimeFormatSimple(birthday.birthday) }}</p>
+                      <p><strong>Name:</strong> {{ birthday.name || 'Unnamed' }}</p>
+                      <p><strong>Gender:</strong> {{ birthday.gender }}</p>
+                      <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
+                      <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
+                      <div>
+                        <button @click="loadBirthday(birthday)" class="btn btn-primary btn-sm me-2">Load</button>
+                        <button @click="startEditingBirthday(birthday)" class="btn btn-primary btn-sm me-2">Edit</button>
+                        <button @click="birthdayStore.removeBirthday(birthday.id)" class="btn btn-danger btn-sm">Delete</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-
-
             </div>
+          </div>
+        </div>
 
-            <!-- Buttons Section -->
-            <div class="row justify-content-center">
-              <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <button @click="consult" class="btn btn-primary btn-narrow">Consult</button>
-              </div>
-              <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <button v-if="!state.editingBirthday" @click="saveBirthday" class="btn btn-primary btn-narrow">Save Birthday</button>
-                <div v-else>
-                  <button @click="updateBirthday" class="btn btn-success btn-narrow">Update Birthday</button>
-                  <button @click="cancelEditing" class="btn btn-secondary btn-narrow">Cancel</button>
+        <!-- Birthday Entry Tab -->
+        <div class="tab-pane fade show active" id="birthday-entry" role="tabpanel" aria-labelledby="birthday-entry-tab">
+          <div class="row justify-content-center mt-4">
+            <div class="col-12 col-md-10 col-lg-8">
+              <div class="card text-center">
+                <h3 class="card-header py-3">Astrological Hexagrams in the I Ching Sexagenary Cycle</h3>
+                <div class="card-body" v-if="state.cycle">
+                  <div class="row">
+                    <div class="col-12">
+                      <h5 class="card-title mb-2">Gender</h5>
+                      <p :style="{ color: colorClass }" class="card-text display-5 mb-3">{{ state.gender }}</p>
+                      <h5 class="card-title mb-2">Birth Date</h5>
+                      <p :style="{ color: colorClass }" class="card-text display-6 mb-3">{{ dateTimeFormatSimple(state.birthDate) }}</p>
+                      <h6 class="card-subtitle mb-2">Hemisphere</h6>
+                      <p :style="{ color: colorClass }" class="card-text display-5 mb-3">{{ state.hemisphere }}</p>
+                      <h6 class="card-subtitle mb-2">Sexagenary Cycle</h6>
+                      <p :style="{ color: colorClass }" class="card-text display-5 mb-2">{{ state.cycle.cycleName }}</p>
+                      <p :style="{ color: colorClass }" class="card-text display-6">{{ state.cycle.startYear }} - {{ state.cycle.endYear }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title mb-3">Birth Details</h5>
+                  <div class="row justify-content-center">
+                    <!-- Name Input -->
+                    <div class="col-12 col-md-8 col-lg-6 mb-3">
+                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Name</h6>
+                      <input
+                        v-model="state.name"
+                        :list="`saved-names-${state.id}`"
+                        class="form-control input-narrow"
+                        placeholder="Type your name or select from the list"
+                      />
+                      <datalist :id="`saved-names-${state.id}`">
+                        <option v-for="birthday in birthdayList" :key="birthday.id" :value="birthday.name">{{ birthday.name }}</option>
+                      </datalist>
+                    </div>
+                    <!-- Birth Date Input -->
+                    <div class="col-12 col-md-8 col-lg-6 mb-3">
+                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Birth Date</h6>
+                      <Datepicker
+                        placeholder="Birth Date"
+                        v-model="state.birthDate"
+                        format="yyyy-MM-dd HH:mm"
+                        previewFormat="yyyy-MM-dd HH:mm"
+                        :enableTimePicker="true"
+                        :disabled="false"
+                        :min-date="state.minDate"
+                        :max-date="state.maxDate"
+                        class="w-100 input-narrow"
+                      />
+                    </div>
+                    <!-- Gender Select -->
+                    <div class="col-12 col-md-8 col-lg-6 mb-3">
+                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Gender</h6>
+                      <select v-model="state.gender" class="form-control input-narrow">
+                        <option value="MALE">MALE</option>
+                        <option value="FEMALE">FEMALE</option>
+                      </select>
+                    </div>
+                    <!-- Latitude and Longitude -->
+                    <div class="col-12 col-md-8 col-lg-6 mb-3">
+                      <div class="row justify-content-center">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                          <h6 :style="{ color: colorClass }" class="card-text mb-2">Latitude</h6>
+                          <input v-model.number="state.latitude" class="form-control input-narrow" placeholder="0.00 Latitude" />
+                        </div>
+                        <div class="col-12 col-md-6">
+                          <h6 :style="{ color: colorClass }" class="card-text mb-2">Longitude</h6>
+                          <input v-model.number="state.longitude" class="form-control input-narrow" placeholder="0.00 Longitude" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Buttons Section -->
+                  <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6 mb-3">
+                      <button @click="consult" class="btn btn-primary btn-narrow">Consult</button>
+                    </div>
+                    <div class="col-12 col-md-8 col-lg-6 mb-3">
+                      <button v-if="!state.editingBirthday" @click="saveBirthday" class="btn btn-primary btn-narrow">Save Birthday</button>
+                      <div v-else>
+                        <button @click="updateBirthday" class="btn btn-success btn-narrow">Update Birthday</button>
+                        <button @click="cancelEditing" class="btn btn-secondary btn-narrow">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
-
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Pre-Heaven and Later Heaven Hexagrams -->
-    <div v-if="state.showHexagrams && state.cycle" class="row justify-content-center">
-      <div class="col-12">
-        <div class="card text-center">
-          <h3 class="card-header">Pre-Heaven and Later Heaven Hexagrams</h3>
-          <div class="card-body">
-            <div class="row justify-content-center">
-              <!-- Pre-Heaven Hexagram -->
-              <div class="col-12 col-md-6 col-lg-5 mb-4">
-                <div class="card text-center">
-                  <div class="card-body" v-if="state.preHeavenHexagram">
-                    <h5 class="card-title">Pre-Heaven Hexagram</h5>
-                    <p class="card-text display-3">{{ state.preHeavenHexagram.name }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-1">{{ state.preHeavenHexagram.symbol }}</p>
+        <!-- Hexagrams Tab -->
+        <div class="tab-pane fade" id="hexagrams" role="tabpanel" aria-labelledby="hexagrams-tab">
+          <div class="row justify-content-center mt-4" v-if="state.cycle">
+            <div class="col-12">
+              <div class="card text-center">
+                <h3 class="card-header">Pre-Heaven and Later Heaven Hexagrams</h3>
+                <div class="card-body">
+                  <div class="row justify-content-center">
+                    <!-- Pre-Heaven Hexagram -->
+                    <div class="col-12 col-md-6 col-lg-5 mb-4">
+                      <div class="card text-center">
+                        <div class="card-body" v-if="state.preHeavenHexagram">
+                          <h5 class="card-title">Pre-Heaven Hexagram</h5>
+                          <p class="card-text display-3">{{ state.preHeavenHexagram.name }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-1">{{ state.preHeavenHexagram.symbol }}</p>
+                          <div class="center-content">
+                            <svg
+                              class="hexagram-svg"
+                              :width="state.graphics.svgWidth"
+                              :height="state.graphics.svgHeight"
+                              :viewBox="`0 0 ${state.graphics.svgWidth + 60} ${state.graphics.svgHeight}`"
+                            >
+                              <g :transform="`translate(${(state.graphics.svgWidth - state.graphics.lineLength) / 2}, 20)`">
+                                <g
+                                  v-if="state.preHeavenHexagram.above?.lineArray"
+                                  v-for="(line, index) in [...state.preHeavenHexagram.above.lineArray].reverse()"
+                                  :key="'heaven' + index"
+                                  :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`"
+                                >
+                                  <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" stroke="white" :stroke-width="state.graphics.lineWidth" />
+                                  <text v-if="index === 0" :x="state.graphics.lineLength + 10" y="-20" dy=".35em" fill="black">Age</text>
+                                  <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" fill="black">{{ line.yearRange[0] }} - {{ line.yearRange[1] }}</text>
+                                  <text>{{ updateGlobalPreHeavenLineIndex() }}</text>
+                                </g>
+                                <g
+                                  v-if="state.preHeavenHexagram.below?.lineArray"
+                                  v-for="(line, index) in [...state.preHeavenHexagram.below.lineArray].reverse()"
+                                  :key="'earth' + index"
+                                  :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`"
+                                >
+                                  <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" fill="black">{{ line.yearRange[0] }} - {{ line.yearRange[1] }}</text>
+                                  <text>{{ updateGlobalPreHeavenLineIndex() }}</text>
+                                </g>
+                              </g>
+                            </svg>
+                          </div>
+                          <p :style="{ color: colorClass }" class="card-text display-6">{{ state.preHeavenHexagram.translation.split(',')[0] }}</p>
+                          <div class="card-body" v-if="state.preHeavenHexagram.controllingLine">
+                            <h3 class="card-title">Controlling Line</h3>
+                            <p class="card-text display-10">{{ state.preHeavenHexagram.controllingLine.trigram }} Trigram {{ state.preHeavenHexagram.controllingLine.linePosition }} Line ({{ state.preHeavenHexagram.controllingLine.line.name }})</p>
+                          </div>
+                          <div class="card-body">
+                            <h3 class="card-title">Summary</h3>
+                            <p class="card-text display-10" v-html="state.preHeavenHexagram.summary"></p>
+                          </div>
+                          <router-link :to="`/hexagram_detail?hexagram=${state.preHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Later-Heaven Hexagram -->
+                    <div class="col-12 col-md-6 col-lg-5 mb-4">
+                      <div class="card text-center">
+                        <div class="card-body" v-if="state.laterHeavenHexagram">
+                          <h5 class="card-title">Later-Heaven Hexagram</h5>
+                          <p class="card-text display-3">{{ state.laterHeavenHexagram.name }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-1">{{ state.laterHeavenHexagram.symbol }}</p>
+                          <div class="center-content">
+                            <svg
+                              class="hexagram-svg"
+                              :width="state.graphics.svgWidth"
+                              :height="state.graphics.svgHeight"
+                              :viewBox="`0 0 ${state.graphics.svgWidth + 60} ${state.graphics.svgHeight}`"
+                            >
+                              <g :transform="`translate(${(state.graphics.svgWidth - state.graphics.lineLength) / 2}, 20)`">
+                                <g
+                                  v-if="state.laterHeavenHexagram.above?.lineArray"
+                                  v-for="(line, index) in [...state.laterHeavenHexagram.above.lineArray].reverse()"
+                                  :key="'heaven' + index"
+                                  :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`"
+                                >
+                                  <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" stroke="white" :stroke-width="state.graphics.lineWidth" />
+                                  <text v-if="index === 0" :x="state.graphics.lineLength + 10" y="-20" dy=".35em" fill="black">Age</text>
+                                  <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" fill="black">{{ line.yearRange[0] }} - {{ line.yearRange[1] }}</text>
+                                  <text>{{ updateGlobalLaterHeavenLineIndex() }}</text>
+                                </g>
+                                <g
+                                  v-if="state.laterHeavenHexagram.below?.lineArray"
+                                  v-for="(line, index) in [...state.laterHeavenHexagram.below.lineArray].reverse()"
+                                  :key="'earth' + index"
+                                  :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`"
+                                >
+                                  <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
+                                  <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" fill="black">{{ line.yearRange[0] }} - {{ line.yearRange[1] }}</text>
+                                  <text>{{ updateGlobalLaterHeavenLineIndex() }}</text>
+                                </g>
+                              </g>
+                            </svg>
+                          </div>
+                          <p :style="{ color: colorClass }" class="card-text display-6">{{ state.laterHeavenHexagram.translation.split(',')[0] }}</p>
+                          <div class="card-body" v-if="state.laterHeavenHexagram.controllingLine">
+                            <h3 class="card-title">Controlling Line</h3>
+                            <p class="card-text display-10">{{ state.laterHeavenHexagram.controllingLine.trigram }} Trigram {{ state.laterHeavenHexagram.controllingLine.linePosition }} Line ({{ state.laterHeavenHexagram.controllingLine.line.name }})</p>
+                          </div>
+                          <div class="card-body">
+                            <h3 class="card-title">Summary</h3>
+                            <p class="card-text display-10" v-html="state.laterHeavenHexagram.summary"></p>
+                          </div>
+                          <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trigrams Tab -->
+        <div class="tab-pane fade" id="trigrams" role="tabpanel" aria-labelledby="trigrams-tab">
+          <div class="row justify-content-center mt-4" v-if="state.cycle">
+            <div class="col-12 col-sm-6 mb-4">
+              <div class="card text-center">
+                <div class="card-body" v-if="state.heavenlyTrigram && state.earthlyTrigram">
+                  <h5 class="card-title">Heavenly and Earthly Trigrams</h5>
+                  <div class="row justify-content-center">
+                    <div class="col-12 col-sm-5">
+                      <p class="card-text display-3">{{ state.heavenlyTrigram.trigram.name }}</p>
+                      <p :style="{ color: colorClass }" class="card-text display-1">{{ state.heavenlyTrigram.trigram.symbol }}</p>
+                      <p :style="{ color: colorClass }" class="card-text display-1">{{ state.heavenlyTrigram.trigram.trigram }}</p>
+                      <p :style="{ color: colorClass }" class="card-text display-6">{{ state.heavenlyTrigram.trigram.description.bodyPart }}</p>
+                      <router-link :to="`/trigram_detail?trigram=${state.heavenlyTrigram.trigram.binary}`" class="btn btn-primary">Heavenly Detail</router-link>
+                    </div>
+                    <div class="col-12 col-sm-5">
+                      <p class="card-text display-3">{{ state.earthlyTrigram.trigram.name }}</p>
+                      <p :style="{ color: colorClass }" class="card-text display-1">{{ state.earthlyTrigram.trigram.symbol }}</p>
+                      <p :style="{ color: colorClass }" class="card-text display-1">{{ state.earthlyTrigram.trigram.trigram }}</p>
+                      <p :style="{ color: colorClass }" class="card-text display-6">{{ state.earthlyTrigram.trigram.description.bodyPart }}</p>
+                      <router-link :to="`/trigram_detail?trigram=${state.earthlyTrigram.trigram.binary}`" class="btn btn-primary">Earthly Detail</router-link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 mb-4">
+              <div class="card text-center">
+                <div class="card-body" v-if="state.timeOfBirthHexagram">
+                  <h5 class="card-title">Time of Birth Hexagram</h5>
+                  <p class="card-text display-3">{{ state.timeOfBirthHexagram.hexagram.name }}</p>
+                  <p :style="{ color: colorClass }" class="card-text display-1">{{ state.timeOfBirthHexagram.hexagram.symbol }}</p>
+                  <p :style="{ color: colorClass }" class="card-text display-1">{{ state.timeOfBirthHexagram.hexagram.hexagram }}</p>
+                  <p :style="{ color: colorClass }" class="card-text display-6">{{ state.timeOfBirthHexagram.hexagram.translation.split(',')[0] }}</p>
+                  <div class="card-body">
+                    <h3 class="card-title">Summary</h3>
+                    <p class="card-text display-10" v-html="state.timeOfBirthHexagram.hexagram.summary"></p>
+                  </div>
+                  <router-link :to="`/hexagram_detail?hexagram=${state.timeOfBirthHexagram.hexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Early/Later Life Tab -->
+        <div class="tab-pane fade" id="early-later-life" role="tabpanel" aria-labelledby="early-later-life-tab">
+          <div class="row justify-content-center mt-4" v-if="state.cycle">
+            <div class="col-12 col-sm-6 mb-4">
+              <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenBirthSubCycles.length">
+                  <h5 class="card-title">Early Life</h5>
+                  <select v-model="state.selectedPreHeavenYear" class="form-control input-narrow">
+                    <option v-for="subCycle in state.preHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">{{ subCycle.year + ' - ' + subCycle.age }}</option>
+                  </select>
+                  <div v-if="state.selectedPreHeavenBirthSubCycle">
+                    <p class="card-text display-3">{{ state.selectedPreHeavenBirthSubCycle.hexagram.name }}</p>
+                    <p :style="{ color: colorClass }" class="card-text display-1">{{ state.selectedPreHeavenBirthSubCycle.hexagram.symbol }}</p>
                     <div class="center-content">
                       <svg
                         class="hexagram-svg"
                         :width="state.graphics.svgWidth"
                         :height="state.graphics.svgHeight"
-                        :viewBox="`0 0 ${state.graphics.svgWidth + 60} ${state.graphics.svgHeight}`"
+                        :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`"
                       >
                         <g :transform="`translate(${(state.graphics.svgWidth - state.graphics.lineLength) / 2}, 20)`">
                           <g
-                            v-if="state.preHeavenHexagram.above?.lineArray"
-                            v-for="(line, index) in [...state.preHeavenHexagram.above.lineArray].reverse()"
+                            v-for="(line, index) in [...state.selectedPreHeavenBirthSubCycle.hexagram.above.lineArray].reverse()"
                             :key="'heaven' + index"
                             :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`"
                           >
                             <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" stroke="white" :stroke-width="state.graphics.lineWidth" />
-                            <text v-if="index === 0" :x="state.graphics.lineLength + 10" y="-20" dy=".35em" fill="black">Age</text>
-                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" fill="black">{{ line.yearRange[0] }} - {{ line.yearRange[1] }}</text>
-                            <text>{{ updateGlobalPreHeavenLineIndex() }}</text>
+                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <text>{{ updateGlobalEarlyLifeLineIndex() }}</text>
                           </g>
                           <g
-                            v-if="state.preHeavenHexagram.below?.lineArray"
-                            v-for="(line, index) in [...state.preHeavenHexagram.below.lineArray].reverse()"
+                            v-for="(line, index) in [...state.selectedPreHeavenBirthSubCycle.hexagram.below.lineArray].reverse()"
                             :key="'earth' + index"
                             :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`"
                           >
-                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determinePreHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" fill="black">{{ line.yearRange[0] }} - {{ line.yearRange[1] }}</text>
-                            <text>{{ updateGlobalPreHeavenLineIndex() }}</text>
+                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <text>{{ updateGlobalEarlyLifeLineIndex() }}</text>
                           </g>
                         </g>
                       </svg>
                     </div>
-                    <p :style="{ color: colorClass }" class="card-text display-6">{{ state.preHeavenHexagram.translation.split(',')[0] }}</p>
-                    <div class="card-body" v-if="state.preHeavenHexagram.controllingLine">
+                    <p :style="{ color: colorClass }" class="card-text display-6">{{ state.selectedPreHeavenBirthSubCycle.hexagram.translation.split(',')[0] }}</p>
+                    <div class="card-body" v-if="state.selectedPreHeavenBirthSubCycle">
                       <h3 class="card-title">Controlling Line</h3>
-                      <p class="card-text display-10">{{ state.preHeavenHexagram.controllingLine.trigram }} Trigram {{ state.preHeavenHexagram.controllingLine.linePosition }} Line ({{ state.preHeavenHexagram.controllingLine.line.name }})</p>
+                      <p class="card-text display-10">Age {{ state.selectedPreHeavenBirthSubCycle.age }}</p>
+                      <h3 class="card-title">Before Transformation</h3>
+                      <p class="card-text display-10">{{ state.selectedPreHeavenBirthSubCycle.controllingLine.trigram }} Trigram {{ state.selectedPreHeavenBirthSubCycle.controllingLine.linePosition }} Line ({{ state.selectedPreHeavenBirthSubCycle.controllingLine.line.name }})</p>
                     </div>
                     <div class="card-body">
                       <h3 class="card-title">Summary</h3>
-                      <p class="card-text display-10" v-html="state.preHeavenHexagram.summary"></p>
+                      <p class="card-text display-10" v-html="state.selectedPreHeavenBirthSubCycle.hexagram.summary"></p>
                     </div>
-                    <router-link :to="`/hexagram_detail?hexagram=${state.preHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
+                    <router-link :to="`/hexagram_detail?hexagram=${state.selectedPreHeavenBirthSubCycle.hexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
                   </div>
                 </div>
               </div>
-
-              <!-- Later-Heaven Hexagram -->
-              <div class="col-12 col-md-6 col-lg-5 mb-4">
-                <div class="card text-center">
-                  <div class="card-body" v-if="state.laterHeavenHexagram">
-                    <h5 class="card-title">Later-Heaven Hexagram</h5>
-                    <p class="card-text display-3">{{ state.laterHeavenHexagram.name }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-1">{{ state.laterHeavenHexagram.symbol }}</p>
+            </div>
+            <div class="col-12 col-sm-6 mb-4">
+              <div class="card text-center">
+                <div class="card-body" v-if="state.laterHeavenBirthSubCycles.length">
+                  <h5 class="card-title">Later Life</h5>
+                  <select v-model="state.selectedLaterHeavenYear" class="form-control input-narrow">
+                    <option v-for="subCycle in state.laterHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">{{ subCycle.year + ' - ' + subCycle.age }}</option>
+                  </select>
+                  <div v-if="state.laterHeavenBirthSubCycleHexagram">
+                    <p class="card-text display-3">{{ state.laterHeavenBirthSubCycleHexagram.name }}</p>
+                    <p :style="{ color: colorClass }" class="card-text display-1">{{ state.laterHeavenBirthSubCycleHexagram.symbol }}</p>
                     <div class="center-content">
                       <svg
                         class="hexagram-svg"
                         :width="state.graphics.svgWidth"
                         :height="state.graphics.svgHeight"
-                        :viewBox="`0 0 ${state.graphics.svgWidth + 60} ${state.graphics.svgHeight}`"
+                        :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`"
                       >
                         <g :transform="`translate(${(state.graphics.svgWidth - state.graphics.lineLength) / 2}, 20)`">
                           <g
-                            v-if="state.laterHeavenHexagram.above?.lineArray"
-                            v-for="(line, index) in [...state.laterHeavenHexagram.above.lineArray].reverse()"
+                            v-for="(line, index) in [...state.laterHeavenBirthSubCycleHexagram.above.lineArray].reverse()"
                             :key="'heaven' + index"
                             :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`"
                           >
                             <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" stroke="white" :stroke-width="state.graphics.lineWidth" />
-                            <text v-if="index === 0" :x="state.graphics.lineLength + 10" y="-20" dy=".35em" fill="black">Age</text>
-                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" fill="black">{{ line.yearRange[0] }} - {{ line.yearRange[1] }}</text>
-                            <text>{{ updateGlobalLaterHeavenLineIndex() }}</text>
+                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <text>{{ updateGlobalLaterLifeLineIndex() }}</text>
                           </g>
                           <g
-                            v-if="state.laterHeavenHexagram.below?.lineArray"
-                            v-for="(line, index) in [...state.laterHeavenHexagram.below.lineArray].reverse()"
+                            v-for="(line, index) in [...state.laterHeavenBirthSubCycleHexagram.below.lineArray].reverse()"
                             :key="'earth' + index"
                             :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`"
                           >
-                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineLaterHeavenLineColor(line)" :stroke-width="state.graphics.lineWidth" />
-                            <text :x="state.graphics.lineLength + 10" y="0" dy=".35em" fill="black">{{ line.yearRange[0] }} - {{ line.yearRange[1] }}</text>
-                            <text>{{ updateGlobalLaterHeavenLineIndex() }}</text>
+                            <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
+                            <text>{{ updateGlobalLaterLifeLineIndex() }}</text>
                           </g>
                         </g>
                       </svg>
                     </div>
-                    <p :style="{ color: colorClass }" class="card-text display-6">{{ state.laterHeavenHexagram.translation.split(',')[0] }}</p>
-                    <div class="card-body" v-if="state.laterHeavenHexagram.controllingLine">
+                    <p :style="{ color: colorClass }" class="card-text display-6">{{ state.laterHeavenBirthSubCycleHexagram.translation.split(',')[0] }}</p>
+                    <div class="card-body" v-if="state.selectedLaterHeavenBirthSubCycle">
                       <h3 class="card-title">Controlling Line</h3>
-                      <p class="card-text display-10">{{ state.laterHeavenHexagram.controllingLine.trigram }} Trigram {{ state.laterHeavenHexagram.controllingLine.linePosition }} Line ({{ state.laterHeavenHexagram.controllingLine.line.name }})</p>
+                      <p class="card-text display-10">Age {{ state.selectedLaterHeavenBirthSubCycle.age }}</p>
+                      <h3 class="card-title">Before Transformation</h3>
+                      <p class="card-text display-10">{{ state.selectedLaterHeavenBirthSubCycle.controllingLine.trigram }} Trigram {{ state.selectedLaterHeavenBirthSubCycle.controllingLine.linePosition }} Line ({{ state.selectedLaterHeavenBirthSubCycle.controllingLine.line.name }})</p>
                     </div>
                     <div class="card-body">
                       <h3 class="card-title">Summary</h3>
-                      <p class="card-text display-10" v-html="state.laterHeavenHexagram.summary"></p>
+                      <p class="card-text display-10" v-html="state.laterHeavenBirthSubCycleHexagram.summary"></p>
                     </div>
-                    <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
+                    <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenBirthSubCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Heavenly and Earthly Trigrams -->
-    <div v-if="state.showTrigrams && state.cycle" class="row justify-content-center">
-      <div class="col-12 col-sm-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body" v-if="state.heavenlyTrigram && state.earthlyTrigram">
-            <h5 class="card-title">Heavenly and Earthly Trigrams</h5>
-            <div class="row justify-content-center">
-              <div class="col-12 col-sm-5">
-                <p class="card-text display-3">{{ state.heavenlyTrigram.trigram.name }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-1">{{ state.heavenlyTrigram.trigram.symbol }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-1">{{ state.heavenlyTrigram.trigram.trigram }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-6">{{ state.heavenlyTrigram.trigram.description.bodyPart }}</p>
-                <router-link :to="`/trigram_detail?trigram=${state.heavenlyTrigram.trigram.binary}`" class="btn btn-primary">Heavenly Detail</router-link>
-              </div>
-              <div class="col-12 col-sm-5">
-                <p class="card-text display-3">{{ state.earthlyTrigram.trigram.name }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-1">{{ state.earthlyTrigram.trigram.symbol }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-1">{{ state.earthlyTrigram.trigram.trigram }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-6">{{ state.earthlyTrigram.trigram.description.bodyPart }}</p>
-                <router-link :to="`/trigram_detail?trigram=${state.earthlyTrigram.trigram.binary}`" class="btn btn-primary">Earthly Detail</router-link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Time of Birth Hexagram -->
-      <div class="col-12 col-sm-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body" v-if="state.timeOfBirthHexagram">
-            <h5 class="card-title">Time of Birth Hexagram</h5>
-            <p class="card-text display-3">{{ state.timeOfBirthHexagram.hexagram.name }}</p>
-            <p :style="{ color: colorClass }" class="card-text display-1">{{ state.timeOfBirthHexagram.hexagram.symbol }}</p>
-            <p :style="{ color: colorClass }" class="card-text display-1">{{ state.timeOfBirthHexagram.hexagram.hexagram }}</p>
-            <p :style="{ color: colorClass }" class="card-text display-6">{{ state.timeOfBirthHexagram.hexagram.translation.split(',')[0] }}</p>
-            <div class="card-body">
-              <h3 class="card-title">Summary</h3>
-              <p class="card-text display-10" v-html="state.timeOfBirthHexagram.hexagram.summary"></p>
-            </div>
-            <router-link :to="`/hexagram_detail?hexagram=${state.timeOfBirthHexagram.hexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Early Life and Later Life -->
-    <div v-if="state.showEarlyLaterLife && state.cycle" class="row justify-content-center">
-      <div class="col-12 col-sm-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body" v-if="state.preHeavenBirthSubCycles.length">
-            <h5 class="card-title">Early Life</h5>
-            <select v-model="state.selectedPreHeavenYear" class="form-control input-narrow">
-              <option v-for="subCycle in state.preHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">{{ subCycle.year + ' - ' + subCycle.age }}</option>
-            </select>
-            <div v-if="state.selectedPreHeavenBirthSubCycle">
-              <p class="card-text display-3">{{ state.selectedPreHeavenBirthSubCycle.hexagram.name }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-1">{{ state.selectedPreHeavenBirthSubCycle.hexagram.symbol }}</p>
-              <div class="center-content">
-                <svg
-                  class="hexagram-svg"
-                  :width="state.graphics.svgWidth"
-                  :height="state.graphics.svgHeight"
-                  :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`"
-                >
-                  <g :transform="`translate(${(state.graphics.svgWidth - state.graphics.lineLength) / 2}, 20)`">
-                    <g
-                      v-for="(line, index) in [...state.selectedPreHeavenBirthSubCycle.hexagram.above.lineArray].reverse()"
-                      :key="'heaven' + index"
-                      :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`"
-                    >
-                      <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" stroke="white" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <text>{{ updateGlobalEarlyLifeLineIndex() }}</text>
-                    </g>
-                    <g
-                      v-for="(line, index) in [...state.selectedPreHeavenBirthSubCycle.hexagram.below.lineArray].reverse()"
-                      :key="'earth' + index"
-                      :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`"
-                    >
-                      <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedPreHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <text>{{ updateGlobalEarlyLifeLineIndex() }}</text>
-                    </g>
-                  </g>
-                </svg>
-              </div>
-              <p :style="{ color: colorClass }" class="card-text display-6">{{ state.selectedPreHeavenBirthSubCycle.hexagram.translation.split(',')[0] }}</p>
-              <div class="card-body" v-if="state.selectedPreHeavenBirthSubCycle">
-                <h3 class="card-title">Controlling Line</h3>
-                <p class="card-text display-10">Age {{ state.selectedPreHeavenBirthSubCycle.age }}</p>
-                <h3 class="card-title">Before Transformation</h3>
-                <p class="card-text display-10">{{ state.selectedPreHeavenBirthSubCycle.controllingLine.trigram }} Trigram {{ state.selectedPreHeavenBirthSubCycle.controllingLine.linePosition }} Line ({{ state.selectedPreHeavenBirthSubCycle.controllingLine.line.name }})</p>
-              </div>
-              <div class="card-body">
-                <h3 class="card-title">Summary</h3>
-                <p class="card-text display-10" v-html="state.selectedPreHeavenBirthSubCycle.hexagram.summary"></p>
-              </div>
-              <router-link :to="`/hexagram_detail?hexagram=${state.selectedPreHeavenBirthSubCycle.hexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body" v-if="state.laterHeavenBirthSubCycles.length">
-            <h5 class="card-title">Later Life</h5>
-            <select v-model="state.selectedLaterHeavenYear" class="form-control input-narrow">
-              <option v-for="subCycle in state.laterHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">{{ subCycle.year + ' - ' + subCycle.age }}</option>
-            </select>
-            <div v-if="state.laterHeavenBirthSubCycleHexagram">
-              <p class="card-text display-3">{{ state.laterHeavenBirthSubCycleHexagram.name }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-1">{{ state.laterHeavenBirthSubCycleHexagram.symbol }}</p>
-              <div class="center-content">
-                <svg
-                  class="hexagram-svg"
-                  :width="state.graphics.svgWidth"
-                  :height="state.graphics.svgHeight"
-                  :viewBox="`0 0 ${state.graphics.svgWidth} ${state.graphics.svgHeight}`"
-                >
-                  <g :transform="`translate(${(state.graphics.svgWidth - state.graphics.lineLength) / 2}, 20)`">
-                    <g
-                      v-for="(line, index) in [...state.laterHeavenBirthSubCycleHexagram.above.lineArray].reverse()"
-                      :key="'heaven' + index"
-                      :transform="`translate(0, ${(index + 1) * state.graphics.lineSpacing})`"
-                    >
-                      <line v-if="index === 0" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" stroke="white" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Above', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <text>{{ updateGlobalLaterLifeLineIndex() }}</text>
-                    </g>
-                    <g
-                      v-for="(line, index) in [...state.laterHeavenBirthSubCycleHexagram.below.lineArray].reverse()"
-                      :key="'earth' + index"
-                      :transform="`translate(0, ${(index + 4) * state.graphics.lineSpacing + 20})`"
-                    >
-                      <line v-if="line.alternate === 'YOUNGYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'YOUNGYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYANG'" :x1="0" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYIN'" :x1="0" :y1="0" :x2="state.graphics.lineLength / 2 - state.graphics.gapWidth" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <line v-if="line.alternate === 'OLDYIN'" :x1="state.graphics.lineLength / 2 + state.graphics.gapWidth" :y1="0" :x2="state.graphics.lineLength" :y2="0" :stroke="determineSelectedLaterHeavenBirthSubCycleLineColor('Below', line, index)" :stroke-width="state.graphics.lineWidth" />
-                      <text>{{ updateGlobalLaterLifeLineIndex() }}</text>
-                    </g>
-                  </g>
-                </svg>
-              </div>
-              <p :style="{ color: colorClass }" class="card-text display-6">{{ state.laterHeavenBirthSubCycleHexagram.translation.split(',')[0] }}</p>
-              <div class="card-body" v-if="state.selectedLaterHeavenBirthSubCycle">
-                <h3 class="card-title">Controlling Line</h3>
-                <p class="card-text display-10">Age {{ state.selectedLaterHeavenBirthSubCycle.age }}</p>
-                <h3 class="card-title">Before Transformation</h3>
-                <p class="card-text display-10">{{ state.selectedLaterHeavenBirthSubCycle.controllingLine.trigram }} Trigram {{ state.selectedLaterHeavenBirthSubCycle.controllingLine.linePosition }} Line ({{ state.selectedLaterHeavenBirthSubCycle.controllingLine.line.name }})</p>
-              </div>
-              <div class="card-body">
-                <h3 class="card-title">Summary</h3>
-                <p class="card-text display-10" v-html="state.laterHeavenBirthSubCycleHexagram.summary"></p>
-              </div>
-              <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenBirthSubCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Daily Early Life and Later Life -->
-    <div v-if="state.showDailyCycles && state.cycle" class="row justify-content-center">
-      <div class="col-12 col-sm-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body" v-if="state.preHeavenDailyCycle.length">
-            <h5 class="card-title">Daily Early Life</h5>
-            <select v-model="state.selectedPreHeavenDailyCycleDate" class="form-control input-narrow">
-              <option v-for="subCycle in state.preHeavenDailyCycle" :key="subCycle.date" :value="subCycle.date">{{ subCycle.date }}</option>
-            </select>
-            <div v-if="state.preHeavenDailyCycleHexagram">
-              <p class="card-text display-3">{{ state.preHeavenDailyCycleHexagram.name }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-1">{{ state.preHeavenDailyCycleHexagram.symbol }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-1">{{ state.preHeavenDailyCycleHexagram.hexagram }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-3">{{ state.preHeavenDailyCycleHexagram.translation.split(',')[0] }}</p>
-              <div class="card-body">
-                <h3 class="card-title">Summary</h3>
-                <p class="card-text display-10" v-html="state.preHeavenDailyCycleHexagram.summary"></p>
-              </div>
-              <router-link :to="`/hexagram_detail?hexagram=${state.preHeavenDailyCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body" v-if="state.laterHeavenDailyCycle.length">
-            <h5 class="card-title">Daily Later Life</h5>
-            <select v-model="state.selectedLaterHeavenDailyCycleDate" class="form-control input-narrow">
-              <option v-for="subCycle in state.laterHeavenDailyCycle" :key="subCycle.date" :value="subCycle.date">{{ subCycle.date }}</option>
-            </select>
-            <div v-if="state.laterHeavenDailyCycleHexagram">
-              <p class="card-text display-3">{{ state.laterHeavenDailyCycleHexagram.name }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-1">{{ state.laterHeavenDailyCycleHexagram.symbol }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-1">{{ state.laterHeavenDailyCycleHexagram.hexagram }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-3">{{ state.laterHeavenDailyCycleHexagram.translation.split(',')[0] }}</p>
-              <div class="card-body">
-                <h3 class="card-title">Summary</h3>
-                <p class="card-text display-10" v-html="state.laterHeavenDailyCycleHexagram.summary"></p>
-              </div>
-              <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenDailyCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Yearly Cycle -->
-    <div v-if="state.showYearlyCycle && state.cycle" class="row justify-content-center">
-      <div class="col-12">
-        <div class="card text-center">
-          <h3 class="card-header">Yearly Cycle</h3>
-          <div class="card-body">
-            <div class="row justify-content-center">
-              <div class="col-12 col-sm-6 mb-4">
-                <div class="card text-center">
-                  <div class="card-body" v-if="state.sexagenaryCycle">
-                    <h5 class="card-title">Celestial Stem - {{ formatBirthYear }}</h5>
-                    <p class="card-text display-3">{{ state.sexagenaryCycle.celestialStem.name }}</p>
-                    <p class="card-text display-1">{{ state.sexagenaryCycle.celestialStem.symbol }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.sexagenaryCycle.celestialStem.element.name }} {{ state.sexagenaryCycle.celestialStem.element.bodyPart }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.sexagenaryCycle.celestialStem.trigram.name }} {{ state.sexagenaryCycle.celestialStem.trigram.symbol }} {{ state.sexagenaryCycle.celestialStem.trigram.trigram }} {{ state.sexagenaryCycle.celestialStem.trigram.description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.sexagenaryCycle.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</router-link>
+        <!-- Daily Cycles Tab -->
+        <div class="tab-pane fade" id="daily-cycles" role="tabpanel" aria-labelledby="daily-cycles-tab">
+          <div class="row justify-content-center mt-4" v-if="state.cycle">
+            <div class="col-12 col-sm-6 mb-4">
+              <div class="card text-center">
+                <div class="card-body" v-if="state.preHeavenDailyCycle.length">
+                  <h5 class="card-title">Daily Early Life</h5>
+                  <select v-model="state.selectedPreHeavenDailyCycleDate" class="form-control input-narrow">
+                    <option v-for="subCycle in state.preHeavenDailyCycle" :key="subCycle.date" :value="subCycle.date">{{ subCycle.date }}</option>
+                  </select>
+                  <div v-if="state.preHeavenDailyCycleHexagram">
+                    <p class="card-text display-3">{{ state.preHeavenDailyCycleHexagram.name }}</p>
+                    <p :style="{ color: colorClass }" class="card-text display-1">{{ state.preHeavenDailyCycleHexagram.symbol }}</p>
+                    <p :style="{ color: colorClass }" class="card-text display-1">{{ state.preHeavenDailyCycleHexagram.hexagram }}</p>
+                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.preHeavenDailyCycleHexagram.translation.split(',')[0] }}</p>
+                    <div class="card-body">
+                      <h3 class="card-title">Summary</h3>
+                      <p class="card-text display-10" v-html="state.preHeavenDailyCycleHexagram.summary"></p>
+                    </div>
+                    <router-link :to="`/hexagram_detail?hexagram=${state.preHeavenDailyCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-sm-6 mb-4">
-                <div class="card text-center">
-                  <div class="card-body" v-if="state.sexagenaryCycle">
-                    <h5 class="card-title">Horary Branch - {{ formatBirthYear }}</h5>
-                    <p class="card-text display-3">{{ state.sexagenaryCycle.horaryBranch.name }}</p>
-                    <p class="card-text display-1">{{ state.sexagenaryCycle.horaryBranch.symbol }} {{ state.sexagenaryCycle.horaryBranch.animal }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.sexagenaryCycle.horaryBranch.element.name }} {{ state.sexagenaryCycle.horaryBranch.element.bodyPart }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.sexagenaryCycle.horaryBranch.element.trigrams[0].name }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[0].trigram }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[0].description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</router-link>
-                    <p :style="{ color: colorClass }" class="card-text display-3 mt-3">{{ state.sexagenaryCycle.horaryBranch.element.trigrams[1].name }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[1].trigram }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[1].description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary mt-2">Detail</router-link>
+            </div>
+            <div class="col-12 col-sm-6 mb-4">
+              <div class="card text-center">
+                <div class="card-body" v-if="state.laterHeavenDailyCycle.length">
+                  <h5 class="card-title">Daily Later Life</h5>
+                  <select v-model="state.selectedLaterHeavenDailyCycleDate" class="form-control input-narrow">
+                    <option v-for="subCycle in state.laterHeavenDailyCycle" :key="subCycle.date" :value="subCycle.date">{{ subCycle.date }}</option>
+                  </select>
+                  <div v-if="state.laterHeavenDailyCycleHexagram">
+                    <p class="card-text display-3">{{ state.laterHeavenDailyCycleHexagram.name }}</p>
+                    <p :style="{ color: colorClass }" class="card-text display-1">{{ state.laterHeavenDailyCycleHexagram.symbol }}</p>
+                    <p :style="{ color: colorClass }" class="card-text display-1">{{ state.laterHeavenDailyCycleHexagram.hexagram }}</p>
+                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.laterHeavenDailyCycleHexagram.translation.split(',')[0] }}</p>
+                    <div class="card-body">
+                      <h3 class="card-title">Summary</h3>
+                      <p class="card-text display-10" v-html="state.laterHeavenDailyCycleHexagram.summary"></p>
+                    </div>
+                    <router-link :to="`/hexagram_detail?hexagram=${state.laterHeavenDailyCycleHexagram.binary}`" class="btn btn-primary">Hexagram Detail</router-link>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Monthly Cycle -->
-    <div v-if="state.showMonthlyCycle && state.cycle" class="row justify-content-center">
-      <div class="col-12">
-        <div class="card text-center">
-          <h3 class="card-header">Monthly Cycle</h3>
-          <div class="card-body">
-            <div class="row justify-content-center">
-              <div class="col-12 col-sm-6 mb-4">
-                <div class="card text-center">
-                  <div class="card-body" v-if="state.birthStemsandBranches">
-                    <h5 class="card-title">Celestial Stem - {{ formatBirthMonth }}</h5>
-                    <p class="card-text display-3">{{ state.birthStemsandBranches.celestialStem.name }}</p>
-                    <p class="card-text display-1">{{ state.birthStemsandBranches.celestialStem.symbol }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.birthStemsandBranches.celestialStem.element.name }} {{ state.birthStemsandBranches.celestialStem.element.bodyPart }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.birthStemsandBranches.celestialStem.trigram.name }} {{ state.birthStemsandBranches.celestialStem.trigram.symbol }} {{ state.birthStemsandBranches.celestialStem.trigram.trigram }} {{ state.birthStemsandBranches.celestialStem.trigram.description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</router-link>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-sm-6 mb-4">
-                <div class="card text-center">
-                  <div class="card-body" v-if="state.birthStemsandBranches">
-                    <h5 class="card-title">Horary Branch - {{ formatBirthMonth }}</h5>
-                    <p class="card-text display-3">{{ state.birthStemsandBranches.horaryBranch.name }}</p>
-                    <p class="card-text display-1">{{ state.birthStemsandBranches.horaryBranch.symbol }} {{ state.birthStemsandBranches.horaryBranch.animal }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.birthStemsandBranches.horaryBranch.element.name }} {{ state.birthStemsandBranches.horaryBranch.element.bodyPart }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.birthStemsandBranches.horaryBranch.element.trigrams[0].name }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[0].trigram }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</router-link>
-                    <p :style="{ color: colorClass }" class="card-text display-3 mt-3">{{ state.birthStemsandBranches.horaryBranch.element.trigrams[1].name }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[1].trigram }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary mt-2">Detail</router-link>
+        <!-- Yearly Cycle Tab -->
+        <div class="tab-pane fade" id="yearly-cycle" role="tabpanel" aria-labelledby="yearly-cycle-tab">
+          <div class="row justify-content-center mt-4" v-if="state.cycle">
+            <div class="col-12">
+              <div class="card text-center">
+                <h3 class="card-header">Yearly Cycle</h3>
+                <div class="card-body">
+                  <div class="row justify-content-center">
+                    <div class="col-12 col-sm-6 mb-4">
+                      <div class="card text-center">
+                        <div class="card-body" v-if="state.sexagenaryCycle">
+                          <h5 class="card-title">Celestial Stem - {{ formatBirthYear }}</h5>
+                          <p class="card-text display-3">{{ state.sexagenaryCycle.celestialStem.name }}</p>
+                          <p class="card-text display-1">{{ state.sexagenaryCycle.celestialStem.symbol }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.sexagenaryCycle.celestialStem.element.name }} {{ state.sexagenaryCycle.celestialStem.element.bodyPart }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.sexagenaryCycle.celestialStem.trigram.name }} {{ state.sexagenaryCycle.celestialStem.trigram.symbol }} {{ state.sexagenaryCycle.celestialStem.trigram.trigram }} {{ state.sexagenaryCycle.celestialStem.trigram.description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.sexagenaryCycle.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</router-link>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 mb-4">
+                      <div class="card text-center">
+                        <div class="card-body" v-if="state.sexagenaryCycle">
+                          <h5 class="card-title">Horary Branch - {{ formatBirthYear }}</h5>
+                          <p class="card-text display-3">{{ state.sexagenaryCycle.horaryBranch.name }}</p>
+                          <p class="card-text display-1">{{ state.sexagenaryCycle.horaryBranch.symbol }} {{ state.sexagenaryCycle.horaryBranch.animal }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.sexagenaryCycle.horaryBranch.element.name }} {{ state.sexagenaryCycle.horaryBranch.element.bodyPart }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.sexagenaryCycle.horaryBranch.element.trigrams[0].name }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[0].symbol }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[0].trigram }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[0].description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</router-link>
+                          <p :style="{ color: colorClass }" class="card-text display-3 mt-3">{{ state.sexagenaryCycle.horaryBranch.element.trigrams[1].name }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[1].symbol }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[1].trigram }} {{ state.sexagenaryCycle.horaryBranch.element.trigrams[1].description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.sexagenaryCycle.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary mt-2">Detail</router-link>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Daily Cycle -->
-    <div v-if="state.showDailyCycle && state.cycle" class="row justify-content-center">
-      <div class="col-12">
-        <div class="card text-center">
-          <h3 class="card-header">Daily Cycle</h3>
-          <div class="card-body">
-            <div class="row justify-content-center">
-              <div class="col-12 col-sm-6 mb-4">
-                <div class="card text-center">
-                  <div class="card-body" v-if="state.dailyStemsandBranches">
-                    <h5 class="card-title">Celestial Stem - {{ formatBirthDay }}</h5>
-                    <p class="card-text display-3">{{ state.dailyStemsandBranches.celestialStem.name }}</p>
-                    <p class="card-text display-1">{{ state.dailyStemsandBranches.celestialStem.symbol }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.dailyStemsandBranches.celestialStem.element.name }} {{ state.dailyStemsandBranches.celestialStem.element.bodyPart }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.dailyStemsandBranches.celestialStem.trigram.symbol }} {{ state.dailyStemsandBranches.celestialStem.trigram.trigram }} {{ state.dailyStemsandBranches.celestialStem.trigram.description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.dailyStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</router-link>
+        <!-- Monthly Cycle Tab -->
+        <div class="tab-pane fade" id="monthly-cycle" role="tabpanel" aria-labelledby="monthly-cycle-tab">
+          <div class="row justify-content-center mt-4" v-if="state.cycle">
+            <div class="col-12">
+              <div class="card text-center">
+                <h3 class="card-header">Monthly Cycle</h3>
+                <div class="card-body">
+                  <div class="row justify-content-center">
+                    <div class="col-12 col-sm-6 mb-4">
+                      <div class="card text-center">
+                        <div class="card-body" v-if="state.birthStemsandBranches">
+                          <h5 class="card-title">Celestial Stem - {{ formatBirthMonth }}</h5>
+                          <p class="card-text display-3">{{ state.birthStemsandBranches.celestialStem.name }}</p>
+                          <p class="card-text display-1">{{ state.birthStemsandBranches.celestialStem.symbol }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.birthStemsandBranches.celestialStem.element.name }} {{ state.birthStemsandBranches.celestialStem.element.bodyPart }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.birthStemsandBranches.celestialStem.trigram.name }} {{ state.birthStemsandBranches.celestialStem.trigram.symbol }} {{ state.birthStemsandBranches.celestialStem.trigram.trigram }} {{ state.birthStemsandBranches.celestialStem.trigram.description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.birthStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</router-link>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 mb-4">
+                      <div class="card text-center">
+                        <div class="card-body" v-if="state.birthStemsandBranches">
+                          <h5 class="card-title">Horary Branch - {{ formatBirthMonth }}</h5>
+                          <p class="card-text display-3">{{ state.birthStemsandBranches.horaryBranch.name }}</p>
+                          <p class="card-text display-1">{{ state.birthStemsandBranches.horaryBranch.symbol }} {{ state.birthStemsandBranches.horaryBranch.animal }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.birthStemsandBranches.horaryBranch.element.name }} {{ state.birthStemsandBranches.horaryBranch.element.bodyPart }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.birthStemsandBranches.horaryBranch.element.trigrams[0].name }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[0].symbol }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[0].trigram }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</router-link>
+                          <p :style="{ color: colorClass }" class="card-text display-3 mt-3">{{ state.birthStemsandBranches.horaryBranch.element.trigrams[1].name }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[1].symbol }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[1].trigram }} {{ state.birthStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.birthStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary mt-2">Detail</router-link>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-sm-6 mb-4">
-                <div class="card text-center">
-                  <div class="card-body" v-if="state.dailyStemsandBranches">
-                    <h5 class="card-title">Horary Branch - {{ formatBirthDay }}</h5>
-                    <p class="card-text display-3">{{ state.dailyStemsandBranches.horaryBranch.name }}</p>
-                    <p class="card-text display-1">{{ state.dailyStemsandBranches.horaryBranch.symbol }} {{ state.dailyStemsandBranches.horaryBranch.animal }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.dailyStemsandBranches.horaryBranch.element.name }} {{ state.dailyStemsandBranches.horaryBranch.element.bodyPart }}</p>
-                    <p :style="{ color: colorClass }" class="card-text display-3">{{ state.dailyStemsandBranches.horaryBranch.element.trigrams[0].name }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[0].symbol }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[0].trigram }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</router-link>
-                    <p :style="{ color: colorClass }" class="card-text display-3 mt-3">{{ state.dailyStemsandBranches.horaryBranch.element.trigrams[1].name }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[1].symbol }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[1].trigram }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0] }}</p>
-                    <router-link :to="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary mt-2">Detail</router-link>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Cycle Tab -->
+        <div class="tab-pane fade" id="daily-cycle" role="tabpanel" aria-labelledby="daily-cycle-tab">
+          <div class="row justify-content-center mt-4" v-if="state.cycle">
+            <div class="col-12">
+              <div class="card text-center">
+                <h3 class="card-header">Daily Cycle</h3>
+                <div class="card-body">
+                  <div class="row justify-content-center">
+                    <div class="col-12 col-sm-6 mb-4">
+                      <div class="card text-center">
+                        <div class="card-body" v-if="state.dailyStemsandBranches">
+                          <h5 class="card-title">Celestial Stem - {{ formatBirthDay }}</h5>
+                          <p class="card-text display-3">{{ state.dailyStemsandBranches.celestialStem.name }}</p>
+                          <p class="card-text display-1">{{ state.dailyStemsandBranches.celestialStem.symbol }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.dailyStemsandBranches.celestialStem.element.name }} {{ state.dailyStemsandBranches.celestialStem.element.bodyPart }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.dailyStemsandBranches.celestialStem.trigram.symbol }} {{ state.dailyStemsandBranches.celestialStem.trigram.trigram }} {{ state.dailyStemsandBranches.celestialStem.trigram.description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.dailyStemsandBranches.celestialStem.trigram.binary}`" class="btn btn-primary">Detail</router-link>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 mb-4">
+                      <div class="card text-center">
+                        <div class="card-body" v-if="state.dailyStemsandBranches">
+                          <h5 class="card-title">Horary Branch - {{ formatBirthDay }}</h5>
+                          <p class="card-text display-3">{{ state.dailyStemsandBranches.horaryBranch.name }}</p>
+                          <p class="card-text display-1">{{ state.dailyStemsandBranches.horaryBranch.symbol }} {{ state.dailyStemsandBranches.horaryBranch.animal }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.dailyStemsandBranches.horaryBranch.element.name }} {{ state.dailyStemsandBranches.horaryBranch.element.bodyPart }}</p>
+                          <p :style="{ color: colorClass }" class="card-text display-3">{{ state.dailyStemsandBranches.horaryBranch.element.trigrams[0].name }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[0].symbol }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[0].trigram }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[0].description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[0].binary}`" class="btn btn-primary">Detail</router-link>
+                          <p :style="{ color: colorClass }" class="card-text display-3 mt-3">{{ state.dailyStemsandBranches.horaryBranch.element.trigrams[1].name }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[1].symbol }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[1].trigram }} {{ state.dailyStemsandBranches.horaryBranch.element.trigrams[1].description.translation.split(',')[0] }}</p>
+                          <router-link :to="`/trigram_detail?trigram=${state.dailyStemsandBranches.horaryBranch.element.trigrams[1].binary}`" class="btn btn-primary mt-2">Detail</router-link>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

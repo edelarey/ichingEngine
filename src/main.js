@@ -35,7 +35,7 @@ const savedColor = localStorage.getItem('backgroundColor');
 if (savedColor) {
   document.body.style.backgroundColor = savedColor;
 } else {
-  document.body.style.backgroundColor = '#3f41c2'; // Default from app.scss
+  document.body.style.backgroundColor = '#E6F0FA'; // Default from app.scss
 }
 
 
