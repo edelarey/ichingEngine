@@ -26,26 +26,27 @@
           <button class="nav-link" id="birthday-entry-tab" data-bs-toggle="tab" data-bs-target="#birthday-entry" type="button" role="tab" aria-controls="birthday-entry" aria-selected="false">Birthday Entry</button>
          </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="hexagrams-tab" data-bs-toggle="tab" data-bs-target="#hexagrams" type="button" role="tab" aria-controls="hexagrams" aria-selected="false">Hexagrams</button>
+          <button class="nav-link" id="hexagrams-tab" data-bs-toggle="tab" data-bs-target="#hexagrams" type="button" role="tab" aria-controls="hexagrams" aria-selected="false">Heavenly Hexagrams</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="trigrams-tab" data-bs-toggle="tab" data-bs-target="#trigrams" type="button" role="tab" aria-controls="trigrams" aria-selected="false">Trigrams</button>
+          <button class="nav-link" id="trigrams-tab" data-bs-toggle="tab" data-bs-target="#trigrams" type="button" role="tab" aria-controls="trigrams" aria-selected="false">Heaven & Earth Trigrams</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="early-later-life-tab" data-bs-toggle="tab" data-bs-target="#early-later-life" type="button" role="tab" aria-controls="early-later-life" aria-selected="false">Early/Later Life</button>
+          <button class="nav-link" id="yearly-cycle-tab" data-bs-toggle="tab" data-bs-target="#yearly-cycle" type="button" role="tab" aria-controls="yearly-cycle" aria-selected="false">Yearly Stem & Branch</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="daily-cycles-tab" data-bs-toggle="tab" data-bs-target="#daily-cycles" type="button" role="tab" aria-controls="daily-cycles" aria-selected="false">Daily Cycles</button>
+          <button class="nav-link" id="monthly-cycle-tab" data-bs-toggle="tab" data-bs-target="#monthly-cycle" type="button" role="tab" aria-controls="monthly-cycle" aria-selected="false">Monthly Stem & Branch</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="yearly-cycle-tab" data-bs-toggle="tab" data-bs-target="#yearly-cycle" type="button" role="tab" aria-controls="yearly-cycle" aria-selected="false">Yearly Cycle</button>
+          <button class="nav-link" id="daily-cycle-tab" data-bs-toggle="tab" data-bs-target="#daily-cycle" type="button" role="tab" aria-controls="daily-cycle" aria-selected="false">Daily Stem & Branch </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="monthly-cycle-tab" data-bs-toggle="tab" data-bs-target="#monthly-cycle" type="button" role="tab" aria-controls="monthly-cycle" aria-selected="false">Monthly Cycle</button>
+          <button class="nav-link" id="early-later-life-tab" data-bs-toggle="tab" data-bs-target="#early-later-life" type="button" role="tab" aria-controls="early-later-life" aria-selected="false">Early & Later Yearly Cycles</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="daily-cycle-tab" data-bs-toggle="tab" data-bs-target="#daily-cycle" type="button" role="tab" aria-controls="daily-cycle" aria-selected="false">Daily Cycle</button>
+          <button class="nav-link" id="daily-cycles-tab" data-bs-toggle="tab" data-bs-target="#daily-cycles" type="button" role="tab" aria-controls="daily-cycles" aria-selected="false">Early & Later Daily Cycles</button>
         </li>
+        
       </ul>
 
       <div class="tab-content" id="astrologyTabContent">
@@ -63,19 +64,19 @@
                     <p><strong>Gender:</strong> {{ state.gender }}</p>
                     <p><strong>Hemisphere:</strong> {{ state.hemisphere }}</p>
                     <h5 class="card-title mt-4 mb-3">Core Hexagrams</h5>
-                    <p><strong>Pre-Heaven Hexagram:</strong> {{ state.preHeavenHexagram?.name }} ({{ state.preHeavenHexagram?.symbol }})</p>
-                    <p><strong>Later-Heaven Hexagram:</strong> {{ state.laterHeavenHexagram?.name }} ({{ state.laterHeavenHexagram?.symbol }})</p>
-                    <p><strong>Time of Birth Hexagram:</strong> {{ state.timeOfBirthHexagram?.hexagram.name }} ({{ state.timeOfBirthHexagram?.hexagram.symbol }})</p>
+                    <p><strong>Pre-Heaven Hexagram:</strong> {{ state.preHeavenHexagram?.name }} ({{ state.preHeavenHexagram?.symbol }}) ({{ state.preHeavenHexagram?.hexagram }})</p>
+                    <p><strong>Later-Heaven Hexagram:</strong> {{ state.laterHeavenHexagram?.name }} ({{ state.laterHeavenHexagram?.symbol }}) ({{ state.laterHeavenHexagram?.hexagram }})</p>
+                    <p><strong>Time of Birth Hexagram:</strong> {{ state.timeOfBirthHexagram?.hexagram.name }} ({{ state.timeOfBirthHexagram?.hexagram.symbol }}) ({{ state.timeOfBirthHexagram?.hexagram.hexagram}})</p>
                     <h5 class="card-title mt-4 mb-3">Trigrams</h5>
-                    <p><strong>Heavenly Trigram:</strong> {{ state.heavenlyTrigram?.trigram.name }}</p>
-                    <p><strong>Earthly Trigram:</strong> {{ state.earthlyTrigram?.trigram.name }}</p>
+                    <p><strong>Heavenly Trigram:</strong> {{ state.heavenlyTrigram?.trigram.name }} ({{ state.heavenlyTrigram?.trigram.trigram }})</p>
+                    <p><strong>Earthly Trigram:</strong> {{ state.earthlyTrigram?.trigram.name }} ({{ state.earthlyTrigram?.trigram.trigram }})</p>
                     <h5 class="card-title mt-4 mb-3">Current Life Stage</h5>
-                    <p v-if="state.selectedPreHeavenBirthSubCycle"><strong>Early Life:</strong> {{ state.selectedPreHeavenBirthSubCycle.hexagram.name }} (Age {{ state.selectedPreHeavenBirthSubCycle.age }})</p>
-                    <p v-if="state.selectedLaterHeavenBirthSubCycle"><strong>Later Life:</strong> {{ state.laterHeavenBirthSubCycleHexagram?.name }} (Age {{ state.selectedLaterHeavenBirthSubCycle.age }})</p>
+                    <p v-if="state.selectedPreHeavenBirthSubCycle"><strong>Early Life:</strong> {{ state.selectedPreHeavenBirthSubCycle.hexagram.name }} ({{ state.selectedPreHeavenBirthSubCycle.hexagram.hexagram }}) (Age {{ state.selectedPreHeavenBirthSubCycle.age }})</p>
+                    <p v-if="state.selectedLaterHeavenBirthSubCycle"><strong>Later Life:</strong> {{ state.laterHeavenBirthSubCycleHexagram?.name }} ({{ state.laterHeavenBirthSubCycleHexagram?.hexagram }}) (Age {{ state.selectedLaterHeavenBirthSubCycle.age }})</p>
                     <h5 class="card-title mt-4 mb-3">Cycles</h5>
-                    <p><strong>Yearly Cycle ({{ formatBirthYear }}):</strong> {{ state.sexagenaryCycle?.celestialStem.name }} - {{ state.sexagenaryCycle?.horaryBranch.name }} ({{ state.sexagenaryCycle?.horaryBranch.animal }})</p>
-                    <p><strong>Monthly Cycle ({{ formatBirthMonth }}):</strong> {{ state.birthStemsandBranches?.celestialStem.name }} - {{ state.birthStemsandBranches?.horaryBranch.name }} ({{ state.birthStemsandBranches?.horaryBranch.animal }})</p>
-                    <p><strong>Daily Cycle ({{ formatBirthDay }}):</strong> {{ state.dailyStemsandBranches?.celestialStem.name }} - {{ state.dailyStemsandBranches?.horaryBranch.name }} ({{ state.dailyStemsandBranches?.horaryBranch.animal }})</p>
+                    <p><strong>Yearly Cycle ({{ formatBirthYear }}):</strong> {{ state.sexagenaryCycle?.celestialStem.name }} ({{state.sexagenaryCycle.celestialStem.trigram.trigram}}) - {{ state.sexagenaryCycle?.horaryBranch.name }} ({{ state.sexagenaryCycle?.horaryBranch.animal }})</p>
+                    <p><strong>Monthly Cycle ({{ formatBirthMonth }}):</strong> {{ state.birthStemsandBranches?.celestialStem.name }} ({{ state.birthStemsandBranches?.celestialStem.trigram.trigram }}) - {{ state.birthStemsandBranches?.horaryBranch.name }} ({{ state.birthStemsandBranches?.horaryBranch.animal }})</p>
+                    <p><strong>Daily Cycle ({{ formatBirthDay }}):</strong> {{ state.dailyStemsandBranches?.celestialStem.name }} ({{ state.dailyStemsandBranches?.celestialStem.trigram.trigram }}) - {{ state.dailyStemsandBranches?.horaryBranch.name }} ({{ state.dailyStemsandBranches?.horaryBranch.animal }})</p>
                   </div>
                   <div v-else>
                     <p>Please enter birth details and consult to view your summary.</p>
@@ -124,11 +125,11 @@
         </div>
 
         <!-- Birthday Entry Tab -->
-        <div class="tab-pane fade show active" id="birthday-entry" role="tabpanel" aria-labelledby="birthday-entry-tab">
+        <div class="tab-pane fade" id="birthday-entry" role="tabpanel" aria-labelledby="birthday-entry-tab">
           <div class="row justify-content-center mt-4">
             <div class="col-12 col-md-10 col-lg-8">
               <div class="card text-center">
-                <h3 class="card-header py-3">Astrological Hexagrams in the I Ching Sexagenary Cycle</h3>
+                <h3 class="card-header py-3">Astrological Hexagrams in the I-Ching Sexagenary Cycle</h3>
                 <div class="card-body" v-if="state.cycle">
                   <div class="row">
                     <div class="col-12">
@@ -408,7 +409,7 @@
             <div class="col-12 col-sm-6 mb-4">
               <div class="card text-center">
                 <div class="card-body" v-if="state.preHeavenBirthSubCycles.length">
-                  <h5 class="card-title">Early Life</h5>
+                  <h5 class="card-title">Early Life Yearly Cycles</h5>
                   <select v-model="state.selectedPreHeavenYear" class="form-control input-narrow">
                     <option v-for="subCycle in state.preHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">{{ subCycle.year + ' - ' + subCycle.age }}</option>
                   </select>
@@ -472,7 +473,7 @@
             <div class="col-12 col-sm-6 mb-4">
               <div class="card text-center">
                 <div class="card-body" v-if="state.laterHeavenBirthSubCycles.length">
-                  <h5 class="card-title">Later Life</h5>
+                  <h5 class="card-title">Later Life Yearly Cycles</h5>
                   <select v-model="state.selectedLaterHeavenYear" class="form-control input-narrow">
                     <option v-for="subCycle in state.laterHeavenBirthSubCycles" :key="subCycle.year" :value="subCycle.year">{{ subCycle.year + ' - ' + subCycle.age }}</option>
                   </select>
@@ -589,7 +590,7 @@
           <div class="row justify-content-center mt-4" v-if="state.cycle">
             <div class="col-12">
               <div class="card text-center">
-                <h3 class="card-header">Yearly Cycle</h3>
+                <h3 class="card-header">Yearly Stem and Branch</h3>
                 <div class="card-body">
                   <div class="row justify-content-center">
                     <div class="col-12 col-sm-6 mb-4">
@@ -630,7 +631,7 @@
           <div class="row justify-content-center mt-4" v-if="state.cycle">
             <div class="col-12">
               <div class="card text-center">
-                <h3 class="card-header">Monthly Cycle</h3>
+                <h3 class="card-header">Monthly Stem and Branch</h3>
                 <div class="card-body">
                   <div class="row justify-content-center">
                     <div class="col-12 col-sm-6 mb-4">
@@ -671,7 +672,7 @@
           <div class="row justify-content-center mt-4" v-if="state.cycle">
             <div class="col-12">
               <div class="card text-center">
-                <h3 class="card-header">Daily Cycle</h3>
+                <h3 class="card-header">Daily Stem and Branch</h3>
                 <div class="card-body">
                   <div class="row justify-content-center">
                     <div class="col-12 col-sm-6 mb-4">
