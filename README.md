@@ -21,3 +21,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # New Added Relationship Compatibility 
 # fix date handling
 # change to tab layout for Astrology
+# Add astrological images (Summary Only)
