@@ -3,7 +3,7 @@ import Home from '../views/home.vue';
 import Consult from '../views/consult.vue';
 import Astrology from '../views/astrology.vue';
 import AstrologyChart from '../views/astrology_chart.vue';
-import ComplexAstrologyChart from '../views/complex_astrology_chart.vue';
+import IChingZodiacChart from '../views/iching_zodiac_chart.vue';
 import Relationship from '../views/relationship.vue';
 import HexagramDetail from '../views/hexagram_detail.vue';
 import HexagramSequence from '../views/hexagram_sequence.vue';
@@ -34,9 +34,9 @@ const routes = [
     component: AstrologyChart,
   },
   {
-    path: '/complex_astrology_chart',
+    path: '/iching_zodiac_chart',
     name: 'ComplexAstrologyChart',
-    component: ComplexAstrologyChart,
+    component: IChingZodiacChart,
   },
   {
     path: '/relationship',

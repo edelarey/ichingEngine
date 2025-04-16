@@ -55,12 +55,12 @@
               </li>
               <li class="nav-item">
                 <router-link class="nav-link" to="/astrology_chart" exact-active-class="active">
-                  <span class="align-middle">Astrology Chart</span>
+                  <span class="align-middle">Chinese Zodiac Chart</span>
                 </router-link>
               </li>
               <li class="nav-item">
-                <router-link class="nav-link" to="/complex_astrology_chart" exact-active-class="active">
-                  <span class="align-middle">Complex Astrology Chart</span>
+                <router-link class="nav-link" to="/iching_zodiac_chart" exact-active-class="active">
+                  <span class="align-middle">Western Zodiac Chart</span>
                 </router-link>
               </li>
               <li class="nav-item">

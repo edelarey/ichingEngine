@@ -15,15 +15,17 @@
 
     <!-- Chart Display -->
     <div class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6 mb-4">
+      <div class="col-12 col-md-10 col-lg-8 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">I Ching and Zodiac Chart</h5>
+            <h5 class="card-title">I Ching and Western Zodiac Chart</h5>
             <p class="card-text">
               This chart integrates the I Ching hexagrams with the Western zodiac, showing their symbolic relationships.
             </p>
             <!-- SVG container for D3 to render into -->
-            <svg ref="chartSvg" :width="svgWidth" :height="svgHeight" class="center-content"></svg>
+            <div class="svg-container">
+              <svg ref="chartSvg" class="center-content"></svg>
+            </div>
           </div>
         </div>
       </div>
@@ -39,9 +41,6 @@ import hexagram from '@/const/hexagram';
 export default {
   name: 'AstrologyChart',
   setup() {
-    // Reactive references for SVG dimensions
-    const svgWidth = ref(600);
-    const svgHeight = ref(600);
     const chartSvg = ref(null);
 
     // Method to draw the chart using D3.js
@@ -77,7 +76,8 @@ export default {
 
       // Set up the SVG canvas
       const svg = d3.select(chartSvg.value)
-        .attr('viewBox', '0 0 600 600');
+        .attr('viewBox', '0 0 600 600')
+        .attr('preserveAspectRatio', 'xMidYMid meet');
 
       // Background Circle
       svg.append('circle')
@@ -182,7 +182,7 @@ export default {
           .text(hex.symbol);
       });
 
-      
+     
     };
 
     // Lifecycle hook to draw the chart after the component is mounted
@@ -191,8 +191,6 @@ export default {
     });
 
     return {
-      svgWidth,
-      svgHeight,
       chartSvg,
     };
   },
@@ -200,9 +198,35 @@ export default {
 </script>
 
 <style scoped>
+/* Ensure the SVG container is responsive */
+.svg-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* Maintain a 1:1 aspect ratio (since viewBox is 600x600) */
+}
+
+/* Make the SVG fill the container and scale responsively */
+.svg-container svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .center-content {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Ensure the card body has enough padding and doesn't restrict the SVG */
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Optional: Add max-width to the card to prevent it from growing too large on wide screens */
+.card {
+  max-width: 100%;
 }
 </style>
