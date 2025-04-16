@@ -18,7 +18,7 @@
       <div class="col-12 col-md-10 col-lg-8 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">I Ching and Western Zodiac Chart</h5>
+            <h5 class="card-title">I Ching and Zodiac Chart</h5>
             <p class="card-text">
               This chart integrates the I Ching hexagrams with the Western zodiac, showing their symbolic relationships.
             </p>
@@ -47,18 +47,18 @@ export default {
     const drawChart = () => {
       // Data for the chart
       const zodiacData = [
-        { sign: 'Capricorn', hexagram: '䷀', angle: 345, color: '#6A5ACD' },
-        { sign: 'Sagittarius', hexagram: '䷁', angle: 15, color: '#4682B4' },
-        { sign: 'Scorpio', hexagram: '䷂', angle: 45, color: '#00CED1' },
-        { sign: 'Libra', hexagram: '䷃', angle: 75, color: '#32CD32' },
-        { sign: 'Virgo', hexagram: '䷄', angle: 100, color: '#9ACD32' },
-        { sign: 'Leo', hexagram: '䷅', angle: 130, color: '#FFD700' },
-        { sign: 'Cancer', hexagram: '䷆', angle: 160, color: '#FFA500' },
-        { sign: 'Gemini', hexagram: '䷇', angle: 195, color: '#FF4500' },
-        { sign: 'Taurus', hexagram: '䷈', angle: 225, color: '#FF6347' },
-        { sign: 'Aries', hexagram: '䷉', angle: 260, color: '#FF0000' },
-        { sign: 'Pisces', hexagram: '䷊', angle: 290, color: '#FF69B4' },
-        { sign: 'Aquarius', hexagram: '䷋', angle: 315, color: '#FF00FF' },
+        { sign: 'Capricorn', symbol: '♑', angle: 345, color: '#6A5ACD' },
+        { sign: 'Sagittarius', symbol: '♐', angle: 15, color: '#4682B4' },
+        { sign: 'Scorpio', symbol: '♏', angle: 45, color: '#00CED1' },
+        { sign: 'Libra', symbol: '♎', angle: 75, color: '#32CD32' },
+        { sign: 'Virgo', symbol: '♍', angle: 100, color: '#9ACD32' },
+        { sign: 'Leo', symbol: '♌', angle: 130, color: '#FFD700' },
+        { sign: 'Cancer', symbol: '♋', angle: 160, color: '#FFA500' },
+        { sign: 'Gemini', symbol: '♊', angle: 195, color: '#FF4500' },
+        { sign: 'Taurus', symbol: '♉', angle: 225, color: '#FF6347' },
+        { sign: 'Aries', symbol: '♈', angle: 260, color: '#FF0000' },
+        { sign: 'Pisces', symbol: '♓', angle: 290, color: '#FF69B4' },
+        { sign: 'Aquarius', symbol: '♒', angle: 315, color: '#FF00FF' },
       ];
 
       // Get the hexagram sequence in binary order
@@ -108,20 +108,37 @@ export default {
         .attr('stroke-width', 1)
         .attr('transform', 'translate(300, 300)');
 
-      // Zodiac Labels
+      // Zodiac Labels (Sign and Symbol)
       zodiacData.forEach(zodiac => {
-        const radius = 250;
+        const signRadius = 250; // Radius for the zodiac sign name
+        const symbolRadius = 270; // Radius for the zodiac symbol (farther out to avoid overlap)
         const angleRad = (zodiac.angle - 90) * (Math.PI / 180); // Adjust for SVG coordinate system
-        const x = 300 + radius * Math.cos(angleRad);
-        const y = 300 + radius * Math.sin(angleRad);
 
+        // Zodiac sign name position
+        const signX = 300 + signRadius * Math.cos(angleRad);
+        const signY = 300 + signRadius * Math.sin(angleRad);
+
+        // Zodiac symbol position
+        const symbolX = 300 + symbolRadius * Math.cos(angleRad);
+        const symbolY = 300 + symbolRadius * Math.sin(angleRad);
+
+        // Zodiac sign name
         svg.append('text')
-          .attr('x', x)
-          .attr('y', y)
+          .attr('x', signX)
+          .attr('y', signY)
           .attr('font-size', 16)
           .attr('text-anchor', 'middle')
-          .attr('transform', `rotate(${zodiac.angle}, ${x}, ${y})`)
+          .attr('transform', `rotate(${zodiac.angle}, ${signX}, ${signY})`)
           .text(zodiac.sign);
+
+        // Zodiac symbol
+        svg.append('text')
+          .attr('x', symbolX)
+          .attr('y', symbolY)
+          .attr('font-size', 20) // Slightly larger for the symbol
+          .attr('text-anchor', 'middle')
+          .attr('transform', `rotate(${zodiac.angle}, ${symbolX}, ${symbolY})`)
+          .text(zodiac.symbol);
       });
 
       // Hexagram Grid (8x8 grid for 64 hexagrams in the center)
@@ -182,7 +199,7 @@ export default {
           .text(hex.symbol);
       });
 
-     
+      
     };
 
     // Lifecycle hook to draw the chart after the component is mounted
@@ -196,37 +213,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Ensure the SVG container is responsive */
-.svg-container {
-  position: relative;
-  width: 100%;
-  padding-bottom: 100%; /* Maintain a 1:1 aspect ratio (since viewBox is 600x600) */
-}
-
-/* Make the SVG fill the container and scale responsively */
-.svg-container svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Ensure the card body has enough padding and doesn't restrict the SVG */
-.card-body {
-  padding: 1.5rem;
-}
-
-/* Optional: Add max-width to the card to prevent it from growing too large on wide screens */
-.card {
-  max-width: 100%;
-}
-</style>

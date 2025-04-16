@@ -13,6 +13,7 @@ body {
 .card {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin: 1rem;
+  max-width: 100%; /* Ensure card doesn't overflow its parent */
 
   .card-body {
     padding: 1.5rem; // Default padding, overridden where specified
@@ -36,7 +37,6 @@ img.animal-image {
   vertical-align: middle;
   object-fit: cover; /* Ensure the image fits within the dimensions */
 }
-
 
 // Sidebar styling (merged)
 .sidebar {
@@ -101,6 +101,21 @@ footer {
   justify-content: center;
   align-items: center;
   width: 100%;
+}
+
+/* Responsive SVG container for charts */
+.svg-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* Maintain a 1:1 aspect ratio (since viewBox is 600x600) */
+}
+
+.svg-container svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .text-break {
@@ -245,6 +260,7 @@ footer {
   /* Show the list only when the dropdown is active (clicked) */
   display: block !important;
 }
+
 // Media queries (merged)
 @media (max-width: 768px) {
   .sidebar {
