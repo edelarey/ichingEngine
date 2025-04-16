@@ -15,7 +15,7 @@
 
     <!-- Chart Display -->
     <div class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6 mb-4">
+      <div class="col-12 col-md-10 col-lg-8 mb-4">
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">I Ching and Chinese Zodiac Chart</h5>
@@ -23,7 +23,9 @@
               This chart integrates the I Ching trigrams with the Chinese zodiac, showing their directional and elemental relationships.
             </p>
             <!-- SVG container for D3 to render into -->
-            <svg ref="chartSvg" :width="svgWidth" :height="svgHeight" class="center-content"></svg>
+            <div class="svg-container">
+              <svg ref="chartSvg" class="center-content"></svg>
+            </div>
           </div>
         </div>
       </div>
@@ -38,9 +40,6 @@ import * as d3 from 'd3';
 export default {
   name: 'AstrologyChart',
   setup() {
-    // Reactive references for SVG dimensions
-    const svgWidth = ref(500);
-    const svgHeight = ref(500);
     const chartSvg = ref(null);
 
     // Method to draw the chart using D3.js
@@ -58,18 +57,18 @@ export default {
       ];
 
       const zodiac = [
-        { name: 'Rat', angle: 0 }, // North
-        { name: 'Ox', angle: 30 }, // Northeast
-        { name: 'Tiger', angle: 60 }, // Northeast
-        { name: 'Rabbit', angle: 90 }, // East
-        { name: 'Dragon', angle: 120 }, // Southeast
-        { name: 'Snake', angle: 150 }, // Southeast
-        { name: 'Horse', angle: 180 }, // South
-        { name: 'Goat', angle: 210 }, // Southwest
-        { name: 'Monkey', angle: 240 }, // Southwest
-        { name: 'Rooster', angle: 270 }, // West
-        { name: 'Dog', angle: 300 }, // Northwest
-        { name: 'Pig', angle: 330 }, // Northwest
+        { name: 'Rat', symbol: '鼠', angle: 0 }, // North
+        { name: 'Ox', symbol: '牛', angle: 30 }, // Northeast
+        { name: 'Tiger', symbol: '虎', angle: 60 }, // Northeast
+        { name: 'Rabbit', symbol: '兔', angle: 90 }, // East
+        { name: 'Dragon', symbol: '龙', angle: 120 }, // Southeast
+        { name: 'Snake', symbol: '蛇', angle: 150 }, // Southeast
+        { name: 'Horse', symbol: '马', angle: 180 }, // South
+        { name: 'Goat', symbol: '羊', angle: 210 }, // Southwest
+        { name: 'Monkey', symbol: '猴', angle: 240 }, // Southwest
+        { name: 'Rooster', symbol: '鸡', angle: 270 }, // West
+        { name: 'Dog', symbol: '狗', angle: 300 }, // Northwest
+        { name: 'Pig', symbol: '猪', angle: 330 }, // Northwest
       ];
 
       const loShu = [
@@ -80,7 +79,8 @@ export default {
 
       // Set up the SVG canvas
       const svg = d3.select(chartSvg.value)
-        .attr('viewBox', '0 0 500 500');
+        .attr('viewBox', '0 0 500 500')
+        .attr('preserveAspectRatio', 'xMidYMid meet');
 
       // Background Circle
       svg.append('circle')
@@ -176,20 +176,37 @@ export default {
           .text(trigram.name);
       });
 
-      // Zodiac Animals
+      // Zodiac Animals (English name and Chinese symbol)
       zodiac.forEach(animal => {
-        const radius = 220;
+        const nameRadius = 205; // Radius for the English name (closer to the inner ring)
+        const symbolRadius = 220; // Radius for the Chinese symbol (farther out but still within the outer ring)
         const angleRad = (animal.angle - 90) * (Math.PI / 180); // Adjust for SVG coordinate system
-        const x = 250 + radius * Math.cos(angleRad);
-        const y = 250 + radius * Math.sin(angleRad);
 
+        // English name position
+        const nameX = 250 + nameRadius * Math.cos(angleRad);
+        const nameY = 250 + nameRadius * Math.sin(angleRad);
+
+        // Chinese symbol position
+        const symbolX = 250 + symbolRadius * Math.cos(angleRad);
+        const symbolY = 250 + symbolRadius * Math.sin(angleRad);
+
+        // English name
         svg.append('text')
-          .attr('x', x)
-          .attr('y', y)
+          .attr('x', nameX)
+          .attr('y', nameY)
           .attr('font-size', 14)
           .attr('text-anchor', 'middle')
-          .attr('transform', `rotate(${animal.angle}, ${x}, ${y})`)
+          .attr('transform', `rotate(${animal.angle}, ${nameX}, ${nameY})`)
           .text(animal.name);
+
+        // Chinese symbol
+        svg.append('text')
+          .attr('x', symbolX)
+          .attr('y', symbolY)
+          .attr('font-size', 16) // Slightly larger for the Chinese symbol
+          .attr('text-anchor', 'middle')
+          .attr('transform', `rotate(${animal.angle}, ${symbolX}, ${symbolY})`)
+          .text(animal.symbol);
       });
     };
 
@@ -199,19 +216,8 @@ export default {
     });
 
     return {
-      svgWidth,
-      svgHeight,
       chartSvg,
     };
   },
 };
 </script>
-
-<style scoped>
-/* Reuse styles from Consult.vue */
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>
