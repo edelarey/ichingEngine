@@ -68,7 +68,11 @@ export default {
       // Prepare data for the hexagram grid and circular arrangement
       const hexagramGrid = [];
       for (let i = 0; i < 64; i++) {
-        hexagramGrid.push({ hexagram: hexagramSequence[i].hexagram, index: i });
+        hexagramGrid.push({
+          hexagram: hexagramSequence[i].hexagram,
+          symbol: hexagramSequence[i].symbol, // Chinese text
+          index: i,
+        });
       }
 
       // Set up the SVG canvas
@@ -139,27 +143,47 @@ export default {
       });
 
       // Circular Hexagram Ring Inside the Zodiac Ring
-      const innerRadius = 180; // Position the hexagrams just inside the zodiac ring
+      const hexagramRadius = 180; // Radius for hexagram symbols
+      const symbolRadius = 165; // Radius for Chinese symbols (closer to the center to avoid overlap)
       const hexagramCount = 64;
-      const angleStep = 360 / hexagramCount; // Angle between each hexagram
+      const angleStep = 360 / hexagramCount; // Angle between each hexagram (5.625 degrees)
+      const startOffset = angleStep / 2; // Offset by half the angle step (2.8125 degrees)
 
       hexagramGrid.forEach((hex, i) => {
-        const angle = i * angleStep; // Start at 0 degrees (Capricorn-Sagittarius line) and go clockwise
+        const angle = startOffset + i * angleStep; // Start just after 0 degrees and go clockwise
         const angleRad = (angle - 90) * (Math.PI / 180); // Adjust for SVG coordinate system
-        const x = 300 + innerRadius * Math.cos(angleRad);
-        const y = 300 + innerRadius * Math.sin(angleRad);
 
+        // Hexagram symbol position
+        const hexX = 300 + hexagramRadius * Math.cos(angleRad);
+        const hexY = 300 + hexagramRadius * Math.sin(angleRad);
+
+        // Chinese symbol position (at a smaller radius, closer to the center)
+        const symbolX = 300 + symbolRadius * Math.cos(angleRad);
+        const symbolY = 300 + symbolRadius * Math.sin(angleRad);
+
+        // Hexagram symbol
         svg.append('text')
-          .attr('x', x)
-          .attr('y', y)
+          .attr('x', hexX)
+          .attr('y', hexY)
           .attr('font-size', 12)
           .attr('text-anchor', 'middle')
           .attr('dominant-baseline', 'middle')
-          .attr('transform', `rotate(${angle}, ${x}, ${y})`)
+          .attr('transform', `rotate(${angle}, ${hexX}, ${hexY})`)
           .text(hex.hexagram);
+
+        // Chinese text (symbol) at a smaller radius
+        svg.append('text')
+          .attr('x', symbolX)
+          .attr('y', symbolY)
+          .attr('font-size', 10)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .attr('transform', `rotate(${angle}, ${symbolX}, ${symbolY})`)
+          .text(hex.symbol);
       });
 
-        };
+      
+    };
 
     // Lifecycle hook to draw the chart after the component is mounted
     onMounted(() => {
