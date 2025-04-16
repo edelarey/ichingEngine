@@ -23,3 +23,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # change to tab layout for Astrology
 # Add astrological images (Summary Only)
 # Add Zodiac Charts - Chinese and Western correspondence to IChing
+# Tweak Charts Layout
