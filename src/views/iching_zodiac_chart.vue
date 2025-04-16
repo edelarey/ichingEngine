@@ -18,7 +18,7 @@
       <div class="col-12 col-md-10 col-lg-8 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">I Ching and Zodiac Chart</h5>
+            <h5 class="card-title">I Ching and Western Zodiac Chart</h5>
             <p class="card-text">
               This chart integrates the I Ching hexagrams with the Western zodiac, showing their symbolic relationships.
             </p>
