@@ -62,12 +62,13 @@ export default {
         { sign: 'Aquarius', hexagram: '䷋', angle: 315, color: '#FF00FF' },
       ];
 
-      // Simulate a grid of hexagrams (simplified for this example)
+      // Get the hexagram sequence in binary order
       const hexagramSequence = hexagram.sequence_binary();
-     
+
+      // Prepare data for the hexagram grid and circular arrangement
       const hexagramGrid = [];
       for (let i = 0; i < 64; i++) {
-        hexagramGrid.push({ hexagram: hexagramSequence[i].hexagram , index: i });
+        hexagramGrid.push({ hexagram: hexagramSequence[i].hexagram, index: i });
       }
 
       // Set up the SVG canvas
@@ -117,11 +118,10 @@ export default {
           .attr('text-anchor', 'middle')
           .attr('transform', `rotate(${zodiac.angle}, ${x}, ${y})`)
           .text(zodiac.sign);
-       
       });
 
-      // Hexagram Grid (simplified representation of the I Ching hexagrams)
-      const gridSize = 8; // 8x8 grid for 64 hexagrams
+      // Hexagram Grid (8x8 grid for 64 hexagrams in the center)
+      const gridSize = 8;
       const cellSize = 200 / gridSize; // Inner circle diameter is 400, so grid is 200x200
       hexagramGrid.forEach((hex, i) => {
         const row = Math.floor(i / gridSize);
@@ -138,8 +138,28 @@ export default {
           .text(hex.hexagram);
       });
 
-    
-    };
+      // Circular Hexagram Ring Inside the Zodiac Ring
+      const innerRadius = 180; // Position the hexagrams just inside the zodiac ring
+      const hexagramCount = 64;
+      const angleStep = 360 / hexagramCount; // Angle between each hexagram
+
+      hexagramGrid.forEach((hex, i) => {
+        const angle = i * angleStep; // Start at 0 degrees (Capricorn-Sagittarius line) and go clockwise
+        const angleRad = (angle - 90) * (Math.PI / 180); // Adjust for SVG coordinate system
+        const x = 300 + innerRadius * Math.cos(angleRad);
+        const y = 300 + innerRadius * Math.sin(angleRad);
+
+        svg.append('text')
+          .attr('x', x)
+          .attr('y', y)
+          .attr('font-size', 12)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .attr('transform', `rotate(${angle}, ${x}, ${y})`)
+          .text(hex.hexagram);
+      });
+
+        };
 
     // Lifecycle hook to draw the chart after the component is mounted
     onMounted(() => {
