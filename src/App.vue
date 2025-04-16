@@ -54,6 +54,16 @@
                 </router-link>
               </li>
               <li class="nav-item">
+                <router-link class="nav-link" to="/astrology_chart" exact-active-class="active">
+                  <span class="align-middle">Astrology Chart</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/complex_astrology_chart" exact-active-class="active">
+                  <span class="align-middle">Complex Astrology Chart</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
                 <router-link class="nav-link" to="/relationship" exact-active-class="active">
                   <span class="align-middle">Relationships</span>
                 </router-link>
