@@ -156,10 +156,11 @@ export default {
       // Spiral parameters
       const centerX = 300;
       const centerY = 300;
-      const a = 7; // Small initial radius
-      const b = 7; // Increased growth rate to match desired spiral pattern
+      const a = 25; // Increased initial radius to avoid overlap with central syllable
+      const maxTheta = 12 * Math.PI; // 6 rotations to fill the circle (corrected comment)
+      const maxRadius = 290; // Desired maximum radius to match the outer circle
+      const b = (maxRadius - a) / maxTheta; // Growth rate calculated to reach maxRadius
       const numPoints = mantraSyllables.length - 1; // Exclude the center syllable
-      const maxTheta = 12 * Math.PI; // 15 rotations to fill the circle
 
       // Place the center syllable (hūṃ) explicitly at the center
       svg.append('text')
@@ -196,7 +197,8 @@ export default {
         .attr('fill', '#000')
         .text(d => d.syllable);
 
-      // Optional: Draw the spiral path for debugging
+      // Optional: Draw the spiral path for debugging (commented out)
+      /*
       const spiralPath = d3.line()
         .x((i) => {
           const theta = (i / numPoints) * maxTheta;
@@ -206,8 +208,12 @@ export default {
           const theta = (i / numPoints) * maxTheta;
           return centerY + (a + b * theta) * Math.sin(theta);
         });
-
-     
+      svg.append('path')
+        .attr('d', spiralPath(d3.range(numPoints + 1)))
+        .attr('fill', 'none')
+        .attr('stroke', '#ccc')
+        .attr('stroke-width', 1);
+      */
     };
 
     // Lifecycle hook to draw the spiral after the component is mounted
