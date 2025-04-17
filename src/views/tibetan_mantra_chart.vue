@@ -13,6 +13,21 @@
       </div>
     </header>
 
+    <!-- Control Box -->
+    <div class="controls">
+      <label for="spiralType">Spiral Type:</label>
+      <select v-model="spiralType">
+        <option value="Logarithmic">Logarithmic</option>
+        <option value="Archimedean">Archimedean</option>
+        <option value="Fermat">Fermat</option>
+        <option value="Fibonacci">Fibonacci</option>
+      </select>
+      <label for="rotations">Rotations:</label>
+      <input type="number" v-model="rotations" min="1" step="1">
+      <label for="startingRadius">Starting Radius:</label>
+      <input type="number" v-model="startingRadius" min="10" max="100" step="5">
+    </div>
+
     <!-- Mantra Display -->
     <div class="row justify-content-center">
       <div class="col-12 col-md-10 col-lg-8 mb-4">
@@ -22,7 +37,6 @@
             <p class="card-text">
               This visualization displays the 100-syllable Vajrasattva mantra in a spiral, with the seed syllable ཧཱུཾ at the center.
             </p>
-            <!-- SVG container for D3 to render into -->
             <div class="svg-container">
               <svg ref="mantraSvg" class="center-content"></svg>
             </div>
@@ -34,117 +48,118 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import * as d3 from 'd3';
 
 export default {
   name: 'VajrasattvaMantra',
   setup() {
     const mantraSvg = ref(null);
+    const spiralType = ref('Logarithmic');
+    const rotations = ref(4);
+    const startingRadius = ref(40);
 
-    // Method to draw the mantra spiral using D3.js
+    const mantraSyllables = [
+      '\u0F68\u0F7C\u0F7E', // ཨོཾ
+      '\u0F56\u0F5B\u0FB2', // བཛྲ
+      '\u0F66\u0F4F\u0FB2', // སཏྭ
+      '\u0F66', // ས
+      '\u0F58', // མ
+      '\u0F61', // ཡ
+      '\u0F58', // མ
+      '\u0F53\u0F74', // ནུ
+      '\u0F54\u0F71', // པཱ
+      '\u0F63', // ལ
+      '\u0F61', // ཡ
+      '\u0F0B', // །
+      '\u0F56\u0F5B\u0FB2', // བཛྲ
+      '\u0F66\u0F4F\u0FB2', // སཏྭ
+      '\u0F4F\u0FB2\u0F7A', // ཏྭེ
+      '\u0F53\u0F7C', // ནོ
+      '\u0F54', // པ
+      '\u0F4F\u0F72\u0F65\u0FB3', // ཏིཥྛ
+      '\u0F0B', // །
+      '\u0F51\u0FB2\u0F72', // དྲི
+      '\u0F4C\u0FB7\u0F7C', // ཌྷོ
+      '\u0F58\u0F7A', // མེ
+      '\u0F67\u0F7E', // ཿ
+      '\u0F0B', // །
+      '\u0F66\u0F74', // སུ
+      '\u0F4F\u0F7C', // ཏོ
+      '\u0F65\u0FB1\u0F7C', // ཥྱོ
+      '\u0F58\u0F7A', // མེ
+      '\u0F67\u0F7E', // ཿ
+      '\u0F0B', // །
+      '\u0F66\u0F74', // སུ
+      '\u0F54\u0F7C', // པོ
+      '\u0F65\u0FB1\u0F7C', // ཥྱོ
+      '\u0F58\u0F7A', // མེ
+      '\u0F67\u0F7E', // ཿ
+      '\u0F0B', // །
+      '\u0F68', // ཨ
+      '\u0F53\u0F74', // ནུ
+      '\u0F62\u0F40\u0FB1\u0F7C', // རཀྟོ
+      '\u0F58\u0F7A', // མེ
+      '\u0F67\u0F7E', // ཿ
+      '\u0F0B', // །
+      '\u0F66\u0F62\u0FB2', // སརྦ
+      '\u0F66\u0F72\u0F51\u0FB7\u0F72', // སིདྡྷི
+      '\u0F58\u0F7A', // མེ
+      '\u0F54\u0FB2', // པྲ
+      '\u0F61\u0F59\u0F46', // ཡཙཆ
+      '\u0F0B', // །
+      '\u0F66\u0F62\u0FB2', // སརྦ
+      '\u0F40\u0F62\u0F7E', // ཀརྨ
+      '\u0F66\u0F74', // སུ
+      '\u0F59', // ཙ
+      '\u0F58\u0F7A', // མེ
+      '\u0F0B', // །
+      '\u0F59\u0F72\u0F4F\u0F9E\u0F74', // ཙིཏྟཾ
+      '\u0F64\u0FB2\u0F7A', // ཤྲེ
+      '\u0F61\u0F7E', // ཡཿ
+      '\u0F40\u0F74', // ཀུ
+      '\u0F62\u0F74', // རུ
+      '\u0F67\u0F71\u0F7E', // ཧཱུཾ
+      '\u0F0B', // །
+      '\u0F67', // ཧ
+      '\u0F67', // ཧ
+      '\u0F67', // ཧ
+      '\u0F67', // ཧ
+      '\u0F67\u0F7C\u0F7E', // ཧོཿ
+      '\u0F0B', // །
+      '\u0F56\u0F42', // བག
+      '\u0F5D\u0F71\u0F53', // ཝཱན
+      '\u0F0B', // །
+      '\u0F66\u0F62\u0FB2', // སརྦ
+      '\u0F4F', // ཏ
+      '\u0F50\u0F71', // ཐཱ
+      '\u0F42', // ག
+      '\u0F4F', // ཏ
+      '\u0F56\u0F5B\u0FB2', // བཛྲ
+      '\u0F58\u0F71', // མཱ
+      '\u0F58\u0F7A', // མེ
+      '\u0F58\u0F74\u0F49\u0F46', // མུཉཆ
+      '\u0F0B', // །
+      '\u0F56\u0F5B\u0FB2\u0F71\u0F72', // བཛྲཱི
+      '\u0F56', // བ
+      '\u0F5D', // ཝ
+      '\u0F0B', // །
+      '\u0F58\u0F71', // མཱ
+      '\u0F67\u0F71', // ཧཱ
+      '\u0F66', // ས
+      '\u0F58\u0F71', // མཱ
+      '\u0F61', // ཡ
+      '\u0F66\u0F4F\u0FB2', // སཏྭ
+      '\u0F68\u0F7E', // ཨཿ
+    ];
+
     const drawMantraSpiral = () => {
-      // Mantra syllables (100 syllables)
-      const mantraSyllables = [
-        '\u0F68\u0F7C\u0F7E', // ཨོཾ
-        '\u0F56\u0F5B\u0FB2', // བཛྲ
-        '\u0F66\u0F4F\u0FB2', // སཏྭ
-        '\u0F66', // ས
-        '\u0F58', // མ
-        '\u0F61', // ཡ
-        '\u0F58', // མ
-        '\u0F53\u0F74', // ནུ
-        '\u0F54\u0F71', // པཱ
-        '\u0F63', // ལ
-        '\u0F61', // ཡ
-        '\u0F0B', // །
-        '\u0F56\u0F5B\u0FB2', // བཛྲ
-        '\u0F66\u0F4F\u0FB2', // སཏྭ
-        '\u0F4F\u0FB2\u0F7A', // ཏྭེ
-        '\u0F53\u0F7C', // ནོ
-        '\u0F54', // པ
-        '\u0F4F\u0F72\u0F65\u0FB3', // ཏིཥྛ
-        '\u0F0B', // །
-        '\u0F51\u0FB2\u0F72', // དྲི
-        '\u0F4C\u0FB7\u0F7C', // ཌྷོ
-        '\u0F58\u0F7A', // མེ
-        '\u0F67\u0F7E', // ཿ
-        '\u0F0B', // །
-        '\u0F66\u0F74', // སུ
-        '\u0F4F\u0F7C', // ཏོ
-        '\u0F65\u0FB1\u0F7C', // ཥྱོ
-        '\u0F58\u0F7A', // མེ
-        '\u0F67\u0F7E', // ཿ
-        '\u0F0B', // །
-        '\u0F66\u0F74', // སུ
-        '\u0F54\u0F7C', // པོ
-        '\u0F65\u0FB1\u0F7C', // ཥྱོ
-        '\u0F58\u0F7A', // མེ
-        '\u0F67\u0F7E', // ཿ
-        '\u0F0B', // །
-        '\u0F68', // ཨ
-        '\u0F53\u0F74', // ནུ
-        '\u0F62\u0F40\u0FB1\u0F7C', // རཀྟོ
-        '\u0F58\u0F7A', // མེ
-        '\u0F67\u0F7E', // ཿ
-        '\u0F0B', // །
-        '\u0F66\u0F62\u0FB2', // སརྦ
-        '\u0F66\u0F72\u0F51\u0FB7\u0F72', // སིདྡྷི
-        '\u0F58\u0F7A', // མེ
-        '\u0F54\u0FB2', // པྲ
-        '\u0F61\u0F59\u0F46', // ཡཙཆ
-        '\u0F0B', // །
-        '\u0F66\u0F62\u0FB2', // སརྦ
-        '\u0F40\u0F62\u0F7E', // ཀརྨ
-        '\u0F66\u0F74', // སུ
-        '\u0F59', // ཙ
-        '\u0F58\u0F7A', // མེ
-        '\u0F0B', // །
-        '\u0F59\u0F72\u0F4F\u0F9E\u0F74', // ཙིཏྟཾ
-        '\u0F64\u0FB2\u0F7A', // ཤྲེ
-        '\u0F61\u0F7E', // ཡཿ
-        '\u0F40\u0F74', // ཀུ
-        '\u0F62\u0F74', // རུ
-        '\u0F67\u0F71\u0F7E', // ཧཱུཾ
-        '\u0F0B', // །
-        '\u0F67', // ཧ
-        '\u0F67', // ཧ
-        '\u0F67', // ཧ
-        '\u0F67', // ཧ
-        '\u0F67\u0F7C\u0F7E', // ཧོཿ
-        '\u0F0B', // །
-        '\u0F56\u0F42', // བག
-        '\u0F5D\u0F71\u0F53', // ཝཱན
-        '\u0F0B', // །
-        '\u0F66\u0F62\u0FB2', // སརྦ
-        '\u0F4F', // ཏ
-        '\u0F50\u0F71', // ཐཱ
-        '\u0F42', // ག
-        '\u0F4F', // ཏ
-        '\u0F56\u0F5B\u0FB2', // བཛྲ
-        '\u0F58\u0F71', // མཱ
-        '\u0F58\u0F7A', // མེ
-        '\u0F58\u0F74\u0F49\u0F46', // མུཉཆ
-        '\u0F0B', // །
-        '\u0F56\u0F5B\u0FB2\u0F71\u0F72', // བཛྲཱི
-        '\u0F56', // བ
-        '\u0F5D', // ཝ
-        '\u0F0B', // །
-        '\u0F58\u0F71', // མཱ
-        '\u0F67\u0F71', // ཧཱ
-        '\u0F66', // ས
-        '\u0F58\u0F71', // མཱ
-        '\u0F61', // ཡ
-        '\u0F66\u0F4F\u0FB2', // སཏྭ
-        '\u0F68\u0F7E', // ཨཿ
-      ];
-
-      // Set up the SVG canvas
       const svg = d3.select(mantraSvg.value)
         .attr('viewBox', '0 0 600 600')
         .attr('preserveAspectRatio', 'xMidYMid meet');
+      svg.selectAll('*').remove(); // Clear previous content
 
-      // Background Circle
+      // Optional Background Circle (uncomment if desired)
       // svg.append('circle')
       //   .attr('cx', 300)
       //   .attr('cy', 300)
@@ -153,16 +168,33 @@ export default {
       //   .attr('stroke', '#000')
       //   .attr('stroke-width', 2);
 
-      // Spiral parameters for Logarithmic Spiral
       const centerX = 300;
       const centerY = 300;
-      const a = 40; // Starting radius
-      const maxTheta = 8 * Math.PI; // 6 rotations to fill the circle
-      const maxRadius = 280; // Desired maximum radius
-      const b = Math.log(maxRadius / a) / maxTheta; // Growth rate for logarithmic spiral
-      const numPoints = mantraSyllables.length - 1; // Exclude the center syllable
+      const maxRadius = 280;
+      const a = startingRadius.value;
+      const maxTheta = rotations.value * 2 * Math.PI;
+      const numPoints = mantraSyllables.length - 1;
 
-      // Place the center syllable (hūṃ) at the center
+      let b, k;
+      if (spiralType.value === 'Logarithmic' || spiralType.value === 'Fibonacci') {
+        b = Math.log(maxRadius / a) / maxTheta;
+      } else if (spiralType.value === 'Archimedean') {
+        b = (maxRadius - a) / maxTheta;
+      } else if (spiralType.value === 'Fermat') {
+        k = (maxRadius - a) / Math.sqrt(maxTheta);
+      }
+
+      const getRadius = (theta) => {
+        if (spiralType.value === 'Logarithmic' || spiralType.value === 'Fibonacci') {
+          return a * Math.exp(b * theta);
+        } else if (spiralType.value === 'Archimedean') {
+          return a + b * theta;
+        } else if (spiralType.value === 'Fermat') {
+          return a + k * Math.sqrt(theta);
+        }
+      };
+
+      // Center syllable
       svg.append('text')
         .attr('x', centerX)
         .attr('y', centerY)
@@ -171,18 +203,18 @@ export default {
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
         .attr('fill', '#FF4500')
-        .text('ཧཱུཾ'); // ཧཱུཾ
+        .text('ཧཱུཾ');
 
-      // Generate spiral positions for the remaining 99 syllables using Logarithmic Spiral
+      // Spiral positions
       const spiralData = mantraSyllables.slice(1).map((syllable, i) => {
-        const theta = (i / numPoints) * maxTheta; // Angle from 0 to maxTheta
-        const radius = a * Math.exp(b * theta); // Logarithmic spiral: r = a * e^{bθ}
+        const theta = (i / numPoints) * maxTheta;
+        const radius = getRadius(theta);
         const x = centerX + radius * Math.cos(theta);
         const y = centerY + radius * Math.sin(theta);
         return { syllable, x, y, theta };
       });
 
-      // Place syllables on the spiral
+      // Place syllables
       svg.selectAll('.mantra-syllable')
         .data(spiralData)
         .enter()
@@ -196,42 +228,25 @@ export default {
         .attr('transform', d => `rotate(${(d.theta * 180 / Math.PI) + 90}, ${d.x}, ${d.y})`)
         .attr('fill', '#000')
         .text(d => d.syllable);
-
-      // Optional: Draw the spiral path for debugging (commented out)
-      
-      // const spiralPath = d3.line()
-      //   .x((i) => {
-      //     const theta = (i / numPoints) * maxTheta;
-      //     const radius = a * Math.exp(b * theta);
-      //     return centerX + radius * Math.cos(theta);
-      //   })
-      //   .y((i) => {
-      //     const theta = (i / numPoints) * maxTheta;
-      //     const radius = a * Math.exp(b * theta);
-      //     return centerY + radius * Math.sin(theta);
-      //   });
-      // svg.append('path')
-      //   .attr('d', spiralPath(d3.range(numPoints + 1)))
-      //   .attr('fill', 'none')
-      //   .attr('stroke', '#ccc')
-      //   .attr('stroke-width', 1);
-      
-
     };
 
-    // Lifecycle hook to draw the spiral after the component is mounted
     onMounted(() => {
-      // Load Tibetan font
       const link = document.createElement('link');
       link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Tibetan&display=swap';
       link.rel = 'stylesheet';
       document.head.appendChild(link);
+      drawMantraSpiral();
+    });
 
+    watch([spiralType, rotations, startingRadius], () => {
       drawMantraSpiral();
     });
 
     return {
       mantraSvg,
+      spiralType,
+      rotations,
+      startingRadius,
     };
   },
 };
@@ -240,5 +255,20 @@ export default {
 <style scoped>
 .mantra-visualization-page {
   padding-bottom: 2rem;
+}
+
+.controls {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.controls label {
+  margin-right: 10px;
+}
+
+.controls select,
+.controls input {
+  margin-right: 20px;
+  padding: 5px;
 }
 </style>
