@@ -1,4 +1,7 @@
+
+
 <template>
+    <Analytics />
   <div id="app">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -146,9 +149,13 @@
 <script>
 import { ref, onMounted, watch } from 'vue';
 import { useHead } from '@vueuse/head';
+import { Analytics } from '@vercel/analytics/vue';
 
 export default {
   name: 'App',
+  components: {
+    Analytics, // Register the Analytics component
+  },
   setup() {
     const isSidebarOpen = ref(true); // Default to open for initial visibility
     const isBootstrapLoaded = ref(false);

@@ -14,9 +14,11 @@ import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Ensur
 import 'vue-good-table-next/dist/vue-good-table-next.css';
 
 
+
+
 const app = createApp(App);
 const head = createHead();
-console.log('Vue app created:', head);
+
 // Make Bootstrap available globally
 window.bootstrap = bootstrap;
 
