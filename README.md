@@ -25,4 +25,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # Add Zodiac Charts - Chinese and Western correspondence to IChing
 # Tweak Charts Layout
 # Add Tibetan Hum Mantra Visualization
-# Add Analytics - Fix Analytics
+# Add Analytics 
