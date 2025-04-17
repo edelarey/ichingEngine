@@ -64,6 +64,11 @@
                 </router-link>
               </li>
               <li class="nav-item">
+                <router-link class="nav-link" to="/tibetan_mantra_chart" exact-active-class="active">
+                  <span class="align-middle">Tibetan Mantra Chart</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
                 <router-link class="nav-link" to="/relationship" exact-active-class="active">
                   <span class="align-middle">Relationships</span>
                 </router-link>

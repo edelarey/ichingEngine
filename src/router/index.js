@@ -11,6 +11,7 @@ import Hexagrams from '../views/hexagrams.vue';
 import Trigram from '../views/trigrams.vue';
 import TrigramDetail from '../views/trigram_detail.vue';
 import About from '../views/about.vue'; 
+import TibetanMantraChart from '../views/tibetan_mantra_chart.vue'; // Import the new component
 
 const routes = [
   {
@@ -37,6 +38,11 @@ const routes = [
     path: '/iching_zodiac_chart',
     name: 'ComplexAstrologyChart',
     component: IChingZodiacChart,
+  },
+  {
+    path: '/tibetan_mantra_chart',
+    name: 'TibetanMantraChart',
+    component: TibetanMantraChart, 
   },
   {
     path: '/relationship',
