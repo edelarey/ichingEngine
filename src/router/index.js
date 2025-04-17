@@ -86,4 +86,8 @@ const router = createRouter({
   routes,
 });
 
+router.afterEach((to) => {
+  track('pageview', { path: to.fullPath });
+});
+
 export default router;
