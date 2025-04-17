@@ -73,7 +73,7 @@
             <div class="card-body">
               <h5 class="card-title">Get in Touch</h5>
               <p class="card-text">
-                Have questions or need assistance? Visit our <a href="#">Support page</a> or contact us at <a href="mailto:support@ichingengine.com">support@ichingengine.com</a>.
+                Have questions or need assistance? Contact us at <a href="mailto:edelarey@gmail.com">support@ichingengine.com</a>.
               </p>
             </div>
           </div>

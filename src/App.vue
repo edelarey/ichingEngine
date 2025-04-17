@@ -32,82 +32,97 @@
       <div class="row flex-nowrap">
         <!-- Sidebar -->
         <nav
-          id="sidebarCollapse"
-          class="col-3 col-md-2 bg-light sidebar"
-          :class="{ 'show': isSidebarOpen }"
+  id="sidebarCollapse"
+  class="col-3 col-md-2 bg-light sidebar"
+  :class="{ 'show': isSidebarOpen }"
+>
+  <div class="position-sticky pt-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <router-link class="nav-link" to="/" exact-active-class="active">
+          <span class="align-middle">Home</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/consult" exact-active-class="active">
+          <span class="align-middle">Consult</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/astrology" exact-active-class="active">
+          <span class="align-middle">Astrology</span>
+        </router-link>
+      </li>
+      <!-- Charts Sub-Menu -->
+      <li class="nav-item">
+        <span
+          class="nav-link"
+          @click="toggleChartsMenu"
+          role="button"
+          tabindex="0"
+          :aria-expanded="chartsMenuOpen"
         >
-          <div class="position-sticky pt-3">
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <router-link class="nav-link" to="/" exact-active-class="active">
-                  <span class="align-middle">Home</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/consult" exact-active-class="active">
-                  <span class="align-middle">Consult</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/astrology" exact-active-class="active">
-                  <span class="align-middle">Astrology</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/astrology_chart" exact-active-class="active">
-                  <span class="align-middle">Chinese Zodiac Chart</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/iching_zodiac_chart" exact-active-class="active">
-                  <span class="align-middle">Western Zodiac Chart</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/tibetan_mantra_chart" exact-active-class="active">
-                  <span class="align-middle">Tibetan Mantra Chart</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/relationship" exact-active-class="active">
-                  <span class="align-middle">Relationships</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/trigrams" exact-active-class="active">
-                  <span class="align-middle">Trigrams</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/hexagrams" exact-active-class="active">
-                  <span class="align-middle">Hexagrams</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/hexagram_sequence" exact-active-class="active">
-                  <span class="align-middle">Hexagram Sequence</span>
-                </router-link>
-              </li>           
-              <li class="nav-item">
-                <router-link class="nav-link" to="/about" exact-active-class="active">
-                  <span class="align-middle">About</span>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <div class="nav-link">
-                  <label for="bg-color-picker" class="form-label">Background Color</label>
-                  <input
-                    type="color"
-                    id="bg-color-picker"
-                    v-model="backgroundColor"
-                    @change="saveBackgroundColor"
-                    class="form-control form-control-color"
-                  />
-                </div>
-              </li>
-            </ul>
-          </div>
-        </nav>
+          <span class="align-middle">Charts</span>
+          <i :class="chartsMenuOpen ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
+        </span>
+        <ul v-show="chartsMenuOpen" class="nav flex-column ms-3">
+          <li class="nav-item">
+            <router-link class="nav-link" to="/astrology_chart" exact-active-class="active">
+              <span class="align-middle">Chinese Zodiac Chart</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/iching_zodiac_chart" exact-active-class="active">
+              <span class="align-middle">Western Zodiac Chart</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/tibetan_mantra_chart" exact-active-class="active">
+              <span class="align-middle">Tibetan Mantra Chart</span>
+            </router-link>
+          </li>
+        </ul>
+</li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/relationship" exact-active-class="active">
+          <span class="align-middle">Relationships</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/trigrams" exact-active-class="active">
+          <span class="align-middle">Trigrams</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/hexagrams" exact-active-class="active">
+          <span class="align-middle">Hexagrams</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/hexagram_sequence" exact-active-class="active">
+          <span class="align-middle">Hexagram Sequence</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/about" exact-active-class="active">
+          <span class="align-middle">About</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <div class="nav-link">
+          <label for="bg-color-picker" class="form-label">Background Color</label>
+          <input
+            type="color"
+            id="bg-color-picker"
+            v-model="backgroundColor"
+            @change="saveBackgroundColor"
+            class="form-control form-control-color"
+          />
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
 
         <!-- Main Content -->
         <main
@@ -138,6 +153,8 @@ export default {
     const isSidebarOpen = ref(true); // Default to open for initial visibility
     const isBootstrapLoaded = ref(false);
     const backgroundColor = ref('#3f41c2');
+    const chartsMenuOpen = ref(false); // New: Tracks Charts sub-menu state
+
 
     // Add SEO meta tags
     useHead({
@@ -169,6 +186,11 @@ export default {
       }
     };
 
+    const toggleChartsMenu = () => {
+      chartsMenuOpen.value = !chartsMenuOpen.value; // New: Toggles Charts sub-menu
+    };
+
+
     watch(isSidebarOpen, (newValue) => {
       document.body.style.overflow = newValue ? 'hidden' : '';
     });
@@ -199,12 +221,15 @@ export default {
       }
     });
 
+
     return {
       isSidebarOpen,
       isBootstrapLoaded,
       toggleSidebar,
       saveBackgroundColor,
-      backgroundColor
+      backgroundColor,
+      chartsMenuOpen,      // New: Return sub-menu state
+      toggleChartsMenu,    // New: Return toggle function
     };
   },
 };

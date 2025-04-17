@@ -22,10 +22,24 @@
         <option value="Fermat">Fermat</option>
         <option value="Fibonacci">Fibonacci</option>
       </select>
+      
       <label for="rotations">Rotations:</label>
-      <input type="number" v-model.number="rotations" min="1" step="1">
+      <input 
+        type="number" 
+        v-model.number="rotations" 
+        min="2" 
+        max="20" 
+        step="1"
+      >
+      
       <label for="startingRadius">Starting Radius:</label>
-      <input type="number" v-model.number="startingRadius" min="10" max="100" step="5">
+      <input 
+        type="number" 
+        v-model.number="startingRadius" 
+        min="10" 
+        max="100" 
+        step="1"
+      >
     </div>
 
     <!-- Mantra Display -->
