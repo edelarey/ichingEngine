@@ -16,16 +16,16 @@
     <!-- Control Box -->
     <div class="controls">
       <label for="spiralType">Spiral Type:</label>
-      <select v-model="spiralType">
+      <select v-model="selectedSpiralType">
         <option value="Logarithmic">Logarithmic</option>
         <option value="Archimedean">Archimedean</option>
         <option value="Fermat">Fermat</option>
         <option value="Fibonacci">Fibonacci</option>
       </select>
       <label for="rotations">Rotations:</label>
-      <input type="number" v-model="rotations" min="1" step="1">
+      <input type="number" v-model.number="rotations" min="1" step="1">
       <label for="startingRadius">Starting Radius:</label>
-      <input type="number" v-model="startingRadius" min="10" max="100" step="5">
+      <input type="number" v-model.number="startingRadius" min="10" max="100" step="5">
     </div>
 
     <!-- Mantra Display -->
@@ -48,16 +48,50 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import * as d3 from 'd3';
+import { useSpiralSettingsStore } from '@/stores/spiralSettings';
 
 export default {
   name: 'VajrasattvaMantra',
   setup() {
     const mantraSvg = ref(null);
-    const spiralType = ref('Logarithmic');
-    const rotations = ref(4);
-    const startingRadius = ref(40);
+    const spiralStore = useSpiralSettingsStore();
+
+    // Reactive variable for the selected spiral type
+    const selectedSpiralType = ref('Logarithmic');
+
+    // Computed properties for rotations and startingRadius based on the selected spiral type
+    const rotations = computed({
+      get: () => spiralStore.getSettings(selectedSpiralType.value).rotations,
+      set: (value) => {
+        spiralStore.updateSettings(selectedSpiralType.value, {
+          rotations: value,
+          startingRadius: startingRadius.value,
+        });
+      },
+    });
+
+    const startingRadius = computed({
+      get: () => spiralStore.getSettings(selectedSpiralType.value).startingRadius,
+      set: (value) => {
+        spiralStore.updateSettings(selectedSpiralType.value, {
+          rotations: rotations.value,
+          startingRadius: value,
+        });
+      },
+    });
+
+    // Watch for changes in selectedSpiralType to initialize settings if needed
+    watch(selectedSpiralType, (newType) => {
+      spiralStore.initializeSettings(newType);
+      drawMantraSpiral();
+    });
+
+    // Watch for changes in rotations and startingRadius to redraw the spiral
+    watch([rotations, startingRadius], () => {
+      drawMantraSpiral();
+    });
 
     const mantraSyllables = [
       '\u0F68\u0F7C\u0F7E', // ཨོཾ
@@ -159,15 +193,6 @@ export default {
         .attr('preserveAspectRatio', 'xMidYMid meet');
       svg.selectAll('*').remove(); // Clear previous content
 
-      // Optional Background Circle (uncomment if desired)
-      // svg.append('circle')
-      //   .attr('cx', 300)
-      //   .attr('cy', 300)
-      //   .attr('r', 290)
-      //   .attr('fill', '#fff')
-      //   .attr('stroke', '#000')
-      //   .attr('stroke-width', 2);
-
       const centerX = 300;
       const centerY = 300;
       const maxRadius = 280;
@@ -176,21 +201,25 @@ export default {
       const numPoints = mantraSyllables.length - 1;
 
       let b, k;
-      if (spiralType.value === 'Logarithmic' || spiralType.value === 'Fibonacci') {
+      if (selectedSpiralType.value === 'Logarithmic' || selectedSpiralType.value === 'Fibonacci') {
         b = Math.log(maxRadius / a) / maxTheta;
-      } else if (spiralType.value === 'Archimedean') {
+      } else if (selectedSpiralType.value === 'Archimedean') {
         b = (maxRadius - a) / maxTheta;
-      } else if (spiralType.value === 'Fermat') {
+      } else if (selectedSpiralType.value === 'Fermat') {
         k = (maxRadius - a) / Math.sqrt(maxTheta);
       }
 
       const getRadius = (theta) => {
-        if (spiralType.value === 'Logarithmic' || spiralType.value === 'Fibonacci') {
-          return a * Math.exp(b * theta);
-        } else if (spiralType.value === 'Archimedean') {
-          return a + b * theta;
-        } else if (spiralType.value === 'Fermat') {
-          return a + k * Math.sqrt(theta);
+        if (selectedSpiralType.value === 'Logarithmic') {
+          return a * Math.exp(b * theta); // Existing logarithmic spiral
+        } else if (selectedSpiralType.value === 'Archimedean') {
+          return a + b * theta; // Existing Archimedean spiral
+        } else if (selectedSpiralType.value === 'Fermat') {
+          return a + k * Math.sqrt(theta); // Existing Fermat spiral
+        } else if (selectedSpiralType.value === 'Fibonacci') {
+          const phi = (1 + Math.sqrt(5)) / 2; // Golden ratio ≈ 1.618
+          const bFib = Math.log(phi) / (Math.PI / 2); // Growth rate for Fibonacci spiral
+          return a * Math.exp(bFib * theta); // Radius based on golden ratio
         }
       };
 
@@ -235,16 +264,14 @@ export default {
       link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Tibetan&display=swap';
       link.rel = 'stylesheet';
       document.head.appendChild(link);
-      drawMantraSpiral();
-    });
-
-    watch([spiralType, rotations, startingRadius], () => {
+      // Initialize settings for the default spiral type
+      spiralStore.initializeSettings(selectedSpiralType.value);
       drawMantraSpiral();
     });
 
     return {
       mantraSvg,
-      spiralType,
+      selectedSpiralType,
       rotations,
       startingRadius,
     };
