@@ -145,24 +145,24 @@ export default {
         .attr('preserveAspectRatio', 'xMidYMid meet');
 
       // Background Circle
-      svg.append('circle')
-        .attr('cx', 300)
-        .attr('cy', 300)
-        .attr('r', 290)
-        .attr('fill', '#fff')
-        .attr('stroke', '#000')
-        .attr('stroke-width', 2);
+      // svg.append('circle')
+      //   .attr('cx', 300)
+      //   .attr('cy', 300)
+      //   .attr('r', 290)
+      //   .attr('fill', '#fff')
+      //   .attr('stroke', '#000')
+      //   .attr('stroke-width', 2);
 
-      // Spiral parameters
+      // Spiral parameters for Logarithmic Spiral
       const centerX = 300;
       const centerY = 300;
-      const a = 25; // Increased initial radius to avoid overlap with central syllable
-      const maxTheta = 12 * Math.PI; // 6 rotations to fill the circle (corrected comment)
-      const maxRadius = 290; // Desired maximum radius to match the outer circle
-      const b = (maxRadius - a) / maxTheta; // Growth rate calculated to reach maxRadius
+      const a = 40; // Starting radius
+      const maxTheta = 8 * Math.PI; // 6 rotations to fill the circle
+      const maxRadius = 280; // Desired maximum radius
+      const b = Math.log(maxRadius / a) / maxTheta; // Growth rate for logarithmic spiral
       const numPoints = mantraSyllables.length - 1; // Exclude the center syllable
 
-      // Place the center syllable (hūṃ) explicitly at the center
+      // Place the center syllable (hūṃ) at the center
       svg.append('text')
         .attr('x', centerX)
         .attr('y', centerY)
@@ -171,12 +171,12 @@ export default {
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
         .attr('fill', '#FF4500')
-        .text('ཧཱུཾ');
+        .text('ཧཱུཾ'); // ཧཱུཾ
 
-      // Generate spiral positions for the remaining 99 syllables
+      // Generate spiral positions for the remaining 99 syllables using Logarithmic Spiral
       const spiralData = mantraSyllables.slice(1).map((syllable, i) => {
         const theta = (i / numPoints) * maxTheta; // Angle from 0 to maxTheta
-        const radius = a + b * theta; // Archimedean spiral: r = a + bθ
+        const radius = a * Math.exp(b * theta); // Logarithmic spiral: r = a * e^{bθ}
         const x = centerX + radius * Math.cos(theta);
         const y = centerY + radius * Math.sin(theta);
         return { syllable, x, y, theta };
@@ -189,7 +189,7 @@ export default {
         .append('text')
         .attr('x', d => d.x)
         .attr('y', d => d.y)
-        .attr('font-size', 18) // Smaller font size to fit dense spiral
+        .attr('font-size', 18)
         .attr('font-family', 'Noto Sans Tibetan, sans-serif')
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
@@ -198,22 +198,25 @@ export default {
         .text(d => d.syllable);
 
       // Optional: Draw the spiral path for debugging (commented out)
-      /*
-      const spiralPath = d3.line()
-        .x((i) => {
-          const theta = (i / numPoints) * maxTheta;
-          return centerX + (a + b * theta) * Math.cos(theta);
-        })
-        .y((i) => {
-          const theta = (i / numPoints) * maxTheta;
-          return centerY + (a + b * theta) * Math.sin(theta);
-        });
-      svg.append('path')
-        .attr('d', spiralPath(d3.range(numPoints + 1)))
-        .attr('fill', 'none')
-        .attr('stroke', '#ccc')
-        .attr('stroke-width', 1);
-      */
+      
+      // const spiralPath = d3.line()
+      //   .x((i) => {
+      //     const theta = (i / numPoints) * maxTheta;
+      //     const radius = a * Math.exp(b * theta);
+      //     return centerX + radius * Math.cos(theta);
+      //   })
+      //   .y((i) => {
+      //     const theta = (i / numPoints) * maxTheta;
+      //     const radius = a * Math.exp(b * theta);
+      //     return centerY + radius * Math.sin(theta);
+      //   });
+      // svg.append('path')
+      //   .attr('d', spiralPath(d3.range(numPoints + 1)))
+      //   .attr('fill', 'none')
+      //   .attr('stroke', '#ccc')
+      //   .attr('stroke-width', 1);
+      
+
     };
 
     // Lifecycle hook to draw the spiral after the component is mounted
@@ -235,7 +238,6 @@ export default {
 </script>
 
 <style scoped>
-/* Reuse existing styles from main.css */
 .mantra-visualization-page {
   padding-bottom: 2rem;
 }
