@@ -35,8 +35,9 @@
                                     tag="tr"
                                     class="clickable-row"
                                 >
-                                    <span v-if="props.column.field === 'order'">{{ props.row.order }}</span>
+                                    <span v-if="props.column.field === 'kingwen'">{{ props.row.kingwen }}</span>
                                     <span v-else-if="props.column.field === 'name'">{{ props.row.name }}</span>
+                                    <span v-else-if="props.column.field === 'translation'">{{ props.row.translation }}</span>
                                     <span v-else-if="props.column.field === 'symbol'">{{ props.row.symbol }}</span>
                                     <span v-else-if="props.column.field === 'hexagram'">{{ props.row.hexagram }}</span>
                                     <span v-else-if="props.column.field === 'binary'">{{ props.row.binary }}</span>
@@ -70,7 +71,8 @@
         ],
         hexagrams: [],
         fields: [
-          { field: 'order', label: 'Order', sortable: true },
+          { field: 'kingwen', label: 'King Wen', sortable: true },
+          { field: 'translation', label: 'Translation', sortable: true },
           { field: 'name', label: 'Name', sortable: true },
           { field: 'symbol', label: 'Symbol', sortable: true },
           { field: 'hexagram', label: 'Hexagram', sortable: true },
