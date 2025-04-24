@@ -27,3 +27,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # Add Tibetan Hum Mantra Visualization
 # Add Analytics 
 # Add google verification and sitemap
+# update hexagram list
