@@ -18,6 +18,7 @@ npm run build
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+# Enhance Relationship Compatibility
 # New Added Relationship Compatibility 
 # fix date handling
 # change to tab layout for Astrology
