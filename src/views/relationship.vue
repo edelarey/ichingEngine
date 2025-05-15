@@ -484,7 +484,7 @@
                       <table class="table table-bordered">
                         <thead>
                           <tr>
-                            <th>Age Range</th>
+                            <th>Age </th>
                             <th>{{ state.person1.name || 'Person 1' }}</th>
                             <th>{{ state.person2.name || 'Person 2' }}</th>
                             <th>Alignment</th>
@@ -493,7 +493,7 @@
                         <tbody>
                           <tr v-for="(cycle1, index) in state.compatibilityResult.person1.iching.preHeavenBirthSubCycles" :key="index">
                             <td>
-                              {{ cycle1.age ? `${cycle1.age || 'N/A'} - ${cycle1.age || 'N/A'}` : 'N/A' }}
+                              {{ cycle1.age ? `${cycle1.age || 'N/A'}` : 'N/A' }}
                             </td>
                             <td>{{ cycle1.hexagram.name || 'N/A' }}</td>
                             <td>{{ state.compatibilityResult.person2.iching.preHeavenBirthSubCycles[index]?.hexagram.name || 'N/A' }}</td>
