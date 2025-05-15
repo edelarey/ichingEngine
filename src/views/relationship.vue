@@ -480,25 +480,27 @@
                   <div id="subCycleCollapse" class="accordion-collapse collapse" aria-labelledby="subCycleHeading" data-bs-parent="#relationshipAccordion">
                     <div class="accordion-body">
                       <p><strong>Overview:</strong> {{ state.compatibilityResult.compatibility.subCycleCompatibility.description }}</p>
-                      <p class="text-muted">Sub-cycles represent life stages. Below are key alignments:</p>
+                      <p class="text-muted">Sub-cycles represent life stages aligned by calendar years, accounting for age differences.</p>
                       <table class="table table-bordered">
                         <thead>
                           <tr>
-                            <th>Age </th>
-                            <th>{{ state.person1.name || 'Person 1' }}</th>
-                            <th>{{ state.person2.name || 'Person 2' }}</th>
+                            <th>Year</th>
+                            <th>{{ state.person1.name || 'Person 1' }} (Age)</th>
+                            <th>{{ state.person2.name || 'Person 2' }} (Age)</th>
                             <th>Alignment</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(cycle1, index) in state.compatibilityResult.person1.iching.preHeavenBirthSubCycles" :key="index">
+                          <tr v-for="yearData in getYearlySubCycleData()" :key="yearData.year">
+                            <td>{{ yearData.year }}</td>
                             <td>
-                              {{ cycle1.age ? `${cycle1.age || 'N/A'}` : 'N/A' }}
+                              {{ yearData.cycle1 ? `${yearData.cycle1.hexagram.name} (${yearData.age1})` : 'N/A' }}
                             </td>
-                            <td>{{ cycle1.hexagram.name || 'N/A' }}</td>
-                            <td>{{ state.compatibilityResult.person2.iching.preHeavenBirthSubCycles[index]?.hexagram.name || 'N/A' }}</td>
-                            <td :style="{ color: cycle1.hexagramBinary && state.compatibilityResult.person2.iching.preHeavenBirthSubCycles[index]?.hexagramBinary && cycle1.hexagramBinary === state.compatibilityResult.person2.iching.preHeavenBirthSubCycles[index]?.hexagramBinary ? 'green' : 'black' }">
-                              {{ cycle1.hexagramBinary && state.compatibilityResult.person2.iching.preHeavenBirthSubCycles[index]?.hexagramBinary && cycle1.hexagramBinary === state.compatibilityResult.person2.iching.preHeavenBirthSubCycles[index]?.hexagramBinary ? 'Harmonious' : 'Neutral' }}
+                            <td>
+                              {{ yearData.cycle2 ? `${yearData.cycle2.hexagram.name} (${yearData.age2})` : 'N/A' }}
+                            </td>
+                            <td :style="{ color: yearData.alignment === 'Harmonious' ? 'green' : 'black' }">
+                              {{ yearData.alignment }}
                             </td>
                           </tr>
                         </tbody>
@@ -726,8 +728,8 @@ export default {
 
         const gender1 = state.person1.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
         const gender2 = state.person2.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
-
-        const result = await astro.calculateCompatibility(
+        
+        const result = await astro.calculateCompatibilityByYear(
           state.person1.birthDate,
           gender1,
           state.person1.latitude,
@@ -739,20 +741,20 @@ export default {
         );
 
         // Log sub-cycles for debugging
-        console.log('Person 1 Sub-Cycles:', result.person1.iching.preHeavenBirthSubCycles);
-        console.log('Person 2 Sub-Cycles:', result.person2.iching.preHeavenBirthSubCycles);
+        console.log('Person 1 Sub-Cycles:', JSON.stringify(result.person1?.iching?.preHeavenBirthSubCycles, null, 2));
+        console.log('Person 2 Sub-Cycles:', JSON.stringify(result.person2?.iching?.preHeavenBirthSubCycles, null, 2));
 
         // Validate sub-cycles
-        if (!result.person1.iching.preHeavenBirthSubCycles || !result.person2.iching.preHeavenBirthSubCycles) {
+        if (!result.person1?.iching?.preHeavenBirthSubCycles || !result.person2?.iching?.preHeavenBirthSubCycles) {
           console.warn('Sub-cycles data is incomplete:', {
-            person1SubCycles: result.person1.iching.preHeavenBirthSubCycles,
-            person2SubCycles: result.person2.iching.preHeavenBirthSubCycles,
+            person1SubCycles: result.person1?.iching?.preHeavenBirthSubCycles,
+            person2SubCycles: result.person2?.iching?.preHeavenBirthSubCycles,
           });
           result.person1.iching.preHeavenBirthSubCycles = [];
           result.person2.iching.preHeavenBirthSubCycles = [];
         }
 
-        // Calculate natal hexagrams for both persons
+        // Calculate natal hexagrams
         result.person1.natalHexagram = await astro.calculateNatalHexagram(
           DateTime.fromJSDate(state.person1.birthDate).toFormat('yyyy-MM-dd'),
           DateTime.fromJSDate(state.person1.birthDate).toFormat('HH:mm')
@@ -761,9 +763,8 @@ export default {
           DateTime.fromJSDate(state.person2.birthDate).toFormat('yyyy-MM-dd'),
           DateTime.fromJSDate(state.person2.birthDate).toFormat('HH:mm')
         );
-        console.log('Result:', result);
-        state.compatibilityResult = result;
 
+        state.compatibilityResult = result;
         state.showCompatibilityResults = true;
         state.activeTab = 'overview';
       } catch (error) {
@@ -773,6 +774,53 @@ export default {
         state.loading = false;
       }
     };
+
+    const getYearlySubCycleData = () => {
+        if (!state.compatibilityResult) return [];
+        
+        const year1 = DateTime.fromJSDate(state.person1.birthDate).year;
+        const year2 = DateTime.fromJSDate(state.person2.birthDate).year;
+        const startYear = Math.max(year1, year2);
+        const endYear = Math.min(year1, year2) + 81;
+        
+        const cycles1 = state.compatibilityResult.person1.iching.preHeavenBirthSubCycles || [];
+        const cycles2 = state.compatibilityResult.person2.iching.preHeavenBirthSubCycles || [];
+        const gender1 = state.person1.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
+        const gender2 = state.person2.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
+        const baseAge1 = gender1 === astro.Gender.MALE ? 8 : 7;
+        const baseAge2 = gender2 === astro.Gender.MALE ? 8 : 7;
+
+        const getActiveCycle = (birthYear, targetYear, cycles, baseAge) => {
+          const age = targetYear - birthYear;
+          if (age < 0 || age > 81) return null;
+          const cycleIndex = Math.floor(age / baseAge);
+          return cycles[cycleIndex] || null;
+        };
+
+        const yearlyData = [];
+        for (let year = startYear; year <= endYear; year++) {
+          const age1 = year - year1;
+          const age2 = year - year2;
+          const cycle1 = getActiveCycle(year1, year, cycles1, baseAge1);
+          const cycle2 = getActiveCycle(year2, year, cycles2, baseAge2);
+          
+          let alignment = 'Neutral';
+          if (cycle1 && cycle2 && cycle1.hexagramBinary === cycle2.hexagramBinary) {
+            alignment = 'Harmonious';
+          }
+          
+          yearlyData.push({
+            year,
+            age1,
+            age2,
+            cycle1,
+            cycle2,
+            alignment,
+          });
+        }
+        
+        return yearlyData;
+      };
 
     const handleImport = (event) => {
       const file = event.target.files[0];
@@ -813,6 +861,7 @@ export default {
       cancelEditing,
       calculateCompatibility,
       handleImport,
+      getYearlySubCycleData,
     };
   },
 };

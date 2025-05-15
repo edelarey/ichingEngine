@@ -3511,6 +3511,73 @@ class IChingConsultation {
 
   /** Relationship Classes */
   /** Main function to calculate compatibility between two individuals */
+  async calculateSubCycleCompatibilityByYear(person1, person2, birthDateTime1, birthDateTime2) {
+  let score = 0;
+
+  // Get birth years
+  const year1 = DateTime.fromJSDate(birthDateTime1).year;
+  const year2 = DateTime.fromJSDate(birthDateTime2).year;
+  
+  // Determine evaluation period (from the later birth year to 81 years after the earlier birth year)
+  const startYear = Math.max(year1, year2);
+  const endYear = Math.min(year1, year2) + 81; // Max age 81
+  
+  // Get sub-cycles
+  const preHeavenSubCycles1 = person1.iching.preHeavenBirthSubCycles || [];
+  const preHeavenSubCycles2 = person2.iching.preHeavenBirthSubCycles || [];
+  const laterHeavenSubCycles1 = person1.iching.laterHeavenBirthSubCycles || [];
+  const laterHeavenSubCycles2 = person2.iching.laterHeavenBirthSubCycles || [];
+
+  // Function to find the active sub-cycle for a given year and person
+  const getActiveCycle = (birthYear, targetYear, cycles, gender) => {
+    const age = targetYear - birthYear;
+    const baseAge = gender === Gender.MALE ? 8 : 7;
+    if (age < 0 || age > 81) return null;
+    const cycleIndex = Math.floor(age / baseAge);
+    return cycles[cycleIndex] || null;
+  };
+
+  // Compare sub-cycles year by year
+  for (let year = startYear; year <= endYear; year++) {
+    const cycle1 = getActiveCycle(year1, year, preHeavenSubCycles1, person1.yearly.yearlyCycle.cycle.celestialStem.gender || Gender.MALE);
+    const cycle2 = getActiveCycle(year2, year, preHeavenSubCycles2, person2.yearly.yearlyCycle.cycle.celestialStem.gender || Gender.MALE);
+
+    if (cycle1 && cycle2) {
+      if (cycle1.hexagramBinary === cycle2.hexagramBinary) {
+        score += 2; // Same hexagram in the same year
+      }
+      if (cycle1.polarity === cycle2.polarity) {
+        score += 1; // Same polarity
+      } else {
+        score -= 1; // Different polarity
+      }
+    }
+
+    // Compare later-heaven sub-cycles
+    const laterCycle1 = getActiveCycle(year1, year, laterHeavenSubCycles1, person1.yearly.yearlyCycle.cycle.celestialStem.gender || Gender.MALE);
+    const laterCycle2 = getActiveCycle(year2, year, laterHeavenSubCycles2, person2.yearly.yearlyCycle.cycle.celestialStem.gender || Gender.MALE);
+
+    if (laterCycle1 && laterCycle2) {
+      if (laterCycle1.hexagramBinary === laterCycle2.hexagramBinary) {
+        score += 2; // Same hexagram in the same year
+      }
+      if (laterCycle1.polarity === laterCycle2.polarity) {
+        score += 1; // Same polarity
+      } else {
+        score -= 1; // Different polarity
+      }
+    }
+  }
+
+  // Normalize score by number of years compared to avoid bias from longer periods
+  const yearsCompared = endYear - startYear + 1;
+  if (yearsCompared > 0) {
+    score = Math.round(score / yearsCompared);
+  }
+
+  return score;
+}
+
 
   static async calculateCompatibility(birthDateTime1, gender1, latitude1, longitude1, birthDateTime2, gender2, latitude2, longitude2) {
     // Determine the appropriate astrology class for each person based on their latitude
@@ -3570,6 +3637,69 @@ class IChingConsultation {
       compatibility: analysis,
     };
   }
+
+
+  static async calculateCompatibilityByYear(
+  birthDateTime1, gender1, latitude1, longitude1,
+  birthDateTime2, gender2, latitude2, longitude2
+) {
+  // Initialize astrology instances based on hemisphere
+  const astrology1 = latitude1 >= 0 ? new IChingAstrology_North() : new IChingAstrology_South();
+  const astrology2 = latitude2 >= 0 ? new IChingAstrology_North() : new IChingAstrology_South();
+
+  // Create consultation instances
+  const consultation1 = new IChingConsultation(astrology1);
+  const consultation2 = new IChingConsultation(astrology2);
+
+  // Compute astrological data for both persons
+  const person1 = await consultation1.consultOracle(birthDateTime1, gender1, latitude1, longitude1);
+  const person2 = await consultation2.consultOracle(birthDateTime2, gender2, latitude2, longitude2);
+
+  if (!person1 || !person2) {
+    throw new Error('Failed to compute astrological data for one or both persons');
+  }
+
+  // Calculate compatibility scores
+  const elementalScore = calculateElementalCompatibility(
+    person1.yearly.yearlyCycle.cycle.celestialStem.element.name,
+    person2.yearly.yearlyCycle.cycle.celestialStem.element.name
+  );
+  const trigramHexagramScore = consultation1.calculateTrigramHexagramCompatibility(person1, person2);
+  const sexagenaryScore = consultation1.calculateSexagenaryCompatibility(person1, person2);
+  const subCycleScore = await consultation1.calculateSubCycleCompatibilityByYear(person1, person2, birthDateTime1, birthDateTime2);
+
+  const overallScore = elementalScore + trigramHexagramScore + sexagenaryScore + subCycleScore;
+
+  // Build analysis object
+  const analysis = {
+    elementalCompatibility: {
+      score: elementalScore,
+      description: elementalScore > 0 ? 'Harmonious elemental relationship' : elementalScore < 0 ? 'Challenging elemental relationship' : 'Neutral elemental relationship',
+    },
+    trigramHexagramCompatibility: {
+      score: trigramHexagramScore,
+      description: trigramHexagramScore > 0 ? 'Harmonious trigrams and hexagrams' : trigramHexagramScore < 0 ? 'Challenging trigrams and hexagrams' : 'Neutral trigrams and hexagrams',
+    },
+    sexagenaryCompatibility: {
+      score: sexagenaryScore,
+      description: sexagenaryScore > 0 ? 'Harmonious sexagenary cycles' : sexagenaryScore < 0 ? 'Challenging sexagenary cycles' : 'Neutral sexagenary cycles',
+    },
+    subCycleCompatibility: {
+      score: subCycleScore,
+      description: subCycleScore > 0 ? 'Harmonious life stage alignment' : subCycleScore < 0 ? 'Challenging life stage alignment' : 'Neutral life stage alignment',
+    },
+    overallCompatibility: {
+      score: overallScore,
+      description: overallScore > 5 ? 'Highly compatible' : overallScore > 0 ? 'Moderately compatible' : overallScore < -5 ? 'Highly challenging' : overallScore < 0 ? 'Moderately challenging' : 'Neutral compatibility',
+    },
+  };
+
+  return {
+    person1,
+    person2,
+    compatibility: analysis,
+  };
+}
 
     /** Function to calculate trigram and hexagram compatibility */
   calculateTrigramHexagramCompatibility(person1, person2) {
@@ -4740,6 +4870,7 @@ export default {
   computeSexagenaryCycle,
   calculateNatalHexagram,
   calculateCompatibility: IChingConsultation.calculateCompatibility,  
+  calculateCompatibilityByYear: IChingConsultation.calculateCompatibilityByYear,  
   Gender,  
   elementRelationships,
 }
