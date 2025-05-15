@@ -4741,4 +4741,5 @@ export default {
   calculateNatalHexagram,
   calculateCompatibility: IChingConsultation.calculateCompatibility,  
   Gender,  
+  elementRelationships,
 }
