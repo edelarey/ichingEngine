@@ -96,6 +96,18 @@ const bagua = {
             nature: "earth," + "地",
             color: Color.rgb(	0, 0, 0), // black
         },
+        music: {
+             musicalScale: "C Major Pentatonic",
+             notes: ['C4', 'D4', 'E4', 'G4', 'A4'],
+             description: `Warm, grounding, and nurturing, reflecting Earth’s receptive nature.`,
+             instrument: "Cello",
+             solfeggio: 396,
+             lineMappings: [
+                    { note: "C4", duration: 5, velocity: 0.4 }, // Lower: yin
+                    { note: "D4", duration: 5, velocity: 0.4 }, // Middle: yin
+                    { note: "E4", duration: 5, velocity: 0.4 }  // Upper: yin
+              ],
+        },
     },
     gèn: {
         name: `gèn`,
@@ -134,7 +146,19 @@ const bagua = {
             animal: "dog, " + "狗",
             nature: "mountain, " + "山",
             color: Color.rgb(	255, 0, 0), // red
-        },     
+        },    
+        music: {
+            musicalScale: "D Dorian",
+            notes: ['D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'],
+            description:`Introspective and stable, with a slightly melancholic yet resolute tone.`,
+            instrument: "Bassoon",
+            solfeggio: 417,
+            lineMappings: [
+                { note: "D4", duration: 5, velocity: 0.4 }, // Lower: yin
+                { note: "E4", duration: 5, velocity: 0.4 }, // Middle: yin
+                { note: "F4", duration: 2, velocity: 0.8 }  // Upper: yang
+            ],
+        }, 
     },
     kǎn: {
         name: `kǎn`,
@@ -173,7 +197,19 @@ const bagua = {
         animal: "pig, " + "豕",
         nature: "water, moon " + "水",
         color: Color.rgb(	0, 0, 255), // blue
-        },       
+        },   
+        music: {
+            musicalScale: "E Phrygian",
+            notes: ['E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5'],
+            description: `Mysterious and flowing, evoking the depth and danger of water.`,
+            instrument: "Harp",
+            solfeggio: 285,
+            lineMappings: [
+                { note: "E4", duration: 5, velocity: 0.4 }, // Lower: yin
+                { note: "F4", duration: 2, velocity: 0.8 }, // Middle: yang
+                { note: "G4", duration: 5, velocity: 0.4 }  // Upper: yin
+            ],
+        },     
     }, 
     xùn: {
         name: `xùn`,
@@ -212,6 +248,18 @@ const bagua = {
         animal: "cock, " + "雞",
         nature:"wind, wood " + "風",
         color:Color.rgb(	0, 255, 0), // green
+        },
+        music: {
+            musicalScale: "G Whole-Tone",
+            notes: ['G4', 'A4', 'B4', 'C#5', 'D#5', 'F5'],
+            description: `Airy and ethereal, with a floating, penetrating quality.`,
+            instrument: "Flute",
+            solfeggio: 639,
+            lineMappings: [
+                { note: "G4", duration: 5, velocity: 0.4 }, // Lower: yin
+                { note: "A4", duration: 2, velocity: 0.8 }, // Middle: yang
+                { note: "B4", duration: 2, velocity: 0.8 }  // Upper: yang
+            ],
         },
     },
     zhèn: {
@@ -252,6 +300,18 @@ const bagua = {
         nature:"thunder, " + "雷",
         color:Color.rgb(	255, 255, 0), // yellow 
         },
+        music: {
+            musicalScale: "A Aeolian",
+            notes: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5'],
+            description: `Dynamic and intense, capturing the arousing energy of thunder.`,
+            instrument: "Taiko Drum",
+            solfeggio: 741,
+            lineMappings: [
+                { note: "A4", duration: 2, velocity: 0.8 }, // Lower: yang
+                { note: "B4", duration: 5, velocity: 0.4 }, // Middle: yin
+                { note: "C5", duration: 5, velocity: 0.4 }  // Upper: yin
+            ],
+        },
     },
     lí:{
         name: `lí`,
@@ -290,7 +350,19 @@ const bagua = {
         animal: "pheasant, " + "雉",
         nature:"fire, sun, " + "火",
         color:Color.rgb(	255, 0, 255), // magenta
-        },        
+        },     
+        music: {
+            musicalScale: "F Lydian",
+            notes: ['F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5'],
+            description: `Bright and radiant, with an uplifting, fiery quality.`,
+            instrument: "Electric Guitar",
+            solfeggio: 528,
+            lineMappings: [
+                { note: "F4", duration: 2, velocity: 0.8 }, // Lower: yang
+                { note: "G4", duration: 5, velocity: 0.4 }, // Middle: yin
+                { note: "A4", duration: 2, velocity: 0.8 }  // Upper: yang
+            ],
+        },   
     },
     duì: {
         name: `duì`,        
@@ -329,7 +401,19 @@ const bagua = {
         animal: "sheep," + "羊",
         nature:"marsh, lake, swamp, " + "澤",
         color:Color.rgb(	255, 0, 0), // red
-        },        
+        },    
+        music: {
+            musicalScale: "B Harmonic Minor",
+            notes: ['B4', 'C#5', 'D5', 'E5', 'F#5', 'G5', 'A#5'],
+            description: `Joyous yet reflective, with a poignant, expressive edge.`,
+            instrument: "Vibraphone",
+            solfeggio: 852,
+            lineMappings: [
+                { note: "B4", duration: 2, velocity: 0.8 }, // Lower: yang
+                { note: "C5", duration: 2, velocity: 0.8 }, // Middle: yang
+                { note: "D5", duration: 5, velocity: 0.4 }  // Upper: yin
+            ],
+        },       
     },
     qián: {
         name: 'qián',
@@ -369,7 +453,18 @@ const bagua = {
         nature:"heaven, sky, " + "天",
         color: Color.rgb(	0, 0, 0), // black
         },
-        
+        music: {
+            musicalScale: "C Ionian",
+            notes: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4'],
+            description: `Bold and harmonious, embodying the creative force of heaven.`,
+            instrument: "Trumpet",
+            solfeggio: 963,
+            lineMappings: [
+                { note: "C4", duration: 2, velocity: 0.8 }, // Lower: yang
+                { note: "D4", duration: 2, velocity: 0.8 }, // Middle: yang
+                { note: "E4", duration: 2, velocity: 0.8 }  // Upper: yang
+            ],
+        },          
     },
 };  
 
