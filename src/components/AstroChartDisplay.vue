@@ -22,10 +22,16 @@
           </thead>
           <tbody>
             <tr v-for="planet in planetPositions" :key="planet.name">
-              <td>{{ planet.name }}</td>
-              <td>{{ planet.sign }}</td>
+              <td>
+                <span class="planet-symbol" :style="{ color: getPlanetColor(planet.name) }">{{ planet.symbol }}</span>
+                {{ planet.name }}
+              </td>
+              <td>
+                <span class="zodiac-symbol">{{ getZodiacSymbol(planet.sign) }}</span>
+                {{ planet.sign }}
+              </td>
               <td>{{ formatDegree(planet.longitude) }}</td>
-              <td>{{ planet.house }}</td>
+              <td>{{ getHouseName(planet.house) }}</td>
             </tr>
           </tbody>
         </table>
@@ -65,8 +71,44 @@ export default {
       return `${degree.toFixed(2)}°`;
     };
 
+    const getZodiacSymbol = (signName) => {
+      const symbols = {
+        'Aries': '♈',
+        'Taurus': '♉',
+        'Gemini': '♊',
+        'Cancer': '♋',
+        'Leo': '♌',
+        'Virgo': '♍',
+        'Libra': '♎',
+        'Scorpio': '♏',
+        'Sagittarius': '♐',
+        'Capricorn': '♑',
+        'Aquarius': '♒',
+        'Pisces': '♓'
+      };
+      return symbols[signName] || '';
+    };
+
+    const getHouseName = (houseNumber) => {
+      const houseNames = {
+        1: '1st - Self',
+        2: '2nd - Values',
+        3: '3rd - Communication',
+        4: '4th - Home',
+        5: '5th - Creativity',
+        6: '6th - Health',
+        7: '7th - Partnership',
+        8: '8th - Transformation',
+        9: '9th - Philosophy',
+        10: '10th - Career',
+        11: '11th - Friends',
+        12: '12th - Subconscious'
+      };
+      return houseNames[houseNumber] || `${houseNumber}th`;
+    };
+
     const drawAstrologyChart = () => {
-      if (!chartCanvas.value || !props.planetPositions.length) return;
+      if (!chartCanvas.value) return;
 
       const ctx = chartCanvas.value.getContext('2d');
       const centerX = 300;
@@ -83,7 +125,7 @@ export default {
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Draw zodiac divisions
+      // Draw zodiac divisions and signs
       for (let i = 0; i < 12; i++) {
         const angle = (i * 30 - 90) * Math.PI / 180;
         const x1 = centerX + Math.cos(angle) * (radius - 20);
@@ -98,36 +140,20 @@ export default {
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // Draw zodiac sign labels
+        // Draw zodiac sign symbols
         const labelAngle = ((i * 30) + 15 - 90) * Math.PI / 180;
         const labelX = centerX + Math.cos(labelAngle) * (radius - 35);
         const labelY = centerY + Math.sin(labelAngle) * (radius - 35);
         
+        ctx.fillStyle = '#6c63ff';
+        ctx.font = '18px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(getZodiacSymbol(zodiacSigns[i]), labelX, labelY);
+        
         ctx.fillStyle = '#333';
-        ctx.font = '14px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(zodiacSigns[i], labelX, labelY);
-      }
-
-      // Draw planets
-      props.planetPositions.forEach((planet, index) => {
-        const angle = (planet.longitude - 90) * Math.PI / 180;
-        const planetRadius = radius - 60;
-        const x = centerX + Math.cos(angle) * planetRadius;
-        const y = centerY + Math.sin(angle) * planetRadius;
-
-        // Draw planet symbol/name
-        ctx.fillStyle = getPlanetColor(planet.name);
-        ctx.beginPath();
-        ctx.arc(x, y, 8, 0, 2 * Math.PI);
-        ctx.fill();
-
-        // Draw planet label
-        ctx.fillStyle = '#000';
         ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(planet.symbol || planet.name.substr(0, 2), x, y - 15);
-      });
+        ctx.fillText(zodiacSigns[i], labelX, labelY + 20);
+      }
 
       // Draw houses (simplified)
       ctx.beginPath();
@@ -135,6 +161,37 @@ export default {
       ctx.strokeStyle = '#999';
       ctx.lineWidth = 1;
       ctx.stroke();
+
+      // Only draw planets if we have position data
+      if (props.planetPositions && props.planetPositions.length > 0) {
+        props.planetPositions.forEach((planet, index) => {
+          const angle = (planet.longitude - 90) * Math.PI / 180;
+          const planetRadius = radius - 60;
+          const x = centerX + Math.cos(angle) * planetRadius;
+          const y = centerY + Math.sin(angle) * planetRadius;
+
+          // Draw planet circle with matching color
+          ctx.fillStyle = getPlanetColor(planet.name);
+          ctx.beginPath();
+          ctx.arc(x, y, 10, 0, 2 * Math.PI);
+          ctx.fill();
+
+          // Add a white border for visibility
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Draw planet symbol
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 14px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(planet.symbol, x, y - 18);
+          
+          // Draw planet name
+          ctx.font = '10px Arial';
+          ctx.fillText(planet.name, x, y + 25);
+        });
+      }
     };
 
     const getPlanetColor = (planetName) => {
@@ -163,7 +220,10 @@ export default {
 
     return {
       chartCanvas,
-      formatDegree
+      formatDegree,
+      getZodiacSymbol,
+      getHouseName,
+      getPlanetColor
     };
   }
 };
@@ -190,6 +250,18 @@ canvas {
 
 .planet-positions {
   text-align: left;
+}
+
+.planet-symbol {
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-right: 0.5rem;
+}
+
+.zodiac-symbol {
+  font-size: 1.1em;
+  margin-right: 0.5rem;
+  color: #6c63ff;
 }
 
 @media (max-width: 768px) {
