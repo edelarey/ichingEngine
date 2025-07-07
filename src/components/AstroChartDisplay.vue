@@ -1,41 +1,56 @@
 <template>
   <div class="astro-chart-display">
-    <h4 class="text-center mb-4">Astrological Chart</h4>
-    
-    <!-- Chart Canvas -->
-    <div class="chart-container">
-      <canvas ref="chartCanvas" width="600" height="600" class="center-content"></canvas>
+    <!-- Chart Display -->
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8 mb-4">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Western Astrological Chart</h5>
+            <p class="card-text">
+              This chart shows the planetary positions and astrological aspects for the given birth data.
+            </p>
+            <!-- Canvas container for chart rendering -->
+            <div class="canvas-container">
+              <canvas ref="chartCanvas" width="600" height="600" class="center-content"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     
     <!-- Planet Positions Table -->
-    <div class="planet-positions mt-4">
-      <h5>Planetary Positions</h5>
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Planet</th>
-              <th>Sign</th>
-              <th>Degree</th>
-              <th>House</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="planet in planetPositions" :key="planet.name">
-              <td>
-                <span class="planet-color-dot" :style="{ backgroundColor: getPlanetColor(planet.name) }"></span>
-                <span class="planet-symbol" :style="{ color: getPlanetColor(planet.name) }">{{ planet.symbol }}</span>
-                {{ planet.name }}
-              </td>
-              <td>
-                <span class="zodiac-symbol">{{ getZodiacSymbol(planet.sign) }}</span>
-                {{ planet.sign }}
-              </td>
-              <td>{{ formatDegree(planet.longitude) }}</td>
-              <td>{{ getHouseName(planet.house) }}</td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="planet-positions">
+          <h5>Planetary Positions</h5>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Planet</th>
+                  <th>Sign</th>
+                  <th>Degree</th>
+                  <th>House</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="planet in planetPositions" :key="planet.name">
+                  <td>
+                    <span class="planet-color-dot" :style="{ backgroundColor: getPlanetColor(planet.name) }"></span>
+                    <span class="planet-symbol" :style="{ color: getPlanetColor(planet.name) }">{{ planet.symbol }}</span>
+                    {{ planet.name }}
+                  </td>
+                  <td>
+                    <span class="zodiac-symbol">{{ getZodiacSymbol(planet.sign) }}</span>
+                    {{ planet.sign }}
+                  </td>
+                  <td>{{ formatDegree(planet.longitude) }}</td>
+                  <td>{{ getHouseName(planet.house) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -232,16 +247,14 @@ export default {
 
 <style scoped>
 .astro-chart-display {
-  text-align: center;
   margin: 2rem 0;
 }
 
-.chart-container {
+.canvas-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 1rem 0;
-  width: 100%;
 }
 
 canvas {
