@@ -31,3 +31,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # Update hexagram list
 # Update Birthday Handling
 # Add western astrology section
+# Add Western Atrology PDF Export
