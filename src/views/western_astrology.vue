@@ -197,10 +197,19 @@
                         </button>
                         <button
                           type="button"
-                          class="btn btn-secondary"
+                          class="btn btn-secondary me-2"
                           @click="clearForm"
                         >
                           Clear Form
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-info"
+                          @click="exportToPDF"
+                          :disabled="!chartData"
+                          title="Export chart and data to PDF"
+                        >
+                          📄 Export PDF
                         </button>
                       </div>
                     </div>
@@ -237,6 +246,8 @@ import { useAstrologyStore } from '@/stores/astrology';
 import AstroChartDisplay from '@/components/AstroChartDisplay.vue';
 import AstroSummary from '@/components/AstroSummary.vue';
 import { calculatePlanetaryPositions } from '@/utils/astrologyCalculations';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default {
   name: 'WesternAstrology',
@@ -433,6 +444,181 @@ export default {
       }
     };
 
+    const exportToPDF = async () => {
+      if (!chartData.value) {
+        alert('Please calculate a chart first before exporting to PDF.');
+        return;
+      }
+
+      try {
+        // Create a new jsPDF instance
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        let yPosition = 20;
+
+        // Title
+        pdf.setFontSize(18);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Western Astrology Chart Report', pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 15;
+
+        // Birth Data Section
+        pdf.setFontSize(14);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Birth Information', 20, yPosition);
+        yPosition += 10;
+
+        pdf.setFontSize(11);
+        pdf.setFont(undefined, 'normal');
+        const birthInfo = [
+          `Name: ${localBirthData.name}`,
+          `Date: ${localBirthData.date.toLocaleDateString()}`,
+          `Time: ${localBirthData.time}`,
+          `Place: ${localBirthData.place || 'Not specified'}`,
+          `Latitude: ${localBirthData.latitude}°`,
+          `Longitude: ${localBirthData.longitude}°`,
+          `Gender: ${localBirthData.gender}`
+        ];
+
+        birthInfo.forEach(info => {
+          pdf.text(info, 20, yPosition);
+          yPosition += 6;
+        });
+
+        yPosition += 10;
+
+        // Chart Section
+        pdf.setFontSize(14);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Astrological Chart', 20, yPosition);
+        yPosition += 10;
+
+        // Capture the chart canvas
+        const chartElement = document.querySelector('canvas');
+        if (chartElement) {
+          const canvas = await html2canvas(chartElement, {
+            backgroundColor: 'white',
+            scale: 2
+          });
+          
+          const chartImgData = canvas.toDataURL('image/png');
+          const chartWidth = 120;
+          const chartHeight = 120;
+          const chartX = (pageWidth - chartWidth) / 2;
+          
+          pdf.addImage(chartImgData, 'PNG', chartX, yPosition, chartWidth, chartHeight);
+          yPosition += chartHeight + 15;
+        }
+
+        // Check if we need a new page
+        if (yPosition > pageHeight - 60) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+
+        // Planetary Positions Section
+        pdf.setFontSize(14);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Planetary Positions', 20, yPosition);
+        yPosition += 10;
+
+        if (planetPositions.value && planetPositions.value.length > 0) {
+          pdf.setFontSize(10);
+          pdf.setFont(undefined, 'normal');
+          
+          // Table headers
+          const headers = ['Planet', 'Sign', 'Degree', 'House'];
+          const startX = 20;
+          const columnWidths = [40, 30, 30, 40];
+          
+          // Draw table header
+          pdf.setFont(undefined, 'bold');
+          headers.forEach((header, index) => {
+            const x = startX + columnWidths.slice(0, index).reduce((a, b) => a + b, 0);
+            pdf.text(header, x, yPosition);
+          });
+          yPosition += 8;
+
+          // Draw table rows
+          pdf.setFont(undefined, 'normal');
+          planetPositions.value.forEach(planet => {
+            if (yPosition > pageHeight - 20) {
+              pdf.addPage();
+              yPosition = 20;
+            }
+            
+            const row = [
+              planet.name,
+              planet.sign,
+              `${Math.round(planet.longitude)}°`,
+              `${planet.house}`
+            ];
+            
+            row.forEach((cell, index) => {
+              const x = startX + columnWidths.slice(0, index).reduce((a, b) => a + b, 0);
+              pdf.text(cell.toString(), x, yPosition);
+            });
+            yPosition += 6;
+          });
+        }
+
+        // Add a new page for summary if needed
+        if (yPosition > pageHeight - 40) {
+          pdf.addPage();
+          yPosition = 20;
+        } else {
+          yPosition += 15;
+        }
+
+        // Astrological Summary Section
+        pdf.setFontSize(14);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Astrological Summary', 20, yPosition);
+        yPosition += 10;
+
+        pdf.setFontSize(10);
+        pdf.setFont(undefined, 'normal');
+        
+        // Add some basic interpretation
+        const summaryText = [
+          'This Western astrology chart shows the positions of celestial bodies at the time',
+          'and place of birth. Each planet\'s position in a zodiac sign and house provides',
+          'insights into different aspects of personality, life themes, and potential.',
+          '',
+          'Key Elements:',
+          '• Houses represent different life areas (1st=Self, 2nd=Values, 3rd=Communication, etc.)',
+          '• Signs indicate how planetary energies are expressed',
+          '• Planetary positions show where energies are focused',
+          '',
+          'This chart serves as a foundation for astrological interpretation and should',
+          'be read by a qualified astrologer for detailed insights.'
+        ];
+
+        summaryText.forEach(line => {
+          if (yPosition > pageHeight - 15) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          pdf.text(line, 20, yPosition);
+          yPosition += 5;
+        });
+
+        // Add footer
+        const currentDate = new Date().toLocaleDateString();
+        pdf.setFontSize(8);
+        pdf.text(`Generated on ${currentDate} by iChing Engine`, 20, pageHeight - 10);
+
+        // Save the PDF
+        const fileName = `${localBirthData.name || 'Astrology'}_Chart_${currentDate.replace(/\//g, '-')}.pdf`;
+        pdf.save(fileName);
+
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        alert('Failed to generate PDF. Please try again.');
+      }
+    };
+
     return {
       birthdayStore,
       birthdayList,
@@ -449,7 +635,8 @@ export default {
       saveBirthday,
       clearForm,
       startEditingBirthday,
-      handleImport
+      handleImport,
+      exportToPDF
     };
   }
 };
