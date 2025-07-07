@@ -84,6 +84,11 @@
               <span class="align-middle">Tibetan Mantra Chart</span>
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/western_astrology" exact-active-class="active">
+              <span class="align-middle">Western Astrology</span>
+            </router-link>
+          </li>
         </ul>
 </li>
       <li class="nav-item">

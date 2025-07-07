@@ -46,9 +46,6 @@
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="daily-cycles-tab" data-bs-toggle="tab" data-bs-target="#daily-cycles" type="button" role="tab" aria-controls="daily-cycles" aria-selected="false">Early & Later Daily Cycles</button>
         </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="western-astrology-tab" data-bs-toggle="tab" data-bs-target="#western-astrology" type="button" role="tab" aria-controls="western-astrology" aria-selected="false">Western Astrology</button>
-        </li>
         
       </ul>
 
@@ -733,11 +730,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Western Astrology Tab -->
-        <div class="tab-pane fade" id="western-astrology" role="tabpanel" aria-labelledby="western-astrology-tab">
-          <AstrologySection />
-        </div>
       </div>
     </div>
   </div>
@@ -753,13 +745,11 @@
   import astro from '@/const/astrology';
   import { DateTime } from 'luxon';
   import { useBirthdayStore } from '@/stores/birthday';
-  import AstrologySection from '@/components/AstrologySection.vue';
 
   export default {
     name: 'Astrology',
     components: {
-      Datepicker,
-      AstrologySection
+      Datepicker
     },
     setup() {
       const birthdayStore = useBirthdayStore();

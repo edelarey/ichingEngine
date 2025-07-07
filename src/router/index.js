@@ -10,8 +10,9 @@ import HexagramSequence from '../views/hexagram_sequence.vue';
 import Hexagrams from '../views/hexagrams.vue';
 import Trigram from '../views/trigrams.vue';
 import TrigramDetail from '../views/trigram_detail.vue';
-import About from '../views/about.vue'; 
+import About from '../views/about.vue';
 import TibetanMantraChart from '../views/tibetan_mantra_chart.vue'; // Import the new component
+import WesternAstrology from '../views/western_astrology.vue';
 
 const routes = [
   {
@@ -42,7 +43,12 @@ const routes = [
   {
     path: '/tibetan_mantra_chart',
     name: 'TibetanMantraChart',
-    component: TibetanMantraChart, 
+    component: TibetanMantraChart,
+  },
+  {
+    path: '/western_astrology',
+    name: 'WesternAstrology',
+    component: WesternAstrology,
   },
   {
     path: '/relationship',

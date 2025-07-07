@@ -119,6 +119,7 @@ export const useBirthdayStore = defineStore('birthday', {
                 latitude: typeof b.coords?.latitude === 'string' ? parseFloat(b.coords.latitude) : b.coords?.latitude || 0,
                 longitude: typeof b.coords?.longitude === 'string' ? parseFloat(b.coords.longitude) : b.coords?.longitude || 0,
               },
+              place: b.place || '', // Add place field
             };
 
             // Additional validation for imported data
