@@ -451,7 +451,14 @@ export default {
       }
 
       try {
-        // Create a new jsPDF instance
+        // Make sure we're on the chart tab
+        const chartTab = document.querySelector('#western-chart-tab');
+        if (chartTab && !chartTab.classList.contains('active')) {
+          chartTab.click();
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        // Create a comprehensive PDF with all the information
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
@@ -488,31 +495,38 @@ export default {
 
         yPosition += 10;
 
-        // Chart Section
+        // Chart Section - Capture the chart canvas
         pdf.setFontSize(14);
         pdf.setFont(undefined, 'bold');
         pdf.text('Astrological Chart', 20, yPosition);
         yPosition += 10;
 
-        // Capture the chart canvas
         const chartElement = document.querySelector('canvas');
         if (chartElement) {
-          const canvas = await html2canvas(chartElement, {
-            backgroundColor: 'white',
-            scale: 2
-          });
-          
-          const chartImgData = canvas.toDataURL('image/png');
-          const chartWidth = 120;
-          const chartHeight = 120;
-          const chartX = (pageWidth - chartWidth) / 2;
-          
-          pdf.addImage(chartImgData, 'PNG', chartX, yPosition, chartWidth, chartHeight);
-          yPosition += chartHeight + 15;
+          try {
+            const chartCanvas = await html2canvas(chartElement, {
+              backgroundColor: 'white',
+              scale: 2,
+              logging: false
+            });
+            
+            const chartImgData = chartCanvas.toDataURL('image/png');
+            const chartWidth = 120;
+            const chartHeight = 120;
+            const chartX = (pageWidth - chartWidth) / 2;
+            
+            pdf.addImage(chartImgData, 'PNG', chartX, yPosition, chartWidth, chartHeight);
+            yPosition += chartHeight + 15;
+          } catch (chartError) {
+            console.warn('Could not capture chart:', chartError);
+            pdf.setFontSize(10);
+            pdf.text('Chart could not be captured', 20, yPosition);
+            yPosition += 10;
+          }
         }
 
         // Check if we need a new page
-        if (yPosition > pageHeight - 60) {
+        if (yPosition > pageHeight - 80) {
           pdf.addPage();
           yPosition = 20;
         }
@@ -530,7 +544,7 @@ export default {
           // Table headers
           const headers = ['Planet', 'Sign', 'Degree', 'House'];
           const startX = 20;
-          const columnWidths = [40, 30, 30, 40];
+          const columnWidths = [45, 35, 35, 45];
           
           // Draw table header
           pdf.setFont(undefined, 'bold');
@@ -540,6 +554,22 @@ export default {
           });
           yPosition += 8;
 
+          // House names mapping
+          const houseNames = {
+            1: '1st - Self',
+            2: '2nd - Values',
+            3: '3rd - Communication',
+            4: '4th - Home',
+            5: '5th - Creativity',
+            6: '6th - Health',
+            7: '7th - Partnerships',
+            8: '8th - Transformation',
+            9: '9th - Philosophy',
+            10: '10th - Career',
+            11: '11th - Friends',
+            12: '12th - Spirituality'
+          };
+
           // Draw table rows
           pdf.setFont(undefined, 'normal');
           planetPositions.value.forEach(planet => {
@@ -548,61 +578,111 @@ export default {
               yPosition = 20;
             }
             
+            // Clean planet name and use simple text symbols
+            const planetName = planet.name || 'Unknown';
+            const planetSign = planet.sign || 'Unknown';
+            const planetDegree = planet.longitude ? `${Math.round(planet.longitude * 100) / 100}°` : '0°';
+            const planetHouse = planet.house ? houseNames[planet.house] || `${planet.house}th House` : 'Unknown';
+            
             const row = [
-              planet.name,
-              planet.sign,
-              `${Math.round(planet.longitude)}°`,
-              `${planet.house}`
+              planetName,
+              planetSign,
+              planetDegree,
+              planetHouse
             ];
             
             row.forEach((cell, index) => {
               const x = startX + columnWidths.slice(0, index).reduce((a, b) => a + b, 0);
-              pdf.text(cell.toString(), x, yPosition);
+              const cellText = cell.toString();
+              
+              // Handle house column with potential line wrapping
+              if (index === 3 && cellText.includes(' - ')) {
+                const parts = cellText.split(' - ');
+                pdf.text(parts[0], x, yPosition);
+                if (parts[1] && parts[1] !== 'undefined') {
+                  pdf.setFontSize(8);
+                  pdf.text(parts[1], x, yPosition + 3);
+                  pdf.setFontSize(10);
+                }
+              } else {
+                pdf.text(cellText, x, yPosition);
+              }
             });
-            yPosition += 6;
+            yPosition += 8;
           });
         }
 
         // Add a new page for summary if needed
-        if (yPosition > pageHeight - 40) {
+        if (yPosition > pageHeight - 60) {
           pdf.addPage();
           yPosition = 20;
         } else {
           yPosition += 15;
         }
 
-        // Astrological Summary Section
-        pdf.setFontSize(14);
-        pdf.setFont(undefined, 'bold');
-        pdf.text('Astrological Summary', 20, yPosition);
-        yPosition += 10;
+        // Try to capture the summary section
+        const summaryElement = document.querySelector('.astro-summary');
+        if (summaryElement) {
+          try {
+            const summaryCanvas = await html2canvas(summaryElement, {
+              backgroundColor: 'white',
+              scale: 1.5,
+              logging: false,
+              width: summaryElement.scrollWidth,
+              height: summaryElement.scrollHeight
+            });
+            
+            const summaryImgData = summaryCanvas.toDataURL('image/png');
+            const summaryWidth = pageWidth - 40;
+            const summaryHeight = (summaryCanvas.height / summaryCanvas.width) * summaryWidth;
+            
+            // Check if we need multiple pages for summary
+            if (summaryHeight > (pageHeight - yPosition - 20)) {
+              pdf.addPage();
+              yPosition = 20;
+            }
+            
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('Astrological Summary', 20, yPosition);
+            yPosition += 10;
+            
+            pdf.addImage(summaryImgData, 'PNG', 20, yPosition, summaryWidth, Math.min(summaryHeight, pageHeight - yPosition - 20));
+          } catch (summaryError) {
+            console.warn('Could not capture summary:', summaryError);
+            // Fallback to text summary
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('Astrological Summary', 20, yPosition);
+            yPosition += 10;
+            
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'normal');
+            
+            const summaryText = [
+              'This Western astrology chart shows the positions of celestial bodies at the time',
+              'and place of birth. Each planet\'s position in a zodiac sign and house provides',
+              'insights into different aspects of personality, life themes, and potential.',
+              '',
+              'Key Elements:',
+              '• Houses represent different life areas (1st=Self, 2nd=Values, 3rd=Communication, etc.)',
+              '• Signs indicate how planetary energies are expressed',
+              '• Planetary positions show where energies are focused',
+              '',
+              'This chart serves as a foundation for astrological interpretation and should',
+              'be read by a qualified astrologer for detailed insights.'
+            ];
 
-        pdf.setFontSize(10);
-        pdf.setFont(undefined, 'normal');
-        
-        // Add some basic interpretation
-        const summaryText = [
-          'This Western astrology chart shows the positions of celestial bodies at the time',
-          'and place of birth. Each planet\'s position in a zodiac sign and house provides',
-          'insights into different aspects of personality, life themes, and potential.',
-          '',
-          'Key Elements:',
-          '• Houses represent different life areas (1st=Self, 2nd=Values, 3rd=Communication, etc.)',
-          '• Signs indicate how planetary energies are expressed',
-          '• Planetary positions show where energies are focused',
-          '',
-          'This chart serves as a foundation for astrological interpretation and should',
-          'be read by a qualified astrologer for detailed insights.'
-        ];
-
-        summaryText.forEach(line => {
-          if (yPosition > pageHeight - 15) {
-            pdf.addPage();
-            yPosition = 20;
+            summaryText.forEach(line => {
+              if (yPosition > pageHeight - 15) {
+                pdf.addPage();
+                yPosition = 20;
+              }
+              pdf.text(line, 20, yPosition);
+              yPosition += 5;
+            });
           }
-          pdf.text(line, 20, yPosition);
-          yPosition += 5;
-        });
+        }
 
         // Add footer
         const currentDate = new Date().toLocaleDateString();
