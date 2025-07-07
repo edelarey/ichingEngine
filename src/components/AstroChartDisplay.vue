@@ -23,6 +23,7 @@
           <tbody>
             <tr v-for="planet in planetPositions" :key="planet.name">
               <td>
+                <span class="planet-color-dot" :style="{ backgroundColor: getPlanetColor(planet.name) }"></span>
                 <span class="planet-symbol" :style="{ color: getPlanetColor(planet.name) }">{{ planet.symbol }}</span>
                 {{ planet.name }}
               </td>
@@ -185,11 +186,11 @@ export default {
           ctx.fillStyle = '#000';
           ctx.font = 'bold 14px Arial';
           ctx.textAlign = 'center';
-          ctx.fillText(planet.symbol, x, y - 18);
+          ctx.fillText(planet.symbol, x, y - 10);
           
           // Draw planet name
           ctx.font = '10px Arial';
-          ctx.fillText(planet.name, x, y + 25);
+          ctx.fillText(planet.name, x, y + 20);
         });
       }
     };
@@ -238,7 +239,9 @@ export default {
 .chart-container {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin: 1rem 0;
+  width: 100%;
 }
 
 canvas {
@@ -250,6 +253,16 @@ canvas {
 
 .planet-positions {
   text-align: left;
+}
+
+.planet-color-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  border: 1px solid #fff;
+  vertical-align: middle;
 }
 
 .planet-symbol {
