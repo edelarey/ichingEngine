@@ -50,22 +50,72 @@ export const useBirthdayStore = defineStore('birthday', {
       return errors;
     },
 
-    addBirthday(birthday) {
-      // Validate the birthday
-      const errors = this.validateBirthday(birthday);
+    addBirthday(birthday, forceUpdate = false) {
+      // Check for duplicate name first
+      const existingBirthday = this.birthdays.find(b => b.name === birthday.name);
+      
+      if (existingBirthday && !forceUpdate) {
+        // Return a special object indicating duplicate found
+        return {
+          duplicate: true,
+          existingBirthday: existingBirthday,
+          newBirthday: birthday
+        };
+      }
+
+      // If forceUpdate is true, remove the existing birthday
+      if (existingBirthday && forceUpdate) {
+        this.birthdays = this.birthdays.filter(b => b.id !== existingBirthday.id);
+        birthday.id = existingBirthday.id; // Keep the same ID
+      } else {
+        // Ensure unique ID for new birthday
+        let newId = birthday.id;
+        while (this.birthdays.some(b => b.id === newId)) {
+          newId = Date.now() + Math.floor(Math.random() * 1000);
+        }
+        birthday.id = newId;
+      }
+
+      // Validate the birthday (excluding duplicate name check since we handle it above)
+      const errors = this.validateBirthdayExcludingName(birthday);
       if (errors.length > 0) {
         throw new Error(errors.join(' '));
       }
 
-      // Ensure unique ID
-      let newId = birthday.id;
-      while (this.birthdays.some(b => b.id === newId)) {
-        newId = Date.now() + Math.floor(Math.random() * 1000); // Add random suffix to avoid collisions
-      }
-      birthday.id = newId;
-
       this.birthdays.push(birthday);
       this.persistState();
+      
+      return { success: true };
+    },
+
+    // Separate validation method that excludes name duplication check
+    validateBirthdayExcludingName(birthday) {
+      const errors = [];
+
+      // Validate name
+      if (!birthday.name || typeof birthday.name !== 'string' || birthday.name.trim() === '') {
+        errors.push('Name is required and must be a non-empty string.');
+      }
+
+      // Validate birthday date
+      if (!birthday.birthday || !DateTime.fromISO(birthday.birthday).isValid) {
+        errors.push('Birthday must be a valid date in ISO format (e.g., "1970-01-01T15:50:00").');
+      }
+
+      // Validate gender
+      if (!['MALE', 'FEMALE'].includes(birthday.gender)) {
+        errors.push('Gender must be either "MALE" or "FEMALE".');
+      }
+
+      // Validate coordinates (latitude and longitude can be decimal numbers)
+      if (typeof birthday.coords.latitude !== 'number' || isNaN(birthday.coords.latitude) || birthday.coords.latitude < -90 || birthday.coords.latitude > 90) {
+        errors.push('Latitude must be a number (including decimals) between -90 and 90 (e.g., -26.174204189162413).');
+      }
+      if (typeof birthday.coords.longitude !== 'number' || isNaN(birthday.coords.longitude) || birthday.coords.longitude < -180 || birthday.coords.longitude > 180) {
+        errors.push('Longitude must be a number (including decimals) between -180 and 180 (e.g., 151.2093).');
+      }
+
+      return errors;
     },
 
     updateBirthday(birthday) {

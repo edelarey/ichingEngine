@@ -72,6 +72,7 @@
                       <p><strong>Gender:</strong> {{ birthday.gender }}</p>
                       <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
                       <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
+                      <p v-if="birthday.place"><strong>Place:</strong> {{ birthday.place }}</p>
                       <div>
                         <button @click="loadBirthdayData(birthday)" class="btn btn-primary btn-sm me-2">Load for Chart</button>
                         <button @click="startEditingBirthday(birthday)" class="btn btn-secondary btn-sm me-2">Edit</button>
@@ -377,15 +378,30 @@ export default {
             minute: parseInt(localBirthData.time.split(':')[1])
           }).toISO(),
           gender: localBirthData.gender,
-          coords: { 
-            latitude: localBirthData.latitude, 
-            longitude: localBirthData.longitude 
+          coords: {
+            latitude: localBirthData.latitude,
+            longitude: localBirthData.longitude
           },
           place: localBirthData.place
         };
 
-        birthdayStore.addBirthday(birthdayData);
-        alert('Birthday saved successfully!');
+        const result = birthdayStore.addBirthday(birthdayData);
+        
+        if (result.duplicate) {
+          const confirmMessage = `A birthday with the name "${birthdayData.name}" already exists.\n\n` +
+            `Existing: ${result.existingBirthday.name} - ${DateTime.fromISO(result.existingBirthday.birthday).toFormat('yyyy-MM-dd HH:mm')}\n` +
+            `New: ${birthdayData.name} - ${DateTime.fromISO(birthdayData.birthday).toFormat('yyyy-MM-dd HH:mm')}\n\n` +
+            `Do you want to replace the existing birthday with the new one?`;
+          
+          if (confirm(confirmMessage)) {
+            const updateResult = birthdayStore.addBirthday(birthdayData, true);
+            if (updateResult.success) {
+              alert('Birthday updated successfully!');
+            }
+          }
+        } else if (result.success) {
+          alert('Birthday saved successfully!');
+        }
       } catch (error) {
         console.error('Error saving birthday:', error);
         alert(`Failed to save birthday: ${error.message}`);

@@ -134,6 +134,7 @@
                       <p><strong>Gender:</strong> {{ birthday.gender }}</p>
                       <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
                       <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
+                      <p v-if="birthday.place"><strong>Place:</strong> {{ birthday.place }}</p>
                       <div>
                         <button @click="loadBirthday(birthday)" class="btn btn-primary btn-sm me-2">Load</button>
                         <button @click="startEditingBirthday(birthday)" class="btn btn-primary btn-sm me-2">Edit</button>
@@ -219,6 +220,15 @@
                           <input v-model.number="state.longitude" class="form-control input-narrow" placeholder="0.00 Longitude" />
                         </div>
                       </div>
+                    </div>
+                    <!-- Birth Place -->
+                    <div class="col-12 col-md-8 col-lg-6 mb-3">
+                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Birth Place (Optional)</h6>
+                      <input
+                        v-model="state.place"
+                        class="form-control input-narrow"
+                        placeholder="e.g., New York, NY, USA"
+                      />
                     </div>
                   </div>
                   <!-- Buttons Section -->
@@ -766,6 +776,7 @@
         birthStemsandBranches: null,
         name: 'John Doe',
         gender: 'MALE',
+        place: '',
         preHeavenHexagram: '',
         preHeavenBirthSubCycles: [],
         selectedPreHeavenBirthSubCycle: null,
@@ -975,14 +986,32 @@
           throw new Error(errors.join(' '));
         }
 
-        birthdayStore.addBirthday({
+        const birthdayData = {
           id: Date.now(),
           name: state.name,
           birthday: DateTime.fromJSDate(state.birthDate).toISO(),
           gender: state.gender,
           coords: { latitude: state.latitude, longitude: state.longitude },
-        });
-        alert('Birthday saved successfully!');
+          place: state.place || '',
+        };
+
+        const result = birthdayStore.addBirthday(birthdayData);
+        
+        if (result.duplicate) {
+          const confirmMessage = `A birthday with the name "${birthdayData.name}" already exists.\n\n` +
+            `Existing: ${result.existingBirthday.name} - ${DateTime.fromISO(result.existingBirthday.birthday).toFormat('yyyy-MM-dd HH:mm')}\n` +
+            `New: ${birthdayData.name} - ${DateTime.fromISO(birthdayData.birthday).toFormat('yyyy-MM-dd HH:mm')}\n\n` +
+            `Do you want to replace the existing birthday with the new one?`;
+          
+          if (confirm(confirmMessage)) {
+            const updateResult = birthdayStore.addBirthday(birthdayData, true);
+            if (updateResult.success) {
+              alert('Birthday updated successfully!');
+            }
+          }
+        } else if (result.success) {
+          alert('Birthday saved successfully!');
+        }
       } catch (error) {
         console.error('Error saving birthday:', error);
         alert(`Failed to save birthday: ${error.message}`);
@@ -991,11 +1020,12 @@
 
     const loadBirthday = (birthday) => {
   
-      state.name = birthday.name;  
+      state.name = birthday.name;
       state.birthDate = DateTime.fromISO(birthday.birthday).toJSDate();
       state.gender = birthday.gender;
       state.latitude = birthday.coords.latitude;
       state.longitude = birthday.coords.longitude;
+      state.place = birthday.place || '';
       consult();
       toggleHistory();
     };
@@ -1007,6 +1037,7 @@
       state.gender = birthday.gender;
       state.latitude = birthday.coords.latitude;
       state.longitude = birthday.coords.longitude;
+      state.place = birthday.place || '';
     };
 
 
@@ -1018,6 +1049,7 @@
           birthday: DateTime.fromJSDate(state.birthDate).toISO(),
           gender: state.gender,
           coords: { latitude: state.latitude, longitude: state.longitude },
+          place: state.place || '',
         };
 
         birthdayStore.updateBirthday(updatedBirthday);
@@ -1136,6 +1168,7 @@
           state.gender = selectedBirthday.gender;
           state.latitude = selectedBirthday.coords.latitude;
           state.longitude = selectedBirthday.coords.longitude;
+          state.place = selectedBirthday.place || '';
           consult();
         }
       });

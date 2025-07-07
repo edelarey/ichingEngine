@@ -260,8 +260,10 @@ export default {
 canvas {
   border: 1px solid #ddd;
   border-radius: 8px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 600px;
   height: auto;
+  aspect-ratio: 1;
 }
 
 .center-content {
