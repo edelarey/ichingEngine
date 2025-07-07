@@ -4,7 +4,7 @@
     
     <!-- Chart Canvas -->
     <div class="chart-container">
-      <canvas ref="chartCanvas" width="8800" height="800"></canvas>
+      <canvas ref="chartCanvas" width="600" height="600" class="center-content"></canvas>
     </div>
     
     <!-- Planet Positions Table -->
@@ -249,6 +249,11 @@ canvas {
   border-radius: 8px;
   max-width: 100%;
   height: auto;
+}
+
+.center-content {
+  display: block;
+  margin: 0 auto;
 }
 
 .planet-positions {
