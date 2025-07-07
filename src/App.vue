@@ -51,10 +51,30 @@
           <span class="align-middle">Consult</span>
         </router-link>
       </li>
+      <!-- Astrology Sub-Menu -->
       <li class="nav-item">
-        <router-link class="nav-link" to="/astrology" exact-active-class="active">
+        <span
+          class="nav-link"
+          @click="toggleAstrologyMenu"
+          role="button"
+          tabindex="0"
+          :aria-expanded="astrologyMenuOpen"
+        >
           <span class="align-middle">Astrology</span>
-        </router-link>
+          <i :class="astrologyMenuOpen ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
+        </span>
+        <ul v-show="astrologyMenuOpen" class="nav flex-column ms-3">
+          <li class="nav-item">
+            <router-link class="nav-link" to="/astrology" exact-active-class="active">
+              <span class="align-middle">I-Ching Astrology</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/western_astrology" exact-active-class="active">
+              <span class="align-middle">Western Astrology</span>
+            </router-link>
+          </li>
+        </ul>
       </li>
       <!-- Charts Sub-Menu -->
       <li class="nav-item">
@@ -82,11 +102,6 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/tibetan_mantra_chart" exact-active-class="active">
               <span class="align-middle">Tibetan Mantra Chart</span>
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/western_astrology" exact-active-class="active">
-              <span class="align-middle">Western Astrology</span>
             </router-link>
           </li>
         </ul>
@@ -165,7 +180,8 @@ export default {
     const isSidebarOpen = ref(true); // Default to open for initial visibility
     const isBootstrapLoaded = ref(false);
     const backgroundColor = ref('#3f41c2');
-    const chartsMenuOpen = ref(false); // New: Tracks Charts sub-menu state
+    const chartsMenuOpen = ref(false); // Tracks Charts sub-menu state
+    const astrologyMenuOpen = ref(false); // Tracks Astrology sub-menu state
 
 
     // Add SEO meta tags
@@ -199,7 +215,11 @@ export default {
     };
 
     const toggleChartsMenu = () => {
-      chartsMenuOpen.value = !chartsMenuOpen.value; // New: Toggles Charts sub-menu
+      chartsMenuOpen.value = !chartsMenuOpen.value; // Toggles Charts sub-menu
+    };
+
+    const toggleAstrologyMenu = () => {
+      astrologyMenuOpen.value = !astrologyMenuOpen.value; // Toggles Astrology sub-menu
     };
 
 
@@ -240,8 +260,10 @@ export default {
       toggleSidebar,
       saveBackgroundColor,
       backgroundColor,
-      chartsMenuOpen,      // New: Return sub-menu state
-      toggleChartsMenu,    // New: Return toggle function
+      chartsMenuOpen,      // Return Charts sub-menu state
+      toggleChartsMenu,    // Return Charts toggle function
+      astrologyMenuOpen,   // Return Astrology sub-menu state
+      toggleAstrologyMenu, // Return Astrology toggle function
     };
   },
 };
