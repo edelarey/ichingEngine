@@ -23,6 +23,7 @@
             <p :style="{ color: colorClass }" class="card-text display-6">{{ hexagram.binary }}</p>
             <p :style="{ color: colorClass }" class="card-text display-1">{{ hexagram.symbol }}</p>
             <HexagramSymbol 
+              v-if="hexagram.binary"
               :binary="hexagram.binary" 
               :hexagram-symbol="hexagram.hexagram" 
               :show-visual="true"
@@ -38,6 +39,7 @@
             <h5 class="card-title mt-4">Above</h5>
             <p class="card-text display-3">{{ above.name }}</p>
             <TrigramSymbol 
+              v-if="above.binary"
               :binary="above.binary" 
               :trigram-symbol="above.trigram" 
               :show-visual="true"
@@ -50,6 +52,7 @@
             <h5 class="card-title mt-4">Below</h5>
             <p class="card-text display-3">{{ below.name }}</p>
             <TrigramSymbol 
+              v-if="below.binary"
               :binary="below.binary" 
               :trigram-symbol="below.trigram" 
               :show-visual="true"

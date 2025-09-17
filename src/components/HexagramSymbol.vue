@@ -6,7 +6,7 @@
     </span>
     
     <!-- Visual Fallback (shown if requested or if Unicode fails) -->
-    <div v-if="showVisual" class="hexagram-visual" :class="visualClasses">
+    <div v-if="showVisual && binary" class="hexagram-visual" :class="visualClasses">
       <div class="hexagram-lines">
         <div 
           v-for="(line, index) in lines" 
@@ -24,8 +24,9 @@ export default {
   props: {
     binary: {
       type: String,
-      required: true,
-      validator: (value) => /^[01]{6}$/.test(value)
+      required: false,
+      default: '',
+      validator: (value) => !value || /^[01]{6}$/.test(value)
     },
     hexagramSymbol: {
       type: String,
@@ -49,6 +50,7 @@ export default {
     lines() {
       // Convert binary string to array of booleans (1 = yang/solid, 0 = yin/broken)
       // Read from bottom to top (traditional I Ching order)
+      if (!this.binary) return [];
       return this.binary.split('').reverse().map(bit => bit === '1');
     },
     symbolClasses() {

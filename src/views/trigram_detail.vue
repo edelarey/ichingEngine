@@ -22,6 +22,7 @@
               <p class="card-text display-3">{{ trigram.name }}</p>
               <p :style="{ color: colorClass }" class="card-text display-1">{{ trigram.symbol }}</p>
               <TrigramSymbol 
+                v-if="trigram.binary"
                 :binary="trigram.binary" 
                 :trigram-symbol="trigram.trigram" 
                 :show-visual="true"
