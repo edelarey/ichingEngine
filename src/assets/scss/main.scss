@@ -1,9 +1,28 @@
-@import url('https://bootswatch.com/5/lux/bootstrap.min.css');
+/* macOS Modern Design - Main Styles */
 
+// Import only essential Bootstrap components (without utilities that cause variable errors)
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/helpers";
+
+// SF Pro Display font family
 body {
-  font-family: 'Lora', serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  line-height: 1.47;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .navbar-brand {
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1.25rem;
 }

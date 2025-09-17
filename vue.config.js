@@ -31,7 +31,7 @@ module.exports = defineConfig({
     },
     loaderOptions: {
       sass: {
-        additionalData: `@import "@/assets/scss/app.scss"; @import "@/assets/scss/app.scss";`
+        // Remove additionalData to avoid conflicts
       },
     },
   },

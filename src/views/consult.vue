@@ -1,12 +1,12 @@
 <template>
   <div class="consult-page">
-    <!-- Page Header -->
-    <header class="bg-light py-3 mb-4">
+    <!-- Page Header (macOS Style) -->
+    <header class="macos-header py-4 mb-5">
       <div class="container">
-        <h1 class="display-4">Consult</h1>
+        <h1 class="macos-title">Consult</h1>
         <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <ol class="macos-breadcrumb">
+            <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
             <li class="breadcrumb-item active" aria-current="page">Consult the I Ching</li>
           </ol>
         </nav>
