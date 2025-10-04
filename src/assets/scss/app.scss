@@ -358,6 +358,7 @@ textarea, input, select {
 @media (max-width: 768px) {
   .apple-nav-toggle {
     display: block !important;
+    touch-action: manipulation !important;
   }
   
   .apple-nav-menu {
@@ -389,6 +390,16 @@ textarea, input, select {
   .apple-nav-link {
     padding: 12px 0 !important;
     justify-content: center !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: var(--apple-blue-light) !important;
+  }
+  
+  // Fix dropdown behavior on mobile
+  .dropdown {
+    .apple-nav-link {
+      cursor: pointer !important;
+      user-select: none !important;
+    }
   }
   
   .apple-dropdown {
@@ -400,10 +411,16 @@ textarea, input, select {
     border: none !important;
     background: transparent !important;
     margin-top: 0.5rem !important;
+    display: none !important;
     
     &.show {
       display: block !important;
     }
+  }
+  
+  .apple-dropdown-link {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: var(--apple-blue-light) !important;
   }
   
   .theme-item {

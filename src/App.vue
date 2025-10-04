@@ -28,7 +28,11 @@
             <li class="apple-nav-item">
               <router-link to="/consult" class="apple-nav-link" @click="closeMobileMenu">Consult</router-link>
             </li>
-            <li class="apple-nav-item dropdown" @mouseover="showDropdown = true" @mouseleave="showDropdown = false">
+            <li class="apple-nav-item dropdown" 
+                @mouseover="handleDropdownHover(true, 'study')" 
+                @mouseleave="handleDropdownHover(false, 'study')"
+                @click="handleDropdownClick('study')"
+                @touchstart="handleDropdownTouch('study')">
               <span class="apple-nav-link dropdown-toggle">
                 Study
                 <i class="bi bi-chevron-down"></i>
@@ -39,7 +43,11 @@
                 <li><router-link to="/hexagram_sequence" class="apple-dropdown-link" @click="closeMobileMenu">Sequence</router-link></li>
               </ul>
             </li>
-            <li class="apple-nav-item dropdown" @mouseover="showAstrologyDropdown = true" @mouseleave="showAstrologyDropdown = false">
+            <li class="apple-nav-item dropdown" 
+                @mouseover="handleDropdownHover(true, 'astrology')" 
+                @mouseleave="handleDropdownHover(false, 'astrology')"
+                @click="handleDropdownClick('astrology')"
+                @touchstart="handleDropdownTouch('astrology')">
               <span class="apple-nav-link dropdown-toggle">
                 Astrology
                 <i class="bi bi-chevron-down"></i>
@@ -81,7 +89,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useHead } from '@vueuse/head';
 import { Analytics } from '@vercel/analytics/vue';
 
@@ -95,6 +103,7 @@ export default {
     const showDropdown = ref(false);
     const showAstrologyDropdown = ref(false);
     const isDarkMode = ref(localStorage.getItem('theme') === 'dark');
+    const isMobile = ref(false);
 
     // Add SEO meta tags
     useHead({
@@ -115,6 +124,11 @@ export default {
       ],
     });
 
+    // Mobile detection
+    const checkMobile = () => {
+      isMobile.value = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    };
+
     // Mobile menu functions
     const toggleMobileMenu = () => {
       isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -122,6 +136,38 @@ export default {
 
     const closeMobileMenu = () => {
       isMobileMenuOpen.value = false;
+      showDropdown.value = false;
+      showAstrologyDropdown.value = false;
+    };
+
+    // Enhanced dropdown handling for mobile compatibility
+    const handleDropdownHover = (show, type) => {
+      // Only use hover on desktop
+      if (!isMobile.value) {
+        if (type === 'study') {
+          showDropdown.value = show;
+        } else if (type === 'astrology') {
+          showAstrologyDropdown.value = show;
+        }
+      }
+    };
+
+    const handleDropdownClick = (type) => {
+      // Handle click events for mobile and desktop
+      if (type === 'study') {
+        showDropdown.value = !showDropdown.value;
+        showAstrologyDropdown.value = false; // Close other dropdown
+      } else if (type === 'astrology') {
+        showAstrologyDropdown.value = !showAstrologyDropdown.value;
+        showDropdown.value = false; // Close other dropdown
+      }
+    };
+
+    const handleDropdownTouch = (type) => {
+      // Specifically for touch devices
+      if (isMobile.value) {
+        handleDropdownClick(type);
+      }
     };
 
     // Dark mode functionality
@@ -132,20 +178,30 @@ export default {
       document.documentElement.setAttribute('data-theme', theme);
     };
 
-    // Apply theme on mount
+    // Apply theme and check mobile on mount
     onMounted(() => {
       const theme = isDarkMode.value ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', theme);
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
     });
 
+    // Cleanup event listener
+    onUnmounted(() => {
+      window.removeEventListener('resize', checkMobile);
+    });
 
     return {
       isMobileMenuOpen,
       showDropdown,
       showAstrologyDropdown,
       isDarkMode,
+      isMobile,
       toggleMobileMenu,
       closeMobileMenu,
+      handleDropdownHover,
+      handleDropdownClick,
+      handleDropdownTouch,
       toggleDarkMode,
     };
   },
