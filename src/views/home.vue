@@ -4,12 +4,17 @@
     <section class="apple-hero">
       <div class="apple-hero-content">
         <h1 class="apple-hero-title">
-          The wisdom you seek.<br>
-          <span class="apple-hero-subtitle">From a source you can trust.</span>
+          The wisdom you seek<br>
+          <span class="apple-hero-subtitle">From a source you can trust</span>
         </h1>
         <p class="apple-hero-description">
           For thousands of years, the I Ching has provided guidance and insight. Our modern platform brings this ancient wisdom to your fingertips with precision, care, and authentic interpretations.
         </p>
+        <!-- I Ching Animation -->
+        <div class="apple-hero-animation">
+          <img class="img-fluid gif-image" alt="I-Ching Animation" :src="gifUrl" />
+        </div>
+        
         <div class="apple-hero-cta">
           <router-link to="/consult" class="apple-btn-primary">
             Begin Your Consultation
@@ -17,11 +22,6 @@
           <router-link to="/about" class="apple-btn-secondary">
             Learn About I Ching
           </router-link>
-        </div>
-        
-        <!-- I Ching Animation -->
-        <div class="apple-hero-animation">
-          <img class="img-fluid gif-image" alt="I-Ching Animation" :src="gifUrl" />
         </div>
       </div>
     </section>

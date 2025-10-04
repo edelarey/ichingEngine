@@ -1618,17 +1618,21 @@ img.animal-image {
 }
 
 .apple-hero-animation {
-  margin-top: 3rem;
+  margin: 4rem auto 2rem;
   display: flex;
   justify-content: center;
+  align-items: center;
+  width: 100%;
   
   .gif-image {
-    max-width: 300px;
+    max-width: 400px;
     width: 100%;
     height: auto;
     border-radius: var(--apple-radius-lg);
     box-shadow: var(--apple-shadow-lg);
     transition: all 0.3s ease;
+    opacity: 1;
+    display: block;
     
     &:hover {
       transform: scale(1.05);
