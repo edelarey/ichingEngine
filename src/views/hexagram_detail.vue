@@ -22,7 +22,14 @@
             <p class="card-text display-3">{{ hexagram.name }}</p>
             <p :style="{ color: colorClass }" class="card-text display-6">{{ hexagram.binary }}</p>
             <p :style="{ color: colorClass }" class="card-text display-1">{{ hexagram.symbol }}</p>
-            <p :style="{ color: colorClass }" class="card-text display-1">{{ hexagram.hexagram }}</p>
+            <HexagramSymbol 
+              v-if="hexagram.binary"
+              :binary="hexagram.binary" 
+              :hexagram-symbol="hexagram.hexagram" 
+              :show-visual="true"
+              size="large" 
+              :color="colorClass" 
+            />
             <p :style="{ color: colorClass }" class="card-text display-5">{{ hexagram.translation }}</p>
             <div v-if="hexagram.summary" class="card-body">
               <h3 class="card-title">Summary</h3>
@@ -31,13 +38,27 @@
 
             <h5 class="card-title mt-4">Above</h5>
             <p class="card-text display-3">{{ above.name }}</p>
-            <p :style="{ color: aboveColorClass }" class="card-text display-3">{{ above.trigram }}</p>
+            <TrigramSymbol 
+              v-if="above.binary"
+              :binary="above.binary" 
+              :trigram-symbol="above.trigram" 
+              :show-visual="true"
+              size="large" 
+              :color="aboveColorClass" 
+            />
             <p class="card-text display-5">{{ aboveNature }} : {{ aboveTranslation }}</p>
             <router-link :to="`/trigram_detail?trigram=${above.binary}`" class="btn btn-primary mt-2">Trigram Detail</router-link>
 
             <h5 class="card-title mt-4">Below</h5>
             <p class="card-text display-3">{{ below.name }}</p>
-            <p :style="{ color: belowColorClass }" class="card-text display-3">{{ below.trigram }}</p>
+            <TrigramSymbol 
+              v-if="below.binary"
+              :binary="below.binary" 
+              :trigram-symbol="below.trigram" 
+              :show-visual="true"
+              size="large" 
+              :color="belowColorClass" 
+            />
             <p class="card-text display-5">{{ belowNature }} : {{ belowTranslation }}</p>
             <router-link :to="`/trigram_detail?trigram=${below.binary}`" class="btn btn-primary mt-2">Trigram Detail</router-link>
 
@@ -79,9 +100,15 @@
 import hexagram from '@/const/hexagram';
 import bagua from '@/const/bagua';
 import _ from 'lodash';
+import HexagramSymbol from '@/components/HexagramSymbol.vue';
+import TrigramSymbol from '@/components/TrigramSymbol.vue';
 
 export default {
   name: 'HexagramDetail',
+  components: {
+    HexagramSymbol,
+    TrigramSymbol,
+  },
   data() {
     return {
       hexagram: {},

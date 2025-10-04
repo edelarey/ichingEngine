@@ -1,30 +1,475 @@
-@import '~bootstrap/scss/bootstrap';
+/* Apple macOS Modern Design System */
 
-// Custom Lux theme overrides
+// Import main styles first
+@import "./main.scss";
+
+// Import Apple's SF Pro Display and system fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2:wght@400;700&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css');
+
+// Apple App Store Design System
+:root {
+  // Apple's brand colors
+  --apple-blue: #0071e3;
+  --apple-blue-hover: #0077ed;
+  --apple-blue-light: #e8f4fd;
+  --apple-blue-transparent: rgba(232, 244, 253, 0.4);
+  
+  // Custom cream/light brown background
+  --cream-background: #fdf6e8;
+  --cream-light: #fefcf7;
+  
+  // Apple's neutral backgrounds (very clean and minimal)
+  --apple-bg-primary: #ffffff;
+  --apple-bg-secondary: #f5f5f7;
+  --apple-bg-tertiary: #fbfbfd;
+  --apple-bg-elevated: #ffffff;
+  
+  // Apple's text hierarchy (high contrast, clean)
+  --apple-text-primary: #1d1d1f;
+  --apple-text-secondary: #86868b;
+  --apple-text-tertiary: #a1a1a6;
+  --apple-text-quaternary: #d2d2d7;
+  
+  // Apple's semantic colors
+  --apple-green: #1d8f47;
+  --apple-orange: #f56500;
+  --apple-red: #e8384f;
+  --apple-purple: #a855f7;
+  
+  // Borders and separators (very subtle)
+  --apple-separator: #d2d2d7;
+  --apple-separator-opaque: rgba(0, 0, 0, 0.05);
+  
+  // Apple's refined shadow system (much more subtle than before)
+  --apple-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --apple-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --apple-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --apple-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.04), 0 4px 6px rgba(0, 0, 0, 0.05);
+  
+  // Apple's consistent border radius
+  --apple-radius-sm: 4px;
+  --apple-radius: 8px;
+  --apple-radius-md: 12px;
+  --apple-radius-lg: 16px;
+  --apple-radius-xl: 24px;
+}
+
+// Apple's refined dark mode
+@media (prefers-color-scheme: dark) {
+  :root {
+    --apple-bg-primary: #000000;
+    --apple-bg-secondary: #1d1d1f;
+    --apple-bg-tertiary: #2d2d2f;
+    --apple-bg-elevated: #1d1d1f;
+    
+    --apple-text-primary: #f5f5f7;
+    --apple-text-secondary: #a1a1a6;
+    --apple-text-tertiary: #6e6e73;
+    --apple-text-quaternary: #48484a;
+    
+    --apple-separator: #48484a;
+    --apple-separator-opaque: rgba(255, 255, 255, 0.1);
+    
+    // Slightly more visible shadows in dark mode
+    --apple-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
+    --apple-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.8);
+    --apple-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.8);
+    --apple-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.8), 0 4px 6px rgba(0, 0, 0, 0.8);
+  }
+}
+
+// Manual dark mode (attribute-based) - matches Apple's approach
+[data-theme="dark"] {
+  --apple-bg-primary: #000000;
+  --apple-bg-secondary: #1d1d1f;
+  --apple-bg-tertiary: #2d2d2f;
+  --apple-bg-elevated: #1d1d1f;
+  
+  --apple-text-primary: #f5f5f7;
+  --apple-text-secondary: #a1a1a6;
+  --apple-text-tertiary: #6e6e73;
+  --apple-text-quaternary: #48484a;
+  
+  --apple-separator: #48484a;
+  --apple-separator-opaque: rgba(255, 255, 255, 0.1);
+  
+  body {
+    background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
+  }
+}
+
+[data-theme="light"] {
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  background-color: #b0aae7; // Light background for Lux
+  // Tahoma font for all text
+  font-family: Tahoma, sans-serif;
+  font-weight: 600;
+  line-height: 1.47059; // Apple's precise line height
+  
+  // Clean white background like Apple
+  background: var(--apple-bg-primary);
+  color: var(--apple-text-primary);
+  
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  
+  // Apple's text rendering optimizations
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+  
+  // Minimal hardware acceleration
+  transform: translateZ(0);
 }
 
-.navbar {
-  background-color: #343a40; // Dark navbar for Lux
+// Global bold text styling
+* {
+  font-family: Tahoma, sans-serif !important;
+  font-weight: 600 !important;
 }
 
-// Card styling (consolidated)
+// Specific text elements with even bolder weight
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700 !important;
+}
+
+// Apple-style Form Controls
+textarea, input, select {
+  background: var(--apple-blue-transparent) !important;
+  border: 1px solid var(--apple-separator) !important;
+  border-radius: var(--apple-radius) !important;
+  color: #000000 !important;
+  padding: 12px 16px !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  box-shadow: var(--apple-shadow-sm) !important;
+  transition: all 0.2s ease !important;
+  
+  &:focus {
+    border-color: var(--apple-blue) !important;
+    background: var(--apple-blue-light) !important;
+    box-shadow: 0 0 0 3px var(--apple-blue-light) !important;
+    outline: none !important;
+  }
+  
+  &::placeholder {
+    color: var(--apple-text-tertiary) !important;
+    font-weight: 500 !important;
+  }
+}
+
+// Apple Navigation - Global Styles (override Bootstrap)
+.apple-nav {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  background: var(--apple-bg-primary) !important;
+  border-bottom: 1px solid var(--apple-separator) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+.apple-nav-container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 60px !important;
+}
+
+.apple-nav-brand {
+  flex-shrink: 0 !important;
+}
+
+.apple-logo {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: var(--apple-text-primary) !important;
+  text-decoration: none !important;
+  
+  &:hover {
+    color: var(--apple-blue) !important;
+    text-decoration: none !important;
+  }
+}
+
+.apple-nav-toggle {
+  display: none !important;
+  background: none !important;
+  border: none !important;
+  font-size: 1.5rem !important;
+  color: var(--apple-text-primary) !important;
+  padding: 8px !important;
+  border-radius: var(--apple-radius) !important;
+  
+  &:hover {
+    background: var(--apple-bg-secondary) !important;
+  }
+}
+
+.apple-nav-menu {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.apple-nav-list {
+  display: flex !important;
+  align-items: center !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 1rem !important;
+}
+
+.apple-nav-item {
+  position: relative !important;
+}
+
+.apple-nav-link {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 16px !important;
+  color: var(--apple-text-primary) !important;
+  text-decoration: none !important;
+  font-weight: 400 !important;
+  border-radius: var(--apple-radius) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  
+  &:hover, &.router-link-active {
+    color: var(--apple-blue) !important;
+    background: var(--apple-blue-light) !important;
+    text-decoration: none !important;
+  }
+  
+  i {
+    margin-left: 4px !important;
+    font-size: 0.75rem !important;
+  }
+}
+
+.dropdown-toggle {
+  cursor: pointer !important;
+}
+
+.apple-dropdown {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  background: var(--apple-bg-elevated) !important;
+  border: 1px solid var(--apple-separator) !important;
+  border-radius: var(--apple-radius-md) !important;
+  box-shadow: var(--apple-shadow-lg) !important;
+  min-width: 200px !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 8px 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(-8px) !important;
+  transition: all 0.2s ease !important;
+  
+  &.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+  }
+  
+  li {
+    margin: 0 !important;
+  }
+}
+
+.apple-dropdown-link {
+  display: block !important;
+  padding: 12px 20px !important;
+  color: var(--apple-text-primary) !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover, &.router-link-active {
+    background: var(--apple-bg-secondary) !important;
+    color: var(--apple-blue) !important;
+    text-decoration: none !important;
+  }
+}
+
+.theme-item {
+  margin-left: 1rem !important;
+  padding-left: 1rem !important;
+  border-left: 1px solid var(--apple-separator) !important;
+}
+
+.apple-theme-toggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  background: none !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: var(--apple-text-secondary) !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    background: var(--apple-bg-secondary) !important;
+    color: var(--apple-text-primary) !important;
+  }
+  
+  i {
+    font-size: 1rem !important;
+  }
+}
+
+// Apple Main Content
+.apple-main {
+  min-height: calc(100vh - 60px) !important;
+}
+
+// Mobile Navigation
+@media (max-width: 768px) {
+  .apple-nav-toggle {
+    display: block !important;
+  }
+  
+  .apple-nav-menu {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: var(--apple-bg-elevated) !important;
+    border-top: 1px solid var(--apple-separator) !important;
+    padding: 20px !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-10px) !important;
+    transition: all 0.3s ease !important;
+    
+    &.is-open {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: translateY(0) !important;
+    }
+  }
+  
+  .apple-nav-list {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+  
+  .apple-nav-link {
+    padding: 12px 0 !important;
+    justify-content: center !important;
+  }
+  
+  .apple-dropdown {
+    position: static !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    margin-top: 0.5rem !important;
+    
+    &.show {
+      display: block !important;
+    }
+  }
+  
+  .theme-item {
+    margin: 1rem 0 0 0 !important;
+    padding: 1rem 0 0 0 !important;
+    border-left: none !important;
+    border-top: 1px solid var(--apple-separator) !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+}
+
+// macOS-style Cards
 .card {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--macos-surface-primary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--macos-separator);
+  border-radius: var(--macos-radius-large);
+  box-shadow: var(--macos-shadow-medium);
   margin: 1rem;
-  max-width: 100%; /* Ensure card doesn't overflow its parent */
+  max-width: 100%;
+  transition: all 0.3s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--macos-shadow-large);
+  }
+
+  .card-header {
+    background: var(--macos-surface-secondary);
+    border-bottom: 1px solid var(--macos-separator);
+    padding: 16px 20px;
+    font-weight: 600;
+    color: var(--macos-label-primary);
+    border-radius: var(--macos-radius-large) var(--macos-radius-large) 0 0;
+  }
 
   .card-body {
-    padding: 1.5rem; // Default padding, overridden where specified
+    padding: 20px;
+    background: var(--macos-surface-primary);
   }
 
   &.card-body {
-    padding: 1rem; // Specific override for some cards
+    padding: 16px;
+  }
+
+  .card-title {
+    font-weight: 600;
+    color: var(--macos-label-primary);
+    margin-bottom: 8px;
   }
 
   .card-subtitle {
     font-size: 1.1rem;
+    color: var(--macos-label-secondary);
+    font-weight: 500;
+  }
+
+  .card-text {
+    color: var(--macos-label-primary);
+    line-height: 1.5;
+  }
+
+  .card-footer {
+    background: var(--macos-surface-secondary);
+    border-top: 1px solid var(--macos-separator);
+    padding: 12px 20px;
+    border-radius: 0 0 var(--macos-radius-large) var(--macos-radius-large);
   }
 }
 
@@ -38,61 +483,201 @@ img.animal-image {
   object-fit: cover; /* Ensure the image fits within the dimensions */
 }
 
-// Sidebar styling (merged)
-.sidebar {
-  position: fixed;
-  top: 56px; // Height of navbar
-  bottom: 0;
-  left: 0;
-  z-index: 100;
-  padding: 0;
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
-  width: max-content; // Adapts to longest nav-link
-  min-width: 80px; // Minimum width for usability (from second definition)
-  max-width: 80px; // Cap width on large screens (from second definition)
-  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; // Combined transitions
-  transform: translateX(0); // Default to visible, collapse handles hiding
-  overflow: auto;
-  resize: horizontal; // Allow user to resize horizontally
+// Apple Navigation styles are in App.vue component
+// Old sidebar styles removed to prevent conflicts
 
-  &:not(.show) {
-    transform: translateX(-100%); // Hide when not shown
-    resize: none; // Disable resizing when sidebar is hidden (from second definition)
+// Apple-style Main Content
+main {
+  min-height: calc(100vh - 60px); // Account for Apple navigation height
+  padding: 20px;
+  background: transparent;
+
+  // Ensure proper container behavior
+  .container,
+  .container-fluid {
+    max-width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
   }
-
-  .nav-link {
-    font-weight: 500;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0.5rem 1rem;
-
-    &.active {
-      color: #007bff;
-      background-color: #f8f9fa;
+  
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+    
+    > [class*="col-"] {
+      padding-left: 8px;
+      padding-right: 8px;
     }
   }
 }
 
-// Main content adjustment (merged)
-main {
-  min-height: calc(100vh - 112px); // Adjust for navbar and footer
-  transition: margin-left 0.3s ease-in-out;
-  margin-left: 0;
-
-  &.col-md-12 {
-    margin-left: 0; // Full width when sidebar is closed
-  }
-
-  &.col-md-10 {
-    margin-left: auto; // Dynamically adjusts based on sidebar width (from second definition)
+// macOS-style Footer
+footer {
+  width: 100%;
+  background: var(--macos-surface-primary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--macos-separator);
+  color: var(--macos-label-secondary);
+  font-size: 0.9rem;
+  padding: 20px 0;
+  
+  p {
+    margin: 0;
+    font-weight: 400;
   }
 }
 
-// Footer (merged)
-footer {
-  width: 100%;
+// macOS-style Buttons
+.btn {
+  font-weight: 500;
+  border-radius: var(--macos-radius-medium);
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+
+  &.btn-primary {
+    background: var(--macos-blue);
+    color: white;
+    
+    &:hover {
+      background: #0056cc;
+      transform: translateY(-1px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.btn-secondary {
+    background: var(--macos-surface-secondary);
+    color: var(--macos-label-primary);
+    border: 1px solid var(--macos-separator);
+    
+    &:hover {
+      background: var(--macos-surface-tertiary);
+    }
+  }
+
+  &.btn-success {
+    background: var(--macos-green);
+    color: white;
+    
+    &:hover {
+      background: #28a745;
+    }
+  }
+
+  &.btn-danger {
+    background: var(--macos-red);
+    color: white;
+    
+    &:hover {
+      background: #dc3545;
+    }
+  }
+
+  &.btn-info {
+    background: var(--macos-cyan);
+    color: white;
+    
+    &:hover {
+      background: #17a2b8;
+    }
+  }
+
+  &.btn-warning {
+    background: var(--macos-orange);
+    color: white;
+    
+    &:hover {
+      background: #e0a800;
+    }
+  }
+
+  // Button sizes
+  &.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    border-radius: var(--macos-radius-small);
+  }
+
+  &.btn-lg {
+    padding: 12px 24px;
+    font-size: 1.125rem;
+    border-radius: var(--macos-radius-large);
+  }
+
+  &.btn-outline-primary {
+    background: transparent;
+    color: var(--macos-blue);
+    border: 1px solid var(--macos-blue);
+    
+    &:hover {
+      background: var(--macos-blue);
+      color: white;
+    }
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+// macOS-style Form Controls
+.form-control {
+  background: var(--macos-surface-primary);
+  border: 1px solid var(--macos-separator);
+  border-radius: var(--macos-radius-medium);
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  color: var(--macos-label-primary);
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: var(--macos-blue);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    outline: none;
+    background: var(--macos-surface-primary);
+  }
+
+  &::placeholder {
+    color: var(--macos-label-tertiary);
+  }
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--macos-label-primary);
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.form-select {
+  background: var(--macos-surface-primary);
+  border: 1px solid var(--macos-separator);
+  border-radius: var(--macos-radius-medium);
+  padding: 12px 16px;
+  color: var(--macos-label-primary);
+  
+  &:focus {
+    border-color: var(--macos-blue);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+  }
 }
 
 // Utility classes
@@ -156,48 +741,141 @@ footer {
   padding-bottom: 2rem;
 }
 
+// macOS-style Hexagram Display
 .hexagram-svg {
   width: 100%;
-  max-width: 400px; // Larger default, overridden where needed
+  max-width: 400px;
   margin: 0 auto;
+  filter: drop-shadow(var(--macos-shadow-small));
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+    filter: drop-shadow(var(--macos-shadow-medium));
+  }
 
   &.small {
-    max-width: 110px; // Specific smaller size
+    max-width: 110px;
   }
 }
 
 .hexagram-row {
   margin: 0;
-  display: flex; // Ensure flexbox layout
-  flex-wrap: wrap; // Allow wrapping
-  gap: 1rem; // Add spacing between cards
-  width: 100%; // Ensure it takes full available width
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
 }
 
 .hexagram-card {
-  transition: transform 0.2s ease-in-out;
-  min-width: 100px; // Slightly reduced to ensure 8 per row
-  flex: 1 1 auto; // Allow cards to grow/shrink evenly
+  background: var(--macos-surface-primary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--macos-separator);
+  border-radius: var(--macos-radius-large);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 100px;
+  flex: 1 1 auto;
+  overflow: hidden;
+  
   &:hover {
-    transform: scale(1.05);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--macos-shadow-large);
+    border-color: var(--macos-blue);
+  }
+  
+  &:active {
+    transform: translateY(-2px) scale(1.01);
   }
 }
 
+// macOS-style Tables
 .table-responsive {
   overflow-x: auto;
-  margin-bottom: 0; // For trigrams-page
+  margin-bottom: 0;
+  border-radius: var(--macos-radius-large);
+  background: var(--macos-surface-primary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--macos-separator);
+}
+
+// Special styling for hexagram and trigram tables
+.hexagrams-page .table-responsive,
+.trigrams-page .table-responsive {
+  background: var(--cream-light) !important;
+  border: 1px solid #e8dcc0 !important;
+}
+
+.hexagrams-page .table th,
+.trigrams-page .table th {
+  background: var(--cream-background) !important;
+  border-bottom: 1px solid #e8dcc0 !important;
+}
+
+.hexagrams-page .table td,
+.trigrams-page .table td {
+  border-bottom: 1px solid #e8dcc0 !important;
+}
+
+.hexagrams-page tbody tr:hover,
+.trigrams-page tbody tr:hover {
+  background: var(--cream-background) !important;
+}
+
+.table {
+  background: transparent;
+  color: var(--macos-label-primary);
+  
+  th {
+    background: var(--macos-surface-secondary);
+    color: var(--macos-label-primary);
+    font-weight: 600;
+    border-bottom: 1px solid var(--macos-separator);
+    padding: 16px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--macos-separator);
+    vertical-align: middle;
+  }
+  
+  tbody tr {
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background: var(--macos-surface-tertiary);
+    }
+  }
 }
 
 .vgt-table {
   width: 100%;
-
+  background: var(--macos-surface-primary);
+  border-radius: var(--macos-radius-large);
+  overflow: hidden;
+  box-shadow: var(--macos-shadow-medium);
   td {
-    padding: 0.5rem;
-    min-width: 100px; // Default, overridden for trigrams
+    padding: 12px 16px;
+    min-width: 100px;
+    border-bottom: 1px solid var(--macos-separator);
 
     span {
-      font-size: clamp(1rem, 2vw, 1.25rem); // Default, overridden where needed
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--macos-label-primary);
     }
+  }
+
+  th {
+    background: var(--macos-surface-secondary);
+    color: var(--macos-label-primary);
+    font-weight: 600;
+    padding: 16px;
   }
 
   &.trigrams-table td {
@@ -209,11 +887,18 @@ footer {
   }
 }
 
+// Special styling for hexagram and trigram tables
+.hexagrams-page .vgt-table,
+.trigrams-page .vgt-table {
+  background: var(--cream-light) !important;
+}
+
 .clickable-row {
   cursor: pointer;
+  transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: #f5f5f5;
+    background: var(--macos-surface-tertiary);
   }
 }
 
@@ -228,57 +913,101 @@ footer {
   border-radius: 0.25rem;
 }
 
+// macOS-style Multiselect
 .multiselect-custom {
-  width: 200px; /* Adjust to your liking */
-}
-
-.multiselect-custom .multiselect__tags {
-  /* Style the input box */
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background: #fff;
-  cursor: pointer;
-}
-
-.multiselect-custom .multiselect__select {
-  /* Ensure the dropdown arrow is visible */
-  display: block !important;
-}
-
-.multiselect-custom .multiselect__content-wrapper {
-  /* Hide the options list by default */
-  display: none !important;
-  max-height: 200px; /* Limit height for scrolling */
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.multiselect-custom.multiselect--active .multiselect__content-wrapper {
-  /* Show the list only when the dropdown is active (clicked) */
-  display: block !important;
-}
-
-// Media queries (merged)
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%; // Full width on smaller screens (from second definition)
-    max-width: 250px; // Cap for usability (from second definition)
-    min-width: 180px; // From first definition
-    resize: none; // Disable resizing on mobile (from second definition)
+  width: 220px;
+  
+  .multiselect__tags {
+    background: var(--macos-surface-primary);
+    border: 1px solid var(--macos-separator);
+    border-radius: var(--macos-radius-medium);
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: var(--macos-blue);
+    }
   }
 
-  main.col-md-10 {
-    margin-left: 0; // No offset when sidebar is hidden or full-width (from second definition)
+  .multiselect__select {
+    display: block !important;
+    background: var(--macos-surface-secondary);
+    border-radius: var(--macos-radius-small);
+    margin: 2px;
+  }
+
+  .multiselect__content-wrapper {
+    display: none !important;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--macos-separator);
+    border-radius: var(--macos-radius-medium);
+    background: var(--macos-surface-primary);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--macos-shadow-large);
+    margin-top: 4px;
+  }
+
+  &.multiselect--active .multiselect__content-wrapper {
+    display: block !important;
+  }
+
+  .multiselect__option {
+    padding: 10px 16px;
+    color: var(--macos-label-primary);
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background: var(--macos-surface-tertiary);
+    }
+    
+    &.multiselect__option--selected {
+      background: var(--macos-blue);
+      color: white;
+    }
+  }
+}
+
+// macOS-style responsive adjustments
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 240px;
+    
+    &.show {
+      transform: translateX(0);
+    }
+  }
+
+  main {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+    padding: 16px;
+    
+    &.col-md-10 {
+      margin-left: 0 !important;
+      max-width: 100% !important;
+    }
+  }
+
+  .navbar {
+    padding: 6px 0;
+    height: 56px;
+  }
+
+  .macos-header {
+    margin: -16px -16px 0 -16px;
+    padding: 16px;
   }
 
   .card {
-    margin: 0.5rem;
+    margin: 8px 0;
+    border-radius: var(--macos-radius-medium);
 
     .card-body {
-      padding: 1rem;
+      padding: 16px;
     }
   }
 
@@ -288,25 +1017,832 @@ footer {
   }
 
   .hexagram-card {
-    min-width: 120px; // Keep consistent for medium screens
+    min-width: 120px;
+  }
+
+  .hexagram-row {
+    gap: 12px;
   }
 }
 
 @media (max-width: 576px) {
   .sidebar {
-    min-width: 100px; // From first definition
+    width: 240px;
+    transform: translateX(-100%);
+    
+    &.show {
+      transform: translateX(0);
+    }
   }
 
-  main.col-md-10 {
-    margin-left: 0; // No offset (already set in 768px query, kept for clarity)
+  main {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+    padding: 12px;
+    
+    &.col-md-10 {
+      margin-left: 0 !important;
+      max-width: 100% !important;
+    }
+  }
+
+  .navbar {
+    height: 52px;
+    padding: 4px 0;
+  }
+
+  .macos-header {
+    margin: -12px -12px 0 -12px;
+    padding: 12px;
+  }
+
+  .macos-title {
+    font-size: 1.75rem;
   }
 
   .input-narrow,
   .btn-narrow {
-    max-width: 200px; // Tighter for very small screens
+    max-width: 200px;
   }
 
   .hexagram-card {
-    min-width: 100px; // Smaller cards for mobile
+    min-width: 100px;
+  }
+
+  .gif-image {
+    width: 250px;
+  }
+  
+  .card {
+    margin: 4px 0;
+    
+    .card-body {
+      padding: 12px;
+    }
+  }
+
+  .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+// Additional macOS-style enhancements
+.alert {
+  background: var(--macos-surface-primary);
+  border: 1px solid var(--macos-separator);
+  border-radius: var(--macos-radius-large);
+  color: var(--macos-label-primary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  
+  &.alert-primary {
+    background: rgba(0, 122, 255, 0.1);
+    border-color: var(--macos-blue);
+    color: var(--macos-blue);
+  }
+  
+  &.alert-success {
+    background: rgba(48, 209, 88, 0.1);
+    border-color: var(--macos-green);
+    color: var(--macos-green);
+  }
+  
+  &.alert-danger {
+    background: rgba(255, 59, 48, 0.1);
+    border-color: var(--macos-red);
+    color: var(--macos-red);
+  }
+}
+
+.badge {
+  border-radius: var(--macos-radius-small);
+  font-weight: 500;
+  
+  &.bg-primary {
+    background: var(--macos-blue) !important;
+  }
+  
+  &.bg-success {
+    background: var(--macos-green) !important;
+  }
+  
+  &.bg-danger {
+    background: var(--macos-red) !important;
+  }
+}
+
+// Scrollbar styling for webkit browsers
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--macos-separator);
+  border-radius: 4px;
+  
+  &:hover {
+    background: var(--macos-label-tertiary);
+  }
+}
+
+// macOS-style Headers and Typography
+.macos-header {
+  background: var(--macos-surface-primary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--macos-separator);
+  margin: -20px -20px 0 -20px;
+  padding: 20px;
+  border-radius: 0 0 var(--macos-radius-large) var(--macos-radius-large);
+}
+
+.macos-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: var(--macos-label-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.macos-breadcrumb {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  .breadcrumb-item {
+    color: var(--macos-label-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    
+    &.active {
+      color: var(--macos-blue);
+    }
+    
+    &:not(:last-child)::after {
+      content: "›";
+      margin: 0 8px;
+      color: var(--macos-label-tertiary);
+    }
+  }
+}
+
+// Typography enhancements
+h1, h2, h3, h4, h5, h6 {
+  color: var(--macos-label-primary);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: 2.5rem; font-weight: 700; }
+h2 { font-size: 2rem; font-weight: 600; }
+h3 { font-size: 1.75rem; font-weight: 600; }
+h4 { font-size: 1.5rem; font-weight: 600; }
+h5 { font-size: 1.25rem; font-weight: 600; }
+h6 { font-size: 1.1rem; font-weight: 600; }
+
+p {
+  color: var(--macos-label-primary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.text-muted {
+  color: var(--macos-label-secondary) !important;
+}
+
+// Unicode symbol support for hexagrams and trigrams
+.hexagram-symbol, .trigram-symbol {
+  font-family: 'Noto Sans Symbols 2', 'Noto Sans Symbols', 'Apple Symbols', 'Segoe UI Symbol', 'Symbol', serif !important;
+  font-weight: 400;
+  font-style: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  line-height: 1;
+  font-size: inherit;
+  
+  // Ensure proper Unicode rendering in Chrome
+  unicode-bidi: isolate;
+  direction: ltr;
+  
+  // Force Chrome to use proper font rendering
+  &::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    font-family: 'Noto Sans Symbols 2', 'Noto Sans Symbols';
+  }
+  
+  // Fallback for older browsers
+  &:before {
+    content: '';
+  }
+}
+
+// Specific styling for display sizes
+.display-1 .hexagram-symbol,
+.display-1 .trigram-symbol {
+  font-size: 3.5rem;
+  line-height: 1.1;
+}
+
+.display-3 .hexagram-symbol,
+.display-3 .trigram-symbol {
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+
+// CSS-based fallback for hexagram/trigram visualization
+.hexagram-visual, .trigram-visual {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 8px;
+  
+  // Chrome-specific optimizations
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.hexagram-lines, .trigram-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+
+.line {
+  height: 4px;
+  background-color: var(--macos-label-primary);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  
+  &.yang {
+    width: 40px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  &.yin {
+    width: 18px;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    
+    &:after {
+      content: '';
+      position: absolute;
+      right: -22px;
+      top: 0;
+      width: 18px;
+      height: 4px;
+      background-color: var(--macos-label-primary);
+      border-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// Responsive adjustments for hexagram visuals
+@media (max-width: 768px) {
+  .hexagram-visual, .trigram-visual {
+    margin: 0 4px;
+  }
+  
+  .line {
+    height: 3px;
+    
+    &.yang {
+      width: 30px;
+    }
+    
+    &.yin {
+      width: 14px;
+      
+      &:after {
+        width: 14px;
+        right: -16px;
+      }
+    }
+  }
+}
+
+.text-primary {
+  color: var(--macos-blue) !important;
+}
+
+// Links
+a {
+  color: var(--macos-blue);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #0056cc;
+    text-decoration: underline;
+  }
+  
+  &:focus {
+    outline: 2px solid var(--macos-blue);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+// Focus states for accessibility
+*:focus {
+  outline: none;
+}
+
+.focus-visible {
+  outline: 2px solid var(--macos-blue);
+  outline-offset: 2px;
+}
+
+// macOS-specific spacing utilities
+.macos-spacing-xs { margin: 4px; }
+.macos-spacing-sm { margin: 8px; }
+.macos-spacing-md { margin: 16px; }
+.macos-spacing-lg { margin: 24px; }
+.macos-spacing-xl { margin: 32px; }
+
+.macos-padding-xs { padding: 4px; }
+.macos-padding-sm { padding: 8px; }
+.macos-padding-md { padding: 16px; }
+.macos-padding-lg { padding: 24px; }
+.macos-padding-xl { padding: 32px; }
+
+// macOS system colors as utility classes
+.text-macos-blue { color: var(--macos-blue) !important; }
+.text-macos-green { color: var(--macos-green) !important; }
+.text-macos-red { color: var(--macos-red) !important; }
+.text-macos-orange { color: var(--macos-orange) !important; }
+.text-macos-purple { color: var(--macos-purple) !important; }
+
+.bg-macos-surface-primary { background: var(--macos-surface-primary) !important; }
+.bg-macos-surface-secondary { background: var(--macos-surface-secondary) !important; }
+.bg-macos-surface-tertiary { background: var(--macos-surface-tertiary) !important; }
+
+// Enhanced text styles
+.text-headline {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--macos-label-primary);
+  letter-spacing: -0.01em;
+}
+
+.text-subheadline {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--macos-label-primary);
+}
+
+.text-body {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--macos-label-primary);
+  line-height: 1.5;
+}
+
+.text-caption {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--macos-label-secondary);
+}
+
+.text-footnote {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--macos-label-tertiary);
+}
+
+// Loading states
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--macos-separator);
+  border-radius: 50%;
+  border-top-color: var(--macos-blue);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Image enhancements
+img {
+  border-radius: var(--macos-radius-medium);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.gif-image {
+  max-width: 100%;
+  width: 300px; // Fixed reasonable size
+  height: auto;
+  margin: 20px auto;
+  display: block;
+  border-radius: var(--macos-radius-large);
+  box-shadow: var(--macos-shadow-medium);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: var(--macos-shadow-large);
+  }
+}
+
+// Utility classes used throughout the app
+.btn-narrow {
+  max-width: 300px;
+  margin: 0 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.input-narrow {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.input-wide {
+  width: 90%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.form-check-inline {
+  margin: 0 1rem;
+  
+  .form-check-input {
+    border-radius: var(--macos-radius-small);
+    border: 1px solid var(--macos-separator);
+    
+    &:checked {
+      background-color: var(--macos-blue);
+      border-color: var(--macos-blue);
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    }
+  }
+  
+  .form-check-label {
+    color: var(--macos-label-primary);
+    font-weight: 500;
+  }
+}
+
+.text-break {
+  word-wrap: break-word;
+}
+
+// Page-specific styling with macOS enhancements
+.astrology-page,
+.hexagram-detail-page,
+.hexagram-sequence-page,
+.hexagrams-page,
+.home-page,
+.trigram-detail-page,
+.trigrams-page,
+.consult-page {
+  padding-bottom: 2rem;
+}
+
+// Animal images
+img.animal-image {
+  width: 100px !important;
+  height: 100px !important;
+  max-width: none !important;
+  height: auto !important;
+  margin-left: 10px;
+  vertical-align: middle;
+  object-fit: cover;
+  border-radius: var(--macos-radius-medium);
+  box-shadow: var(--macos-shadow-small);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: var(--macos-shadow-medium);
+  }
+}
+
+// SVG container for charts
+.svg-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: var(--macos-radius-large);
+  overflow: hidden;
+  background: var(--macos-surface-primary);
+  box-shadow: var(--macos-shadow-medium);
+  
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Apple App Store Style Components
+.apple-home {
+  background: var(--apple-bg-primary);
+}
+
+// Apple Hero Section
+.apple-hero {
+  padding: 120px 0 80px;
+  text-align: center;
+  background: var(--apple-bg-primary);
+}
+
+.apple-hero-content {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.apple-hero-title {
+  font-size: 3.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--apple-text-primary);
+  margin-bottom: 0.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+.apple-hero-subtitle {
+  color: var(--apple-text-secondary);
+  font-weight: 400;
+}
+
+.apple-hero-description {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--apple-text-secondary);
+  margin: 2rem auto 3rem;
+  max-width: 640px;
+  
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+    margin: 1.5rem auto 2.5rem;
+  }
+}
+
+.apple-hero-cta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.apple-hero-animation {
+  margin: 4rem auto 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  
+  .gif-image {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    border-radius: var(--apple-radius-lg);
+    box-shadow: var(--apple-shadow-lg);
+    transition: all 0.3s ease;
+    opacity: 1;
+    display: block;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: var(--apple-shadow-lg);
+    }
+    
+    @media (max-width: 768px) {
+      max-width: 250px;
+    }
+  }
+}
+
+// Apple Buttons
+.apple-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 24px;
+  background: var(--apple-blue);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--apple-radius-md);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--apple-blue-hover);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+}
+
+.apple-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 24px;
+  background: transparent;
+  color: var(--apple-blue);
+  text-decoration: none;
+  border: 1px solid var(--apple-separator);
+  border-radius: var(--apple-radius-md);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--apple-bg-secondary);
+    color: var(--apple-blue);
+    text-decoration: none;
+    border-color: var(--apple-blue);
+  }
+}
+
+// Apple Container
+.apple-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+// Features Section
+.apple-features {
+  padding: 80px 0;
+  background: var(--apple-bg-secondary);
+}
+
+.apple-section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.apple-section-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--apple-text-primary);
+  margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.apple-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.apple-feature-card {
+  text-align: center;
+  padding: 2rem;
+  background: var(--apple-bg-primary);
+  border-radius: var(--apple-radius-lg);
+  box-shadow: var(--apple-shadow);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--apple-shadow-lg);
+  }
+}
+
+.apple-feature-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--apple-blue-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  
+  i {
+    font-size: 1.5rem;
+    color: var(--apple-blue);
+  }
+}
+
+.apple-feature-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--apple-text-primary);
+  margin-bottom: 1rem;
+}
+
+.apple-feature-description {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--apple-text-secondary);
+  margin: 0;
+}
+
+// Statistics Section
+.apple-stats {
+  padding: 60px 0;
+  background: var(--apple-bg-primary);
+}
+
+.apple-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+
+.apple-stat {
+  padding: 1rem;
+}
+
+.apple-stat-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--apple-blue);
+  margin-bottom: 0.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+.apple-stat-label {
+  font-size: 1rem;
+  color: var(--apple-text-secondary);
+  font-weight: 500;
+}
+
+// Chrome-specific compatibility fixes
+@supports (-webkit-appearance: none) {
+  // Chrome/WebKit specific styles
+  .hexagram-symbol, .trigram-symbol {
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+    font-feature-settings: "liga" on;
+  }
+  
+  // Fix for Chrome font rendering issues
+  input, button, select, textarea {
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+  }
+  
+  // Chrome scrollbar styling for macOS look
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  
+  // Improve Chrome's Unicode rendering
+  .hexagram-symbol-container,
+  .trigram-symbol-container {
+    text-rendering: geometricPrecision;
+    font-variant-numeric: normal;
+    font-variant-ligatures: normal;
   }
 }

@@ -21,7 +21,14 @@
               <h3 class="card-title">Trigram Detail</h3>
               <p class="card-text display-3">{{ trigram.name }}</p>
               <p :style="{ color: colorClass }" class="card-text display-1">{{ trigram.symbol }}</p>
-              <p :style="{ color: colorClass }" class="card-text display-1" :class="{ 'text-white bg-dark': isWhiteColor }">{{ trigram.trigram }}</p>
+              <TrigramSymbol 
+                v-if="trigram.binary"
+                :binary="trigram.binary" 
+                :trigram-symbol="trigram.trigram" 
+                :show-visual="true"
+                size="large" 
+                :color="colorClass" 
+              />
               <p class="card-text display-5">Binary: {{ trigram.binary }}</p>
               <p class="card-text display-5">Nature: {{ nature }} : {{ translation }}</p>
               <p class="card-text display-5">Animal: {{ animal }}</p>
@@ -64,9 +71,13 @@
   import { useRoute } from 'vue-router';
   import bagua from '@/const/bagua';
   import _ from 'lodash';
+  import TrigramSymbol from '@/components/TrigramSymbol.vue';
   
   export default {
     name: 'TrigramDetail',
+    components: {
+      TrigramSymbol,
+    },
     setup() {
       // Reactive state
       const trigram = ref({});
