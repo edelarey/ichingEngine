@@ -1846,3 +1846,289 @@ img.animal-image {
     font-variant-ligatures: normal;
   }
 }
+
+/* =====================================
+   MOBILE-FIRST RESPONSIVE DESIGN
+   ===================================== */
+
+/* Mobile Base Styles (320px+) */
+@media (max-width: 767px) {
+  /* Typography Scaling */
+  .apple-hero-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .apple-hero-subtitle {
+    font-size: 1.8rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .apple-hero-description {
+    font-size: 1.1rem !important;
+    line-height: 1.5 !important;
+    padding: 0 1rem !important;
+  }
+  
+  /* Touch-Friendly Navigation */
+  .apple-nav-item {
+    padding: 15px 20px !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .apple-nav-toggle {
+    padding: 12px !important;
+    font-size: 1.5rem !important;
+  }
+  
+  /* Touch-Friendly Buttons */
+  .apple-btn-primary,
+  .apple-btn-secondary {
+    min-height: 48px !important;
+    padding: 15px 25px !important;
+    font-size: 1.1rem !important;
+    margin: 10px 5px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Hero Section Mobile Layout */
+  .apple-hero {
+    padding: 2rem 1rem !important;
+    text-align: center !important;
+  }
+  
+  .apple-hero-content {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  .apple-hero-cta {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 15px !important;
+  }
+  
+  .apple-hero-cta .apple-btn-primary,
+  .apple-hero-cta .apple-btn-secondary {
+    width: 280px !important;
+    max-width: 90% !important;
+  }
+  
+  /* Animation Mobile Sizing */
+  .apple-hero-animation {
+    margin: 2rem auto 1.5rem !important;
+    max-width: 280px !important;
+  }
+  
+  .apple-hero-animation .gif-image {
+    max-width: 250px !important;
+    width: 90% !important;
+  }
+  
+  /* Feature Cards Mobile */
+  .apple-feature-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding: 0 1rem !important;
+  }
+  
+  .apple-feature-card {
+    padding: 2rem 1.5rem !important;
+    text-align: center !important;
+  }
+  
+  .apple-feature-title {
+    font-size: 1.3rem !important;
+  }
+  
+  .apple-feature-description {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+  
+  /* Statistics Mobile Layout */
+  .apple-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem !important;
+    padding: 0 1rem !important;
+  }
+  
+  .apple-stat-number {
+    font-size: 2rem !important;
+  }
+  
+  .apple-stat-label {
+    font-size: 0.9rem !important;
+  }
+  
+  /* Forms Mobile Optimization */
+  .form-control,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  select {
+    min-height: 48px !important;
+    font-size: 1.1rem !important;
+    padding: 12px 15px !important;
+    border-radius: 10px !important;
+  }
+  
+  /* Table Mobile Responsive */
+  .table-responsive {
+    font-size: 0.9rem !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Container Mobile Spacing */
+  .apple-container {
+    padding: 0 1rem !important;
+    max-width: 100% !important;
+  }
+  
+  .apple-section-title {
+    font-size: 2rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+/* Small Mobile (iPhone SE and smaller) */
+@media (max-width: 375px) {
+  .apple-hero-title {
+    font-size: 2.2rem !important;
+  }
+  
+  .apple-hero-subtitle {
+    font-size: 1.6rem !important;
+  }
+  
+  .apple-hero-animation .gif-image {
+    max-width: 220px !important;
+  }
+  
+  .apple-hero-cta .apple-btn-primary,
+  .apple-hero-cta .apple-btn-secondary {
+    width: 260px !important;
+  }
+  
+  .apple-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Tablet Portrait (768px+) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .apple-hero-title {
+    font-size: 3.2rem !important;
+  }
+  
+  .apple-hero-subtitle {
+    font-size: 2.2rem !important;
+  }
+  
+  .apple-feature-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2.5rem !important;
+  }
+  
+  .apple-stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .apple-hero-animation .gif-image {
+    max-width: 350px !important;
+  }
+}
+
+/* Desktop Enhancement (1024px+) */
+@media (min-width: 1024px) {
+  .apple-hero-title {
+    font-size: 4rem !important;
+  }
+  
+  .apple-hero-subtitle {
+    font-size: 2.5rem !important;
+  }
+  
+  .apple-hero-animation .gif-image {
+    max-width: 400px !important;
+  }
+  
+  /* Hover Effects for Desktop */
+  .apple-btn-primary:hover,
+  .apple-btn-secondary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  .apple-feature-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    transition: all 0.3s ease !important;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .apple-btn-primary:hover,
+  .apple-btn-secondary:hover,
+  .apple-feature-card:hover {
+    transform: none !important;
+    box-shadow: inherit !important;
+  }
+  
+  /* Enhanced touch targets */
+  button, .btn, a {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+  
+  /* Improved tap highlighting */
+  button, .btn, a, input, select, textarea {
+    -webkit-tap-highlight-color: rgba(52, 152, 219, 0.2) !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  input, select, textarea {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+  }
+}
+
+/* High DPI/Retina Display Optimization */
+@media (-webkit-min-device-pixel-ratio: 2),
+       (min-resolution: 192dpi) {
+  .gif-image {
+    image-rendering: -webkit-optimize-contrast !important;
+    image-rendering: crisp-edges !important;
+  }
+}
+
+/* Landscape Mobile Optimization */
+@media (max-height: 500px) and (orientation: landscape) {
+  .apple-hero {
+    padding: 1rem !important;
+  }
+  
+  .apple-hero-title {
+    font-size: 2rem !important;
+  }
+  
+  .apple-hero-subtitle {
+    font-size: 1.4rem !important;
+  }
+  
+  .apple-hero-animation {
+    margin: 1rem auto !important;
+  }
+  
+  .apple-hero-animation .gif-image {
+    max-width: 200px !important;
+  }
+}

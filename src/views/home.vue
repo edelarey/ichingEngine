@@ -30,7 +30,7 @@
     <section class="apple-features">
       <div class="apple-container">
         <div class="apple-section-header">
-          <h2 class="apple-section-title">Designed for insight.</h2>
+          <h2 class="apple-section-title">Designed for insight</h2>
         </div>
         
         <div class="apple-feature-grid">
