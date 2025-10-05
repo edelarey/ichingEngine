@@ -89,8 +89,9 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useHead } from '@vueuse/head';
+import { useRouter, useRoute } from 'vue-router';
 import { Analytics } from '@vercel/analytics/vue';
 
 export default {
@@ -99,6 +100,8 @@ export default {
     Analytics, // Register the Analytics component
   },
   setup() {
+    const router = useRouter();
+    const route = useRoute();
     const isMobileMenuOpen = ref(false);
     const showDropdown = ref(false);
     const showAstrologyDropdown = ref(false);
@@ -138,6 +141,7 @@ export default {
       isMobileMenuOpen.value = false;
       showDropdown.value = false;
       showAstrologyDropdown.value = false;
+      console.log('Mobile menu and all dropdowns closed');
     };
 
     // Enhanced dropdown handling for mobile compatibility
@@ -189,6 +193,11 @@ export default {
     // Cleanup event listener
     onUnmounted(() => {
       window.removeEventListener('resize', checkMobile);
+    });
+
+    // Watch for route changes and close mobile menu/dropdowns
+    watch(route, () => {
+      closeMobileMenu();
     });
 
     return {

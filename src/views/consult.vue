@@ -80,13 +80,13 @@
             <div class="card-body">
               <h5 class="card-title">Select Divination Method</h5>
               <div class="method-selection-container">
-                <div class="method-option" @click="selectMethod('coin')" :class="{ 'selected': divinationMethod === 'coin' }">
+                <div class="method-option" @click.stop.prevent="selectMethod('coin')" :class="{ 'selected': divinationMethod === 'coin' }">
                   <div class="selection-box">
                     <span v-if="divinationMethod === 'coin'" class="selection-mark">✓</span>
                   </div>
                   <label class="method-label">Coin Toss</label>
                 </div>
-                <div class="method-option" @click="selectMethod('yarrow')" :class="{ 'selected': divinationMethod === 'yarrow' }">
+                <div class="method-option" @click.stop.prevent="selectMethod('yarrow')" :class="{ 'selected': divinationMethod === 'yarrow' }">
                   <div class="selection-box">
                     <span v-if="divinationMethod === 'yarrow'" class="selection-mark">✓</span>
                   </div>
@@ -303,8 +303,17 @@ export default {
     };
 
     const selectMethod = (method) => {
+      console.log('=== selectMethod called ===');
+      console.log('Method parameter:', method);
+      console.log('Current method before change:', divinationMethod.value);
+      
       divinationMethod.value = method;
-      console.log('Method selected:', method);
+      
+      console.log('Method after change:', divinationMethod.value);
+      console.log('=== selectMethod completed ===');
+      
+      // Ensure we stay on the consult page and don't navigate anywhere
+      return false;
     };
 
     const transformLine = (lineValue) => {
@@ -437,6 +446,8 @@ export default {
   justify-content: center;
   gap: 2rem;
   margin-top: 1rem;
+  position: relative;
+  z-index: 10;
 }
 
 .method-option {
@@ -447,6 +458,12 @@ export default {
   transition: all 0.3s ease;
   padding: 1rem;
   border-radius: 8px;
+  position: relative;
+  z-index: 11;
+  pointer-events: auto;
+  /* Prevent any touch event interference */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .method-option:hover {
@@ -468,6 +485,9 @@ export default {
   margin-bottom: 0.5rem;
   background: white;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 12;
+  pointer-events: auto;
 }
 
 .method-option.selected .selection-box {
@@ -479,6 +499,7 @@ export default {
   color: white;
   font-weight: bold;
   font-size: 18px;
+  pointer-events: none;
 }
 
 .method-label {
@@ -486,6 +507,8 @@ export default {
   color: var(--apple-text-primary);
   margin: 0;
   cursor: pointer;
+  pointer-events: none;
+  user-select: none;
 }
 
 .method-option.selected .method-label {
@@ -498,6 +521,8 @@ export default {
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+    /* Ensure no mobile interference */
+    isolation: isolate;
   }
   
   .method-option {
@@ -505,10 +530,31 @@ export default {
     width: 200px;
     justify-content: flex-start;
     gap: 1rem;
+    /* Enhanced mobile touch handling */
+    min-height: 48px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: var(--apple-blue-light);
+    /* Prevent any accidental navigation */
+    will-change: transform;
+    contain: layout style;
   }
   
   .selection-box {
     margin-bottom: 0;
+    /* Ensure touch targets are large enough */
+    min-width: 30px;
+    min-height: 30px;
+  }
+  
+  /* Prevent any router-link interference on mobile */
+  .card-body {
+    isolation: isolate;
+  }
+  
+  /* Ensure buttons don't interfere with method selection */
+  .btn {
+    isolation: isolate;
+    touch-action: manipulation;
   }
 }
 </style>
