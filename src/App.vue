@@ -71,9 +71,6 @@
       </div>
     </nav>
 
-
-
-
     <!-- Apple-style Main Content -->
     <main class="apple-main">
       <router-view></router-view>
