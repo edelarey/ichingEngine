@@ -373,11 +373,15 @@ textarea, input, select {
     visibility: hidden !important;
     transform: translateY(-10px) !important;
     transition: all 0.3s ease !important;
+    z-index: -1 !important; /* Hide behind content when closed */
+    pointer-events: none !important; /* Prevent clicks when closed */
     
     &.is-open {
       opacity: 1 !important;
       visibility: visible !important;
       transform: translateY(0) !important;
+      z-index: 999 !important; /* Bring to front when open */
+      pointer-events: auto !important; /* Allow clicks when open */
     }
   }
   
@@ -412,9 +416,11 @@ textarea, input, select {
     background: transparent !important;
     margin-top: 0.5rem !important;
     display: none !important;
+    pointer-events: none !important; /* Prevent clicks when not shown */
     
     &.show {
       display: block !important;
+      pointer-events: auto !important; /* Allow clicks when shown */
     }
   }
   
