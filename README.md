@@ -33,3 +33,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # Add western astrology section
 # Add Western Atrology PDF Export
 # New Theme
+# redeploy
+
