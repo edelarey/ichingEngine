@@ -3,81 +3,162 @@
 <template>
     <Analytics />
   <div id="app">
-    <!-- Apple-style Navigation -->
-    <nav class="apple-nav">
-      <div class="apple-nav-container">
-        <div class="apple-nav-brand">
-          <router-link to="/" class="apple-logo">I Ching Engine</router-link>
-        </div>
-        
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">iChing Engine</a>
         <button
-          class="apple-nav-toggle"
+          class="navbar-toggler"
           type="button"
-          @click="toggleMobileMenu"
-          :aria-expanded="isMobileMenuOpen ? 'true' : 'false'"
-          aria-label="Toggle navigation"
+          @click="toggleSidebar"
+          :aria-expanded="isSidebarOpen ? 'true' : 'false'"
+          aria-controls="sidebarCollapse"
+          aria-label="Toggle sidebar"
         >
-          <i class="bi bi-list"></i>
+          <span class="navbar-toggler-icon"></span>
         </button>
-        
-        <div class="apple-nav-menu" :class="{ 'is-open': isMobileMenuOpen }">
-          <ul class="apple-nav-list">
-            <li class="apple-nav-item">
-              <router-link to="/" class="apple-nav-link" @click="closeMobileMenu">Home</router-link>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <router-link class="nav-link" to="/">Home</router-link>
             </li>
-            <li class="apple-nav-item">
-              <router-link to="/consult" class="apple-nav-link" @click="closeMobileMenu">Consult</router-link>
-            </li>
-            <li class="apple-nav-item dropdown" 
-                @mouseover="handleDropdownHover(true, 'study')" 
-                @mouseleave="handleDropdownHover(false, 'study')"
-                @click="handleDropdownClick('study')"
-                @touchstart="handleDropdownTouch('study')">
-              <span class="apple-nav-link dropdown-toggle">
-                Study
-                <i class="bi bi-chevron-down"></i>
-              </span>
-              <ul class="apple-dropdown" :class="{ 'show': showDropdown }">
-                <li><router-link to="/hexagrams" class="apple-dropdown-link" @click="closeMobileMenu">Hexagrams</router-link></li>
-                <li><router-link to="/trigrams" class="apple-dropdown-link" @click="closeMobileMenu">Trigrams</router-link></li>
-                <li><router-link to="/hexagram_sequence" class="apple-dropdown-link" @click="closeMobileMenu">Sequence</router-link></li>
-              </ul>
-            </li>
-            <li class="apple-nav-item dropdown" 
-                @mouseover="handleDropdownHover(true, 'astrology')" 
-                @mouseleave="handleDropdownHover(false, 'astrology')"
-                @click="handleDropdownClick('astrology')"
-                @touchstart="handleDropdownTouch('astrology')">
-              <span class="apple-nav-link dropdown-toggle">
-                Astrology
-                <i class="bi bi-chevron-down"></i>
-              </span>
-              <ul class="apple-dropdown" :class="{ 'show': showAstrologyDropdown }">
-                <li><router-link to="/astrology" class="apple-dropdown-link" @click="closeMobileMenu">I Ching Astrology</router-link></li>
-                <li><router-link to="/western_astrology" class="apple-dropdown-link" @click="closeMobileMenu">Western Astrology</router-link></li>
-                <li><router-link to="/relationship" class="apple-dropdown-link" @click="closeMobileMenu">Relationships</router-link></li>
-              </ul>
-            </li>
-            <li class="apple-nav-item">
-              <router-link to="/about" class="apple-nav-link" @click="closeMobileMenu">About</router-link>
-            </li>
-            <li class="apple-nav-item theme-item">
-              <button class="apple-theme-toggle" @click="toggleDarkMode" type="button" title="Toggle theme">
-                <i :class="isDarkMode ? 'bi bi-sun-fill' : 'bi bi-moon-fill'"></i>
-              </button>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/consult">Consult</router-link>
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <!-- Apple-style Main Content -->
-    <main class="apple-main">
-      <router-view></router-view>
-    </main>
+    <!-- Sidebar and Main Content -->
+    <div class="container-fluid">
+      <div class="row flex-nowrap">
+        <!-- Sidebar -->
+        <nav
+  id="sidebarCollapse"
+  class="col-3 col-md-2 bg-light sidebar"
+  :class="{ 'show': isSidebarOpen }"
+>
+  <div class="position-sticky pt-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <router-link class="nav-link" to="/" exact-active-class="active">
+          <span class="align-middle">Home</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/consult" exact-active-class="active">
+          <span class="align-middle">Consult</span>
+        </router-link>
+      </li>
+      <!-- Astrology Sub-Menu -->
+      <li class="nav-item">
+        <span
+          class="nav-link"
+          @click="toggleAstrologyMenu"
+          role="button"
+          tabindex="0"
+          :aria-expanded="astrologyMenuOpen"
+        >
+          <span class="align-middle">Astrology</span>
+          <i :class="astrologyMenuOpen ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
+        </span>
+        <ul v-show="astrologyMenuOpen" class="nav flex-column ms-3">
+          <li class="nav-item">
+            <router-link class="nav-link" to="/astrology" exact-active-class="active">
+              <span class="align-middle">I-Ching Astrology</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/western_astrology" exact-active-class="active">
+              <span class="align-middle">Western Astrology</span>
+            </router-link>
+          </li>
+        </ul>
+      </li>
+      <!-- Charts Sub-Menu -->
+      <li class="nav-item">
+        <span
+          class="nav-link"
+          @click="toggleChartsMenu"
+          role="button"
+          tabindex="0"
+          :aria-expanded="chartsMenuOpen"
+        >
+          <span class="align-middle">Charts</span>
+          <i :class="chartsMenuOpen ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
+        </span>
+        <ul v-show="chartsMenuOpen" class="nav flex-column ms-3">
+          <li class="nav-item">
+            <router-link class="nav-link" to="/astrology_chart" exact-active-class="active">
+              <span class="align-middle">Chinese Zodiac Chart</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/iching_zodiac_chart" exact-active-class="active">
+              <span class="align-middle">Western Zodiac Chart</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/tibetan_mantra_chart" exact-active-class="active">
+              <span class="align-middle">Tibetan Mantra Chart</span>
+            </router-link>
+          </li>
+        </ul>
+</li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/relationship" exact-active-class="active">
+          <span class="align-middle">Relationships</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/trigrams" exact-active-class="active">
+          <span class="align-middle">Trigrams</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/hexagrams" exact-active-class="active">
+          <span class="align-middle">Hexagrams</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/hexagram_sequence" exact-active-class="active">
+          <span class="align-middle">Hexagram Sequence</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/about" exact-active-class="active">
+          <span class="align-middle">About</span>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <div class="nav-link">
+          <label for="bg-color-picker" class="form-label">Background Color</label>
+          <input
+            type="color"
+            id="bg-color-picker"
+            v-model="backgroundColor"
+            @change="saveBackgroundColor"
+            class="form-control form-control-color"
+          />
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+        <!-- Main Content -->
+        <main
+          class="col-12 col-md-10 col-lg-10 px-md-4 mt-5"
+          :class="{ 'col-md-12 col-lg-12': !isSidebarOpen }"
+        >
+          <router-view></router-view>
+        </main>
+      </div>
+    </div>
 
     <!-- Footer -->
-    <footer class="text-center py-3 mt-auto">
+    <footer class="bg-dark text-light text-center py-3 mt-auto">
       <div class="container">
         <p>© 2025 iChing Engine. All rights reserved.</p>
       </div>
@@ -86,9 +167,8 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useHead } from '@vueuse/head';
-import { useRouter, useRoute } from 'vue-router';
 import { Analytics } from '@vercel/analytics/vue';
 
 export default {
@@ -97,25 +177,24 @@ export default {
     Analytics, // Register the Analytics component
   },
   setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const isMobileMenuOpen = ref(false);
-    const showDropdown = ref(false);
-    const showAstrologyDropdown = ref(false);
-    const isDarkMode = ref(localStorage.getItem('theme') === 'dark');
-    const isMobile = ref(false);
+    const isSidebarOpen = ref(true); // Default to open for initial visibility
+    const isBootstrapLoaded = ref(false);
+    const backgroundColor = ref('#3f41c2');
+    const chartsMenuOpen = ref(false); // Tracks Charts sub-menu state
+    const astrologyMenuOpen = ref(false); // Tracks Astrology sub-menu state
+
 
     // Add SEO meta tags
     useHead({
-      title: 'I Ching Engine - Ancient Wisdom for Modern Life',
+      title: 'iChing Engine - Online Divination and Astrology Tool',
       meta: [
         {
           name: 'description',
-          content: 'Discover the wisdom of the I Ching with our modern platform. Receive personalized consultations, explore hexagrams and trigrams, and gain insights from ancient Chinese divination.',
+          content: 'Explore the iChing Engine for online iChing consultations, astrology insights, trigrams, hexagrams, and spiritual and relationship guidance.',
         },
         {
           name: 'keywords',
-          content: 'I Ching, divination, oracle, hexagram, trigram, consultation, wisdom, guidance, ancient Chinese philosophy',
+          content: 'iChing, iChing oracle, iChing consultation, astrology, trigrams, hexagrams, divination, spiritual guidance, relationship',
         },
         {
           name: 'robots',
@@ -124,108 +203,151 @@ export default {
       ],
     });
 
-    // Mobile detection
-    const checkMobile = () => {
-      isMobile.value = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    };
-
-    // Mobile menu functions
-    const toggleMobileMenu = () => {
-      isMobileMenuOpen.value = !isMobileMenuOpen.value;
-    };
-
-    const closeMobileMenu = () => {
-      isMobileMenuOpen.value = false;
-      showDropdown.value = false;
-      showAstrologyDropdown.value = false;
-      console.log('Mobile menu and all dropdowns closed');
-    };
-
-    // Enhanced dropdown handling for mobile compatibility
-    const handleDropdownHover = (show, type) => {
-      // Only use hover on desktop
-      if (!isMobile.value) {
-        if (type === 'study') {
-          showDropdown.value = show;
-        } else if (type === 'astrology') {
-          showAstrologyDropdown.value = show;
+    const toggleSidebar = () => {
+      isSidebarOpen.value = !isSidebarOpen.value;
+      if (window.bootstrap && window.bootstrap.Collapse) {
+        const sidebar = document.getElementById('sidebarCollapse');
+        if (sidebar) {
+          const bsCollapse = bootstrap.Collapse.getOrCreateInstance(sidebar);
+          isSidebarOpen.value ? bsCollapse.show() : bsCollapse.hide();
         }
       }
     };
 
-    const handleDropdownClick = (type) => {
-      // Handle click events for mobile and desktop
-      if (type === 'study') {
-        showDropdown.value = !showDropdown.value;
-        showAstrologyDropdown.value = false; // Close other dropdown
-      } else if (type === 'astrology') {
-        showAstrologyDropdown.value = !showAstrologyDropdown.value;
-        showDropdown.value = false; // Close other dropdown
-      }
+    const toggleChartsMenu = () => {
+      chartsMenuOpen.value = !chartsMenuOpen.value; // Toggles Charts sub-menu
     };
 
-    const handleDropdownTouch = (type) => {
-      // Specifically for touch devices
-      if (isMobile.value) {
-        handleDropdownClick(type);
-      }
+    const toggleAstrologyMenu = () => {
+      astrologyMenuOpen.value = !astrologyMenuOpen.value; // Toggles Astrology sub-menu
     };
 
-    // Dark mode functionality
-    const toggleDarkMode = () => {
-      isDarkMode.value = !isDarkMode.value;
-      const theme = isDarkMode.value ? 'dark' : 'light';
-      localStorage.setItem('theme', theme);
-      document.documentElement.setAttribute('data-theme', theme);
+
+    watch(isSidebarOpen, (newValue) => {
+      document.body.style.overflow = newValue ? 'hidden' : '';
+    });
+    
+    const saveBackgroundColor = () => {
+      localStorage.setItem('backgroundColor', backgroundColor.value);
+      document.body.style.backgroundColor = backgroundColor.value;
     };
 
-    // Apply theme and check mobile on mount
     onMounted(() => {
-      const theme = isDarkMode.value ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', theme);
-      checkMobile();
-      window.addEventListener('resize', checkMobile);
+      const savedColor = localStorage.getItem('backgroundColor');
+      if (savedColor) {
+        backgroundColor.value = savedColor;
+      } else {
+        backgroundColor.value = '#3f41c2'; // Default from app.scss
+      }
+
+      if (window.bootstrap && window.bootstrap.Collapse) {
+        isBootstrapLoaded.value = true;
+        const sidebar = document.getElementById('sidebarCollapse');
+        if (sidebar) {
+          new bootstrap.Collapse(sidebar, { toggle: false });
+          if (isSidebarOpen.value) sidebar.classList.add('show');
+        }
+      } else {
+        console.warn('Bootstrap 5 is not fully loaded. Sidebar collapse may not work.');
+        isSidebarOpen.value = true; // Ensure sidebar is visible as fallback
+      }
     });
 
-    // Cleanup event listener
-    onUnmounted(() => {
-      window.removeEventListener('resize', checkMobile);
-    });
-
-    // Watch for route changes and close mobile menu/dropdowns
-    watch(route, () => {
-      closeMobileMenu();
-    });
 
     return {
-      isMobileMenuOpen,
-      showDropdown,
-      showAstrologyDropdown,
-      isDarkMode,
-      isMobile,
-      toggleMobileMenu,
-      closeMobileMenu,
-      handleDropdownHover,
-      handleDropdownClick,
-      handleDropdownTouch,
-      toggleDarkMode,
+      isSidebarOpen,
+      isBootstrapLoaded,
+      toggleSidebar,
+      saveBackgroundColor,
+      backgroundColor,
+      chartsMenuOpen,      // Return Charts sub-menu state
+      toggleChartsMenu,    // Return Charts toggle function
+      astrologyMenuOpen,   // Return Astrology sub-menu state
+      toggleAstrologyMenu, // Return Astrology toggle function
     };
   },
 };
 </script>
 
 <style scoped>
-/* Apple-style App Layout */
-#app {
-  min-height: 100vh;
-  background: var(--apple-bg-primary);
+/* Sidebar styling */
+.sidebar {
+  position: fixed;
+  top: 56px; /* Height of navbar */
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  width: auto; /* Auto-size to fit content */
+  min-width: 200px; /* Minimum width to ensure readability */
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  transform: translateX(0); /* Default to visible, collapse handles hiding */
+}
+
+.sidebar:not(.show) {
+  transform: translateX(-100%); /* Hide when not shown */
+}
+
+/* Ensure content fits naturally */
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.5rem 1rem;
+}
+
+.sidebar .nav-link.active {
+  color: #007bff;
+  background-color: #f8f9fa;
+}
+
+/* Main content adjustment */
+main {
+  min-height: calc(100vh - 112px); /* Adjust for navbar and footer */
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: 0;
+}
+
+main.col-md-12 {
+  margin-left: 0; /* Full width when sidebar is closed */
+}
+
+main.col-md-10 {
+  margin-left: 200px; /* Offset for open sidebar */
+}
+
+/* Resizable sidebar (optional) */
+.sidebar {
+  resize: horizontal;
+  overflow: auto;
 }
 
 /* Footer */
 footer {
-  background: var(--apple-bg-secondary);
-  color: var(--apple-text-secondary);
-  border-top: 1px solid var(--apple-separator);
-  margin-top: auto;
+  width: 100%;
+}
+
+/* Media queries */
+@media (max-width: 767.98px) {
+  .sidebar {
+    min-width: 180px;
+  }
+
+  main.col-md-10 {
+    margin-left: 180px;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    min-width: 150px;
+  }
+
+  main.col-md-10 {
+    margin-left: 150px;
+  }
 }
 </style>

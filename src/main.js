@@ -6,10 +6,8 @@ import VueGoodTablePlugin from 'vue-good-table-next';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import { createHead } from '@vueuse/head';
 
-// Import our custom SCSS styles (this will override Bootstrap)
-import './assets/scss/app.scss';
-
-// Import Bootstrap JS only (no CSS)
+// Import Bootstrap CSS and JS
+import 'bootstrap/dist/css/bootstrap.min.css';
 import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Ensure bundle includes Popper.js
 
 // Import vue-good-table-next CSS

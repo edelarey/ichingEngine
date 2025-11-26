@@ -1,12 +1,12 @@
 <template>
   <div class="consult-page">
-    <!-- Page Header (macOS Style) -->
-    <header class="macos-header py-4 mb-5">
+    <!-- Page Header -->
+    <header class="bg-light py-3 mb-4">
       <div class="container">
-        <h1 class="macos-title">Consult</h1>
+        <h1 class="display-4">Consult</h1>
         <nav aria-label="breadcrumb">
-          <ol class="macos-breadcrumb">
-            <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">Consult the I Ching</li>
           </ol>
         </nav>
@@ -79,19 +79,13 @@
           <div class="card text-center">
             <div class="card-body">
               <h5 class="card-title">Select Divination Method</h5>
-              <div class="method-selection-container">
-                <div class="method-option" @click.stop.prevent="selectMethod('coin')" :class="{ 'selected': divinationMethod === 'coin' }">
-                  <div class="selection-box">
-                    <span v-if="divinationMethod === 'coin'" class="selection-mark">✓</span>
-                  </div>
-                  <label class="method-label">Coin Toss</label>
-                </div>
-                <div class="method-option" @click.stop.prevent="selectMethod('yarrow')" :class="{ 'selected': divinationMethod === 'yarrow' }">
-                  <div class="selection-box">
-                    <span v-if="divinationMethod === 'yarrow'" class="selection-mark">✓</span>
-                  </div>
-                  <label class="method-label">Yarrow Stalk</label>
-                </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" v-model="divinationMethod" value="coin" id="coinMethod">
+                <label class="form-check-label" for="coinMethod">Coin Toss</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" v-model="divinationMethod" value="yarrow" id="yarrowMethod">
+                <label class="form-check-label" for="yarrowMethod">Yarrow Stalk</label>
               </div>
             </div>
           </div>
@@ -257,63 +251,27 @@ export default {
     };
 
     const generateLine = () => {
-      console.log('=== generateLine called ===');
-      console.log('Current line:', currentLine.value);
-      console.log('Divination method:', divinationMethod.value);
-      
       if (currentLine.value <= 6) {
         let lineValue;
-        try {
-          if (divinationMethod.value === 'coin') {
-            console.log('Generating coin line...');
-            console.log('Coin object:', coin);
-            console.log('Coin.generateCoinLine function:', coin.generateCoinLine);
-            lineValue = coin.generateCoinLine();
-            console.log('Coin line generated:', lineValue);
-          } else {
-            console.log('Generating yarrow line...');
-            lineValue = generateYarrowLine();
-            console.log('Yarrow line generated:', lineValue);
-          }
-          
-          console.log('Adding line value to hexagram:', lineValue);
-          primaryHexagram.value.push(lineValue);
-          const transformedLine = transformLine(lineValue);
-          transformedHexagram.value.push(transformedLine);
-
-          if (isChangingLine(lineValue)) {
-            changedLines.value.push(currentLine.value);
-            console.log('Changing line detected:', currentLine.value);
-          }
-
-          currentLine.value++;
-          console.log('Moving to next line:', currentLine.value);
-
-          if (currentLine.value === 7) {
-            console.log('All lines complete, finalizing hexagrams...');
-            finalizeHexagrams();
-          }
-        } catch (error) {
-          console.error('Error in generateLine:', error);
-          console.error('Error details:', error.message, error.stack);
+        if (divinationMethod.value === 'coin') {
+          lineValue = coin.generateCoinLine();
+        } else {
+          lineValue = generateYarrowLine();
         }
-      } else {
-        console.log('All lines already generated');
-      }
-    };
+        primaryHexagram.value.push(lineValue);
+        const transformedLine = transformLine(lineValue);
+        transformedHexagram.value.push(transformedLine);
 
-    const selectMethod = (method) => {
-      console.log('=== selectMethod called ===');
-      console.log('Method parameter:', method);
-      console.log('Current method before change:', divinationMethod.value);
-      
-      divinationMethod.value = method;
-      
-      console.log('Method after change:', divinationMethod.value);
-      console.log('=== selectMethod completed ===');
-      
-      // Ensure we stay on the consult page and don't navigate anywhere
-      return false;
+        if (isChangingLine(lineValue)) {
+          changedLines.value.push(currentLine.value);
+        }
+
+        currentLine.value++;
+
+        if (currentLine.value === 7) {
+          finalizeHexagrams();
+        }
+      }
     };
 
     const transformLine = (lineValue) => {
@@ -412,7 +370,6 @@ export default {
       isYin,
       isChangingLine,
       generateLine,
-      selectMethod,
       reset,
       getChangingLinesText,
       toggleHistory,
@@ -438,123 +395,5 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-/* Custom Method Selection Styling */
-.method-selection-container {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 1rem;
-  position: relative;
-  z-index: 10;
-}
-
-.method-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 1rem;
-  border-radius: 8px;
-  position: relative;
-  z-index: 11;
-  pointer-events: auto;
-  /* Prevent any touch event interference */
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.method-option:hover {
-  background-color: var(--apple-gray-light);
-}
-
-.method-option.selected {
-  background-color: var(--apple-blue-light);
-}
-
-.selection-box {
-  width: 30px;
-  height: 30px;
-  border: 2px solid var(--apple-gray-medium);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-  background: white;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 12;
-  pointer-events: auto;
-}
-
-.method-option.selected .selection-box {
-  border-color: var(--apple-blue);
-  background-color: var(--apple-blue);
-}
-
-.selection-mark {
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  pointer-events: none;
-}
-
-.method-label {
-  font-weight: 600;
-  color: var(--apple-text-primary);
-  margin: 0;
-  cursor: pointer;
-  pointer-events: none;
-  user-select: none;
-}
-
-.method-option.selected .method-label {
-  color: var(--apple-blue);
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  .method-selection-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    /* Ensure no mobile interference */
-    isolation: isolate;
-  }
-  
-  .method-option {
-    flex-direction: row;
-    width: 200px;
-    justify-content: flex-start;
-    gap: 1rem;
-    /* Enhanced mobile touch handling */
-    min-height: 48px;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: var(--apple-blue-light);
-    /* Prevent any accidental navigation */
-    will-change: transform;
-    contain: layout style;
-  }
-  
-  .selection-box {
-    margin-bottom: 0;
-    /* Ensure touch targets are large enough */
-    min-width: 30px;
-    min-height: 30px;
-  }
-  
-  /* Prevent any router-link interference on mobile */
-  .card-body {
-    isolation: isolate;
-  }
-  
-  /* Ensure buttons don't interfere with method selection */
-  .btn {
-    isolation: isolate;
-    touch-action: manipulation;
-  }
 }
 </style>
