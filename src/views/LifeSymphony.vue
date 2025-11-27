@@ -2,7 +2,7 @@
   <div class="container mt-5 life-symphony">
     <h1 class="mb-4 text-center">Life Symphony 🎵</h1>
     <p class="text-center text-muted mb-5">
-      Generate a unique musical composition based on your 90-year I Ching life cycle.
+      Generate a unique musical composition based on your I Ching life cycle.
     </p>
 
     <!-- Saved Birthdays -->
@@ -97,7 +97,11 @@
       <div class="row mb-5" v-if="currentYearData">
         <div class="col-12 text-center mb-4">
           <h2 class="display-4 mb-0">Age {{ currentYearData.age }}</h2>
-          <p class="text-muted">{{ currentYearData.year }} • {{ currentYearData.source }} Cycle</p>
+          <p class="text-muted">
+            {{ currentYearData.year }} • {{ currentYearData.source }} Cycle
+            <br>
+            <small>Step {{ currentYearIndex + 1 }} of {{ symphonyData.timeline.length }}</small>
+          </p>
         </div>
 
         <div class="row g-4 align-items-center">

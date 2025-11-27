@@ -97,7 +97,7 @@ export const generateLifeSymphony = async (birthDate, birthTime, latitude, longi
     // 5. Convert to Array and Sort by Age
     const timeline = Array.from(timelineMap.values())
       .sort((a, b) => a.age - b.age)
-      .filter(item => item.age >= 0 && item.age <= 90); // Limit to 90 years as requested
+      .filter(item => item.age >= 0); // Allow dynamic length based on cycles
 
     return {
       metadata: {
