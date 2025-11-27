@@ -108,6 +108,9 @@
           <!-- Visualizer Column -->
           <div class="col-md-6">
             <div class="visualizer-container p-3 border rounded bg-dark position-relative">
+              <!-- Waveform Canvas -->
+              <canvas ref="waveformCanvas" class="waveform-canvas"></canvas>            
+
               <!-- Hexagram Overlay -->
               <div class="hexagram-overlay">
                 <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight" viewBox="0 0 160 240">
@@ -137,15 +140,15 @@
                         />
                       </template>
 
-                      <!-- Frequency Label (Static) -->
-                      <text
-                        x="110" y="20"
-                        font-size="12"
-                        :fill="currentLineIndex === (5 - index) && isPlaying ? '#00ffff' : '#adb5bd'"
-                        font-weight="bold"
-                      >
-                        {{ frequencies[5 - index] }} Hz
-                      </text>
+                     <!-- Frequency Label (Static) -->
+                     <text
+                       x="110" y="20"
+                       font-size="12"
+                       :fill="getLineColor(index)"
+                       font-weight="bold"
+                     >
+                       {{ frequencies[5 - index] }} Hz
+                     </text>
 
                     </g>
                   </g>
@@ -177,7 +180,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, nextTick } from 'vue';
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import BirthDataForm from '../components/BirthDataForm.vue';
 import { generateLifeSymphony } from '../utils/lifeSymphonyEngine';
 import { useLifeAudio } from '../composables/useLifeAudio';
@@ -204,9 +207,26 @@ export default {
       place: ''
     });
     const symphonyData = ref(null);
+    const waveformCanvas = ref(null);
+    let animationFrameId = null;
 
     // Constants
     const frequencies = [396, 417, 528, 639, 285, 174];
+    
+    const frequencyColors = {
+      174: '#FF0000', // Red (Root)
+      285: '#FFA500', // Orange (Sacral)
+      396: '#FF0000', // Red (Root)
+      417: '#FFA500', // Orange (Sacral)
+      528: '#FFFF00', // Yellow (Solar Plexus)
+      639: '#00FF00', // Green (Heart)
+      741: '#0000FF', // Blue (Throat)
+      852: '#4B0082', // Indigo (Third Eye)
+      963: '#EE82EE'  // Violet (Crown)
+    };
+
+    // Chakra colors: Line 0 (bottom) → Line 5 (top)
+    const chakraColors = frequencies.map(f => frequencyColors[f]);
     const svgWidth = 200;
     const svgHeight = 300;
 
@@ -215,12 +235,14 @@ export default {
       isPlaying,
       currentYearIndex,
       currentLineIndex,
+      currentFrequency,
       playbackSpeed,
       loadTimeline,
-      play, 
-      pause, 
+      play,
+      pause,
       stop: stopAudio,
-      setYear
+      setYear,
+      getWaveform
     } = useLifeAudio();
 
     // Computed
@@ -251,10 +273,29 @@ export default {
       // index is 0 (top) to 5 (bottom) in the visual loop because we reversed the array
       // currentLineIndex is 0 (bottom) to 5 (top) from audio engine
       // So we need to match them: visual index 5 corresponds to audio index 0
-      if (isPlaying.value && currentLineIndex.value === (5 - index)) {
-        return '#00ffff'; // Cyan for active line
+      const lineIndexFromBottom = 5 - index;
+      const color = chakraColors[lineIndexFromBottom];
+      
+      // If this line is currently playing, make it brighter
+      if (isPlaying.value && currentLineIndex.value === lineIndexFromBottom) {
+        return color; // Full brightness chakra color for active line
       }
-      return '#adb5bd'; // Light gray
+      
+      // Yin lines are more transparent/faded
+      const lineData = currentHexagramLines.value[index];
+      if (lineData && !lineData.isYang) {
+        return hexToRgba(color, 0.5); // 50% opacity for yin
+      }
+      
+      return hexToRgba(color, 0.7); // 70% opacity for yang when not active
+    };
+
+    // Helper function to convert hex to rgba
+    const hexToRgba = (hex, alpha) => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     };
 
     // Methods
@@ -320,6 +361,105 @@ export default {
       symphonyData.value = null;
     };
 
+    const drawWaveform = () => {
+      if (!waveformCanvas.value) {
+        // If canvas is missing, try again next frame (in case of v-if timing issues)
+        animationFrameId = requestAnimationFrame(drawWaveform);
+        return;
+      }
+      
+      const canvas = waveformCanvas.value;
+      const ctx = canvas.getContext('2d');
+      // Ensure canvas resolution matches display size
+      if (canvas.width !== canvas.offsetWidth || canvas.height !== canvas.offsetHeight) {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear with fade effect
+      ctx.fillStyle = 'rgba(33, 37, 41, 0.2)'; // Dark background with trail
+      ctx.fillRect(0, 0, width, height);
+      
+      if (!isPlaying.value) {
+        // Still loop so we can catch when it starts playing
+        animationFrameId = requestAnimationFrame(drawWaveform);
+        return;
+      }
+
+      const values = getWaveform();
+      
+      if (!values || values.length === 0) {
+        animationFrameId = requestAnimationFrame(drawWaveform);
+        return;
+      }
+
+      // Get the current line's chakra color
+      // currentLineIndex is 0-5 (bottom to top)
+      // If no line is playing (-1), default to cyan or last color
+      const currentColor = currentLineIndex.value >= 0 ? chakraColors[currentLineIndex.value] : '#00ffff';
+      
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = currentColor; // Use chakra color for waveform
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = currentColor;
+
+      const sliceWidth = width / values.length;
+      let x = 0;
+
+      for (let i = 0; i < values.length; i++) {
+        // Scale value (-1 to 1) to canvas height
+        // Add some gain to make it visible
+        const v = values[i] * 3.0; // Increased gain to make it more visible
+        const y = (height / 2) + (v * height / 2);
+
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+      }
+
+      ctx.lineTo(canvas.width, canvas.height / 2);
+      ctx.stroke();
+      
+      // Reset shadow for next frame performance
+      ctx.shadowBlur = 0;
+
+      animationFrameId = requestAnimationFrame(drawWaveform);
+    };
+
+    onMounted(() => {
+      // Initialize canvas size
+      if (waveformCanvas.value) {
+        waveformCanvas.value.width = waveformCanvas.value.offsetWidth;
+        waveformCanvas.value.height = waveformCanvas.value.offsetHeight;
+      }
+      
+      // Start loop
+      drawWaveform();
+      
+      // Handle resize
+      window.addEventListener('resize', () => {
+        if (waveformCanvas.value) {
+          waveformCanvas.value.width = waveformCanvas.value.offsetWidth;
+          waveformCanvas.value.height = waveformCanvas.value.offsetHeight;
+        }
+      });
+    });
+
+    onUnmounted(() => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      window.removeEventListener('resize', () => {});
+    });
+
     return {
       loading,
       gender,
@@ -344,7 +484,11 @@ export default {
       svgWidth,
       svgHeight,
       getLineColor,
-      currentLineIndex
+      hexToRgba,
+      currentLineIndex,
+      currentFrequency,
+      waveformCanvas,
+      chakraColors
     };
   }
 };
@@ -366,9 +510,15 @@ export default {
   position: relative;
   overflow: hidden;
   background-color: #212529 !important; /* Force dark background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+}
+
+waveform-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
 .hexagram-overlay {
@@ -377,15 +527,29 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
+  min-height: 300px;
+  width: 100%; /* Ensure full width for centering */
+  pointer-events: none; /* Let clicks pass through to canvas if needed */
 }
 
 .hexagram-svg {
   margin: 0 auto;
   display: block;
   filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+  /* Ensure SVG itself is centered if container is larger */
   max-width: 100%;
+}
+
+.frequency-label {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-family: monospace;
+  font-size: 1.2rem;
+  color: #ffffff;
+  z-index: 3;
+  text-shadow: 0 0 10px currentColor;
+  font-weight: bold;
 }
 
 .active-pulse {

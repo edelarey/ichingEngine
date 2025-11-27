@@ -5,12 +5,14 @@ export function useLifeAudio() {
   const isPlaying = ref(false);
   const currentYearIndex = ref(0);
   const currentLineIndex = ref(-1); // -1 when not playing a specific line
+  const currentFrequency = ref(0);
   const playbackSpeed = ref(1.0); // 1.0 = Normal speed
   const totalYears = ref(0);
   
   // Synths
   let synths = [];
   let reverb = null;
+  let analyser = null;
   let sequencePart = null;
   let timelineData = [];
 
@@ -19,6 +21,9 @@ export function useLifeAudio() {
     await Tone.start();
     
     if (synths.length > 0) return; // Already initialized
+
+    // Create Analyser for waveform visualization
+    analyser = new Tone.Waveform(1024);
 
     // Create a reverb for that "healing" feel
     reverb = new Tone.Reverb({
@@ -48,6 +53,9 @@ export function useLifeAudio() {
         }
       }).connect(reverb);
       
+      // Also connect to analyser
+      synth.connect(analyser);
+
       synths.push(synth);
     }
   };
@@ -79,12 +87,14 @@ export function useLifeAudio() {
       // Schedule visual update for this line
       Tone.Draw.schedule(() => {
         currentLineIndex.value = index;
+        currentFrequency.value = freq;
       }, baseTime + (index * noteSpacing));
 
       // Reset line index after the last note finishes
       if (index === lines.length - 1) {
         Tone.Draw.schedule(() => {
           currentLineIndex.value = -1;
+          currentFrequency.value = 0;
         }, baseTime + (index * noteSpacing) + duration);
       }
     });
@@ -143,11 +153,18 @@ export function useLifeAudio() {
 
   const setYear = (index) => {
     currentYearIndex.value = index;
-    // If playing, we need to restart the transport or logic to jump, 
-    // but for simplicity in this version, we just update the index 
-    // which the Loop uses. However, Tone.Loop doesn't take an index, 
+    // If playing, we need to restart the transport or logic to jump,
+    // but for simplicity in this version, we just update the index
+    // which the Loop uses. However, Tone.Loop doesn't take an index,
     // we are managing the index manually in the callback.
     // So setting currentYearIndex is enough, but we might want to stop/start to sync immediately if playing.
+  };
+
+  const getWaveform = () => {
+    if (analyser) {
+      return analyser.getValue();
+    }
+    return null;
   };
 
   // Cleanup
@@ -155,18 +172,21 @@ export function useLifeAudio() {
     stop();
     synths.forEach(s => s.dispose());
     if (reverb) reverb.dispose();
+    if (analyser) analyser.dispose();
   });
 
   return {
     isPlaying,
     currentYearIndex,
     currentLineIndex,
+    currentFrequency,
     playbackSpeed,
     totalYears,
     loadTimeline,
     play,
     pause,
     stop,
-    setYear
+    setYear,
+    getWaveform
   };
 }
