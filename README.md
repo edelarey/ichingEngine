@@ -34,4 +34,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # Add Western Atrology PDF Export
 # Revert to original layouts
 # Add Solfeggio Frequency Player
+# Add basic Life Symphony
 # Redeploy
