@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-4">
     <div class="row justify-content-center">
-      <div class="col-md-8">
+      <div class="col-md-10">
         <div class="card shadow-sm">
           <div class="card-header bg-primary text-white">
             <h3 class="mb-0"><i class="bi bi-music-note-beamed me-2"></i>Solfeggio Healing Player</h3>
@@ -67,66 +67,90 @@
               </div>
             </div>
 
-            <!-- Visualizer -->
-            <div class="hexagram-visualizer d-flex flex-column align-items-center my-4 p-3 border rounded bg-light">
-              <div v-if="activeHexagram" class="center-content">
-                <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight">
-                  <!-- Loop through lines from top (index 5) to bottom (index 0) for display -->
-                  <!-- But SVG coordinates are top-down. -->
-                  <!-- Hexagram string index 0 is BOTTOM line. -->
-                  <!-- So index 0 should be at the BOTTOM of the SVG. -->
-                  <!-- SVG Height is 240. Line height ~40. -->
-                  <!-- Index 0 (Bottom) -> y = 240 - 40 = 200 -->
-                  <!-- Index 5 (Top) -> y = 240 - 6*40 = 0 -->
+            <!-- Main Display Area -->
+            <div class="row g-4 align-items-center">
+              <!-- Visualizer Column -->
+              <div class="col-md-6">
+                <div class="visualizer-container p-3 border rounded bg-dark position-relative">
+                  <!-- Waveform Canvas -->
+                  <canvas ref="waveformCanvas" class="waveform-canvas"></canvas>
                   
-                  <g v-for="(char, index) in activeHexagram" :key="index">
-                    <!-- Transform to position line correctly. index 0 is bottom line. -->
-                    <g :transform="`translate(0, ${svgHeight - (index + 1) * 40})`">
-                      
-                      <!-- Yin Line (0) -->
-                      <template v-if="char === '0'">
-                        <rect 
-                          x="10" y="10" width="40" height="10" 
-                          :fill="getLineColor(index)" 
-                          :class="{ 'active-pulse': currentLineIndex === index }"
-                        />
-                        <rect 
-                          x="60" y="10" width="40" height="10" 
-                          :fill="getLineColor(index)" 
-                          :class="{ 'active-pulse': currentLineIndex === index }"
-                        />
-                      </template>
-                      
-                      <!-- Yang Line (1) -->
-                      <template v-else>
-                        <rect 
-                          x="10" y="10" width="90" height="10" 
-                          :fill="getLineColor(index)" 
-                          :class="{ 'active-pulse': currentLineIndex === index }"
-                        />
-                      </template>
+                  <!-- Frequency Label -->
+                  <div v-if="currentFrequency > 0" class="frequency-label">
+                    {{ Math.round(currentFrequency) }} Hz
+                  </div>
 
-                      <!-- Frequency Label (Optional, to the right) -->
-                      <text 
-                        x="110" y="20" 
-                        font-size="12" 
-                        :fill="currentLineIndex === index ? '#0d6efd' : '#6c757d'"
-                        font-weight="bold"
-                      >
-                        {{ frequencies[index] }} Hz
-                      </text>
+                  <!-- Hexagram Overlay -->
+                  <div v-if="activeHexagram" class="hexagram-overlay">
+                    <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight">
+                      <g v-for="(char, index) in activeHexagram" :key="index">
+                        <g :transform="`translate(0, ${svgHeight - (index + 1) * 40})`">
+                          
+                          <!-- Yin Line (0) -->
+                          <template v-if="char === '0'">
+                            <rect 
+                              x="10" y="10" width="40" height="10" 
+                              :fill="getLineColor(index)" 
+                              :class="{ 'active-pulse': currentLineIndex === index }"
+                            />
+                            <rect 
+                              x="60" y="10" width="40" height="10" 
+                              :fill="getLineColor(index)" 
+                              :class="{ 'active-pulse': currentLineIndex === index }"
+                            />
+                          </template>
+                          
+                          <!-- Yang Line (1) -->
+                          <template v-else>
+                            <rect 
+                              x="10" y="10" width="90" height="10" 
+                              :fill="getLineColor(index)" 
+                              :class="{ 'active-pulse': currentLineIndex === index }"
+                            />
+                          </template>
 
-                    </g>
-                  </g>
-                </svg>
+                          <!-- Frequency Label (Static) -->
+                          <text 
+                            x="110" y="20" 
+                            font-size="12" 
+                            :fill="currentLineIndex === index ? '#00ffff' : '#6c757d'"
+                            font-weight="bold"
+                          >
+                            {{ frequencies[index] }} Hz
+                          </text>
+
+                        </g>
+                      </g>
+                    </svg>
+                  </div>
+                  <div v-else class="text-muted py-5 text-center">
+                    <i class="bi bi-music-note-list display-4"></i>
+                    <p class="mt-2">Press Play to start visualization</p>
+                  </div>
+                </div>
               </div>
-              <div v-else class="text-muted py-5">
-                <i class="bi bi-music-note-list display-4"></i>
-                <p class="mt-2">Press Play to start visualization</p>
+
+              <!-- Details Column -->
+              <div class="col-md-6">
+                <div v-if="activeHexagramDetails" class="card h-100 border-0 bg-light">
+                  <div class="card-body text-center">
+                    <h2 class="display-4 mb-2">{{ activeHexagramDetails.name }}</h2>
+                    <div class="display-1 mb-2" :style="{ color: '#333' }">{{ activeHexagramDetails.symbol }}</div>
+                    <h4 class="text-muted mb-4">{{ activeHexagramDetails.translation }}</h4>
+                    
+                    <div v-if="activeHexagramDetails.summary" class="text-start">
+                      <h5 class="border-bottom pb-2">Summary</h5>
+                      <p class="card-text" v-html="activeHexagramDetails.summary"></p>
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="text-center text-muted py-5">
+                  <p>Hexagram details will appear here during playback.</p>
+                </div>
               </div>
             </div>
             
-            <div class="text-center text-muted small mt-3">
+            <div class="text-center text-muted small mt-4">
               <p>
                 <strong>Frequencies:</strong> 396 Hz (Root) • 417 Hz (Sacral) • 528 Hz (Solar Plexus) • 
                 639 Hz (Heart) • 285 Hz (Throat/Third Eye) • 174 Hz (Crown)
@@ -141,8 +165,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useSolfeggioPlayer } from '../composables/useSolfeggioPlayer';
+import hexagramLibrary from '@/const/hexagram';
 
 export default {
   name: 'SolfeggioPlayer',
@@ -155,20 +180,112 @@ export default {
       sortNewestFirst,
       progressMessage,
       activeHexagram,
+      currentFrequency,
+      getWaveform,
       playAll,
       stop
     } = useSolfeggioPlayer();
 
     const frequencies = [396, 417, 528, 639, 285, 174];
-    const svgWidth = ref(160); // Increased width for labels
+    const svgWidth = ref(160);
     const svgHeight = ref(240);
+    const waveformCanvas = ref(null);
+    let animationFrameId = null;
+
+    // Computed property to get details for the currently active hexagram
+    const activeHexagramDetails = computed(() => {
+      if (!activeHexagram.value) return null;
+      return hexagramLibrary.sequence_binary().find(h => h.binary === activeHexagram.value);
+    });
 
     const getLineColor = (index) => {
       if (currentLineIndex.value === index) {
-        return '#0d6efd'; // Active Blue
+        return '#00ffff'; // Cyan for active line
       }
-      return 'black'; // Default
+      return '#444'; // Dark gray for inactive
     };
+
+    const drawWaveform = () => {
+      if (!waveformCanvas.value) return;
+      
+      const canvas = waveformCanvas.value;
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear with fade effect
+      ctx.fillStyle = 'rgba(33, 37, 41, 0.2)'; // Dark background with trail
+      ctx.fillRect(0, 0, width, height);
+      
+      if (!isPlaying.value) {
+        animationFrameId = requestAnimationFrame(drawWaveform);
+        return;
+      }
+
+      const values = getWaveform();
+      if (!values) {
+        animationFrameId = requestAnimationFrame(drawWaveform);
+        return;
+      }
+
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#00ffff'; // Cyan glow
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#00ffff';
+
+      const sliceWidth = width / values.length;
+      let x = 0;
+
+      for (let i = 0; i < values.length; i++) {
+        // Scale value (-1 to 1) to canvas height
+        // Add some gain to make it visible
+        const v = values[i] * 1.5; 
+        const y = (height / 2) + (v * height / 2);
+
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+      }
+
+      ctx.lineTo(canvas.width, canvas.height / 2);
+      ctx.stroke();
+      
+      // Reset shadow for next frame performance
+      ctx.shadowBlur = 0;
+
+      animationFrameId = requestAnimationFrame(drawWaveform);
+    };
+
+    onMounted(() => {
+      // Initialize canvas size
+      if (waveformCanvas.value) {
+        waveformCanvas.value.width = waveformCanvas.value.offsetWidth;
+        waveformCanvas.value.height = waveformCanvas.value.offsetHeight;
+      }
+      
+      // Start loop
+      drawWaveform();
+      
+      // Handle resize
+      window.addEventListener('resize', () => {
+        if (waveformCanvas.value) {
+          waveformCanvas.value.width = waveformCanvas.value.offsetWidth;
+          waveformCanvas.value.height = waveformCanvas.value.offsetHeight;
+        }
+      });
+    });
+
+    onUnmounted(() => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      window.removeEventListener('resize', () => {});
+    });
 
     return {
       isPlaying,
@@ -178,42 +295,71 @@ export default {
       sortNewestFirst,
       progressMessage,
       activeHexagram,
+      currentFrequency,
       playAll,
       stop,
       frequencies,
       svgWidth,
       svgHeight,
-      getLineColor
+      getLineColor,
+      waveformCanvas,
+      activeHexagramDetails
     };
   }
 };
 </script>
 
 <style scoped>
-.hexagram-visualizer {
+.visualizer-container {
   min-height: 300px;
-  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  background-color: #212529 !important; /* Force dark background */
+}
+
+.waveform-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hexagram-overlay {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass through to canvas if needed */
 }
 
 .hexagram-svg {
   margin: 0 auto;
   display: block;
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
 }
 
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+.frequency-label {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-family: monospace;
+  font-size: 1.2rem;
+  color: #00ffff;
+  z-index: 3;
+  text-shadow: 0 0 5px #00ffff;
 }
 
 .active-pulse {
-  animation: pulse 1s infinite;
+  animation: pulse 0.5s infinite alternate;
+  filter: drop-shadow(0 0 8px #00ffff);
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
+  from { opacity: 0.7; }
+  to { opacity: 1; }
 }
 </style>

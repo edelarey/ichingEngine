@@ -23,10 +23,12 @@ export function useSolfeggioPlayer() {
   const sortNewestFirst = ref(true);
   const progressMessage = ref('');
   const activeHexagram = ref(''); // The binary string of the hexagram currently being played
+  const currentFrequency = ref(0); // Current frequency being played
   
   // Internal state
   let synth = null;
   let reverb = null;
+  let waveform = null;
   let stopSignal = false;
 
   // Initialize Audio Context and Synth
@@ -43,6 +45,9 @@ export function useSolfeggioPlayer() {
         wet: 0.3
       }).toDestination();
 
+      // Create Waveform analyser
+      waveform = new Tone.Waveform(1024);
+
       // Using a Synth with Sine wave
       synth = new Tone.Synth({
         oscillator: {
@@ -55,6 +60,9 @@ export function useSolfeggioPlayer() {
           release: 1.5 // Long release for ambient feel
         }
       }).connect(reverb);
+      
+      // Connect synth to waveform analyser as well
+      synth.connect(waveform);
     }
   };
 
@@ -79,6 +87,7 @@ export function useSolfeggioPlayer() {
     const octaveMultiplier = isYang ? 2 : 1;
     
     const finalFrequency = frequency * octaveMultiplier;
+    currentFrequency.value = finalFrequency;
     
     // Apply volume
     synth.volume.value = volume;
@@ -102,6 +111,7 @@ export function useSolfeggioPlayer() {
 
     // Wait for the duration of the note before resolving
     await wait(adjustedDuration * 1000);
+    currentFrequency.value = 0; // Reset frequency after note
   };
 
   // Play a full hexagram
@@ -203,6 +213,13 @@ export function useSolfeggioPlayer() {
     progressMessage.value = "Stopped";
   };
 
+  const getWaveform = () => {
+    if (waveform) {
+      return waveform.getValue();
+    }
+    return null;
+  };
+
   return {
     isPlaying,
     currentReading,
@@ -211,6 +228,8 @@ export function useSolfeggioPlayer() {
     sortNewestFirst,
     progressMessage,
     activeHexagram,
+    currentFrequency,
+    getWaveform,
     playAll,
     stop
   };
