@@ -82,38 +82,38 @@
 
                   <!-- Hexagram Overlay -->
                   <div v-if="activeHexagram" class="hexagram-overlay">
-                    <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight">
+                    <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight" viewBox="0 0 160 240">
                       <g v-for="(char, index) in activeHexagram" :key="index">
                         <g :transform="`translate(0, ${svgHeight - (index + 1) * 40})`">
                           
                           <!-- Yin Line (0) -->
                           <template v-if="char === '0'">
-                            <rect 
-                              x="10" y="10" width="40" height="10" 
-                              :fill="getLineColor(index)" 
+                            <rect
+                              x="10" y="10" width="40" height="10"
+                              :fill="getLineColor(index)"
                               :class="{ 'active-pulse': currentLineIndex === index }"
                             />
-                            <rect 
-                              x="60" y="10" width="40" height="10" 
-                              :fill="getLineColor(index)" 
+                            <rect
+                              x="60" y="10" width="40" height="10"
+                              :fill="getLineColor(index)"
                               :class="{ 'active-pulse': currentLineIndex === index }"
                             />
                           </template>
                           
                           <!-- Yang Line (1) -->
                           <template v-else>
-                            <rect 
-                              x="10" y="10" width="90" height="10" 
-                              :fill="getLineColor(index)" 
+                            <rect
+                              x="10" y="10" width="90" height="10"
+                              :fill="getLineColor(index)"
                               :class="{ 'active-pulse': currentLineIndex === index }"
                             />
                           </template>
 
                           <!-- Frequency Label (Static) -->
-                          <text 
-                            x="110" y="20" 
-                            font-size="12" 
-                            :fill="currentLineIndex === index ? '#00ffff' : '#6c757d'"
+                          <text
+                            x="110" y="20"
+                            font-size="12"
+                            :fill="currentLineIndex === index ? '#00ffff' : '#adb5bd'"
                             font-weight="bold"
                           >
                             {{ frequencies[index] }} Hz
@@ -202,7 +202,7 @@ export default {
       if (currentLineIndex.value === index) {
         return '#00ffff'; // Cyan for active line
       }
-      return '#444'; // Dark gray for inactive
+      return '#adb5bd'; // Light gray (Bootstrap gray-500) for better visibility on dark bg
     };
 
     const drawWaveform = () => {
@@ -333,6 +333,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
+  width: 100%; /* Ensure full width for centering */
   pointer-events: none; /* Let clicks pass through to canvas if needed */
 }
 
@@ -340,6 +341,8 @@ export default {
   margin: 0 auto;
   display: block;
   filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+  /* Ensure SVG itself is centered if container is larger */
+  max-width: 100%;
 }
 
 .frequency-label {
