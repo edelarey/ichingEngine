@@ -51,6 +51,11 @@
           <span class="align-middle">Consult</span>
         </router-link>
       </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/solfeggio" exact-active-class="active">
+          <span class="align-middle">Solfeggio Player</span>
+        </router-link>
+      </li>
       <!-- Astrology Sub-Menu -->
       <li class="nav-item">
         <span

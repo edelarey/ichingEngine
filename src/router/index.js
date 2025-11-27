@@ -13,6 +13,7 @@ import TrigramDetail from '../views/trigram_detail.vue';
 import About from '../views/about.vue';
 import TibetanMantraChart from '../views/tibetan_mantra_chart.vue'; // Import the new component
 import WesternAstrology from '../views/western_astrology.vue';
+import SolfeggioPlayer from '../views/solfeggio_player.vue';
 
 const routes = [
   {
@@ -84,6 +85,11 @@ const routes = [
     path: '/about',
     name: 'About',
     component: About,
+  },
+  {
+    path: '/solfeggio',
+    name: 'SolfeggioPlayer',
+    component: SolfeggioPlayer,
   },
 ];
 
