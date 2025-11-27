@@ -68,18 +68,61 @@
             </div>
 
             <!-- Visualizer -->
-            <div class="hexagram-visualizer d-flex flex-column-reverse align-items-center my-4 p-3 border rounded bg-light">
-              <div 
-                v-for="(freq, index) in frequencies" 
-                :key="index"
-                class="line-indicator mb-1"
-                :class="{ 
-                  'active': currentLineIndex === index,
-                  'yang': isYang(index),
-                  'yin': !isYang(index)
-                }"
-              >
-                <span class="freq-label">{{ freq }} Hz</span>
+            <div class="hexagram-visualizer d-flex flex-column align-items-center my-4 p-3 border rounded bg-light">
+              <div v-if="activeHexagram" class="center-content">
+                <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight">
+                  <!-- Loop through lines from top (index 5) to bottom (index 0) for display -->
+                  <!-- But SVG coordinates are top-down. -->
+                  <!-- Hexagram string index 0 is BOTTOM line. -->
+                  <!-- So index 0 should be at the BOTTOM of the SVG. -->
+                  <!-- SVG Height is 240. Line height ~40. -->
+                  <!-- Index 0 (Bottom) -> y = 240 - 40 = 200 -->
+                  <!-- Index 5 (Top) -> y = 240 - 6*40 = 0 -->
+                  
+                  <g v-for="(char, index) in activeHexagram" :key="index">
+                    <!-- Transform to position line correctly. index 0 is bottom line. -->
+                    <g :transform="`translate(0, ${svgHeight - (index + 1) * 40})`">
+                      
+                      <!-- Yin Line (0) -->
+                      <template v-if="char === '0'">
+                        <rect 
+                          x="10" y="10" width="40" height="10" 
+                          :fill="getLineColor(index)" 
+                          :class="{ 'active-pulse': currentLineIndex === index }"
+                        />
+                        <rect 
+                          x="60" y="10" width="40" height="10" 
+                          :fill="getLineColor(index)" 
+                          :class="{ 'active-pulse': currentLineIndex === index }"
+                        />
+                      </template>
+                      
+                      <!-- Yang Line (1) -->
+                      <template v-else>
+                        <rect 
+                          x="10" y="10" width="90" height="10" 
+                          :fill="getLineColor(index)" 
+                          :class="{ 'active-pulse': currentLineIndex === index }"
+                        />
+                      </template>
+
+                      <!-- Frequency Label (Optional, to the right) -->
+                      <text 
+                        x="110" y="20" 
+                        font-size="12" 
+                        :fill="currentLineIndex === index ? '#0d6efd' : '#6c757d'"
+                        font-weight="bold"
+                      >
+                        {{ frequencies[index] }} Hz
+                      </text>
+
+                    </g>
+                  </g>
+                </svg>
+              </div>
+              <div v-else class="text-muted py-5">
+                <i class="bi bi-music-note-list display-4"></i>
+                <p class="mt-2">Press Play to start visualization</p>
               </div>
             </div>
             
@@ -98,7 +141,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref } from 'vue';
 import { useSolfeggioPlayer } from '../composables/useSolfeggioPlayer';
 
 export default {
@@ -111,33 +154,20 @@ export default {
       playbackSpeed,
       sortNewestFirst,
       progressMessage,
+      activeHexagram,
       playAll,
       stop
     } = useSolfeggioPlayer();
 
     const frequencies = [396, 417, 528, 639, 285, 174];
+    const svgWidth = ref(160); // Increased width for labels
+    const svgHeight = ref(240);
 
-    // Helper to determine if the currently playing line is Yang (1) or Yin (0)
-    // This is purely for visualization purposes based on the current reading
-    const isYang = (index) => {
-      if (!currentReading.value) return false;
-      
-      // We need to know if we are playing the primary or transformed hexagram
-      // But the composable doesn't explicitly expose "which hexagram" is playing, just the reading.
-      // However, for a simple visualizer, we can just look at the primary hexagram for now,
-      // or ideally, the composable could expose the 'currentHexagramString'.
-      // Given the constraints, let's try to infer or just default to primary for visualization structure.
-      
-      // Actually, let's just check the primary hexagram of the current reading.
-      // If we are in the second phase (transformed), this might be inaccurate, 
-      // but without more state from the composable, it's a reasonable approximation for the UI structure.
-      
-      // A better approach: The composable logic plays primary then transformed.
-      // We can't easily know which one is active without adding state to the composable.
-      // For this UI, we will visualize the Primary Hexagram structure.
-      
-      const hex = currentReading.value.primaryHexagram;
-      return hex && hex[index] === '1';
+    const getLineColor = (index) => {
+      if (currentLineIndex.value === index) {
+        return '#0d6efd'; // Active Blue
+      }
+      return 'black'; // Default
     };
 
     return {
@@ -147,10 +177,13 @@ export default {
       playbackSpeed,
       sortNewestFirst,
       progressMessage,
+      activeHexagram,
       playAll,
       stop,
       frequencies,
-      isYang
+      svgWidth,
+      svgHeight,
+      getLineColor
     };
   }
 };
@@ -158,41 +191,29 @@ export default {
 
 <style scoped>
 .hexagram-visualizer {
-  min-height: 200px;
+  min-height: 300px;
+  transition: all 0.3s ease;
 }
 
-.line-indicator {
-  width: 100%;
-  max-width: 300px;
-  height: 30px;
-  background-color: #e9ecef;
-  border-radius: 4px;
+.hexagram-svg {
+  margin: 0 auto;
+  display: block;
+}
+
+.center-content {
   display: flex;
-  align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  opacity: 0.3;
+  align-items: center;
+  width: 100%;
 }
 
-.line-indicator.active {
-  opacity: 1;
-  box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
-  transform: scale(1.05);
-  background-color: #0d6efd; /* Primary Blue */
-  color: white;
-  font-weight: bold;
+.active-pulse {
+  animation: pulse 1s infinite;
 }
 
-.line-indicator.yang {
-  /* Solid line style hint if needed, but active state dominates */
-}
-
-.line-indicator.yin {
-  /* Broken line style hint if needed */
-  /* For now, we just use opacity/color to indicate "playing" */
-}
-
-.freq-label {
-  font-size: 0.9rem;
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 </style>

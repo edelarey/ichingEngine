@@ -22,6 +22,7 @@ export function useSolfeggioPlayer() {
   const playbackSpeed = ref(1.0); // Multiplier: 0.5x to 2x
   const sortNewestFirst = ref(true);
   const progressMessage = ref('');
+  const activeHexagram = ref(''); // The binary string of the hexagram currently being played
   
   // Internal state
   let synth = null;
@@ -158,6 +159,7 @@ export function useSolfeggioPlayer() {
         progressMessage.value = `Playing reading ${i + 1} of ${total} – Hexagram ${hex1}${transitionText}`;
         
         // Play Primary
+        activeHexagram.value = reading.primaryHexagram;
         await playHexagram(reading.primaryHexagram, reading.changingLines);
         
         if (stopSignal) break;
@@ -166,9 +168,10 @@ export function useSolfeggioPlayer() {
         if (reading.transformedHexagram && reading.transformedHexagram !== reading.primaryHexagram) {
           await wait(1000);
           if (stopSignal) break;
-          // Play transformed. 
+          // Play transformed.
           // Note: Transformed hexagrams represent the result, so lines are stable (no changing logic applied usually).
           // We pass empty array for changing lines to avoid portamento on the result.
+          activeHexagram.value = reading.transformedHexagram;
           await playHexagram(reading.transformedHexagram, []);
         }
         
@@ -185,6 +188,7 @@ export function useSolfeggioPlayer() {
     } finally {
       isPlaying.value = false;
       currentReading.value = null;
+      activeHexagram.value = '';
       currentLineIndex.value = -1;
       stopSignal = false;
     }
@@ -206,6 +210,7 @@ export function useSolfeggioPlayer() {
     playbackSpeed,
     sortNewestFirst,
     progressMessage,
+    activeHexagram,
     playAll,
     stop
   };
