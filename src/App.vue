@@ -51,10 +51,30 @@
           <span class="align-middle">Consult</span>
         </router-link>
       </li>
+      <!-- Music Sub-Menu -->
       <li class="nav-item">
-        <router-link class="nav-link" to="/solfeggio" exact-active-class="active">
-          <span class="align-middle">Solfeggio Player</span>
-        </router-link>
+        <span
+          class="nav-link"
+          @click="toggleMusicMenu"
+          role="button"
+          tabindex="0"
+          :aria-expanded="musicMenuOpen"
+        >
+          <span class="align-middle">Music</span>
+          <i :class="musicMenuOpen ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
+        </span>
+        <ul v-show="musicMenuOpen" class="nav flex-column ms-3">
+          <li class="nav-item">
+            <router-link class="nav-link" to="/solfeggio" exact-active-class="active">
+              <span class="align-middle">Solfeggio Player</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/life_symphony" exact-active-class="active">
+              <span class="align-middle">Life Symphony</span>
+            </router-link>
+          </li>
+        </ul>
       </li>
       <!-- Astrology Sub-Menu -->
       <li class="nav-item">
@@ -187,6 +207,7 @@ export default {
     const backgroundColor = ref('#3f41c2');
     const chartsMenuOpen = ref(false); // Tracks Charts sub-menu state
     const astrologyMenuOpen = ref(false); // Tracks Astrology sub-menu state
+    const musicMenuOpen = ref(false); // Tracks Music sub-menu state
 
 
     // Add SEO meta tags
@@ -225,6 +246,10 @@ export default {
 
     const toggleAstrologyMenu = () => {
       astrologyMenuOpen.value = !astrologyMenuOpen.value; // Toggles Astrology sub-menu
+    };
+
+    const toggleMusicMenu = () => {
+      musicMenuOpen.value = !musicMenuOpen.value; // Toggles Music sub-menu
     };
 
 
@@ -269,6 +294,8 @@ export default {
       toggleChartsMenu,    // Return Charts toggle function
       astrologyMenuOpen,   // Return Astrology sub-menu state
       toggleAstrologyMenu, // Return Astrology toggle function
+      musicMenuOpen,       // Return Music sub-menu state
+      toggleMusicMenu,     // Return Music toggle function
     };
   },
 };
