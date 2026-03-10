@@ -131,6 +131,41 @@
           </li>
         </ul>
 </li>
+      <!-- Dating Sub-Menu -->
+      <li class="nav-item">
+        <span
+          class="nav-link"
+          @click="toggleDatingMenu"
+          role="button"
+          tabindex="0"
+          :aria-expanded="datingMenuOpen"
+        >
+          <span class="align-middle">💕 Dating</span>
+          <i :class="datingMenuOpen ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
+        </span>
+        <ul v-show="datingMenuOpen" class="nav flex-column ms-3">
+          <li class="nav-item">
+            <router-link class="nav-link" to="/my-profile" exact-active-class="active">
+              <span class="align-middle">My Profile</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/browse" exact-active-class="active">
+              <span class="align-middle">Browse Profiles</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/matches" exact-active-class="active">
+              <span class="align-middle">Matches</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/favorites" exact-active-class="active">
+              <span class="align-middle">Favorites</span>
+            </router-link>
+          </li>
+        </ul>
+      </li>
       <li class="nav-item">
         <router-link class="nav-link" to="/relationship" exact-active-class="active">
           <span class="align-middle">Relationships</span>
@@ -208,6 +243,7 @@ export default {
     const chartsMenuOpen = ref(false); // Tracks Charts sub-menu state
     const astrologyMenuOpen = ref(false); // Tracks Astrology sub-menu state
     const musicMenuOpen = ref(false); // Tracks Music sub-menu state
+    const datingMenuOpen = ref(false); // Tracks Dating sub-menu state
 
 
     // Add SEO meta tags
@@ -250,6 +286,10 @@ export default {
 
     const toggleMusicMenu = () => {
       musicMenuOpen.value = !musicMenuOpen.value; // Toggles Music sub-menu
+    };
+
+    const toggleDatingMenu = () => {
+      datingMenuOpen.value = !datingMenuOpen.value; // Toggles Dating sub-menu
     };
 
 
@@ -296,6 +336,8 @@ export default {
       toggleAstrologyMenu, // Return Astrology toggle function
       musicMenuOpen,       // Return Music sub-menu state
       toggleMusicMenu,     // Return Music toggle function
+      datingMenuOpen,      // Return Dating sub-menu state
+      toggleDatingMenu,    // Return Dating toggle function
     };
   },
 };

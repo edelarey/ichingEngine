@@ -16,6 +16,13 @@ import WesternAstrology from '../views/western_astrology.vue';
 import LifeSymphony from '../views/LifeSymphony.vue';
 import SolfeggioPlayer from '../views/solfeggio_player.vue';
 
+// Dating App Views
+import MyProfile from '../views/my_profile.vue';
+import DatingProfiles from '../views/dating_profiles.vue';
+import ProfileDetail from '../views/profile_detail.vue';
+import Matches from '../views/matches.vue';
+import Favorites from '../views/favorites.vue';
+
 const routes = [
   {
     path: '/',
@@ -96,6 +103,32 @@ const routes = [
     path: '/solfeggio',
     name: 'SolfeggioPlayer',
     component: SolfeggioPlayer,
+  },
+  // Dating App Routes
+  {
+    path: '/my-profile',
+    name: 'MyProfile',
+    component: MyProfile,
+  },
+  {
+    path: '/browse',
+    name: 'DatingProfiles',
+    component: DatingProfiles,
+  },
+  {
+    path: '/profile/:id',
+    name: 'ProfileDetail',
+    component: ProfileDetail,
+  },
+  {
+    path: '/matches',
+    name: 'Matches',
+    component: Matches,
+  },
+  {
+    path: '/favorites',
+    name: 'Favorites',
+    component: Favorites,
   },
 ];
 
