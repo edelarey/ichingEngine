@@ -117,6 +117,7 @@ export const useDatingStore = defineStore('dating', {
         // Birth Data
         name: profileData.name || '',
         birthday: profileData.birthday || '',
+        birthDate: profileData.birthDate || profileData.birthday || '',
         gender: profileData.gender || 'MALE',
         coords: profileData.coords || { latitude: 0, longitude: 0 },
         place: profileData.place || '',
@@ -139,11 +140,23 @@ export const useDatingStore = defineStore('dating', {
         createdAt: now,
         updatedAt: now,
         
-        // Computed astrology profile (will be populated later)
+        // Flatten astrology data for easier access
+        element: profileData.element || profileData.astrologyProfile?.element || 'Wood',
+        zodiacAnimal: profileData.zodiacAnimal || profileData.astrologyProfile?.animal || 'Dragon',
+        celestialStem: profileData.celestialStem || profileData.astrologyProfile?.celestialStem || null,
+        horaryBranch: profileData.horaryBranch || profileData.astrologyProfile?.horaryBranch || null,
+        
+        // Keep original nested structure too
         astrologyProfile: profileData.astrologyProfile || null
       };
       
       this.profiles.push(newProfile);
+      
+      // If this is the user's profile, set it as current
+      if (profileData.isUserProfile) {
+        this.setCurrentUserProfile(newProfile.id);
+      }
+      
       this.persistState();
       return newProfile;
     },
