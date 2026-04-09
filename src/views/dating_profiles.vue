@@ -423,8 +423,8 @@ export default {
       datingStore.toggleFavorite(profile.id);
     };
 
-    const loadSamples = () => {
-      datingStore.loadSampleProfiles();
+    const loadSamples = async () => {
+      await datingStore.loadSampleProfiles();
     };
 
     const clearFilters = () => {

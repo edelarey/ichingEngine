@@ -14,6 +14,11 @@ import { DateTime } from 'luxon';
  */
 export async function calculateDatingCompatibility(profile1, profile2) {
   try {
+    console.log('Calculating Dating Compatibility:', {
+      profile1: { id: profile1.id, name: profile1.name, birthday: profile1.birthday, gender: profile1.gender },
+      profile2: { id: profile2.id, name: profile2.name, birthday: profile2.birthday, gender: profile2.gender }
+    });
+
     // Prepare gender for astrology calculation
     const gender1 = profile1.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
     const gender2 = profile2.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
@@ -21,9 +26,28 @@ export async function calculateDatingCompatibility(profile1, profile2) {
     // Get birth dates
     const birthDate1 = new Date(profile1.birthday);
     const birthDate2 = new Date(profile2.birthday);
+
+    if (isNaN(birthDate1.getTime())) {
+      console.warn(`Invalid birthday for profile 1: ${profile1.birthday}`);
+      throw new Error('Invalid birth date for profile 1');
+    }
+    if (isNaN(birthDate2.getTime())) {
+       console.warn(`Invalid birthday for profile 2: ${profile2.birthday}`);
+       throw new Error('Invalid birth date for profile 2');
+    }
     
     // Use existing compatibility calculation from astrology module
-    const astrologyResult = await astro.calculateCompatibilityByYear(
+    // The calculateCompatibilityByYear method is static in the IChingConsultation class,
+    // but the import 'astro' from '@/const/astrology' exports an object containing the classes.
+    // We need to instantiate the class or find where the static method is exposed.
+    // Looking at src/const/astrology.js, calculateCompatibilityByYear is a static method on IChingConsultation.
+    
+    console.log('Calling astro.IChingConsultation.calculateCompatibilityByYear with:', {
+      birthDate1, gender1, lat1: profile1.coords?.latitude || 0, long1: profile1.coords?.longitude || 0,
+      birthDate2, gender2, lat2: profile2.coords?.latitude || 0, long2: profile2.coords?.longitude || 0
+    });
+
+    const astrologyResult = await astro.IChingConsultation.calculateCompatibilityByYear(
       birthDate1,
       gender1,
       profile1.coords?.latitude || 0,
@@ -33,6 +57,8 @@ export async function calculateDatingCompatibility(profile1, profile2) {
       profile2.coords?.latitude || 0,
       profile2.coords?.longitude || 0
     );
+
+    console.log('Astrology Compatibility Result:', astrologyResult);
     
     // Calculate interest compatibility
     const interestScore = calculateInterestCompatibility(
@@ -244,6 +270,13 @@ export async function calculateAstrologyProfile(profile) {
       : new astro.IChingAstrology_South();
     
     const consultation = new astro.IChingConsultation(astrology);
+    console.log('Calculating astrology profile with:', {
+      birthDate,
+      gender,
+      latitude: profile.coords?.latitude || 0,
+      longitude: profile.coords?.longitude || 0
+    });
+    
     const result = await consultation.consultOracle(
       birthDate,
       gender,

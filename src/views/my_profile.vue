@@ -81,11 +81,19 @@
             </div>
             <div class="mb-3">
               <strong>Celestial Stem:</strong>
-              <span class="text-muted">{{ userProfile.celestialStem || 'N/A' }}</span>
+              <span class="text-muted" v-if="userProfile.celestialStem">
+                {{ userProfile.celestialStem.name }} ({{ userProfile.celestialStem.symbol }})
+                <span class="badge bg-secondary ms-1">{{ userProfile.celestialStem.element }}</span>
+              </span>
+              <span class="text-muted" v-else>N/A</span>
             </div>
             <div class="mb-3">
               <strong>Horary Branch:</strong>
-              <span class="text-muted">{{ userProfile.horaryBranch || 'N/A' }}</span>
+              <span class="text-muted" v-if="userProfile.horaryBranch">
+                {{ userProfile.horaryBranch.name }} ({{ userProfile.horaryBranch.symbol }})
+                <span class="badge bg-secondary ms-1">{{ userProfile.horaryBranch.element }}</span>
+              </span>
+              <span class="text-muted" v-else>N/A</span>
             </div>
             <hr>
             <p class="small text-muted mb-0">
@@ -301,12 +309,21 @@ export default {
       };
     });
 
-    onMounted(() => {
+    onMounted(async () => {
       if (createModalRef.value) {
         createModal = new Modal(createModalRef.value);
       }
       if (deleteModalRef.value) {
         deleteModal = new Modal(deleteModalRef.value);
+      }
+
+      // Recalculate astrology if profile exists but is missing celestialStem or horaryBranch
+      if (hasUserProfile.value && userProfile.value) {
+        const profile = userProfile.value;
+        if (!profile.celestialStem || !profile.horaryBranch) {
+          console.log('Recalculating astrology for existing profile...');
+          await datingStore.recalculateAstrology(profile.id);
+        }
       }
     });
 

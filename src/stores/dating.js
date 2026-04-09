@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { DateTime } from 'luxon';
 import sampleProfiles from '@/const/sampleProfiles';
 import { calculateDatingCompatibility } from '@/utils/datingCompatibility';
+import { calculateProfileAstrology } from '@/utils/calculateProfileAstrology';
 
 export const useDatingStore = defineStore('dating', {
   state: () => ({
@@ -219,6 +220,41 @@ export const useDatingStore = defineStore('dating', {
       this.persistState();
     },
 
+    async recalculateAstrology(profileId) {
+      const profile = this.profiles.find(p => p.id === Number(profileId));
+      if (!profile || !profile.birthday) {
+        return null;
+      }
+
+      try {
+        // Calculate full astrology data
+        const coords = profile.coords || { latitude: 0, longitude: 0 };
+        const astrologyData = await calculateProfileAstrology(
+          profile.birthday,
+          profile.gender,
+          coords.latitude,
+          coords.longitude
+        );
+
+        // Update the profile with calculated data
+        this.updateProfile(profileId, {
+          element: astrologyData.element,
+          zodiacAnimal: astrologyData.zodiacAnimal,
+          celestialStem: astrologyData.celestialStem,
+          horaryBranch: astrologyData.horaryBranch,
+          yearlyHexagram: astrologyData.yearlyHexagram,
+          monthlyHexagram: astrologyData.monthlyHexagram,
+          dailyHexagram: astrologyData.dailyHexagram,
+          hourlyHexagram: astrologyData.hourlyHexagram
+        });
+
+        return astrologyData;
+      } catch (error) {
+        console.error('Error recalculating astrology:', error);
+        return null;
+      }
+    },
+
     setFilter(filterName, value) {
       this.filters[filterName] = value;
     },
@@ -240,21 +276,54 @@ export const useDatingStore = defineStore('dating', {
       this.calculatedMatches = matches;
     },
 
-    loadSampleProfiles() {
-      // Load sample profiles from const file and normalize structure
-      const profiles = sampleProfiles.map((p, index) => ({
-        ...p,
-        id: p.id || Date.now() + index,
-        isSample: true,
-        // Flatten astrologyProfile for easier access
-        element: p.astrologyProfile?.element || p.element || 'Wood',
-        zodiacAnimal: p.astrologyProfile?.animal || p.zodiacAnimal || 'Dragon',
-        celestialStem: p.astrologyProfile?.celestialStem || null,
-        horaryBranch: p.astrologyProfile?.horaryBranch || null,
-        // Ensure birthDate exists (some parts use birthDate, some use birthday)
-        birthDate: p.birthDate || p.birthday,
-        birthday: p.birthday || p.birthDate
-      }));
+    async loadSampleProfiles() {
+      // Load sample profiles from const file and calculate full astrology data
+      const profilePromises = sampleProfiles.map(async (p, index) => {
+        try {
+          // Calculate full astrology data for each profile
+          const coords = p.coords || { latitude: 0, longitude: 0 };
+          const astrologyData = await calculateProfileAstrology(
+            p.birthday,
+            p.gender,
+            coords.latitude,
+            coords.longitude
+          );
+          
+          return {
+            ...p,
+            id: p.id || Date.now() + index,
+            isSample: true,
+            // Use calculated astrology data
+            element: astrologyData.element,
+            zodiacAnimal: astrologyData.zodiacAnimal,
+            celestialStem: astrologyData.celestialStem,
+            horaryBranch: astrologyData.horaryBranch,
+            yearlyHexagram: astrologyData.yearlyHexagram,
+            monthlyHexagram: astrologyData.monthlyHexagram,
+            dailyHexagram: astrologyData.dailyHexagram,
+            hourlyHexagram: astrologyData.hourlyHexagram,
+            // Ensure birthDate exists (some parts use birthDate, some use birthday)
+            birthDate: p.birthDate || p.birthday,
+            birthday: p.birthday || p.birthDate
+          };
+        } catch (error) {
+          console.error(`Error calculating astrology for ${p.displayName}:`, error);
+          // Fallback to basic data if calculation fails
+          return {
+            ...p,
+            id: p.id || Date.now() + index,
+            isSample: true,
+            element: p.astrologyProfile?.element || p.element || 'Wood',
+            zodiacAnimal: p.astrologyProfile?.animal || p.zodiacAnimal || 'Dragon',
+            celestialStem: p.astrologyProfile?.celestialStem || null,
+            horaryBranch: p.astrologyProfile?.horaryBranch || null,
+            birthDate: p.birthDate || p.birthday,
+            birthday: p.birthday || p.birthDate
+          };
+        }
+      });
+      
+      const profiles = await Promise.all(profilePromises);
       
       // Add to existing profiles (don't replace)
       profiles.forEach(profile => {

@@ -276,6 +276,7 @@ import { ref, computed, reactive, onMounted } from 'vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { getAllInterests } from '@/const/sampleProfiles';
+import { calculateProfileAstrology } from '@/utils/calculateProfileAstrology';
 
 export default {
   name: 'ProfileForm',
@@ -370,12 +371,32 @@ export default {
       
       try {
         // Convert birthday to ISO string if it's a Date object
+        const birthdayDate = formData.birthday instanceof Date
+          ? formData.birthday.toISOString()
+          : formData.birthday;
+        
+        // Calculate full astrology data
+        const astrologyData = await calculateProfileAstrology(
+          birthdayDate,
+          formData.gender,
+          formData.coords.latitude,
+          formData.coords.longitude
+        );
+        
         const submitData = {
           ...formData,
-          birthday: formData.birthday instanceof Date 
-            ? formData.birthday.toISOString() 
-            : formData.birthday,
-          name: formData.name || formData.displayName
+          birthday: birthdayDate,
+          birthDate: birthdayDate, // Add normalized field
+          name: formData.name || formData.displayName,
+          // Add calculated astrology data
+          element: astrologyData.element,
+          zodiacAnimal: astrologyData.zodiacAnimal,
+          celestialStem: astrologyData.celestialStem,
+          horaryBranch: astrologyData.horaryBranch,
+          yearlyHexagram: astrologyData.yearlyHexagram,
+          monthlyHexagram: astrologyData.monthlyHexagram,
+          dailyHexagram: astrologyData.dailyHexagram,
+          hourlyHexagram: astrologyData.hourlyHexagram
         };
         
         emit('submit', submitData);
