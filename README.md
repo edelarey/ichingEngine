@@ -45,3 +45,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # Add Solfeggio Frequency Player
 # Add basic Life Symphony
 # Redeploy
+# Fix Pico Vulnerablity
