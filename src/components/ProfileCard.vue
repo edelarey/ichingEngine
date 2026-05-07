@@ -63,8 +63,21 @@
         <small class="text-muted">
           {{ compatibility.category?.emoji }} {{ compatibility.category?.name }}
         </small>
+
+        <!-- Cosmic Harmony Type badge — shown when compatibility score exists -->
+        <div v-if="compatibility != null" class="cosmic-harmony-badge"
+             :style="{ borderColor: getCosmicHarmonyType(compatibility.overallScore).color, color: getCosmicHarmonyType(compatibility.overallScore).color }">
+          <span class="harmony-emoji">{{ getCosmicHarmonyType(compatibility.overallScore).emoji }}</span>
+          <span class="harmony-label">{{ getCosmicHarmonyType(compatibility.overallScore).label }}</span>
+          <span class="harmony-hex">• {{ getCosmicHarmonyType(compatibility.overallScore).hexagram }}</span>
+        </div>
+
+        <!-- View Harmony Chamber button — shown when compatibility score exists -->
+        <button v-if="compatibility != null" class="view-harmony-btn" @click.stop="viewHarmonyChamber()">
+          ☯ View Harmony Chamber
+        </button>
       </div>
-      
+
       <!-- Bio excerpt -->
       <p class="card-text bio-excerpt text-muted" v-if="profile.bio">
         {{ truncatedBio }}
@@ -108,6 +121,7 @@
 
 <script>
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useDatingStore } from '@/stores/dating';
 import { useCompatibility } from '@/composables/useCompatibility';
 
@@ -129,8 +143,33 @@ export default {
   },
   emits: ['toggle-favorite'],
   setup(props, { emit }) {
+    const router = useRouter();
     const datingStore = useDatingStore();
     const { getScoreColorClass, getProgressBarColor, getElementEmoji, getAnimalEmoji } = useCompatibility();
+
+    /**
+     * Derives the Cosmic Harmony Type label and styling for a given compatibility score.
+     * Based on the I Ching principle that relationships embody archetypal hexagram energies.
+     * @param {number} score - Compatibility score 0-100
+     * @returns {{ label: string, hexagram: string, emoji: string, color: string }}
+     */
+    function getCosmicHarmonyType(score) {
+      const s = score ?? 0
+      const hexNum = Math.max(1, Math.min(64, Math.floor((s / 100) * 63) + 1))
+      if (s >= 85) return { label: 'Sacred Union', hexagram: `Hex ${hexNum}`, emoji: '☯', color: '#ffd700' }
+      if (s >= 70) return { label: 'Harmonious Bond', hexagram: `Hex ${hexNum}`, emoji: '🌕', color: '#4caf50' }
+      if (s >= 55) return { label: 'Creative Tension', hexagram: `Hex ${hexNum}`, emoji: '⚡', color: '#ff9800' }
+      if (s >= 40) return { label: 'Peaceful Union', hexagram: `Hex ${hexNum}`, emoji: '☮', color: '#009688' }
+      if (s >= 25) return { label: 'Growth Catalyst', hexagram: `Hex ${hexNum}`, emoji: '🌱', color: '#8bc34a' }
+      return { label: 'Karmic Lesson', hexagram: `Hex ${hexNum}`, emoji: '🔮', color: '#9c27b0' }
+    }
+
+    function viewHarmonyChamber() {
+      router.push({
+        path: '/relationship',
+        query: { profileBId: props.profile?.id }
+      })
+    }
     
     const age = computed(() => {
       if (!props.profile.birthday) return '';
@@ -183,7 +222,9 @@ export default {
       progressBarColor,
       toggleFavorite,
       getElementEmoji,
-      getAnimalEmoji
+      getAnimalEmoji,
+      getCosmicHarmonyType,
+      viewHarmonyChamber
     };
   }
 };
@@ -272,5 +313,43 @@ export default {
 
 .text-muted {
   color: #6c757d !important;
+}
+
+/* Cosmic Harmony Type badge */
+.cosmic-harmony-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  background: rgba(0, 0, 0, 0.3);
+  width: fit-content;
+}
+.harmony-emoji { font-size: 0.95rem; }
+.harmony-label { font-weight: 600; }
+.harmony-hex { opacity: 0.7; font-size: 0.75rem; }
+
+/* View Harmony Chamber button */
+.view-harmony-btn {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.55rem 1rem;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+}
+.view-harmony-btn:hover {
+  background: #ffd700;
+  color: #0a0a1a;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.45);
 }
 </style>
