@@ -201,7 +201,13 @@
 </template>
 
 <script>
-export default { name: 'VedicHelp' };
+import { usePageTitle } from '@/composables/usePageTitle';
+export default {
+  name: 'VedicHelp',
+  setup() {
+    usePageTitle('Jyotish guide');
+  },
+};
 </script>
 
 <style scoped>

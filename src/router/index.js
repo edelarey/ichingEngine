@@ -18,6 +18,7 @@ import SolfeggioPlayer from '../views/solfeggio_player.vue';
 const VedicAstrology = () => import('../views/vedic_astrology.vue');
 const VedicHelp = () => import('../views/vedic_help.vue');
 const Birthdays = () => import('../views/birthdays.vue');
+const CompareReadings = () => import('../views/compare.vue');
 
 const routes = [
   {
@@ -34,6 +35,11 @@ const routes = [
     path: '/birthdays',
     name: 'Birthdays',
     component: Birthdays,
+  },
+  {
+    path: '/compare',
+    name: 'CompareReadings',
+    component: CompareReadings,
   },
   {
     path: '/astrology',

@@ -1,80 +1,44 @@
-# ichingengine
+# iChing Engine
 
-This project is licensed under the **GNU Affero General Public License v3.0** (AGPL-3.0).
+Online **I Ching (Yijing)** oracle with **I-Ching astrology**, **Vedic Jyotish** natal charts, and **Western** tropical natal charts. One saved birthday list feeds all three.
 
-- You can view the full license text in the [LICENSE](LICENSE) file.
-- Official license page: https://www.gnu.org/licenses/agpl-3.0.html
+Licensed **AGPL-3.0**. See [LICENSE](LICENSE).
 
-In short: You are free to use, modify, and share the code (including commercially), but:
-- Any modifications or derivative works must also be licensed under AGPL-3.0 (or compatible).
-- If you run a modified version on a server and users interact with it over a network, you must provide them the source code (including your changes).
-  
-## Project setup
+## Setup
+
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-### Added Google Verification File
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Production build: `npm run build`. Fixture checks: `npm test`.
 
-## Birthdays
+## What it does
 
-Saved people live on **Birthdays** (`/birthdays`) — add, edit, import/export — and are shared by I-Ching Astrology, Vedic, and Western. Each astrology page has a picker to load a saved birthday; the Birthdays page can open a person directly in any of the three systems.
+| Section | Route | Notes |
+|---|---|---|
+| Consult | `/consult` | Coin-style I Ching hexagram reading |
+| Birthdays | `/birthdays` | Add/edit people; place search fills coordinates and timezone |
+| I-Ching Astrology | `/astrology` | Sexagenary cycles, pre-/later-heaven hexagrams |
+| Vedic | `/vedic_astrology` | Sidereal kundli, Lahiri, North/South Indian charts, daśā |
+| Western | `/western_astrology` | Tropical natal, true Rising, Placidus, aspects, transits |
+| Compare | `/compare` | Same person, three executive summaries |
+| Jyotish guide | `/vedic_help` | How the Vedic chart is drawn and read |
+| Relationships | `/relationship` | I-Ching compatibility using two saved birthdays |
 
-## Vedic Astrology (Jyotish)
+Gender on birth records is **male or female** (used by I-Ching astrology). Vedic and Western charts also need **birth time, place, and timezone** for an accurate Ascendant / Lagna.
 
-The app now includes a **Vedic Astrology** section at `/vedic_astrology` (sidebar: Astrology → Vedic Astrology).
+Charts are natal-grade (astronomia VSOP87 / Meeus), not Swiss Ephemeris. Readings are educational, not medical, legal, or financial advice.
 
-- Sidereal natal chart (Janma Kuṇḍalī) with **Lahiri / Chitrāpakṣa** ayanāṁśa
-- Nine grahas: Sūrya (Sun) through Śani (Saturn), plus mean Rāhu and Ketu
-- Whole-sign houses from Lagna (Ascendant)
-- North Indian (Bhṛgu) diamond chart and South Indian (Guru) square chart
-- Nakshatras, dignity, dṛṣṭi (aspects), and Vimśottarī daśā
-- Rule-based interpretations; bilingual Sanskrit (English) labels throughout
-- PDF export; reuses the shared birthday history
-- Tradition guide: `/vedic_help` and `docs/vedic-astrology.md`
+## Search / deploy
 
-Birth **time and timezone of the birth place** are required for an accurate Lagna. Positions are natal-grade (astronomia VSOP87 / Meeus), not Swiss Ephemeris.
+- Keywords and description: `public/index.html` and `src/App.vue`
+- Sitemap: `public/sitemap.xml`
+- Google Search Console file: `public/googleaf0181f89a0f0106.html` (do not edit; it is a verification token)
 
-## Western Astrology
+## Changelog (recent)
 
-`/western_astrology` now uses the **same tropical ephemeris** as Vedic (astronomia VSOP87 / Meeus), then keeps the tropical zodiac instead of subtracting Lahiri.
-
-- True **Ascendant (Rising)** and **Midheaven**, not a copy of the Sun sign
-- **Placidus** houses (Equal fallback at high latitude, or choose Equal)
-- Major **aspects** with orbs, drawn on the wheel (Ascendant on the left)
-- Retrograde, essential dignity, Sun / Moon / Rising interpretations
-- Timezone of the birth place (same birthday list as Vedic)
-
-# Enhance Relationship Compatibility
-# New Added Relationship Compatibility 
-# fix date handling
-# change to tab layout for Astrology
-# Add astrological images (Summary Only)
-# Add Zodiac Charts - Chinese and Western correspondence to IChing
-# Tweak Charts Layout
-# Add Tibetan Hum Mantra Visualization
-# Add Analytics 
-# Add google verification and sitemap
-# Update hexagram list
-# Update Birthday Handling
-# Add western astrology section
-# Add Western Atrology PDF Export
-# Revert to original layouts
-# Add Solfeggio Frequency Player
-# Add basic Life Symphony
-# Redeploy
-# Fix Pico Vulnerablity
-# Add Vedic Astrology section (Jyotish kundli, Lahiri, North/South Indian charts, interpretations, help)
-# Rewrite Western astrology on astronomia (true ASC, Placidus, aspects, timezone)
-# Separate Birthday management into its own shared page
+- Shared birthday page, place search, compare view
+- Vedic Jyotish section; Western rewrite on astronomia
+- Plain-English executive summaries
+- I-Ching PDF; Western transits

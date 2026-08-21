@@ -1,0 +1,156 @@
+import { DateTime } from 'luxon';
+import { TIMEZONE_PRESETS } from '@/const/vedic';
+
+function formatOffset(minutes) {
+  const sign = minutes >= 0 ? '+' : '-';
+  const abs = Math.abs(Math.round(minutes));
+  const hh = String(Math.floor(abs / 60)).padStart(2, '0');
+  const mm = String(abs % 60).padStart(2, '0');
+  return `UTC${sign}${hh}:${mm}`;
+}
+
+const COUNTRY_ZONES = {
+  IN: 'Asia/Kolkata',
+  NP: 'Asia/Kathmandu',
+  PK: 'Asia/Karachi',
+  BD: 'Asia/Dhaka',
+  LK: 'Asia/Colombo',
+  AE: 'Asia/Dubai',
+  SA: 'Asia/Riyadh',
+  IL: 'Asia/Jerusalem',
+  TR: 'Europe/Istanbul',
+  GB: 'Europe/London',
+  IE: 'Europe/Dublin',
+  PT: 'Europe/Lisbon',
+  ES: 'Europe/Madrid',
+  FR: 'Europe/Paris',
+  DE: 'Europe/Berlin',
+  IT: 'Europe/Rome',
+  NL: 'Europe/Amsterdam',
+  BE: 'Europe/Brussels',
+  CH: 'Europe/Zurich',
+  AT: 'Europe/Vienna',
+  PL: 'Europe/Warsaw',
+  SE: 'Europe/Stockholm',
+  NO: 'Europe/Oslo',
+  DK: 'Europe/Copenhagen',
+  FI: 'Europe/Helsinki',
+  GR: 'Europe/Athens',
+  CZ: 'Europe/Prague',
+  HU: 'Europe/Budapest',
+  RO: 'Europe/Bucharest',
+  UA: 'Europe/Kyiv',
+  RU: 'Europe/Moscow',
+  ZA: 'Africa/Johannesburg',
+  EG: 'Africa/Cairo',
+  NG: 'Africa/Lagos',
+  KE: 'Africa/Nairobi',
+  JP: 'Asia/Tokyo',
+  KR: 'Asia/Seoul',
+  CN: 'Asia/Shanghai',
+  HK: 'Asia/Hong_Kong',
+  TW: 'Asia/Taipei',
+  SG: 'Asia/Singapore',
+  MY: 'Asia/Kuala_Lumpur',
+  TH: 'Asia/Bangkok',
+  VN: 'Asia/Ho_Chi_Minh',
+  PH: 'Asia/Manila',
+  ID: 'Asia/Jakarta',
+  NZ: 'Pacific/Auckland',
+  MX: 'America/Mexico_City',
+  BR: 'America/Sao_Paulo',
+  AR: 'America/Argentina/Buenos_Aires',
+  CL: 'America/Santiago',
+  CO: 'America/Bogota',
+  PE: 'America/Lima',
+  CA: null,
+  US: null,
+  AU: null,
+};
+
+function zoneForUS(lat, lng) {
+  if (lng < -150 && lat < 30) return 'Pacific/Honolulu';
+  if (lng < -129 && lat > 50) return 'America/Anchorage';
+  if (lng < -115) return 'America/Los_Angeles';
+  if (lng < -102) return 'America/Denver';
+  if (lng < -85) return 'America/Chicago';
+  return 'America/New_York';
+}
+
+function zoneForAU(lng) {
+  if (lng < 129) return 'Australia/Perth';
+  if (lng < 138) return 'Australia/Adelaide';
+  if (lng < 141) return 'Australia/Broken_Hill';
+  return 'Australia/Sydney';
+}
+
+function zoneForCA(lng) {
+  if (lng < -115) return 'America/Vancouver';
+  if (lng < -102) return 'America/Edmonton';
+  if (lng < -89) return 'America/Winnipeg';
+  if (lng < -60) return 'America/Toronto';
+  return 'America/Halifax';
+}
+
+export function guessIanaZone(lat, lng, countryCode) {
+  const code = (countryCode || '').toUpperCase();
+  if (code === 'US') return zoneForUS(lat, lng);
+  if (code === 'AU') return zoneForAU(lng);
+  if (code === 'CA') return zoneForCA(lng);
+  if (COUNTRY_ZONES[code]) return COUNTRY_ZONES[code];
+  const hours = Math.round(lng / 15);
+  const sign = hours >= 0 ? '+' : '-';
+  const hh = String(Math.abs(hours)).padStart(2, '0');
+  return `UTC${sign}${hh}:00`;
+}
+
+export function offsetForZone(iana, date, time) {
+  const d = date instanceof Date ? DateTime.fromJSDate(date) : DateTime.fromISO(String(date || ''));
+  const [hour, minute] = String(time || '12:00').split(':').map(Number);
+  const dt = DateTime.fromObject(
+    {
+      year: d.isValid ? d.year : new Date().getFullYear(),
+      month: d.isValid ? d.month : 1,
+      day: d.isValid ? d.day : 1,
+      hour: Number.isFinite(hour) ? hour : 12,
+      minute: Number.isFinite(minute) ? minute : 0,
+    },
+    { zone: iana }
+  );
+  if (!dt.isValid) return -new Date().getTimezoneOffset();
+  return dt.offset;
+}
+
+export function timezonePresetsWithBrowser() {
+  const browser = -new Date().getTimezoneOffset();
+  const has = TIMEZONE_PRESETS.some((t) => t.offset === browser);
+  const extra = has ? [] : [{ label: `Browser local (${formatOffset(browser)})`, offset: browser }];
+  return [...extra, ...TIMEZONE_PRESETS];
+}
+
+function labelOf(props) {
+  const bits = [props.name, props.city || props.county, props.state, props.country]
+    .filter(Boolean)
+    .filter((v, i, a) => a.indexOf(v) === i);
+  return bits.join(', ') || 'Unknown place';
+}
+
+export async function searchPlaces(query) {
+  const q = String(query || '').trim();
+  if (q.length < 2) return [];
+  const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Place search failed');
+  const data = await res.json();
+  return (data.features || []).map((f) => {
+    const [lng, lat] = f.geometry.coordinates;
+    const countryCode = f.properties.countrycode || f.properties.country_code || '';
+    return {
+      label: labelOf(f.properties),
+      latitude: lat,
+      longitude: lng,
+      countryCode,
+      timezoneName: guessIanaZone(lat, lng, countryCode),
+    };
+  });
+}

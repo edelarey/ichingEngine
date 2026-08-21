@@ -9,14 +9,7 @@ module.exports = defineConfig({
       historyApiFallback: true,
     },
 
-  // Configure Webpack
   configureWebpack: {
-    plugins: [
-      new MiniCssExtractPlugin({
-        filename: 'css/[name].[contenthash].css',
-        chunkFilename: 'css/[id].[contenthash].css',
-      }),
-    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),

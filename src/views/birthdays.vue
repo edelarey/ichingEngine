@@ -24,51 +24,7 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">{{ editingId ? 'Edit birthday' : 'Add birthday' }}</h5>
-              <div class="mb-3">
-                <label class="form-label" for="bd-name">Name</label>
-                <input id="bd-name" class="form-control" v-model="form.name" placeholder="Name" />
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="bd-date">Birth date</label>
-                  <input id="bd-date" type="date" class="form-control" v-model="form.date" />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="bd-time">Birth time</label>
-                  <input id="bd-time" type="time" class="form-control" v-model="form.time" />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="bd-gender">Gender</label>
-                  <select id="bd-gender" class="form-select" v-model="form.gender">
-                    <option value="MALE">MALE</option>
-                    <option value="FEMALE">FEMALE</option>
-                  </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="bd-tz">Timezone of birth place</label>
-                  <select id="bd-tz" class="form-select" v-model.number="form.timezoneOffset">
-                    <option v-for="tz in timezonePresets" :key="tz.label + tz.offset" :value="tz.offset">
-                      {{ tz.label }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="bd-lat">Latitude</label>
-                  <input id="bd-lat" type="number" step="any" class="form-control" v-model.number="form.latitude" placeholder="e.g. 28.6139" />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="bd-lng">Longitude</label>
-                  <input id="bd-lng" type="number" step="any" class="form-control" v-model.number="form.longitude" placeholder="e.g. 77.2090" />
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label" for="bd-place">Birth place (optional)</label>
-                <input id="bd-place" class="form-control" v-model="form.place" placeholder="e.g. New Delhi, India" />
-              </div>
+              <BirthDataForm id="bd" v-model="form" />
               <p v-if="error" class="text-danger small">{{ error }}</p>
               <div class="d-flex flex-wrap gap-2">
                 <button type="button" class="btn btn-primary" @click="save">
@@ -120,6 +76,7 @@
                     <router-link class="btn btn-sm btn-primary" :to="`/astrology?load=${b.id}`">I-Ching</router-link>
                     <router-link class="btn btn-sm btn-primary" :to="`/vedic_astrology?load=${b.id}`">Vedic</router-link>
                     <router-link class="btn btn-sm btn-primary" :to="`/western_astrology?load=${b.id}`">Western</router-link>
+                    <router-link class="btn btn-sm btn-outline-dark" :to="`/compare?load=${b.id}`">Compare all</router-link>
                   </div>
                 </div>
               </div>
@@ -135,7 +92,8 @@
 import { computed, reactive, ref } from 'vue';
 import { DateTime } from 'luxon';
 import { useBirthdayStore } from '@/stores/birthday';
-import { TIMEZONE_PRESETS } from '@/const/vedic';
+import BirthDataForm from '@/components/BirthDataForm.vue';
+import { usePageTitle } from '@/composables/usePageTitle';
 
 function formatOffset(minutes) {
   if (typeof minutes !== 'number' || Number.isNaN(minutes)) return '';
@@ -156,24 +114,20 @@ function emptyForm() {
     longitude: 0,
     place: '',
     timezoneOffset: -new Date().getTimezoneOffset(),
+    timezoneName: '',
   };
 }
 
 export default {
   name: 'Birthdays',
+  components: { BirthDataForm },
   setup() {
+    usePageTitle('Birthdays');
     const birthdayStore = useBirthdayStore();
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
     const form = reactive(emptyForm());
     const editingId = ref(null);
     const error = ref('');
-
-    const timezonePresets = computed(() => {
-      const browser = -new Date().getTimezoneOffset();
-      const has = TIMEZONE_PRESETS.some((t) => t.offset === browser);
-      const extra = has ? [] : [{ label: `Browser local (${formatOffset(browser)})`, offset: browser }];
-      return [...extra, ...TIMEZONE_PRESETS];
-    });
 
     const resetForm = () => {
       Object.assign(form, emptyForm());
@@ -184,7 +138,10 @@ export default {
     const toRecord = () => {
       if (!form.name.trim()) throw new Error('Name is required.');
       if (!form.date) throw new Error('Birth date is required.');
-      const dt = DateTime.fromISO(`${form.date}T${form.time || '12:00'}`);
+      const day = form.date instanceof Date
+        ? DateTime.fromJSDate(form.date).toFormat('yyyy-MM-dd')
+        : String(form.date || '').slice(0, 10);
+      const dt = DateTime.fromISO(`${day}T${form.time || '12:00'}`);
       if (!dt.isValid) throw new Error('Birth date/time is not valid.');
       return {
         id: editingId.value || Date.now(),
@@ -197,6 +154,7 @@ export default {
         },
         place: form.place || '',
         timezoneOffset: Number(form.timezoneOffset),
+        timezoneName: form.timezoneName || '',
       };
     };
 
@@ -231,13 +189,14 @@ export default {
       const dt = DateTime.fromISO(b.birthday);
       editingId.value = b.id;
       form.name = b.name;
-      form.date = dt.toFormat('yyyy-MM-dd');
+      form.date = dt.toJSDate();
       form.time = dt.toFormat('HH:mm');
       form.gender = b.gender;
       form.latitude = b.coords.latitude;
       form.longitude = b.coords.longitude;
       form.place = b.place || '';
       form.timezoneOffset = typeof b.timezoneOffset === 'number' ? b.timezoneOffset : (dt.isValid ? dt.offset : -new Date().getTimezoneOffset());
+      form.timezoneName = b.timezoneName || '';
       error.value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -273,7 +232,6 @@ export default {
       form,
       editingId,
       error,
-      timezonePresets,
       formatOffset,
       formatWhen,
       save,

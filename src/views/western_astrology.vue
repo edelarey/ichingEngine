@@ -41,105 +41,11 @@
                 <h3 class="card-header">Western Astrology Chart</h3>
                 <div class="card-body">
                   <!-- Birth Data Form with Save Functionality -->
-                  <div class="birth-data-form mb-4">
+                  <div class="mb-4">
                     <BirthdayPicker load-label="Load for chart" @load="loadBirthdayData" />
                     <h5 class="mb-3">Birth Information</h5>
-                    <div class="row">
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input
-                          id="name"
-                          type="text"
-                          class="form-control"
-                          v-model="localBirthData.name"
-                          placeholder="Enter name"
-                        />
-                      </div>
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="birthDate" class="form-label">Birth Date</label>
-                        <input
-                          id="birthDate"
-                          type="date"
-                          class="form-control"
-                          :value="formatDateForInput(localBirthData.date)"
-                          @input="updateDate"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div class="row">
-                      <div class="col-12 col-md-4 mb-3">
-                        <label for="birthTime" class="form-label">Birth Time (local civil time)</label>
-                        <input
-                          id="birthTime"
-                          type="time"
-                          class="form-control"
-                          v-model="localBirthData.time"
-                        />
-                      </div>
-                      <div class="col-12 col-md-4 mb-3">
-                        <label for="western-tz" class="form-label">Timezone of birth place</label>
-                        <select id="western-tz" class="form-control" v-model.number="localBirthData.timezoneOffset">
-                          <option v-for="tz in timezonePresets" :key="tz.label + tz.offset" :value="tz.offset">
-                            {{ tz.label }}
-                          </option>
-                        </select>
-                        <div class="form-text">Needed for a real Ascendant (Rising sign).</div>
-                      </div>
-                      <div class="col-12 col-md-4 mb-3">
-                        <label for="gender" class="form-label">Gender</label>
-                        <select id="gender" class="form-control" v-model="localBirthData.gender">
-                          <option value="MALE">MALE</option>
-                          <option value="FEMALE">FEMALE</option>
-                        </select>
-                      </div>
-                    </div>
-                    
-                    <div class="row">
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="latitude" class="form-label">Latitude</label>
-                        <input
-                          id="latitude"
-                          type="number"
-                          step="0.000001"
-                          class="form-control"
-                          v-model.number="localBirthData.latitude"
-                          placeholder="e.g., 40.7128"
-                        />
-                      </div>
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="longitude" class="form-label">Longitude</label>
-                        <input
-                          id="longitude"
-                          type="number"
-                          step="0.000001"
-                          class="form-control"
-                          v-model.number="localBirthData.longitude"
-                          placeholder="e.g., -74.0060"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div class="row">
-                      <div class="col-12 col-md-8 mb-3">
-                        <label for="place" class="form-label">Birth Place (Optional)</label>
-                        <input
-                          id="place"
-                          type="text"
-                          class="form-control"
-                          v-model="localBirthData.place"
-                          placeholder="e.g., New York, NY, USA"
-                        />
-                      </div>
-                      <div class="col-12 col-md-4 mb-3">
-                        <label for="houseSystem" class="form-label">House system</label>
-                        <select id="houseSystem" class="form-control" v-model="localBirthData.houseSystem">
-                          <option value="placidus">Placidus</option>
-                          <option value="equal">Equal (from Ascendant)</option>
-                        </select>
-                      </div>
-                    </div>
-                    <p v-if="timezoneWarning" class="text-warning small">{{ timezoneWarning }}</p>
+                    <BirthDataForm id="western" v-model="localBirthData" show-house-system />
+                    <p v-if="timezoneWarning" class="text-warning small mt-2">{{ timezoneWarning }}</p>
                     <p class="small text-muted">
                       Tropical zodiac via astronomia (VSOP87 / Meeus). Rising is the true Ascendant, not a copy of the Sun.
                     </p>
@@ -215,6 +121,8 @@ import { useAstrologyStore } from '@/stores/astrology';
 import AstroChartDisplay from '@/components/AstroChartDisplay.vue';
 import AstroSummary from '@/components/AstroSummary.vue';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
+import BirthDataForm from '@/components/BirthDataForm.vue';
+import { usePageTitle } from '@/composables/usePageTitle';
 import { calculateWesternChart, formatOffset } from '@/utils/astrologyCalculations';
 import { TIMEZONE_PRESETS } from '@/const/vedic';
 import jsPDF from 'jspdf';
@@ -226,8 +134,10 @@ export default {
     AstroChartDisplay,
     AstroSummary,
     BirthdayPicker,
+    BirthDataForm,
   },
   setup() {
+    usePageTitle('Western Astrology');
     const birthdayStore = useBirthdayStore();
     const astrologyStore = useAstrologyStore();
     const route = useRoute();

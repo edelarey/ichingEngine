@@ -50,7 +50,7 @@
   <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
     <div class="row justify-content-center mt-4">
       <div class="col-12 col-md-10 col-lg-8">
-        <div class="card text-center">
+        <div class="card text-center iching-summary-card">
           <h3 class="card-header py-3">I Ching Astrology Summary</h3>
           <div class="card-body">
             <div v-if="state.cycle">
@@ -104,6 +104,14 @@
             <div v-else>
               <p>Please enter birth details and consult to view your summary.</p>
             </div>
+            <button
+              v-if="state.cycle"
+              type="button"
+              class="btn btn-info mt-3"
+              @click="exportIchingPdf"
+            >
+              Export PDF
+            </button>
           </div>
         </div>
       </div>
@@ -136,66 +144,7 @@
                 <div class="card-body">
                   <BirthdayPicker load-label="Load & consult" @load="loadBirthday" />
                   <h5 class="card-title mb-3">Birth Details</h5>
-                  <div class="row justify-content-center">
-                    <!-- Name Input -->
-                    <div class="col-12 col-md-8 col-lg-6 mb-3">
-                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Name</h6>
-                      <input
-                        v-model="state.name"
-                        :list="`saved-names-${state.id}`"
-                        class="form-control input-narrow"
-                        placeholder="Type your name or select from the list"
-                      />
-                      <datalist :id="`saved-names-${state.id}`">
-                        <option v-for="birthday in birthdayList" :key="birthday.id" :value="birthday.name">{{ birthday.name }}</option>
-                      </datalist>
-                    </div>
-                    <!-- Birth Date Input -->
-                    <div class="col-12 col-md-8 col-lg-6 mb-3">
-                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Birth Date</h6>
-                      <Datepicker
-                        placeholder="Birth Date"
-                        v-model="state.birthDate"
-                        format="yyyy-MM-dd HH:mm"
-                        previewFormat="yyyy-MM-dd HH:mm"
-                        :enableTimePicker="true"
-                        :disabled="false"
-                        :min-date="state.minDate"
-                        :max-date="state.maxDate"
-                        class="w-100 input-narrow"
-                      />
-                    </div>
-                    <!-- Gender Select -->
-                    <div class="col-12 col-md-8 col-lg-6 mb-3">
-                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Gender</h6>
-                      <select v-model="state.gender" class="form-control input-narrow">
-                        <option value="MALE">MALE</option>
-                        <option value="FEMALE">FEMALE</option>
-                      </select>
-                    </div>
-                    <!-- Latitude and Longitude -->
-                    <div class="col-12 col-md-8 col-lg-6 mb-3">
-                      <div class="row justify-content-center">
-                        <div class="col-12 col-md-6 mb-3 mb-md-0">
-                          <h6 :style="{ color: colorClass }" class="card-text mb-2">Latitude</h6>
-                          <input v-model.number="state.latitude" class="form-control input-narrow" placeholder="0.00 Latitude" />
-                        </div>
-                        <div class="col-12 col-md-6">
-                          <h6 :style="{ color: colorClass }" class="card-text mb-2">Longitude</h6>
-                          <input v-model.number="state.longitude" class="form-control input-narrow" placeholder="0.00 Longitude" />
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Birth Place -->
-                    <div class="col-12 col-md-8 col-lg-6 mb-3">
-                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Birth Place (Optional)</h6>
-                      <input
-                        v-model="state.place"
-                        class="form-control input-narrow"
-                        placeholder="e.g., New York, NY, USA"
-                      />
-                    </div>
-                  </div>
+                  <BirthDataForm id="iching" v-model="ichingBirthForm" class="text-start" />
                   <!-- Buttons Section -->
                   <div class="row justify-content-center">
                     <div class="col-12 col-md-8 col-lg-6 mb-3">
@@ -722,16 +671,22 @@
   import { useBirthdayStore } from '@/stores/birthday';
   import { useRoute } from 'vue-router';
   import BirthdayPicker from '@/components/BirthdayPicker.vue';
+  import BirthDataForm from '@/components/BirthDataForm.vue';
   import ReadingLead from '@/components/ReadingLead.vue';
+  import { usePageTitle } from '@/composables/usePageTitle';
+  import jsPDF from 'jspdf';
+  import html2canvas from 'html2canvas';
 
   export default {
     name: 'Astrology',
     components: {
       Datepicker,
       BirthdayPicker,
+      BirthDataForm,
       ReadingLead,
     },
     setup() {
+      usePageTitle('I-Ching Astrology');
       const birthdayStore = useBirthdayStore();
       const birthdayList = computed(() => birthdayStore.getBirthdayList);
       const showHistory = ref(false);
@@ -768,6 +723,7 @@
         timeOfBirthHexagram: '',
         latitude: 26.39655582357474,
         longitude: 27.37679999686307,
+        timezoneOffset: -new Date().getTimezoneOffset(),
         birthDate: DateTime.fromObject({ year: 1970, month: 1, day: 17, hour: 15, minute: 50 }).toJSDate(),
         minDate: DateTime.fromObject({ year: 1, month: 1, day: 1 }).toJSDate(),
         maxDate: DateTime.fromObject({ year: 275760, month: 9, day: 13 }).toJSDate(),
@@ -791,7 +747,40 @@
         showYearlyCycle: true,
         showMonthlyCycle: true,
         showDailyCycle: true,
-        editingBirthday: null, // Track the birthday being edited
+        editingBirthday: null,
+      });
+
+      const ichingBirthForm = computed({
+        get() {
+          const d = DateTime.fromJSDate(state.birthDate);
+          return {
+            name: state.name,
+            date: state.birthDate,
+            time: d.isValid ? d.toFormat('HH:mm') : '12:00',
+            gender: state.gender,
+            latitude: state.latitude,
+            longitude: state.longitude,
+            place: state.place || '',
+            timezoneOffset: typeof state.timezoneOffset === 'number' ? state.timezoneOffset : -new Date().getTimezoneOffset(),
+          };
+        },
+        set(v) {
+          state.name = v.name;
+          state.gender = v.gender === 'FEMALE' ? 'FEMALE' : 'MALE';
+          state.latitude = v.latitude;
+          state.longitude = v.longitude;
+          state.place = v.place;
+          state.timezoneOffset = v.timezoneOffset;
+          const day = v.date instanceof Date ? DateTime.fromJSDate(v.date) : DateTime.fromISO(String(v.date));
+          const [hour, minute] = String(v.time || '12:00').split(':').map(Number);
+          state.birthDate = DateTime.fromObject({
+            year: day.year,
+            month: day.month,
+            day: day.day,
+            hour,
+            minute,
+          }).toJSDate();
+        },
       });
 
       const form = {
@@ -964,6 +953,7 @@
           gender: state.gender,
           coords: { latitude: state.latitude, longitude: state.longitude },
           place: state.place || '',
+          timezoneOffset: state.timezoneOffset,
         };
 
         const result = birthdayStore.addBirthday(birthdayData);
@@ -996,6 +986,7 @@
       state.latitude = birthday.coords.latitude;
       state.longitude = birthday.coords.longitude;
       state.place = birthday.place || '';
+      state.timezoneOffset = typeof birthday.timezoneOffset === 'number' ? birthday.timezoneOffset : -new Date().getTimezoneOffset();
       birthdayStore.selectBirthday(birthday.id);
       consult();
       const entryTab = document.getElementById('birthday-entry-tab');
@@ -1022,6 +1013,7 @@
           gender: state.gender,
           coords: { latitude: state.latitude, longitude: state.longitude },
           place: state.place || '',
+          timezoneOffset: state.timezoneOffset,
         };
 
         birthdayStore.updateBirthday(updatedBirthday);
@@ -1045,6 +1037,61 @@
       }
     };
 
+
+      const exportIchingPdf = async () => {
+        try {
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          let y = 18;
+          pdf.setFontSize(16);
+          pdf.text('I-Ching Astrology Summary', pageWidth / 2, y, { align: 'center' });
+          y += 10;
+          pdf.setFontSize(10);
+          const lines = [
+            `Name: ${state.name}`,
+            `Birth: ${dateTimeFormatSimple(state.birthDate)}`,
+            `Gender: ${state.gender}`,
+            `Place: ${state.place || '—'} (${state.latitude}, ${state.longitude})`,
+          ];
+          if (ichingLead.value) {
+            lines.push('', ichingLead.value.headline, ichingLead.value.intro);
+            ichingLead.value.points.forEach((p) => lines.push(`${p.label}: ${p.text}`));
+          }
+          lines.push(
+            '',
+            `Pre-Heaven: ${state.preHeavenHexagram?.name || ''}`,
+            `Later-Heaven: ${state.laterHeavenHexagram?.name || ''}`,
+            `Year animal: ${state.sexagenaryCycle?.horaryBranch?.animal || ''}`,
+          );
+          lines.forEach((line) => {
+            const wrapped = pdf.splitTextToSize(String(line), pageWidth - 32);
+            wrapped.forEach((w) => {
+              if (y > 280) {
+                pdf.addPage();
+                y = 18;
+              }
+              pdf.text(w, 16, y);
+              y += 5;
+            });
+          });
+          const card = document.querySelector('.iching-summary-card');
+          if (card) {
+            try {
+              const canvas = await html2canvas(card, { backgroundColor: '#ffffff', scale: 1.2, logging: false });
+              pdf.addPage();
+              const w = pageWidth - 32;
+              const h = (canvas.height / canvas.width) * w;
+              pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 16, 16, w, Math.min(h, 260));
+            } catch (e) {
+              console.warn(e);
+            }
+          }
+          pdf.save(`${state.name || 'IChing'}_Astrology.pdf`);
+        } catch (err) {
+          console.error(err);
+          alert('Failed to generate PDF.');
+        }
+      };
 
       const consult = async () => {
     
@@ -1226,7 +1273,9 @@
 
       return {
         state,
+        ichingBirthForm,
         ichingLead,
+        exportIchingPdf,
         birthdayList,
         birthdayStore,
         showHistory,

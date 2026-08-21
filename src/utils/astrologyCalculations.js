@@ -3,6 +3,7 @@
  * true Ascendant and Midheaven, Placidus houses (Equal fallback), major aspects.
  */
 
+import { DateTime } from 'luxon';
 import {
   tropicalPositions,
   tropicalLagna,
@@ -208,6 +209,61 @@ export function calculateWesternChart(birthInput) {
     aspects,
     risingSign,
     interpretations,
+    transits: calculateTransits(planetPositions),
+  };
+}
+
+const TRANSIT_KEYS = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto'];
+
+export function calculateTransits(natalPositions) {
+  const now = DateTime.utc();
+  const snap = julianDayFromBirth({
+    date: now.toJSDate(),
+    time: now.toFormat('HH:mm'),
+    timezoneOffset: 0,
+  });
+  const trop = tropicalPositions(snap.jde);
+  const transiting = TRANSIT_KEYS.map((key) => {
+    const meta = WESTERN_PLANETS.find((p) => p.key === key);
+    const longitude = trop[key];
+    const sign = signFromLongitude(longitude);
+    return {
+      key,
+      name: meta.name,
+      symbol: meta.symbol,
+      longitude,
+      sign: sign.name,
+      degreeLabel: formatDms(sign.degreeInSign),
+    };
+  });
+  const natal = (natalPositions || []).filter((p) => TRANSIT_KEYS.includes(p.key));
+  const hits = [];
+  transiting.forEach((t) => {
+    natal.forEach((n) => {
+      let diff = Math.abs(t.longitude - n.longitude);
+      if (diff > 180) diff = 360 - diff;
+      ASPECT_TYPES.forEach((type) => {
+        const orb = Math.abs(diff - type.angle);
+        const maxOrb = type.name === 'conjunction' || type.name === 'opposition' || type.name === 'square' || type.name === 'trine' ? 6 : 4;
+        if (orb <= maxOrb) {
+          hits.push({
+            transit: t.name,
+            natal: n.name,
+            aspect: type.name,
+            symbol: type.symbol,
+            orb,
+            blurb: `Transit ${t.name} ${type.name} natal ${n.name}. ${type.blurb}`,
+          });
+        }
+      });
+    });
+  });
+  hits.sort((a, b) => a.orb - b.orb);
+  return {
+    asOf: now.toISO(),
+    asOfLabel: now.toFormat("yyyy-MM-dd HH:mm 'UTC'"),
+    transiting,
+    hits: hits.slice(0, 18),
   };
 }
 

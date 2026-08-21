@@ -83,64 +83,11 @@
               <div class="card">
                 <h3 class="card-header">Janma Kuṇḍalī (Vedic Natal Chart)</h3>
                 <div class="card-body">
-                  <div class="birth-data-form mb-4">
+                  <div class="mb-4">
                     <BirthdayPicker load-label="Load for chart" @load="loadBirthdayData" />
                     <h5 class="mb-3">Birth Information</h5>
-                    <div class="row">
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="vedic-name" class="form-label">Name</label>
-                        <input id="vedic-name" type="text" class="form-control" v-model="localBirthData.name" placeholder="Enter name" />
-                      </div>
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="vedic-date" class="form-label">Birth Date</label>
-                        <input
-                          id="vedic-date"
-                          type="date"
-                          class="form-control"
-                          :value="formatDateForInput(localBirthData.date)"
-                          @input="updateDate"
-                        />
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-12 col-md-4 mb-3">
-                        <label for="vedic-time" class="form-label">Birth Time (local civil time)</label>
-                        <input id="vedic-time" type="time" class="form-control" v-model="localBirthData.time" />
-                      </div>
-                      <div class="col-12 col-md-4 mb-3">
-                        <label for="vedic-tz" class="form-label">Timezone of birth place</label>
-                        <select id="vedic-tz" class="form-control" v-model.number="localBirthData.timezoneOffset">
-                          <option v-for="tz in timezonePresets" :key="tz.label + tz.offset" :value="tz.offset">
-                            {{ tz.label }}
-                          </option>
-                        </select>
-                        <div class="form-text">Lagna (Ascendant) needs the timezone where the birth occurred, not the browser’s zone.</div>
-                      </div>
-                      <div class="col-12 col-md-4 mb-3">
-                        <label for="vedic-gender" class="form-label">Gender</label>
-                        <select id="vedic-gender" class="form-control" v-model="localBirthData.gender">
-                          <option value="MALE">MALE</option>
-                          <option value="FEMALE">FEMALE</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="vedic-lat" class="form-label">Latitude</label>
-                        <input id="vedic-lat" type="number" step="0.000001" class="form-control" v-model.number="localBirthData.latitude" placeholder="e.g., 28.6139" />
-                      </div>
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="vedic-lng" class="form-label">Longitude</label>
-                        <input id="vedic-lng" type="number" step="0.000001" class="form-control" v-model.number="localBirthData.longitude" placeholder="e.g., 77.2090" />
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-12 mb-3">
-                        <label for="vedic-place" class="form-label">Birth Place (Optional)</label>
-                        <input id="vedic-place" type="text" class="form-control" v-model="localBirthData.place" placeholder="e.g., New Delhi, India" />
-                      </div>
-                    </div>
-                    <p v-if="timezoneWarning" class="text-warning small">{{ timezoneWarning }}</p>
+                    <BirthDataForm id="vedic" v-model="localBirthData" />
+                    <p v-if="timezoneWarning" class="text-warning small mt-2">{{ timezoneWarning }}</p>
                     <div class="row">
                       <div class="col-12 text-center">
                         <button type="button" class="btn btn-primary me-2" @click="calculateChart" :disabled="loading || !isValidData">
@@ -182,6 +129,8 @@ import { useVedicStore } from '@/stores/vedic';
 import VedicChartDisplay from '@/components/VedicChartDisplay.vue';
 import VedicSummary from '@/components/VedicSummary.vue';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
+import BirthDataForm from '@/components/BirthDataForm.vue';
+import { usePageTitle } from '@/composables/usePageTitle';
 import { calculateVedicChart, formatOffset } from '@/utils/vedicCalculations';
 import { TIMEZONE_PRESETS } from '@/const/vedic';
 import jsPDF from 'jspdf';
@@ -189,8 +138,9 @@ import html2canvas from 'html2canvas';
 
 export default {
   name: 'VedicAstrology',
-  components: { VedicChartDisplay, VedicSummary, BirthdayPicker },
+  components: { VedicChartDisplay, VedicSummary, BirthdayPicker, BirthDataForm },
   setup() {
+    usePageTitle('Vedic Astrology');
     const birthdayStore = useBirthdayStore();
     const vedicStore = useVedicStore();
     const route = useRoute();

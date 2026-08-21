@@ -95,6 +95,42 @@
       </div>
     </div>
 
+    <div class="card mb-3" v-if="transits">
+      <div class="card-body">
+        <h5 class="card-title">Current transits</h5>
+        <p class="small text-muted">Sky right now ({{ transits.asOfLabel }}) against this natal chart. Tightest hits first.</p>
+        <div class="table-responsive mb-2">
+          <table class="table table-sm">
+            <thead>
+              <tr><th>Transit</th><th>Sign now</th><th>Degree</th></tr>
+            </thead>
+            <tbody>
+              <tr v-for="t in transits.transiting" :key="t.key">
+                <td>{{ t.symbol }} {{ t.name }}</td>
+                <td>{{ t.sign }}</td>
+                <td>{{ t.degreeLabel }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-if="transits.hits.length" class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr><th>Hit</th><th>Aspect</th><th>Orb</th></tr>
+            </thead>
+            <tbody>
+              <tr v-for="(h, i) in transits.hits" :key="i">
+                <td>t.{{ h.transit }} → n.{{ h.natal }}</td>
+                <td>{{ h.symbol }} {{ h.aspect }}</td>
+                <td>{{ h.orb.toFixed(2) }}°</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p v-else class="small mb-0">No major transit-to-natal aspects inside a 6° orb at the moment.</p>
+      </div>
+    </div>
+
     <div class="card mb-3" v-if="planetNotes.length">
       <div class="card-body">
         <h5 class="card-title">Planets in Sign and House</h5>
@@ -193,6 +229,7 @@ export default {
     });
 
     const aspects = computed(() => props.chartData.aspects || []);
+    const transits = computed(() => props.chartData.transits || null);
     const planetNotes = computed(() => (props.planetPositions || []).filter((p) => p.blurb));
     const birth = computed(() => (props.chartData.birth || props.chartData.birthData || {}));
     const executive = computed(() => (props.chartData.interpretations && props.chartData.interpretations.executive) || null);
@@ -213,6 +250,7 @@ export default {
     return {
       sun, moon, rising, sunDegree, moonDegree, risingDegree,
       executive,
+      transits,
       sunText, moonText, risingText,
       elementBalance, modalityBalance, aspects, planetNotes, birth,
       engineNote, disclaimer, formatDate, formatCoordinates,

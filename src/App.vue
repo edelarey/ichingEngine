@@ -114,6 +114,11 @@
               <span class="align-middle">Vedic Help</span>
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/compare" exact-active-class="active">
+              <span class="align-middle">Compare readings</span>
+            </router-link>
+          </li>
         </ul>
       </li>
       <!-- Charts Sub-Menu -->
@@ -200,7 +205,7 @@
     <!-- Footer -->
     <footer class="bg-dark text-light text-center py-3 mt-auto">
       <div class="container">
-        <p>© 2025 iChing Engine. All rights reserved.</p>
+        <p>© 2026 iChing Engine. All rights reserved.</p>
       </div>
     </footer>
   </div>

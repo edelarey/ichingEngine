@@ -30,10 +30,12 @@
 
 <script>
 import { ref } from 'vue';
+import { usePageTitle } from '@/composables/usePageTitle';
 
 export default {
   name: 'Home',
   setup() {
+    usePageTitle('Home');
     const gifUrl = ref(require('@/assets/iching.gif'));
 
     return { gifUrl };
