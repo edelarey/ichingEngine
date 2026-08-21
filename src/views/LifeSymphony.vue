@@ -5,27 +5,24 @@
       Turn an I Ching natal cycle into a year-by-year sequence of Solfeggio tones.
     </p>
 
-    <div v-if="!symphonyData" class="card shadow-sm mx-auto" style="max-width: 800px;">
-      <div class="card-body">
-        <h5 class="card-title mb-3">Birth details</h5>
-        <BirthdayPicker load-label="Load birth data" @load="loadBirthday" />
-        <BirthDataForm
-          id="symphony"
-          :show-name="false"
-          :model-value="form"
-          @update:model-value="assignForm"
-        />
-        <p v-if="error" class="text-danger small mt-3 mb-0">{{ error }}</p>
-        <div class="d-flex flex-wrap gap-2 mt-3">
-          <button type="button" class="btn btn-primary" :disabled="loading" @click="generateSymphony">
-            <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
-            {{ loading ? 'Composing…' : 'Generate Symphony' }}
-          </button>
-        </div>
-      </div>
+    <BirthDetailsPanel v-model="showForms" :summary="birthSummary" class="mx-auto" style="max-width: 800px;">
+      <BirthdayPicker load-label="Load birth data" @load="loadBirthday" />
+      <BirthDataForm
+        id="symphony"
+        :show-name="false"
+        :model-value="form"
+        @update:model-value="assignForm"
+      />
+    </BirthDetailsPanel>
+    <p v-if="error" class="text-danger small mt-2 mb-0 text-center">{{ error }}</p>
+    <div class="d-flex flex-wrap gap-2 mt-3 justify-content-center">
+      <button type="button" class="btn btn-primary" :disabled="loading" @click="generateSymphony">
+        <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
+        {{ loading ? 'Composing…' : 'Generate Symphony' }}
+      </button>
     </div>
 
-    <div v-else class="symphony-player">
+    <div v-if="symphonyData" class="symphony-player mt-4">
       <div class="controls-sticky card shadow-sm mb-4 sticky-top">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
@@ -142,6 +139,8 @@ import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { DateTime } from 'luxon';
 import BirthDataForm from '@/components/BirthDataForm.vue';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
+import BirthDetailsPanel from '@/components/BirthDetailsPanel.vue';
+import { summarizeBirth } from '@/utils/birthSummary';
 import HexagramToneVisualizer from '@/components/HexagramToneVisualizer.vue';
 import { generateLifeSymphony } from '@/utils/lifeSymphonyEngine';
 import { useLifeAudio } from '@/composables/useLifeAudio';
@@ -165,13 +164,15 @@ function emptyForm() {
 
 export default {
   name: 'LifeSymphony',
-  components: { BirthDataForm, BirthdayPicker, HexagramToneVisualizer },
+  components: { BirthDataForm, BirthdayPicker, HexagramToneVisualizer, BirthDetailsPanel },
   setup() {
     usePageTitle('Life Symphony');
     const symphonyStore = useSymphonyStore();
     const loading = ref(false);
     const error = ref('');
+    const showForms = ref(true);
     const form = reactive(emptyForm());
+    const birthSummary = computed(() => summarizeBirth(form));
     const symphonyData = ref(null);
 
     const {
@@ -258,6 +259,7 @@ export default {
         timeline: snapshot.timeline,
       };
       loadTimeline(snapshot.timeline, snapshot.yearIndex || 0);
+      showForms.value = false;
       return true;
     };
 
@@ -284,6 +286,7 @@ export default {
         symphonyData.value = data;
         loadTimeline(data.timeline, 0);
         persist();
+        showForms.value = false;
       } catch (err) {
         console.error(err);
         error.value = err.message || 'Could not generate the symphony. Check the birth data.';
@@ -306,6 +309,7 @@ export default {
       stopAudio();
       symphonyStore.clear();
       symphonyData.value = null;
+      showForms.value = true;
     };
 
     const onScrub = (value) => {
@@ -334,6 +338,8 @@ export default {
       error,
       form,
       assignForm,
+      showForms,
+      birthSummary,
       symphonyData,
       loadBirthday,
       generateSymphony,

@@ -17,34 +17,20 @@
     </header>
 
     <div class="container mb-5">
-      <div class="card mb-3">
-        <button
-          type="button"
-          class="forms-toggle"
-          :aria-expanded="showForms ? 'true' : 'false'"
-          @click="showForms = !showForms"
-        >
-          <span>
-            <strong>Birth details</strong>
-            <span class="text-muted ms-2">{{ peopleSummary }}</span>
-          </span>
-          <span class="toggle-hint">{{ showForms ? 'Hide' : 'Show' }}</span>
-        </button>
-        <div v-show="showForms" class="card-body pt-0">
-          <div class="row g-4">
-            <div class="col-12 col-lg-6">
-              <h5 class="card-title">Person 1</h5>
-              <BirthdayPicker independent load-label="Load as person 1" @load="(b) => loadPerson(1, b)" />
-              <BirthDataForm id="rel1" :model-value="person1" @update:model-value="(p) => assignPerson(person1, p)" />
-            </div>
-            <div class="col-12 col-lg-6">
-              <h5 class="card-title">Person 2</h5>
-              <BirthdayPicker independent load-label="Load as person 2" @load="(b) => loadPerson(2, b)" />
-              <BirthDataForm id="rel2" :model-value="person2" @update:model-value="(p) => assignPerson(person2, p)" />
-            </div>
+      <BirthDetailsPanel v-model="showForms" :summary="peopleSummary">
+        <div class="row g-4">
+          <div class="col-12 col-lg-6">
+            <h5 class="card-title">Person 1</h5>
+            <BirthdayPicker independent load-label="Load as person 1" @load="(b) => loadPerson(1, b)" />
+            <BirthDataForm id="rel1" :model-value="person1" @update:model-value="(p) => assignPerson(person1, p)" />
+          </div>
+          <div class="col-12 col-lg-6">
+            <h5 class="card-title">Person 2</h5>
+            <BirthdayPicker independent load-label="Load as person 2" @load="(b) => loadPerson(2, b)" />
+            <BirthDataForm id="rel2" :model-value="person2" @update:model-value="(p) => assignPerson(person2, p)" />
           </div>
         </div>
-      </div>
+      </BirthDetailsPanel>
 
       <p v-if="error" class="text-danger mt-3">{{ error }}</p>
       <div class="d-flex flex-wrap gap-2 mt-3">
@@ -155,6 +141,7 @@ import { DateTime } from 'luxon';
 import { useRoute } from 'vue-router';
 import BirthDataForm from '@/components/BirthDataForm.vue';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
+import BirthDetailsPanel from '@/components/BirthDetailsPanel.vue';
 import ReadingLead from '@/components/ReadingLead.vue';
 import { useBirthdayStore } from '@/stores/birthday';
 import { usePageTitle } from '@/composables/usePageTitle';
@@ -241,7 +228,7 @@ function formatPersonWhen(person) {
 
 export default {
   name: 'Relationship',
-  components: { BirthDataForm, BirthdayPicker, ReadingLead },
+  components: { BirthDataForm, BirthdayPicker, BirthDetailsPanel, ReadingLead },
   setup() {
     usePageTitle('Relationship compatibility');
     const route = useRoute();
@@ -452,26 +439,5 @@ export default {
 .display-6 {
   font-size: 1.5rem;
   font-weight: 700;
-}
-.forms-toggle {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  border: 0;
-  background: #f4f6fb;
-  text-align: left;
-  padding: 0.9rem 1.15rem;
-  border-radius: 0.375rem 0.375rem 0 0;
-  font-size: 0.95rem;
-}
-.forms-toggle:hover {
-  background: #eef1f8;
-}
-.toggle-hint {
-  flex-shrink: 0;
-  font-weight: 600;
-  color: #5b4cdb;
 }
 </style>

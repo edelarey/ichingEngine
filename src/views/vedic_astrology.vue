@@ -83,22 +83,19 @@
               <div class="card">
                 <h3 class="card-header">Janma Kuṇḍalī (Vedic Natal Chart)</h3>
                 <div class="card-body">
-                  <div class="mb-4">
+                  <BirthDetailsPanel v-model="showForms" :summary="birthSummary">
                     <BirthdayPicker load-label="Load for chart" @load="loadBirthdayData" />
-                    <h5 class="mb-3">Birth Information</h5>
                     <BirthDataForm id="vedic" :model-value="localBirthData" @update:model-value="assignBirthData" />
-                    <p v-if="timezoneWarning" class="text-warning small mt-2">{{ timezoneWarning }}</p>
-                    <div class="row">
-                      <div class="col-12 text-center">
-                        <button type="button" class="btn btn-primary me-2" @click="calculateChart" :disabled="loading || !isValidData">
-                          <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
-                          {{ loading ? 'Calculating...' : 'Calculate Chart' }}
-                        </button>
-                        <button type="button" class="btn btn-success me-2" @click="saveBirthday" :disabled="!isValidData">Save Birthday</button>
-                        <button type="button" class="btn btn-secondary me-2" @click="clearForm">Clear Form</button>
-                        <button type="button" class="btn btn-info" @click="exportToPDF" :disabled="!chart">📄 Export PDF</button>
-                      </div>
-                    </div>
+                    <p v-if="timezoneWarning" class="text-warning small mt-2 mb-0">{{ timezoneWarning }}</p>
+                  </BirthDetailsPanel>
+                  <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
+                    <button type="button" class="btn btn-primary" @click="calculateChart" :disabled="loading || !isValidData">
+                      <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
+                      {{ loading ? 'Calculating...' : 'Calculate Chart' }}
+                    </button>
+                    <button type="button" class="btn btn-success" @click="saveBirthday" :disabled="!isValidData">Save Birthday</button>
+                    <button type="button" class="btn btn-secondary" @click="clearForm">Clear Form</button>
+                    <button type="button" class="btn btn-info" @click="exportToPDF" :disabled="!chart">Export PDF</button>
                   </div>
 
                   <div v-if="error" class="alert alert-danger">{{ error }}</div>
@@ -130,6 +127,8 @@ import VedicChartDisplay from '@/components/VedicChartDisplay.vue';
 import VedicSummary from '@/components/VedicSummary.vue';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
 import BirthDataForm from '@/components/BirthDataForm.vue';
+import BirthDetailsPanel from '@/components/BirthDetailsPanel.vue';
+import { summarizeBirth } from '@/utils/birthSummary';
 import { usePageTitle } from '@/composables/usePageTitle';
 import { calculateVedicChart, formatOffset } from '@/utils/vedicCalculations';
 import { TIMEZONE_PRESETS } from '@/const/vedic';
@@ -137,13 +136,14 @@ import { downloadVedicPdf } from '@/utils/vedicPdf';
 
 export default {
   name: 'VedicAstrology',
-  components: { VedicChartDisplay, VedicSummary, BirthdayPicker, BirthDataForm },
+  components: { VedicChartDisplay, VedicSummary, BirthdayPicker, BirthDataForm, BirthDetailsPanel },
   setup() {
     usePageTitle('Vedic Astrology');
     const birthdayStore = useBirthdayStore();
     const vedicStore = useVedicStore();
     const route = useRoute();
     const loading = ref(false);
+    const showForms = ref(true);
     const chart = ref(null);
     const error = ref(null);
     const chartFormat = ref('north');
@@ -169,6 +169,7 @@ export default {
     const assignBirthData = (next) => {
       Object.assign(localBirthData, next);
     };
+    const birthSummary = computed(() => summarizeBirth(localBirthData));
 
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
 
@@ -258,6 +259,7 @@ export default {
         chart.value = result;
         vedicStore.updateBirthData({ ...localBirthData });
         vedicStore.setChart(result);
+        showForms.value = false;
       } catch (err) {
         console.error('Error calculating Vedic chart:', err);
         error.value = 'Could not calculate the Vedic chart. Check date, time, coordinates, and timezone.';
@@ -316,6 +318,7 @@ export default {
       chart.value = null;
       error.value = null;
       timezoneWarning.value = '';
+      showForms.value = true;
     };
 
     const handleImport = (event) => {
@@ -352,6 +355,8 @@ export default {
       birthdayList,
       localBirthData,
       assignBirthData,
+      showForms,
+      birthSummary,
       loading,
       chart,
       error,

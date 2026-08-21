@@ -142,10 +142,10 @@
                   </div>
                 </div>
                 <div class="card-body">
-                  <BirthdayPicker load-label="Load & consult" @load="loadBirthday" />
-                  <h5 class="card-title mb-3">Birth Details</h5>
-                  <BirthDataForm id="iching" v-model="ichingBirthForm" class="text-start" />
-                  <!-- Buttons Section -->
+                  <BirthDetailsPanel v-model="showForms" :summary="birthSummary">
+                    <BirthdayPicker load-label="Load & consult" @load="loadBirthday" />
+                    <BirthDataForm id="iching" v-model="ichingBirthForm" class="text-start" />
+                  </BirthDetailsPanel>
                   <div class="row justify-content-center">
                     <div class="col-12 col-md-8 col-lg-6 mb-3">
                       <button @click="consult" class="btn btn-primary btn-narrow">Consult</button>
@@ -672,6 +672,8 @@
   import { useRoute } from 'vue-router';
   import BirthdayPicker from '@/components/BirthdayPicker.vue';
   import BirthDataForm from '@/components/BirthDataForm.vue';
+  import BirthDetailsPanel from '@/components/BirthDetailsPanel.vue';
+  import { summarizeBirth } from '@/utils/birthSummary';
   import ReadingLead from '@/components/ReadingLead.vue';
   import { usePageTitle } from '@/composables/usePageTitle';
   import { downloadIchingPdf } from '@/utils/ichingPdf';
@@ -682,6 +684,7 @@
       Datepicker,
       BirthdayPicker,
       BirthDataForm,
+      BirthDetailsPanel,
       ReadingLead,
     },
     setup() {
@@ -689,6 +692,7 @@
       const birthdayStore = useBirthdayStore();
       const birthdayList = computed(() => birthdayStore.getBirthdayList);
       const showHistory = ref(false);
+      const showForms = ref(true);
       const route = useRoute();
 
       const state = reactive({
@@ -786,6 +790,8 @@
           }
         },
       });
+
+      const birthSummary = computed(() => summarizeBirth(ichingBirthForm.value));
 
       const form = {
         consultation: null,
@@ -1087,6 +1093,7 @@
         state.laterHeavenHexagram = result.iching.laterHeavenHexagram;
         state.preHeavenBirthSubCycles = result.iching.preHeavenBirthSubCycles;
         state.laterHeavenBirthSubCycles = result.iching.laterHeavenBirthSubCycles;
+        showForms.value = false;
 
         const birthDate = DateTime.fromJSDate(new Date(state.birthDate));
         const currentDate = DateTime.now();
@@ -1237,6 +1244,8 @@
         birthdayList,
         birthdayStore,
         showHistory,
+        showForms,
+        birthSummary,
         dateTimeFormatSimple,
         formatBirthYear,
         formatBirthMonth,

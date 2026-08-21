@@ -41,52 +41,22 @@
                 <h3 class="card-header">Western Astrology Chart</h3>
                 <div class="card-body">
                   <!-- Birth Data Form with Save Functionality -->
-                  <div class="mb-4">
+                  <BirthDetailsPanel v-model="showForms" :summary="birthSummary">
                     <BirthdayPicker load-label="Load for chart" @load="loadBirthdayData" />
-                    <h5 class="mb-3">Birth Information</h5>
                     <BirthDataForm id="western" :model-value="localBirthData" @update:model-value="assignBirthData" show-house-system />
-                    <p v-if="timezoneWarning" class="text-warning small mt-2">{{ timezoneWarning }}</p>
-                    <p class="small text-muted">
+                    <p v-if="timezoneWarning" class="text-warning small mt-2 mb-0">{{ timezoneWarning }}</p>
+                    <p class="small text-muted mb-0">
                       Tropical zodiac via astronomia (VSOP87 / Meeus). Rising is the true Ascendant, not a copy of the Sun.
                     </p>
-                    
-                    <div class="row">
-                      <div class="col-12 text-center">
-                        <button
-                          type="button"
-                          class="btn btn-primary me-2"
-                          @click="calculateChart"
-                          :disabled="loading || !isValidData"
-                        >
-                          <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
-                          {{ loading ? 'Calculating...' : 'Calculate Chart' }}
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-success me-2"
-                          @click="saveBirthday"
-                          :disabled="!isValidData"
-                        >
-                          Save Birthday
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-secondary me-2"
-                          @click="clearForm"
-                        >
-                          Clear Form
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-info"
-                          @click="exportToPDF"
-                          :disabled="!chartData"
-                          title="Export chart and data to PDF"
-                        >
-                          📄 Export PDF
-                        </button>
-                      </div>
-                    </div>
+                  </BirthDetailsPanel>
+                  <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
+                    <button type="button" class="btn btn-primary" @click="calculateChart" :disabled="loading || !isValidData">
+                      <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
+                      {{ loading ? 'Calculating...' : 'Calculate Chart' }}
+                    </button>
+                    <button type="button" class="btn btn-success" @click="saveBirthday" :disabled="!isValidData">Save Birthday</button>
+                    <button type="button" class="btn btn-secondary" @click="clearForm">Clear Form</button>
+                    <button type="button" class="btn btn-info" @click="exportToPDF" :disabled="!chartData">Export PDF</button>
                   </div>
 
                   <!-- Chart Display -->
@@ -122,6 +92,8 @@ import AstroChartDisplay from '@/components/AstroChartDisplay.vue';
 import AstroSummary from '@/components/AstroSummary.vue';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
 import BirthDataForm from '@/components/BirthDataForm.vue';
+import BirthDetailsPanel from '@/components/BirthDetailsPanel.vue';
+import { summarizeBirth } from '@/utils/birthSummary';
 import { usePageTitle } from '@/composables/usePageTitle';
 import { calculateWesternChart, formatOffset } from '@/utils/astrologyCalculations';
 import { TIMEZONE_PRESETS } from '@/const/vedic';
@@ -134,6 +106,7 @@ export default {
     AstroSummary,
     BirthdayPicker,
     BirthDataForm,
+    BirthDetailsPanel,
   },
   setup() {
     usePageTitle('Western Astrology');
@@ -142,6 +115,7 @@ export default {
     const route = useRoute();
     
     const loading = ref(false);
+    const showForms = ref(true);
     const chartData = ref(null);
     const planetPositions = ref(null);
     const timezoneWarning = ref('');
@@ -167,6 +141,7 @@ export default {
     const assignBirthData = (next) => {
       Object.assign(localBirthData, next);
     };
+    const birthSummary = computed(() => summarizeBirth(localBirthData));
 
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
 
@@ -247,7 +222,7 @@ export default {
         });
         astrologyStore.setPlanetPositions(chart.planetPositions);
         astrologyStore.setChartData(chartData.value);
-        
+        showForms.value = false;
       } catch (error) {
         console.error('Error calculating astrology:', error);
         alert('Error calculating astrological data. Please check your inputs.');
@@ -315,6 +290,7 @@ export default {
       chartData.value = null;
       planetPositions.value = null;
       timezoneWarning.value = '';
+      showForms.value = true;
     };
 
     const startEditingBirthday = (birthday) => {
@@ -356,6 +332,8 @@ export default {
       birthdayList,
       localBirthData,
       assignBirthData,
+      showForms,
+      birthSummary,
       loading,
       chartData,
       planetPositions,
