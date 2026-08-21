@@ -44,7 +44,7 @@
                   <div class="mb-4">
                     <BirthdayPicker load-label="Load for chart" @load="loadBirthdayData" />
                     <h5 class="mb-3">Birth Information</h5>
-                    <BirthDataForm id="western" v-model="localBirthData" show-house-system />
+                    <BirthDataForm id="western" :model-value="localBirthData" @update:model-value="assignBirthData" show-house-system />
                     <p v-if="timezoneWarning" class="text-warning small mt-2">{{ timezoneWarning }}</p>
                     <p class="small text-muted">
                       Tropical zodiac via astronomia (VSOP87 / Meeus). Rising is the true Ascendant, not a copy of the Sun.
@@ -164,6 +164,10 @@ export default {
       timezoneOffset: -new Date().getTimezoneOffset(),
       houseSystem: 'placidus',
     });
+
+    const assignBirthData = (next) => {
+      Object.assign(localBirthData, next);
+    };
 
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
 
@@ -597,6 +601,7 @@ export default {
       birthdayStore,
       birthdayList,
       localBirthData,
+      assignBirthData,
       loading,
       chartData,
       planetPositions,

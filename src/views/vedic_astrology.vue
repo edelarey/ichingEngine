@@ -86,7 +86,7 @@
                   <div class="mb-4">
                     <BirthdayPicker load-label="Load for chart" @load="loadBirthdayData" />
                     <h5 class="mb-3">Birth Information</h5>
-                    <BirthDataForm id="vedic" v-model="localBirthData" />
+                    <BirthDataForm id="vedic" :model-value="localBirthData" @update:model-value="assignBirthData" />
                     <p v-if="timezoneWarning" class="text-warning small mt-2">{{ timezoneWarning }}</p>
                     <div class="row">
                       <div class="col-12 text-center">
@@ -166,6 +166,10 @@ export default {
       gender: 'MALE',
       timezoneOffset: -new Date().getTimezoneOffset(),
     });
+
+    const assignBirthData = (next) => {
+      Object.assign(localBirthData, next);
+    };
 
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
 
@@ -447,6 +451,7 @@ export default {
       birthdayStore,
       birthdayList,
       localBirthData,
+      assignBirthData,
       loading,
       chart,
       error,

@@ -121,11 +121,19 @@ export function offsetForZone(iana, date, time) {
   return dt.offset;
 }
 
-export function timezonePresetsWithBrowser() {
+export function timezonePresetsWithBrowser(extraOffset, extraLabel) {
   const browser = -new Date().getTimezoneOffset();
-  const has = TIMEZONE_PRESETS.some((t) => t.offset === browser);
-  const extra = has ? [] : [{ label: `Browser local (${formatOffset(browser)})`, offset: browser }];
-  return [...extra, ...TIMEZONE_PRESETS];
+  const extras = [];
+  const seen = new Set(TIMEZONE_PRESETS.map((t) => t.offset));
+  if (!seen.has(browser)) {
+    extras.push({ label: `Browser local (${formatOffset(browser)})`, offset: browser });
+    seen.add(browser);
+  }
+  if (typeof extraOffset === 'number' && !seen.has(extraOffset)) {
+    const name = extraLabel ? `${extraLabel} (${formatOffset(extraOffset)})` : `Birth place (${formatOffset(extraOffset)})`;
+    extras.push({ label: name, offset: extraOffset });
+  }
+  return [...extras, ...TIMEZONE_PRESETS];
 }
 
 function labelOf(props) {
@@ -135,22 +143,61 @@ function labelOf(props) {
   return bits.join(', ') || 'Unknown place';
 }
 
-export async function searchPlaces(query) {
-  const q = String(query || '').trim();
-  if (q.length < 2) return [];
+function toHit(lat, lng, label, countryCode) {
+  const latitude = Number(lat);
+  const longitude = Number(lng);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  return {
+    label: label || 'Unknown place',
+    latitude,
+    longitude,
+    countryCode: countryCode || '',
+    timezoneName: guessIanaZone(latitude, longitude, countryCode),
+  };
+}
+
+async function searchPhoton(q) {
   const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Place search failed');
   const data = await res.json();
-  return (data.features || []).map((f) => {
-    const [lng, lat] = f.geometry.coordinates;
-    const countryCode = f.properties.countrycode || f.properties.country_code || '';
-    return {
-      label: labelOf(f.properties),
-      latitude: lat,
-      longitude: lng,
-      countryCode,
-      timezoneName: guessIanaZone(lat, lng, countryCode),
-    };
-  });
+  return (data.features || [])
+    .map((f) => {
+      const [lng, lat] = f.geometry?.coordinates || [];
+      const countryCode = f.properties?.countrycode || f.properties?.country_code || '';
+      return toHit(lat, lng, labelOf(f.properties || {}), countryCode);
+    })
+    .filter(Boolean);
+}
+
+async function searchNominatim(q) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=jsonv2&addressdetails=1&limit=6`;
+  const res = await fetch(url, { headers: { Accept: 'application/json' } });
+  if (!res.ok) throw new Error('Place search failed');
+  const data = await res.json();
+  return (Array.isArray(data) ? data : [])
+    .map((item) => {
+      const addr = item.address || {};
+      const name = item.name || addr.city || addr.town || addr.village || addr.hamlet || '';
+      const label = labelOf({
+        name,
+        city: addr.city || addr.town || addr.village,
+        state: addr.state,
+        country: addr.country,
+      });
+      return toHit(item.lat, item.lon, label, addr.country_code);
+    })
+    .filter(Boolean);
+}
+
+export async function searchPlaces(query) {
+  const q = String(query || '').trim();
+  if (q.length < 2) return [];
+  try {
+    const photon = await searchPhoton(q);
+    if (photon.length) return photon;
+  } catch (_) {
+    // Photon is the fast path; Nominatim is the fallback.
+  }
+  return searchNominatim(q);
 }

@@ -19,14 +19,14 @@
     </header>
 
     <div class="container mb-5">
-      <div class="row">
-        <div class="col-12 col-lg-5 mb-4">
-          <div class="card">
+      <div class="row g-4">
+        <div class="col-12 col-xl-6">
+          <div class="card birthday-form-card">
             <div class="card-body">
               <h5 class="card-title">{{ editingId ? 'Edit birthday' : 'Add birthday' }}</h5>
-              <BirthDataForm id="bd" v-model="form" />
-              <p v-if="error" class="text-danger small">{{ error }}</p>
-              <div class="d-flex flex-wrap gap-2">
+              <BirthDataForm id="bd" :model-value="form" @update:model-value="assignForm" />
+              <p v-if="error" class="text-danger small mt-3 mb-2">{{ error }}</p>
+              <div class="d-flex flex-wrap gap-2 mt-3">
                 <button type="button" class="btn btn-primary" @click="save">
                   {{ editingId ? 'Update birthday' : 'Save birthday' }}
                 </button>
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-lg-7 mb-4">
+        <div class="col-12 col-xl-6">
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
@@ -52,7 +52,7 @@
               </div>
 
               <div v-if="birthdayList.length === 0" class="text-muted">
-                No birthdays saved yet. Add someone on the left.
+                No birthdays saved yet. Add someone with the form.
               </div>
               <div v-else>
                 <div v-for="b in birthdayList" :key="b.id" class="person-card mb-3 p-3 border rounded">
@@ -128,6 +128,10 @@ export default {
     const form = reactive(emptyForm());
     const editingId = ref(null);
     const error = ref('');
+
+    const assignForm = (next) => {
+      Object.assign(form, next);
+    };
 
     const resetForm = () => {
       Object.assign(form, emptyForm());
@@ -230,6 +234,7 @@ export default {
       birthdayStore,
       birthdayList,
       form,
+      assignForm,
       editingId,
       error,
       formatOffset,
@@ -246,6 +251,14 @@ export default {
 </script>
 
 <style scoped>
+.birthdays-page :deep(.card) {
+  margin: 0;
+  overflow: visible;
+}
+.birthday-form-card,
+.birthday-form-card :deep(.card-body) {
+  overflow: visible;
+}
 .card-title {
   border-bottom: 2px solid #6c63ff;
   padding-bottom: 0.5rem;

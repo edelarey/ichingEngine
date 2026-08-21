@@ -765,21 +765,26 @@
           };
         },
         set(v) {
-          state.name = v.name;
-          state.gender = v.gender === 'FEMALE' ? 'FEMALE' : 'MALE';
-          state.latitude = v.latitude;
-          state.longitude = v.longitude;
-          state.place = v.place;
-          state.timezoneOffset = v.timezoneOffset;
-          const day = v.date instanceof Date ? DateTime.fromJSDate(v.date) : DateTime.fromISO(String(v.date));
-          const [hour, minute] = String(v.time || '12:00').split(':').map(Number);
-          state.birthDate = DateTime.fromObject({
-            year: day.year,
-            month: day.month,
-            day: day.day,
-            hour,
-            minute,
-          }).toJSDate();
+          if (!v || typeof v !== 'object') return;
+          if (v.name !== undefined) state.name = v.name;
+          if (v.gender !== undefined) state.gender = v.gender === 'FEMALE' ? 'FEMALE' : 'MALE';
+          if (v.latitude !== undefined) state.latitude = v.latitude;
+          if (v.longitude !== undefined) state.longitude = v.longitude;
+          if (v.place !== undefined) state.place = v.place;
+          if (v.timezoneOffset !== undefined) state.timezoneOffset = v.timezoneOffset;
+          const daySource = v.date !== undefined ? v.date : state.birthDate;
+          const timeSource = v.time !== undefined ? v.time : DateTime.fromJSDate(state.birthDate).toFormat('HH:mm');
+          const day = daySource instanceof Date ? DateTime.fromJSDate(daySource) : DateTime.fromISO(String(daySource));
+          const [hour, minute] = String(timeSource || '12:00').split(':').map(Number);
+          if (day.isValid) {
+            state.birthDate = DateTime.fromObject({
+              year: day.year,
+              month: day.month,
+              day: day.day,
+              hour,
+              minute,
+            }).toJSDate();
+          }
         },
       });
 

@@ -1,5 +1,4 @@
 const { defineConfig } = require('@vue/cli-service');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
 module.exports = defineConfig({
@@ -17,36 +16,19 @@ module.exports = defineConfig({
     },
   },
 
-  // Customize CSS handling
+  // Extract CSS in production only. Extracting in `serve` produced vendor CSS
+  // files without linking Vue SFC styles, so form layout (time, city list) never applied.
   css: {
-    extract: {
-      ignoreOrder: true,
-    },
+    extract: process.env.NODE_ENV === 'production' ? { ignoreOrder: true } : false,
     loaderOptions: {
       sass: {
-        additionalData: `@import "@/assets/scss/app.scss"; @import "@/assets/scss/app.scss";`
+        additionalData: `@import "@/assets/scss/app.scss";`
       },
     },
   },
 
   // Chain Webpack for advanced customization
   chainWebpack: (config) => {
-    config.module
-      .rule('css')
-      .oneOf('vue')
-      .use('extract-css')
-      .loader(MiniCssExtractPlugin.loader)
-      .before('css-loader')
-      .end();
-
-    config.module
-      .rule('scss')
-      .oneOf('vue')
-      .use('extract-css')
-      .loader(MiniCssExtractPlugin.loader)
-      .before('css-loader')
-      .end();
-
       config.plugin('define').tap((args) => {
         args[0]['__VUE_PROD_HYDRATION_MISMATCH_DETAILS__'] = JSON.stringify(false);
         // args[0]['__VUE_OPTIONS_API__'] = JSON.stringify(false); // Set to false if you only use Composition API
