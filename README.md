@@ -1,8 +1,13 @@
 # iChing Engine
 
-Online **I Ching (Yijing)** oracle with **I-Ching astrology**, **Vedic Jyotish** natal charts, and **Western** tropical natal charts. One saved birthday list feeds all three.
+A Vue 3 app for the **I Ching (Yijing)** and three natal systems from one birthday list:
 
-Licensed **AGPL-3.0**. See [LICENSE](LICENSE).
+- Coin / yarrow-style **oracle** (64 hexagrams, changing lines)
+- **I-Ching astrology** after Sherrill & Chu (*The Astrology of I Ching*, 1976) — not BaZi, not the coin oracle
+- **Jyotish** (sidereal, Lahiri, whole-sign houses, Vimśottarī daśā)
+- **Western** tropical natal charts (astronomia VSOP87 / Meeus; true Ascendant)
+
+Licensed **AGPL-3.0**. See [LICENSE](LICENSE). Readings are educational, not medical, legal, or financial advice.
 
 ## Setup
 
@@ -11,24 +16,34 @@ npm install
 npm run serve
 ```
 
-Production build: `npm run build`. Fixture checks: `npm test`.
+Runs at `http://localhost:8080/`. Production: `npm run build`. Fixture checks: `npm test`.
 
-## What it does
+## Routes
 
 | Section | Route | Notes |
 |---|---|---|
-| Consult | `/consult` | Coin-style I Ching hexagram reading |
+| Consult | `/consult` | Coin or yarrow-style hexagram; history export/import |
 | Birthdays | `/birthdays` | Add/edit people; place search fills coordinates and timezone |
-| I-Ching Astrology | `/astrology` | Sexagenary cycles, pre-/later-heaven hexagrams |
-| Vedic | `/vedic_astrology` | Sidereal kundli, Lahiri, North/South Indian charts, daśā |
-| Western | `/western_astrology` | Tropical natal, true Rising, Placidus, aspects, transits |
-| Compare | `/compare` | Same person, three executive summaries |
+| I-Ching Astrology | `/astrology` | Pre-Heaven / Later-Heaven, controlling line, sexagenary year/month/day, life stages, PDF |
+| Vedic | `/vedic_astrology` | Sidereal kundli, North/South Indian chart, grahas, daśā |
 | Jyotish guide | `/vedic_help` | How the Vedic chart is drawn and read |
-| Relationships | `/relationship` | I-Ching compatibility using two saved birthdays |
+| Western | `/western_astrology` | Tropical natal, houses, aspects, transits, PDF |
+| Compare | `/compare` | Same person, three executive summaries |
+| Relationship | `/relationship` | Two people × I-Ching, Vedic, Western compatibility, PDF |
+| Trigrams | `/trigrams` | Eight bagua |
+| Hexagrams | `/hexagrams` | 64 hexagrams, search and King Wen / binary / name order |
+| Sequences | `/hexagram_sequence` | King Wen, Fu Xi, Grey code, Shao Yong, consultation history |
+| Life Symphony | `/life_symphony` | Tone.js reading from a birth hexagram |
+| Solfeggio | `/solfeggio` | Solfeggio player |
+| About | `/about` | What the engine is and is not |
 
-Gender on birth records is **male or female** (used by I-Ching astrology). Vedic and Western charts also need **birth time, place, and timezone** for an accurate Ascendant / Lagna.
+Gender on birth records is **Male or Female** (I-Ching astrology uses that polarity). Vedic and Western charts also need **birth time, place, and timezone** for Lagna / Rising.
 
-Charts are natal-grade (astronomia VSOP87 / Meeus), not Swiss Ephemeris. Readings are educational, not medical, legal, or financial advice.
+## Stack
+
+Vue 3, Vue Router, Pinia (persisted birthdays), Bootstrap 5, Luxon, astronomia, Tone.js, jsPDF + DejaVu fonts.
+
+Natal charts are astronomia-grade, not Swiss Ephemeris. I-Ching astrology is custom Ho Map math from the book above; there is no standard library to swap in.
 
 ## Search / deploy
 
@@ -38,7 +53,9 @@ Charts are natal-grade (astronomia VSOP87 / Meeus), not Swiss Ephemeris. Reading
 
 ## Changelog (recent)
 
-- Shared birthday page, place search, compare view
+- Shared birthday manager, place search, collapsible birth panel, compare view
 - Vedic Jyotish section; Western rewrite on astronomia
-- Plain-English executive summaries
-- I-Ching PDF; Western transits
+- Relationship compatibility across I-Ching, Vedic, and Western; shared PDF layout
+- I-Ching astrology single-page reading (no nine tabs); catalog pages for trigrams, hexagrams, sequences
+- Life Symphony and Solfeggio players
+- Plain-English executive summaries on natal pages

@@ -18,7 +18,11 @@
             v-for="line in displayLines"
             :key="line.lineNumber"
             class="hex-row"
-            :class="{ controlling: line.isControlling }"
+            :class="{
+              controlling: line.isControlling,
+              changing: line.isChanging && highlightKind === 'changing',
+              transformed: line.isChanging && highlightKind === 'transformed',
+            }"
           >
             <div class="line-marks" :class="line.isYin ? 'yin' : 'yang'">
               <span class="seg" />
@@ -36,9 +40,9 @@
         {{ controllingCaption }}
       </p>
       <p v-if="note" class="note">{{ note }}</p>
-      <p v-if="summary" class="summary">{{ summary }}</p>
+      <p v-if="showSummary && summary" class="summary">{{ summary }}</p>
       <button
-        v-if="hexagram?.binary"
+        v-if="showDetailButton && hexagram?.binary"
         type="button"
         class="btn btn-outline-primary btn-sm mt-2"
         @click="$emit('detail', hexagram.binary)"
@@ -59,6 +63,10 @@ export default {
     showAgeBands: { type: Boolean, default: false },
     note: { type: String, default: '' },
     lineIndexBase: { type: Number, default: 1 },
+    showSummary: { type: Boolean, default: true },
+    showDetailButton: { type: Boolean, default: true },
+    highlightLines: { type: Array, default: () => [] },
+    highlightKind: { type: String, default: 'changing' },
   },
   emits: ['detail'],
   computed: {
@@ -106,6 +114,7 @@ export default {
         : this.lineIndexBase === 0
           ? raw + 1
           : raw;
+      const highlighted = new Set((this.highlightLines || []).map((n) => Number(n)));
 
       return stacked
         .map((line, i) => {
@@ -114,7 +123,7 @@ export default {
           return {
             lineNumber: i + 1,
             isYin,
-            isChanging: Boolean(line?.changing) || alt.startsWith('OLD'),
+            isChanging: highlighted.has(i + 1) || Boolean(line?.changing) || alt.startsWith('OLD'),
             isControlling: controlOneBased === i + 1,
             yearRange: Array.isArray(line?.yearRange) ? line.yearRange : null,
           };
@@ -201,8 +210,12 @@ export default {
 .line-marks.yang {
   gap: 0;
 }
-.hex-row.controlling .seg {
+.hex-row.controlling .seg,
+.hex-row.changing .seg {
   background: #c62828;
+}
+.hex-row.transformed .seg {
+  background: #1565c0;
 }
 .age-label {
   font-size: 0.75rem;

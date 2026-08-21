@@ -21,18 +21,21 @@ export const useHexagramStore = defineStore('oracle', {
       return this.consultationHistory.map(consult => consult.primaryHexagram);
     },
 
-    addConsultation(question, primaryHexagram, transformedHexagram, changingLines, method) {
+    addConsultation(question, primaryHexagram, transformedHexagram, changingLines, method, extra = {}) {
       const id = Date.now();
       this.consultationHistory.push({
         id,
         timestamp: new Date().toISOString(),
-        question: question.trim(),
+        question: (question || '').trim(),
         primaryHexagram,
         transformedHexagram,
         changingLines: changingLines || [],
         method,
+        primaryLines: extra.primaryLines || null,
+        transformedLines: extra.transformedLines || null,
       });
       this.lastConsultationId = id;
+      return id;
     },
     
     removeConsultation(id) {

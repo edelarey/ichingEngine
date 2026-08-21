@@ -1,277 +1,324 @@
 <template>
   <div class="consult-page">
-    <!-- Page Header -->
     <header class="bg-light py-3 mb-4">
       <div class="container">
         <h1 class="display-4">Consult</h1>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
             <li class="breadcrumb-item active" aria-current="page">Consult the I Ching</li>
           </ol>
         </nav>
+        <p class="mb-0 lead-blurb">
+          Ask a question, then build a hexagram line by line with coins or yarrow odds.
+          Changing lines (old yin 6, old yang 9) become the transformed hexagram.
+        </p>
       </div>
     </header>
 
-    <!-- History Toggle Button -->
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <button @click="toggleHistory" class="btn btn-info btn-narrow">
-          {{ showHistory ? 'Hide History' : 'Show History' }}
+    <div class="container mb-5">
+      <div class="history-panel card mb-4">
+        <button
+          type="button"
+          class="history-toggle"
+          :aria-expanded="showHistory ? 'true' : 'false'"
+          @click="showHistory = !showHistory"
+        >
+          <span>
+            <strong>Previous consultations</strong>
+            <span class="text-muted ms-2">{{ history.length }} saved</span>
+          </span>
+          <span class="toggle-hint">{{ showHistory ? 'Hide' : 'Show' }}</span>
         </button>
+        <div v-show="showHistory" class="card-body pt-0">
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button type="button" class="btn btn-success btn-sm" @click="hexagramStore.exportHistory">Export</button>
+            <label class="btn btn-outline-primary btn-sm mb-0">
+              Import
+              <input type="file" @change="handleImport" hidden accept=".json">
+            </label>
+            <button
+              type="button"
+              class="btn btn-outline-danger btn-sm"
+              :disabled="!history.length"
+              @click="clearHistory"
+            >
+              Clear all
+            </button>
+          </div>
+          <p v-if="!history.length" class="text-muted mb-0">No consultations saved yet. Finish a six-line cast to store one.</p>
+          <div v-else class="history-list">
+            <article
+              v-for="item in historyNewestFirst"
+              :key="item.id"
+              class="history-item"
+              :class="{ active: viewingSaved === item.id }"
+            >
+              <p class="when mb-1">{{ formatWhen(item.timestamp) }} · {{ methodLabel(item.method) }}</p>
+              <p class="question mb-1">{{ item.question || 'No question entered' }}</p>
+              <p class="hex-names mb-2">
+                {{ hexName(item.primaryHexagram) }}
+                <span v-if="item.changingLines?.length"> → {{ hexName(item.transformedHexagram) }}</span>
+                <span v-if="item.changingLines?.length" class="text-muted">
+                  · lines {{ item.changingLines.join(', ') }}
+                </span>
+                <span v-else class="text-muted"> · no changing lines</span>
+              </p>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-primary btn-sm" @click="openSaved(item)">
+                  Open this reading
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm" @click="deleteSaved(item.id)">
+                  Delete
+                </button>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- History Display -->
-    <div v-if="showHistory" class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6 mb-4">
-        <div class="card text-center">
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-7">
+          <div class="cast-card card h-100">
+            <div class="card-body">
+              <h2 class="h5">Your question</h2>
+              <textarea
+                v-model="userQuestion"
+                class="form-control"
+                rows="3"
+                placeholder="Hold a question, then cast six lines from the bottom up."
+                :disabled="viewingSaved != null"
+              />
+              <div class="mt-3">
+                <span class="form-label d-block">Method</span>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" v-model="divinationMethod" value="coin" id="coinMethod" :disabled="viewingSaved != null || currentLine > 1">
+                  <label class="form-check-label" for="coinMethod">Coin toss</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" v-model="divinationMethod" value="yarrow" id="yarrowMethod" :disabled="viewingSaved != null || currentLine > 1">
+                  <label class="form-check-label" for="yarrowMethod">Yarrow stalk</label>
+                </div>
+              </div>
+              <div class="d-flex flex-wrap gap-2 mt-3">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  :disabled="currentLine > 6 || viewingSaved != null"
+                  @click="generateLine"
+                >
+                  {{ tossLabel }}
+                </button>
+                <button type="button" class="btn btn-secondary" @click="reset">New consultation</button>
+              </div>
+              <p v-if="viewingSaved" class="saved-note mt-3 mb-0">
+                Showing a saved reading. Start a new consultation to cast again.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-5">
+          <div class="cast-card card h-100">
+            <div class="card-body">
+              <h2 class="h5">Lines so far</h2>
+              <p class="text-muted small">Line 1 is the bottom. Old yin (6) and old yang (9) change.</p>
+              <div class="build-figure" v-if="primaryHexagram.length">
+                <div
+                  v-for="row in buildingRows"
+                  :key="row.n"
+                  class="hex-row"
+                  :class="{ changing: row.changing, empty: row.empty }"
+                >
+                  <span class="line-no">{{ row.empty ? '' : row.n }}</span>
+                  <div class="line-marks" :class="row.isYin ? 'yin' : 'yang'">
+                    <span v-if="!row.empty" class="seg" />
+                    <span v-if="!row.empty && row.isYin" class="seg" />
+                  </div>
+                  <span class="line-val">{{ row.empty ? '' : row.value }}</span>
+                </div>
+              </div>
+              <p v-else class="text-muted mb-0">No lines yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="hexagram" ref="readingRoot" class="reading">
+        <p class="reading-kicker">
+          <span v-if="viewingSaved">Saved reading</span>
+          <span v-else>This consultation</span>
+          · {{ methodLabel(divinationMethod) }}
+        </p>
+        <h2 class="reading-question">{{ userQuestion || 'No question entered' }}</h2>
+
+        <div class="row g-3 align-items-stretch mb-4">
+          <div class="col-12 col-lg-5">
+            <IchingHexagramCard
+              title="Primary"
+              :hexagram="hexagram"
+              :highlight-lines="changingLines"
+              highlight-kind="changing"
+              :show-summary="false"
+              :show-detail-button="false"
+            />
+          </div>
+          <div class="col-12 col-lg-2 d-flex align-items-center justify-content-center">
+            <p class="arrow mb-0" aria-hidden="true">{{ changingLines.length ? '→' : '=' }}</p>
+          </div>
+          <div class="col-12 col-lg-5">
+            <IchingHexagramCard
+              title="Transformed"
+              :hexagram="hexagramTransformed"
+              :highlight-lines="changingLines"
+              highlight-kind="transformed"
+              :show-summary="false"
+              :show-detail-button="false"
+            />
+          </div>
+        </div>
+
+        <section class="block card mb-3">
           <div class="card-body">
-            <h5 class="card-title">Consultation History</h5>
-            <div class="mb-3">
-              <button @click="hexagramStore.exportHistory" class="btn btn-success btn-sm me-2">Export History</button>
-              <label for="importFile" class="btn btn-primary btn-sm">
-                Import History
-                <input type="file" id="importFile" @change="handleImport" hidden accept=".json">
-              </label>
-              <button @click="hexagramStore.clearHistory" class="btn btn-danger btn-sm ms-2">Clear All</button>
-            </div>
-            <div v-if="hexagramStore.getConsultationHistory.length === 0">
-              <p>No consultations recorded yet.</p>
-            </div>
+            <h3>Changing lines</h3>
+            <p v-if="!changingLineReadings.length" class="mb-0">
+              No changing lines. The primary hexagram is the reading.
+            </p>
             <div v-else>
-              <div v-for="consultation in hexagramStore.getConsultationHistory" :key="consultation.id" class="mb-3">
-                <p><strong>Date:</strong> {{ DateTime.fromISO(consultation.timestamp).toLocaleString(DateTime.DATETIME_MED) }}</p>
-                <p><strong>Question:</strong> {{ consultation.question || 'No question entered' }}</p>
-                <p><strong>Method:</strong> {{ consultation.method === 'coin' ? 'Coin Toss' : 'Yarrow Stalk' }}</p>
-                <p><strong>Primary Hexagram:</strong> {{ hexagramLibrary.sequence_binary().find(h => h.binary === consultation.primaryHexagram)?.name }}</p>
-                <p><strong>Transformed Hexagram:</strong> {{ hexagramLibrary.sequence_binary().find(h => h.binary === consultation.transformedHexagram)?.name }}</p>
-                <p><strong>Changing Lines:</strong> {{ consultation.changingLines.length ? consultation.changingLines.join(', ') : 'None' }}</p>
-                <div>
-                  <router-link :to="`/hexagram_detail?hexagram=${consultation.primaryHexagram}`" class="btn btn-primary btn-sm me-2">View Primary</router-link>
-                  <router-link :to="`/hexagram_detail?hexagram=${consultation.transformedHexagram}`" class="btn btn-primary btn-sm me-2">View Transformed</router-link>
-                  <button @click="hexagramStore.removeConsultation(consultation.id)" class="btn btn-danger btn-sm">Delete</button>
-                </div>
+              <p class="text-muted">
+                Lines {{ changingLines.join(', ') }} change, moving {{ shortName(hexagram.name) }}
+                toward {{ shortName(hexagramTransformed?.name) }}.
+              </p>
+              <div v-for="line in changingLineReadings" :key="line.n" class="line-reading">
+                <h4>Line {{ line.n }}</h4>
+                <p class="mb-0">{{ line.text }}</p>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </section>
 
-    <!-- Consultation Interface -->
-    <div v-if="!showHistory">
-      <!-- Your Question Card -->
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-6 col-lg-5 mb-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title">Your Question</h5>
-              <textarea v-model="userQuestion" class="form-control text-center input-wide" rows="4" placeholder="Enter your question here..."></textarea>
-            </div>
+        <section v-if="plain(hexagram.summary)" class="block card mb-3">
+          <div class="card-body">
+            <h3>Primary · {{ shortName(hexagram.name) }}</h3>
+            <p>{{ plain(hexagram.summary) }}</p>
+            <p v-if="plain(hexagram.judgement)" class="mb-2"><strong>Judgement.</strong> {{ plain(hexagram.judgement) }}</p>
+            <router-link :to="`/hexagram_detail?hexagram=${hexagram.binary}`">Full hexagram page</router-link>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <!-- Method Selection -->
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-6 col-lg-5 mb-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title">Select Divination Method</h5>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" v-model="divinationMethod" value="coin" id="coinMethod">
-                <label class="form-check-label" for="coinMethod">Coin Toss</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" v-model="divinationMethod" value="yarrow" id="yarrowMethod">
-                <label class="form-check-label" for="yarrowMethod">Yarrow Stalk</label>
-              </div>
-            </div>
+        <section v-if="changingLines.length && hexagramTransformed && plain(hexagramTransformed.summary)" class="block card mb-3">
+          <div class="card-body">
+            <h3>Transformed · {{ shortName(hexagramTransformed.name) }}</h3>
+            <p>{{ plain(hexagramTransformed.summary) }}</p>
+            <p v-if="plain(hexagramTransformed.judgement)" class="mb-2"><strong>Judgement.</strong> {{ plain(hexagramTransformed.judgement) }}</p>
+            <router-link :to="`/hexagram_detail?hexagram=${hexagramTransformed.binary}`">Full hexagram page</router-link>
           </div>
-        </div>
-      </div>
-
-      <!-- Generate Line and Reset Buttons -->
-      <div class="row justify-content-center align-items-center">
-        <div class="col-12 col-md-6 col-lg-5 mb-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <button @click="generateLine" class="btn btn-primary btn-narrow" :disabled="currentLine > 6">
-                {{ currentLine > 6 ? 'Reset to Start Over' : `${divinationMethod === 'coin' ? 'Toss Coins' : 'Cast Yarrow'} for Line ${currentLine}` }}
-              </button>
-              <button @click="reset" class="btn btn-secondary btn-narrow ms-2">Reset</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Hexagram Display -->
-      <div class="row justify-content-center">
-        <!-- Primary Hexagram Card -->
-        <div class="col-12 col-md-6 col-lg-5 mb-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title">Primary Hexagram</h5>
-              <div v-if="primaryHexagram.length > 0" class="center-content">
-                <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight">
-                  <g v-for="(line, index) in primaryHexagram" :key="index">
-                    <g :transform="`translate(0, ${svgHeight - (index + 1) * 40})`">
-                      <template v-if="isYin(line)">
-                        <rect x="10" y="10" width="40" height="10" fill="black" />
-                        <rect x="60" y="10" width="40" height="10" fill="black" />
-                        <rect v-if="isChangingLine(line)" x="10" y="10" width="90" height="10" fill="none" stroke="red" stroke-width="2" />
-                      </template>
-                      <template v-else>
-                        <rect x="10" y="10" width="90" height="10" fill="black" />
-                        <rect v-if="isChangingLine(line)" x="10" y="10" width="90" height="10" fill="none" stroke="red" stroke-width="2" />
-                      </template>
-                    </g>
-                  </g>
-                </svg>
-              </div>
-              <div v-if="currentLine > 6">
-                <p class="card-text display-3">{{ hexagram.name }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-1">{{ hexagram.symbol }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-6">{{ hexagram.translation }}</p>
-                <div v-if="hexagram.summary" class="card-body">
-                  <h3 class="card-title">Summary</h3>
-                  <p class="card-text display-10" v-html="hexagram.summary"></p>
-                </div>
-                <div v-if="changingLines.length > 0" class="card-body">
-                  <h3 class="card-title">Changing Lines</h3>
-                  <div class="card-text display-8" v-html="getChangingLinesText()"></div>
-                </div>
-                <router-link :to="`/hexagram_detail?hexagram=${hexagram.binary}`" class="btn btn-primary btn-narrow">View Detail</router-link>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Arrow Card -->
-        <div class="col-12 col-md-2 col-lg-1 mb-4 d-flex align-items-center">
-          <div class="card text-center w-100">
-            <div class="card-body">
-              <p class="card-text display-1">→</p>
-            </div>
-          </div>
-        </div>
-        <!-- Transformed Hexagram Card -->
-        <div class="col-12 col-md-6 col-lg-5 mb-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title">Transformed Hexagram</h5>
-              <div v-if="transformedHexagram.length > 0" class="center-content">
-                <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight">
-                  <g v-for="(line, index) in transformedHexagram" :key="index">
-                    <g :transform="`translate(0, ${svgHeight - (index + 1) * 40})`">
-                      <template v-if="isYin(line)">
-                        <rect x="10" y="10" width="40" height="10" fill="black" />
-                        <rect x="60" y="10" width="40" height="10" fill="black" />
-                        <rect v-if="changedLines.includes(index + 1)" x="10" y="10" width="90" height="10" fill="none" stroke="blue" stroke-width="2" />
-                      </template>
-                      <template v-else>
-                        <rect x="10" y="10" width="90" height="10" fill="black" />
-                        <rect v-if="changedLines.includes(index + 1)" x="10" y="10" width="90" height="10" fill="none" stroke="blue" stroke-width="2" />
-                      </template>
-                    </g>
-                  </g>
-                </svg>
-              </div>
-              <div v-if="currentLine > 6">
-                <p class="card-text display-3">{{ hexagramTransformed.name }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-1">{{ hexagramTransformed.symbol }}</p>
-                <p :style="{ color: colorClass }" class="card-text display-6">{{ hexagramTransformed.translation }}</p>
-                <div v-if="hexagramTransformed.summary" class="card-body">
-                  <h3 class="card-title">Summary</h3>
-                  <p class="card-text display-10" v-html="hexagramTransformed.summary"></p>
-                </div>
-                <router-link :to="`/hexagram_detail?hexagram=${hexagramTransformed.binary}`" class="btn btn-primary btn-narrow">View Detail</router-link>
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, nextTick } from 'vue';
 import hexagramLibrary from '@/const/hexagram';
 import coin from '@/const/coin';
 import { useHexagramStore } from '@/stores/oracle';
 import { DateTime } from 'luxon';
+import IchingHexagramCard from '@/components/IchingHexagramCard.vue';
+import { usePageTitle } from '@/composables/usePageTitle';
+
+function plain(html) {
+  if (!html) return '';
+  return String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function shortName(name) {
+  if (!name) return '—';
+  return String(name).split(',')[0].trim();
+}
+
+function lookupHex(binary) {
+  if (!binary) return null;
+  const b = typeof binary === 'string' ? binary : binary.binary;
+  return (hexagramLibrary.sequence_binary() || []).find((item) => item.binary === b) || null;
+}
 
 export default {
   name: 'Consult',
+  components: { IchingHexagramCard },
   setup() {
-    const router = useRouter();
+    usePageTitle('Consult');
     const hexagramStore = useHexagramStore();
+    const readingRoot = ref(null);
 
-    // Reactive state
     const userQuestion = ref('');
     const primaryHexagram = ref([]);
     const transformedHexagram = ref([]);
     const hexagram = ref(null);
     const hexagramTransformed = ref(null);
     const changingLines = ref([]);
-    const changedLines = ref([]);
     const currentLine = ref(1);
-    const svgWidth = ref(110);
-    const svgHeight = ref(240);
     const divinationMethod = ref('coin');
     const showHistory = ref(false);
+    const viewingSaved = ref(null);
 
-    // Computed properties
-    const colorClass = computed(() => 'rgb(0,0,0)');
+    const history = computed(() => hexagramStore.getConsultationHistory || []);
+    const historyNewestFirst = computed(() => [...history.value].reverse());
 
-    // Methods
-    const isYin = (lineValue) => lineValue === 6 || lineValue === 8;
+    const tossLabel = computed(() => {
+      if (currentLine.value > 6) return 'Six lines complete';
+      const verb = divinationMethod.value === 'coin' ? 'Toss coins' : 'Cast yarrow';
+      return `${verb} for line ${currentLine.value}`;
+    });
+
+    const buildingRows = computed(() => {
+      const rows = [];
+      for (let n = 6; n >= 1; n -= 1) {
+        const value = primaryHexagram.value[n - 1];
+        if (value === undefined) {
+          rows.push({ n, empty: true, isYin: false, changing: false, value: '' });
+        } else {
+          rows.push({
+            n,
+            empty: false,
+            isYin: value === 6 || value === 8,
+            changing: value === 6 || value === 9,
+            value,
+          });
+        }
+      }
+      return rows;
+    });
+
+    const changingLineReadings = computed(() => {
+      const raw = hexagram.value?.lines;
+      if (!raw || typeof raw !== 'string' || !changingLines.value.length) return [];
+      return changingLines.value.map((n) => {
+        const pattern = new RegExp(`- \\*\\*Line ${n}:\\*\\*([^]*?)(?=(?:- \\*\\*Line \\d+:\\*\\*)|$)`, 'i');
+        const match = raw.match(pattern);
+        return {
+          n,
+          text: match && match[1] ? plain(match[1]) : 'No line text in the catalog for this position.',
+        };
+      });
+    });
+
     const isChangingLine = (lineValue) => lineValue === 6 || lineValue === 9;
 
     const generateYarrowLine = () => {
       const probabilities = [
-        { value: 6, weight: 1 }, // Old Yin (1/16)
-        { value: 7, weight: 5 }, // Young Yang (5/16)
-        { value: 8, weight: 7 }, // Young Yin (7/16)
-        { value: 9, weight: 3 }, // Old Yang (3/16)
+        { value: 6, weight: 1 },
+        { value: 7, weight: 5 },
+        { value: 8, weight: 7 },
+        { value: 9, weight: 3 },
       ];
-      const totalWeight = 16;
-      const random = Math.random() * totalWeight;
+      const random = Math.random() * 16;
       let cumulativeWeight = 0;
-
       for (const option of probabilities) {
         cumulativeWeight += option.weight;
-        if (random <= cumulativeWeight) {
-          return option.value;
-        }
+        if (random <= cumulativeWeight) return option.value;
       }
-      return 8; // Fallback
-    };
-
-    const generateLine = () => {
-      if (currentLine.value <= 6) {
-        let lineValue;
-        if (divinationMethod.value === 'coin') {
-          lineValue = coin.generateCoinLine();
-        } else {
-          lineValue = generateYarrowLine();
-        }
-        primaryHexagram.value.push(lineValue);
-        const transformedLine = transformLine(lineValue);
-        transformedHexagram.value.push(transformedLine);
-
-        if (isChangingLine(lineValue)) {
-          changedLines.value.push(currentLine.value);
-        }
-
-        currentLine.value++;
-
-        if (currentLine.value === 7) {
-          finalizeHexagrams();
-        }
-      }
+      return 8;
     };
 
     const transformLine = (lineValue) => {
@@ -280,29 +327,86 @@ export default {
         case 7: return 7;
         case 8: return 8;
         case 9: return 8;
-        default:
-          console.error('Error in transformLine:', lineValue);
-          return lineValue;
+        default: return lineValue;
       }
+    };
+
+    const generateLine = () => {
+      if (currentLine.value > 6 || viewingSaved.value != null) return;
+      const lineValue = divinationMethod.value === 'coin' ? coin.generateCoinLine() : generateYarrowLine();
+      primaryHexagram.value.push(lineValue);
+      transformedHexagram.value.push(transformLine(lineValue));
+      currentLine.value += 1;
+      if (currentLine.value === 7) finalizeHexagrams();
     };
 
     const finalizeHexagrams = () => {
       const primaryBinary = coin.transformCoinHexagramToBinary(primaryHexagram.value);
       const secondaryBinary = coin.transformCoinHexagramToBinary(transformedHexagram.value);
-      hexagram.value = hexagramLibrary.sequence_binary().find((item) => item.binary === primaryBinary);
-      hexagramTransformed.value = hexagramLibrary.sequence_binary().find((item) => item.binary === secondaryBinary);
+      hexagram.value = lookupHex(primaryBinary);
+      hexagramTransformed.value = lookupHex(secondaryBinary);
       changingLines.value = primaryHexagram.value
         .map((value, index) => (isChangingLine(value) ? index + 1 : null))
         .filter((line) => line !== null);
 
       hexagramStore.setHexagram(primaryBinary);
-      hexagramStore.addConsultation(
+      const id = hexagramStore.addConsultation(
         userQuestion.value,
         primaryBinary,
         secondaryBinary,
         changingLines.value,
-        divinationMethod.value
+        divinationMethod.value,
+        {
+          primaryLines: [...primaryHexagram.value],
+          transformedLines: [...transformedHexagram.value],
+        },
       );
+      viewingSaved.value = id;
+      nextTick(() => {
+        readingRoot.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    };
+
+    const restoreLines = (item) => {
+      if (Array.isArray(item.primaryLines) && item.primaryLines.length === 6) {
+        const primary = [...item.primaryLines];
+        const transformed = Array.isArray(item.transformedLines) && item.transformedLines.length === 6
+          ? [...item.transformedLines]
+          : primary.map(transformLine);
+        return { primary, transformed };
+      }
+      const binary = typeof item.primaryHexagram === 'string'
+        ? item.primaryHexagram
+        : item.primaryHexagram?.binary || '';
+      const changing = item.changingLines || [];
+      const primary = String(binary).split('').map((bit, i) => {
+        const ch = changing.includes(i + 1);
+        return bit === '1' ? (ch ? 9 : 7) : (ch ? 6 : 8);
+      });
+      return { primary, transformed: primary.map(transformLine) };
+    };
+
+    const openSaved = (item) => {
+      const { primary, transformed } = restoreLines(item);
+      userQuestion.value = item.question || '';
+      divinationMethod.value = item.method === 'yarrow' ? 'yarrow' : 'coin';
+      primaryHexagram.value = primary;
+      transformedHexagram.value = transformed;
+      changingLines.value = [...(item.changingLines || [])];
+      currentLine.value = 7;
+      viewingSaved.value = item.id;
+      const pBin = typeof item.primaryHexagram === 'string'
+        ? item.primaryHexagram
+        : coin.transformCoinHexagramToBinary(primary);
+      const tBin = typeof item.transformedHexagram === 'string'
+        ? item.transformedHexagram
+        : coin.transformCoinHexagramToBinary(transformed);
+      hexagram.value = lookupHex(pBin);
+      hexagramTransformed.value = lookupHex(tBin);
+      showHistory.value = false;
+      nextTick(() => {
+        readingRoot.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     };
 
     const reset = () => {
@@ -311,29 +415,19 @@ export default {
       hexagram.value = null;
       hexagramTransformed.value = null;
       changingLines.value = [];
-      changedLines.value = [];
       currentLine.value = 1;
       userQuestion.value = '';
+      viewingSaved.value = null;
     };
 
-    const getChangingLinesText = () => {
-      if (!hexagram.value || !changingLines.value.length) return '';
-      const hexagramData = hexagramLibrary.sequence_binary().find((item) => item.binary === hexagram.value.binary);
-      if (!hexagramData || !hexagramData.lines) return 'No changing lines information available';
+    const hexName = (binary) => shortName(lookupHex(binary)?.name);
 
-      let result = '';
-      changingLines.value.forEach((lineNum) => {
-        const pattern = new RegExp(`- \\*\\*Line ${lineNum}:\\*\\*([^]*?)(?=(?:- \\*\\*Line \\d+:\\*\\*)|$)`, 'i');
-        const match = hexagramData.lines.match(pattern);
-        if (match && match[1]) {
-          result += `<p><strong>Line ${lineNum}:</strong> ${match[1].trim()}</p>`;
-        }
-      });
-      return result || 'No changing lines found';
-    };
+    const methodLabel = (method) => (method === 'yarrow' ? 'Yarrow stalk' : 'Coin toss');
 
-    const toggleHistory = () => {
-      showHistory.value = !showHistory.value;
+    const formatWhen = (stamp) => {
+      if (!stamp) return '';
+      const dt = DateTime.fromISO(stamp);
+      return dt.isValid ? dt.toLocaleString(DateTime.DATETIME_MED) : String(stamp);
     };
 
     const handleImport = (event) => {
@@ -342,58 +436,180 @@ export default {
         hexagramStore.importHistory(file).catch((error) => {
           alert('Failed to import history: ' + error.message);
         });
-        event.target.value = ''; // Reset file input
+        event.target.value = '';
       }
     };
 
-    onMounted(() => {
-      reset();
-    });
+    const deleteSaved = (id) => {
+      hexagramStore.removeConsultation(id);
+      if (viewingSaved.value === id) reset();
+    };
+
+    const clearHistory = () => {
+      if (confirm('Clear all saved consultations?')) {
+        hexagramStore.clearHistory();
+        if (viewingSaved.value) reset();
+      }
+    };
 
     return {
-      hexagramLibrary,
       userQuestion,
       primaryHexagram,
-      transformedHexagram,
       hexagram,
       hexagramTransformed,
       changingLines,
-      changedLines,
       currentLine,
-      svgWidth,
-      svgHeight,
       divinationMethod,
       showHistory,
+      viewingSaved,
+      readingRoot,
       hexagramStore,
-      DateTime,
-      colorClass,
-      isYin,
-      isChangingLine,
+      history,
+      historyNewestFirst,
+      tossLabel,
+      buildingRows,
+      changingLineReadings,
       generateLine,
       reset,
-      getChangingLinesText,
-      toggleHistory,
+      openSaved,
       handleImport,
+      deleteSaved,
+      clearHistory,
+      hexName,
+      methodLabel,
+      formatWhen,
+      plain,
+      shortName,
     };
   },
 };
 </script>
 
 <style scoped>
-/* Add any necessary styles here */
-.btn-narrow {
-  padding: 0.25rem 0.5rem;
+.lead-blurb {
+  max-width: 46rem;
+  color: #4a3b16;
 }
-.input-wide {
-  width: 100%;
+.history-panel,
+.cast-card,
+.block {
+  margin: 0;
+  border: 1px solid #e6d5a8;
+  background: #fffdf7;
 }
-.hexagram-svg {
-  margin: 0 auto;
-  display: block;
-}
-.center-content {
+.history-toggle {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  width: 100%;
+  border: 0;
+  background: #fff8e8;
+  text-align: left;
+  padding: 0.9rem 1.15rem;
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+.toggle-hint {
+  font-weight: 600;
+  color: #5b4cdb;
+}
+.history-item {
+  border-top: 1px solid #efe4c6;
+  padding: 0.9rem 0;
+}
+.history-item.active {
+  background: #fff8e8;
+  margin: 0 -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.when {
+  font-size: 0.8rem;
+  color: #8a6a22;
+  font-weight: 700;
+}
+.question {
+  color: #3d2e10;
+  font-weight: 600;
+}
+.hex-names {
+  font-size: 0.95rem;
+  color: #5b4a22;
+}
+.saved-note {
+  color: #8a6a22;
+  font-size: 0.9rem;
+}
+.build-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-width: 14rem;
+}
+.hex-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.line-no,
+.line-val {
+  width: 1.2rem;
+  font-size: 0.75rem;
+  color: #8a6a22;
+  text-align: center;
+}
+.line-marks {
+  display: flex;
+  width: 6.4rem;
+  height: 0.42rem;
+  gap: 0.7rem;
+}
+.line-marks .seg {
+  flex: 1;
+  background: #1a1a1a;
+  border-radius: 1px;
+}
+.line-marks.yang {
+  gap: 0;
+}
+.hex-row.changing .seg {
+  background: #c62828;
+}
+.hex-row.empty .line-marks {
+  background: #efe4c6;
+  border-radius: 1px;
+}
+.reading-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8a6a22;
+  margin-bottom: 0.25rem;
+}
+.reading-question {
+  font-size: 1.45rem;
+  color: #3d2e10;
+  margin-bottom: 1.25rem;
+}
+.arrow {
+  font-size: 2.2rem;
+  color: #8a6a22;
+}
+.block h3 {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8a6a22;
+  margin-bottom: 0.6rem;
+}
+.line-reading {
+  padding: 0.65rem 0;
+  border-top: 1px solid #efe4c6;
+}
+.line-reading h4 {
+  font-size: 1rem;
+  color: #3d2e10;
+  margin-bottom: 0.2rem;
 }
 </style>

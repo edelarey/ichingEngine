@@ -1,7 +1,7 @@
 {
   "name": "ichingengine",
   "version": "1.0.0",
-  "description": "A fresh iChing Engine app",
+  "description": "I Ching oracle with I-Ching, Vedic, and Western natal charts",
   "main": "src/main.js",
   "scripts": {
     "serve": "vue-cli-service serve",

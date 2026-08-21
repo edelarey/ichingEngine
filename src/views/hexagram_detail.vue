@@ -1,152 +1,265 @@
 <template>
   <div class="hexagram-detail-page">
-    <!-- Page Header (Inline) -->
     <header class="bg-light py-3 mb-4">
       <div class="container">
-        <h1 class="display-4">Hexagram Detail</h1>
+        <h1 class="display-4">{{ displayName || 'Hexagram' }}</h1>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/consult">Hexagrams</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Hexagram Detail</li>
+            <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
+            <li class="breadcrumb-item"><router-link to="/hexagrams">Hexagrams</router-link></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ displayName || 'Detail' }}</li>
           </ol>
         </nav>
       </div>
     </header>
 
-    <!-- Hexagram Detail Card -->
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6 mb-4">
-        <div class="card">
-          <div class="card-body text-center">
-            <h3 class="card-title">Hexagram Detail</h3>
-            <p class="card-text display-3">{{ hexagram.name }}</p>
-            <p :style="{ color: colorClass }" class="card-text display-6">{{ hexagram.binary }}</p>
-            <p :style="{ color: colorClass }" class="card-text display-1">{{ hexagram.symbol }}</p>
-            <p :style="{ color: colorClass }" class="card-text display-1">{{ hexagram.hexagram }}</p>
-            <p :style="{ color: colorClass }" class="card-text display-5">{{ hexagram.translation }}</p>
-            <div v-if="hexagram.summary" class="card-body">
-              <h3 class="card-title">Summary</h3>
-              <p class="card-text display-10" v-html="hexagram.summary"></p>
-            </div>
-
-            <h5 class="card-title mt-4">Above</h5>
-            <p class="card-text display-3">{{ above.name }}</p>
-            <p :style="{ color: aboveColorClass }" class="card-text display-3">{{ above.trigram }}</p>
-            <p class="card-text display-5">{{ aboveNature }} : {{ aboveTranslation }}</p>
-            <router-link :to="`/trigram_detail?trigram=${above.binary}`" class="btn btn-primary mt-2">Trigram Detail</router-link>
-
-            <h5 class="card-title mt-4">Below</h5>
-            <p class="card-text display-3">{{ below.name }}</p>
-            <p :style="{ color: belowColorClass }" class="card-text display-3">{{ below.trigram }}</p>
-            <p class="card-text display-5">{{ belowNature }} : {{ belowTranslation }}</p>
-            <router-link :to="`/trigram_detail?trigram=${below.binary}`" class="btn btn-primary mt-2">Trigram Detail</router-link>
-
-            <div class="mt-4">
-              <router-link to="/consult" class="btn btn-link">Back to Hexagrams</router-link>
-            </div>
-          </div>
-
-          <div v-if="hexagram.explanation" class="card-body">
-            <h3 class="card-title">Explanation</h3>
-            <p class="card-text display-10" v-html="hexagram.explanation"></p>
-          </div>
-
-          <div v-if="hexagram.image" class="card-body">
-            <h3 class="card-title">Image</h3>
-            <p class="card-text display-10">{{ hexagram.image }}</p>
-          </div>
-
-          <div v-if="hexagram.judgement" class="card-body">
-            <h3 class="card-title">The Judgement</h3>
-            <p class="card-text display-10" v-html="hexagram.judgement"></p>
-          </div>
-
-          <div v-if="hexagram.lines" class="card-body">
-            <h3 class="card-title">The Lines</h3>
-            <div v-for="(line, index) in formattedLines" :key="index" class="mb-3">
-              <h5 class="card-subtitle mb-2 text-muted">{{ line.title }}</h5>
-              <p class="card-text display-10" v-html="line.text"></p>
-            </div>
-            <p v-if="formattedLines.length === 0" class="card-text display-10">No line information available.</p>
-          </div>
+    <div class="container mb-5">
+      <div v-if="!hexagram.binary" class="card empty">
+        <div class="card-body">
+          <p class="mb-2">No hexagram in the address.</p>
+          <router-link to="/hexagrams">Browse the 64 hexagrams</router-link>
         </div>
       </div>
+
+      <template v-else>
+        <div class="pager mb-3">
+          <router-link
+            v-if="prev"
+            :to="`/hexagram_detail?hexagram=${prev.binary}`"
+            class="btn btn-outline-secondary btn-sm"
+          >
+            ← {{ shortName(prev.name) }}
+          </router-link>
+          <span v-else></span>
+          <router-link
+            v-if="next"
+            :to="`/hexagram_detail?hexagram=${next.binary}`"
+            class="btn btn-outline-secondary btn-sm"
+          >
+            {{ shortName(next.name) }} →
+          </router-link>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-12 col-lg-5">
+            <IchingHexagramCard
+              :title="kingWenLabel"
+              :hexagram="hexagram"
+              :show-summary="false"
+              :show-detail-button="false"
+            />
+          </div>
+          <div class="col-12 col-lg-7">
+            <p class="translation-lead">{{ hexagram.translation }}</p>
+            <p v-if="hexagram.zodiac" class="text-muted">Zodiac flavour: {{ hexagram.zodiac }}</p>
+            <p class="text-muted">Binary {{ hexagram.binary }}</p>
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <IchingTrigramTile
+                  title="Above"
+                  :trigram="above"
+                  :to="above.binary ? `/trigram_detail?trigram=${above.binary}` : ''"
+                />
+              </div>
+              <div class="col-12 col-md-6">
+                <IchingTrigramTile
+                  title="Below"
+                  :trigram="below"
+                  :to="below.binary ? `/trigram_detail?trigram=${below.binary}` : ''"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section v-if="summary" class="block card mb-3">
+          <div class="card-body">
+            <h2>Summary</h2>
+            <p class="mb-0">{{ summary }}</p>
+          </div>
+        </section>
+        <section v-if="judgement" class="block card mb-3">
+          <div class="card-body">
+            <h2>The Judgement</h2>
+            <p class="mb-0">{{ judgement }}</p>
+          </div>
+        </section>
+        <section v-if="image" class="block card mb-3">
+          <div class="card-body">
+            <h2>Image</h2>
+            <p class="mb-0">{{ image }}</p>
+          </div>
+        </section>
+        <section v-if="explanation" class="block card mb-3">
+          <div class="card-body">
+            <h2>Explanation</h2>
+            <p class="mb-0">{{ explanation }}</p>
+          </div>
+        </section>
+        <section v-if="formattedLines.length" class="block card mb-4">
+          <div class="card-body">
+            <h2>The Lines</h2>
+            <div v-for="(line, i) in formattedLines" :key="i" class="line-block">
+              <h3>{{ line.title }}</h3>
+              <p class="mb-0">{{ line.text }}</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="pager">
+          <router-link
+            v-if="prev"
+            :to="`/hexagram_detail?hexagram=${prev.binary}`"
+            class="btn btn-outline-secondary btn-sm"
+          >
+            ← {{ shortName(prev.name) }}
+          </router-link>
+          <router-link to="/hexagrams" class="btn btn-link">All hexagrams</router-link>
+          <router-link
+            v-if="next"
+            :to="`/hexagram_detail?hexagram=${next.binary}`"
+            class="btn btn-outline-secondary btn-sm"
+          >
+            {{ shortName(next.name) }} →
+          </router-link>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
-import hexagram from '@/const/hexagram';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useHead } from '@vueuse/head';
+import hexagramConst from '@/const/hexagram';
 import bagua from '@/const/bagua';
-import _ from 'lodash';
+import IchingHexagramCard from '@/components/IchingHexagramCard.vue';
+import IchingTrigramTile from '@/components/IchingTrigramTile.vue';
+
+function plain(html) {
+  if (!html) return '';
+  return String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function shortName(name) {
+  if (!name) return '—';
+  return String(name).split(',')[0].trim();
+}
 
 export default {
   name: 'HexagramDetail',
-  data() {
-    return {
-      hexagram: {},
-      above: {},
-      below: {},
-    };
-  },
-  computed: {
-    colorClass() {
-      return 'rgb(0,0,0)';
-    },
-    aboveColorClass() {
-      if (!_.isEmpty(this.above)) {
-        const rgb = `rgb(${this.above.description.color.color[0]}, ${this.above.description.color.color[1]}, ${this.above.description.color.color[2]})`;
-        return rgb === 'rgb(255,255,255)' ? 'rgb(0,0,0)' : rgb;
-      }
-      return 'rgb(0,0,0)';
-    },
-    belowColorClass() {
-      if (!_.isEmpty(this.below)) {
-        const rgb = `rgb(${this.below.description.color.color[0]}, ${this.below.description.color.color[1]}, ${this.below.description.color.color[2]})`;
-        return rgb === 'rgb(255,255,255)' ? 'rgb(0,0,0)' : rgb;
-      }
-      return 'rgb(0,0,0)';
-    },
-    aboveTranslation() {
-      return !_.isEmpty(this.above) ? this.above.description.translation : '';
-    },
-    belowTranslation() {
-      return !_.isEmpty(this.below) ? this.below.description.translation : '';
-    },
-    aboveNature() {
-      return !_.isEmpty(this.above) ? this.above.description.nature : '';
-    },
-    belowNature() {
-      return !_.isEmpty(this.below) ? this.below.description.nature : '';
-    },
-    formattedLines() {
-      if (!this.hexagram.lines) return [];
+  components: { IchingHexagramCard, IchingTrigramTile },
+  setup() {
+    const route = useRoute();
+    const list = hexagramConst.sequence_kingwen() || [];
+    const trigrams = bagua.sequence_Gua_OldFamilyOrder() || [];
 
+    const hexagram = computed(() => {
+      const binary = route.query.hexagram;
+      if (!binary) return {};
+      return (hexagramConst.sequence_binary() || []).find((item) => item.binary === binary) || {};
+    });
+
+    const index = computed(() => list.findIndex((item) => item.binary === hexagram.value.binary));
+    const prev = computed(() => (index.value > 0 ? list[index.value - 1] : null));
+    const next = computed(() => (index.value >= 0 && index.value < list.length - 1 ? list[index.value + 1] : null));
+
+    const displayName = computed(() => shortName(hexagram.value.name));
+    const kingWenLabel = computed(() => {
+      if (!hexagram.value.kingwen) return 'Hexagram';
+      return `King Wen ${hexagram.value.kingwen}`;
+    });
+
+    const above = computed(() => {
+      const binary = hexagram.value.binary;
+      if (!binary) return hexagram.value.above || {};
+      return trigrams.find((item) => item.binary === binary.substring(0, 3)) || hexagram.value.above || {};
+    });
+    const below = computed(() => {
+      const binary = hexagram.value.binary;
+      if (!binary) return hexagram.value.below || {};
+      return trigrams.find((item) => item.binary === binary.substring(3, 6)) || hexagram.value.below || {};
+    });
+
+    const summary = computed(() => plain(hexagram.value.summary));
+    const judgement = computed(() => plain(hexagram.value.judgement));
+    const image = computed(() => plain(hexagram.value.image));
+    const explanation = computed(() => plain(hexagram.value.explanation));
+
+    const formattedLines = computed(() => {
+      const raw = hexagram.value.lines;
+      if (!raw || typeof raw !== 'string') return [];
       const lines = [];
       const linePattern = /- \*\*Line (\d+):\*\*([^]*?)(?=(?:- \*\*Line \d+:\*\*)|$)/gi;
-      let match;
-
-      while ((match = linePattern.exec(this.hexagram.lines)) !== null) {
-        const lineNumber = match[1];
-        const lineText = match[2].trim();
-        lines.push({
-          title: `Line ${lineNumber}`,
-          text: lineText,
-        });
+      let match = linePattern.exec(raw);
+      while (match) {
+        lines.push({ title: `Line ${match[1]}`, text: plain(match[2]) });
+        match = linePattern.exec(raw);
       }
-
       return lines;
-    },
-  },
-  methods: {
-    async getData() {
-      this.hexagram = hexagram.sequence_binary().find((item) => item.binary === this.$route.query.hexagram) || {};
-      this.above = bagua.sequence_Gua_OldFamilyOrder().find((item) => item.binary === this.hexagram.binary?.substring(0, 3)) || {};
-      this.below = bagua.sequence_Gua_OldFamilyOrder().find((item) => item.binary === this.hexagram.binary?.substring(3, 6)) || {};
-    },
-  },
-  mounted() {
-    this.getData();
+    });
+
+    useHead({
+      title: computed(() => displayName.value && displayName.value !== '—'
+        ? `${displayName.value} · Hexagram | iChing Engine`
+        : 'Hexagram | iChing Engine'),
+    });
+
+    return {
+      hexagram,
+      above,
+      below,
+      prev,
+      next,
+      displayName,
+      kingWenLabel,
+      summary,
+      judgement,
+      image,
+      explanation,
+      formattedLines,
+      shortName,
+    };
   },
 };
 </script>
+
+<style scoped>
+.pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+.empty,
+.block {
+  margin: 0;
+  border: 1px solid #e6d5a8;
+  background: #fffdf7;
+}
+.translation-lead {
+  font-size: 1.25rem;
+  color: #3d2e10;
+}
+.block h2 {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8a6a22;
+  margin-bottom: 0.6rem;
+}
+.line-block {
+  padding: 0.7rem 0;
+  border-top: 1px solid #efe4c6;
+}
+.line-block:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+.line-block h3 {
+  font-size: 1rem;
+  color: #3d2e10;
+  margin-bottom: 0.25rem;
+}
+</style>

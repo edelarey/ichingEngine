@@ -11,8 +11,15 @@
       </div>
       <p v-if="bodyPart" class="meta mb-2">Body: {{ bodyPart }}</p>
       <p v-if="translation" class="meta mb-3">{{ translation }}</p>
+      <router-link
+        v-if="to"
+        :to="to"
+        class="btn btn-outline-primary btn-sm"
+      >
+        Trigram detail
+      </router-link>
       <button
-        v-if="trigram?.binary"
+        v-else-if="trigram?.binary"
         type="button"
         class="btn btn-outline-primary btn-sm"
         @click="$emit('detail', trigram.binary)"
@@ -29,6 +36,7 @@ export default {
   props: {
     title: { type: String, default: '' },
     trigram: { type: Object, default: null },
+    to: { type: String, default: '' },
   },
   emits: ['detail'],
   computed: {
