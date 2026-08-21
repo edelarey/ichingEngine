@@ -32,16 +32,17 @@ export default {
   name: 'BirthdayPicker',
   props: {
     loadLabel: { type: String, default: 'Load' },
+    independent: { type: Boolean, default: false },
   },
   emits: ['load'],
   setup(props, { emit }) {
     const birthdayStore = useBirthdayStore();
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
-    const selectedId = ref(birthdayStore.selectedId);
+    const selectedId = ref(props.independent ? null : birthdayStore.selectedId);
     const selectId = `birthday-picker-${Math.random().toString(36).slice(2, 8)}`;
 
     watch(() => birthdayStore.selectedId, (id) => {
-      selectedId.value = id;
+      if (!props.independent) selectedId.value = id;
     });
 
     const optionLabel = (b) => {
@@ -53,7 +54,7 @@ export default {
     const load = () => {
       const found = birthdayStore.getBirthdayById(selectedId.value);
       if (!found) return;
-      birthdayStore.selectBirthday(found.id);
+      if (!props.independent) birthdayStore.selectBirthday(found.id);
       emit('load', found);
     };
 

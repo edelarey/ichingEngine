@@ -1,876 +1,477 @@
 <template>
-  <div class="astrology-page">
-    <!-- Page Header (Inline) -->
+  <div class="relationship-page">
     <header class="bg-light py-3 mb-4">
       <div class="container">
-        <h1 class="display-4">I-Ching Relationship Compatibility Reading</h1>
+        <h1 class="display-4">Relationship compatibility</h1>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">I Ching Compatibility</li>
+            <li class="breadcrumb-item active" aria-current="page">Relationship</li>
           </ol>
         </nav>
+        <p class="mb-0">
+          One pair, three systems: I-Ching hexagrams, Vedic Moon and Lagna, Western synastry.
+          Load saved people or enter births, then calculate.
+        </p>
       </div>
     </header>
 
-    <!-- Control Panel: Toggle Sections -->
-    <div class="container my-6">
-      <div class="card">
-        <div class="card-header bg-dark text-white">
-          <h5 class="mb-0">Control Your Compatibility Reading</h5>
-        </div>
-        <div class="card-body">
-          <div class="row g-2 justify-content-center">
-            <div class="col-auto">
-              <button @click="state.showBirthdayHistory = !state.showBirthdayHistory" class="btn btn-sm" :class="state.showBirthdayHistory ? 'btn-success' : 'btn-secondary'">
-                {{ state.showBirthdayHistory ? 'Hide' : 'Show' }} Birthday History
-              </button>
+    <div class="container mb-5">
+      <div class="card mb-3">
+        <button
+          type="button"
+          class="forms-toggle"
+          :aria-expanded="showForms ? 'true' : 'false'"
+          @click="showForms = !showForms"
+        >
+          <span>
+            <strong>Birth details</strong>
+            <span class="text-muted ms-2">{{ peopleSummary }}</span>
+          </span>
+          <span class="toggle-hint">{{ showForms ? 'Hide' : 'Show' }}</span>
+        </button>
+        <div v-show="showForms" class="card-body pt-0">
+          <div class="row g-4">
+            <div class="col-12 col-lg-6">
+              <h5 class="card-title">Person 1</h5>
+              <BirthdayPicker independent load-label="Load as person 1" @load="(b) => loadPerson(1, b)" />
+              <BirthDataForm id="rel1" :model-value="person1" @update:model-value="(p) => assignPerson(person1, p)" />
             </div>
-            <div class="col-auto">
-              <button @click="state.showBirthdayEntry = !state.showBirthdayEntry" class="btn btn-sm" :class="state.showBirthdayEntry ? 'btn-success' : 'btn-secondary'">
-                {{ state.showBirthdayEntry ? 'Hide' : 'Show' }} Birthday Entry
-              </button>
-            </div>
-            <div class="col-auto">
-              <button @click="state.showCompatibilityResults = !state.showCompatibilityResults" class="btn btn-sm" :class="state.showCompatibilityResults ? 'btn-success' : 'btn-secondary'">
-                {{ state.showCompatibilityResults ? 'Hide' : 'Show' }} Compatibility Results
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Birthday History Display -->
-    <div v-if="state.showBirthdayHistory" class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-title">Saved birthdays</h5>
-            <p class="small">
-              Add or edit people on the
-              <router-link to="/birthdays">Birthdays</router-link>
-              page, then load them here as Person 1 or Person 2.
-            </p>
-            <div v-if="birthdayList.length === 0">
-              <p>No birthdays recorded yet. <router-link to="/birthdays">Add one</router-link>.</p>
-            </div>
-            <div v-else>
-              <div v-for="birthday in birthdayList" :key="birthday.id" class="mb-3 p-2 border rounded">
-                <p class="mb-1"><strong>{{ birthday.name || 'Unnamed' }}</strong> — {{ dateTimeFormatSimple(birthday.birthday) }}</p>
-                <div>
-                  <button @click="loadBirthday(birthday, 1)" class="btn btn-primary btn-sm me-2">Load Person 1</button>
-                  <button @click="loadBirthday(birthday, 2)" class="btn btn-primary btn-sm">Load Person 2</button>
-                </div>
-              </div>
+            <div class="col-12 col-lg-6">
+              <h5 class="card-title">Person 2</h5>
+              <BirthdayPicker independent load-label="Load as person 2" @load="(b) => loadPerson(2, b)" />
+              <BirthDataForm id="rel2" :model-value="person2" @update:model-value="(p) => assignPerson(person2, p)" />
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Birthday Entry Interface for Two People -->
-    <div v-if="state.showBirthdayEntry" class="row justify-content-center">
-      <div class="col-12 col-md-10 col-lg-8">
-        <div class="card text-center">
-          <h3 class="card-header py-3">Enter Details for Compatibility Reading</h3>
-          <div class="card-body">
-            <div class="row justify-content-center">
-              <!-- Person 1 Details -->
-              <div class="col-12 col-md-6 mb-4">
-                <h5 class="card-title mb-3">Person 1 Details</h5>
-                <!-- Name Input -->
-                <div class="mb-3">
-                  <h6 :style="{ color: colorClass }" class="card-text mb-2">Name</h6>
-                  <input
-                    v-model="state.person1.name"
-                    :list="`saved-names-person1-${state.id}`"
-                    class="form-control input-narrow"
-                    placeholder="Type Person 1's name or select from the list"
-                  />
-                  <datalist :id="`saved-names-person1-${state.id}`">
-                    <option v-for="birthday in birthdayList" :key="birthday.id" :value="birthday.name">{{ birthday.name }}</option>
-                  </datalist>
-                </div>
-                <!-- Birth Date Input -->
-                <div class="mb-3">
-                  <h6 :style="{ color: colorClass }" class="card-text mb-2">Birth Date</h6>
-                  <Datepicker
-                    placeholder="Birth Date"
-                    v-model="state.person1.birthDate"
-                    format="yyyy-MM-dd HH:mm"
-                    previewFormat="yyyy-MM-dd HH:mm"
-                    :enableTimePicker="true"
-                    :disabled="false"
-                    :min-date="state.minDate"
-                    :max-date="state.maxDate"
-                    class="w-100 input-narrow"
-                  />
-                </div>
-                <!-- Gender Select -->
-                <div class="mb-3">
-                  <h6 :style="{ color: colorClass }" class="card-text mb-2">Gender</h6>
-                  <select v-model="state.person1.gender" class="form-control input-narrow">
-                    <option value="MALE">MALE</option>
-                    <option value="FEMALE">FEMALE</option>
-                  </select>
-                </div>
-                <!-- Latitude and Longitude -->
-                <div class="mb-3">
-                  <div class="row justify-content-center">
-                    <div class="col-12 col-md-6 mb-3 mb-md-0">
-                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Latitude</h6>
-                      <input v-model.number="state.person1.latitude" type="number" min="-90" max="90" step="any" class="form-control input-narrow" placeholder="0.00 Latitude" />
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Longitude</h6>
-                      <input v-model.number="state.person1.longitude" type="number" min="-180" max="180" step="any" class="form-control input-narrow" placeholder="0.00 Longitude" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Person 2 Details -->
-              <div class="col-12 col-md-6 mb-4">
-                <h5 class="card-title mb-3">Person 2 Details</h5>
-                <!-- Name Input -->
-                <div class="mb-3">
-                  <h6 :style="{ color: colorClass }" class="card-text mb-2">Name</h6>
-                  <input
-                    v-model="state.person2.name"
-                    :list="`saved-names-person2-${state.id}`"
-                    class="form-control input-narrow"
-                    placeholder="Type Person 2's name or select from the list"
-                  />
-                  <datalist :id="`saved-names-person2-${state.id}`">
-                    <option v-for="birthday in birthdayList" :key="birthday.id" :value="birthday.name">{{ birthday.name }}</option>
-                  </datalist>
-                </div>
-                <!-- Birth Date Input -->
-                <div class="mb-3">
-                  <h6 :style="{ color: colorClass }" class="card-text mb-2">Birth Date</h6>
-                  <Datepicker
-                    placeholder="Birth Date"
-                    v-model="state.person2.birthDate"
-                    format="yyyy-MM-dd HH:mm"
-                    previewFormat="yyyy-MM-dd HH:mm"
-                    :enableTimePicker="true"
-                    :disabled="false"
-                    :min-date="state.minDate"
-                    :max-date="state.maxDate"
-                    class="w-100 input-narrow"
-                  />
-                </div>
-                <!-- Gender Select -->
-                <div class="mb-3">
-                  <h6 :style="{ color: colorClass }" class="card-text mb-2">Gender</h6>
-                  <select v-model="state.person2.gender" class="form-control input-narrow">
-                    <option value="MALE">MALE</option>
-                    <option value="FEMALE">FEMALE</option>
-                  </select>
-                </div>
-                <!-- Latitude and Longitude -->
-                <div class="mb-3">
-                  <div class="row justify-content-center">
-                    <div class="col-12 col-md-6 mb-3 mb-md-0">
-                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Latitude</h6>
-                      <input v-model.number="state.person2.latitude" type="number" min="-90" max="90" step="any" class="form-control input-narrow" placeholder="0.00 Latitude" />
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <h6 :style="{ color: colorClass }" class="card-text mb-2">Longitude</h6>
-                      <input v-model.number="state.person2.longitude" type="number" min="-180" max="180" step="any" class="form-control input-narrow" placeholder="0.00 Longitude" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Buttons Section -->
-            <div class="row justify-content-center">
-              <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <button @click="calculateCompatibility" class="btn btn-primary btn-narrow" :disabled="state.loading">
-                  {{ state.loading ? 'Calculating...' : 'Calculate Compatibility' }}
-                </button>
-              </div>
-              <div class="col-12 col-md-8 col-lg-6 mb-3">
-                <button @click="saveBirthdays" class="btn btn-primary btn-narrow">Save Both Birthdays</button>
-              </div>
-              <div v-if="state.editingBirthday" class="col-12 col-md-8 col-lg-6 mb-3">
-                <button @click="updateBirthday" class="btn btn-success btn-narrow">Update Birthday</button>
-                <button @click="cancelEditing" class="btn btn-secondary btn-narrow">Cancel</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <p v-if="error" class="text-danger mt-3">{{ error }}</p>
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <button type="button" class="btn btn-primary" :disabled="loading" @click="calculate">
+          <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ loading ? 'Calculating…' : 'Calculate compatibility' }}
+        </button>
+        <button type="button" class="btn btn-outline-secondary" @click="saveBoth">Save both to Birthdays</button>
+        <button type="button" class="btn btn-info" :disabled="!result || exporting" @click="exportPdf">
+          {{ exporting ? 'Building PDF…' : 'Export PDF' }}
+        </button>
       </div>
-    </div>
 
-    <!-- Compatibility Results -->
-    <div v-if="state.showCompatibilityResults && state.compatibilityResult" class="row justify-content-center">
-      <div class="col-12">
-        <div class="card text-center">
-          <h3 class="card-header">
-            Compatibility Reading for {{ state.person1.name || 'Person 1' }} and {{ state.person2.name || 'Person 2' }}
-          </h3>
-          <div class="card-body">
-            <!-- Tabs for Detailed Reading -->
-            <ul class="nav nav-tabs mb-4">
-              <li class="nav-item">
-                <button class="nav-link" :class="{ active: state.activeTab === 'overview' }" @click="state.activeTab = 'overview'">Overview</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" :class="{ active: state.activeTab === 'person1' }" @click="state.activeTab = 'person1'">{{ state.person1.name || 'Person 1' }} Details</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" :class="{ active: state.activeTab === 'person2' }" @click="state.activeTab = 'person2'">{{ state.person2.name || 'Person 2' }} Details</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" :class="{ active: state.activeTab === 'relationship' }" @click="state.activeTab = 'relationship'">Relationship Analysis</button>
-              </li>
-            </ul>
+      <div v-if="result" class="mt-5">
+        <h2 class="h3 mb-3">{{ person1.name || 'Person 1' }} and {{ person2.name || 'Person 2' }}</h2>
+        <ReadingLead
+          v-if="combinedLead"
+          :headline="combinedLead.headline"
+          :intro="combinedLead.intro"
+          :points="combinedLead.points"
+        />
 
-            <!-- Tab Content -->
-            <div v-if="state.activeTab === 'overview'">
-              <!-- Overall Compatibility -->
-              <div class="row justify-content-center">
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Overall Compatibility</h5>
-                      <p class="card-text display-4" :style="{ color: getScoreColor(state.compatibilityResult.compatibility.overallCompatibility.score) }">
-                        {{ state.compatibilityResult.compatibility.overallCompatibility.score }}
-                      </p>
-                      <p class="card-text">{{ state.compatibilityResult.compatibility.overallCompatibility.description }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Detailed Compatibility Aspects -->
-              <div class="row justify-content-center">
-                <!-- Elemental Compatibility -->
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Elemental Compatibility</h5>
-                      <p class="card-text display-4" :style="{ color: getScoreColor(state.compatibilityResult.compatibility.elementalCompatibility.score) }">
-                        {{ state.compatibilityResult.compatibility.elementalCompatibility.score }}
-                      </p>
-                      <p class="card-text">{{ state.compatibilityResult.compatibility.elementalCompatibility.description }}</p>
-                      <p class="card-text text-muted">
-                        {{ state.person1.name || 'Person 1' }}: {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.celestialStem.element.name }}<br>
-                        {{ state.person2.name || 'Person 2' }}: {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.celestialStem.element.name }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Trigram/Hexagram Compatibility -->
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Trigram/Hexagram Compatibility</h5>
-                      <p class="card-text display-4" :style="{ color: getScoreColor(state.compatibilityResult.compatibility.trigramHexagramCompatibility.score) }">
-                        {{ state.compatibilityResult.compatibility.trigramHexagramCompatibility.score }}
-                      </p>
-                      <p class="card-text">{{ state.compatibilityResult.compatibility.trigramHexagramCompatibility.description }}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Sexagenary Cycle Compatibility -->
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Sexagenary Cycle Compatibility</h5>
-                      <p class="card-text display-4" :style="{ color: getScoreColor(state.compatibilityResult.compatibility.sexagenaryCompatibility.score) }">
-                        {{ state.compatibilityResult.compatibility.sexagenaryCompatibility.score }}
-                      </p>
-                      <p class="card-text">{{ state.compatibilityResult.compatibility.sexagenaryCompatibility.description }}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Sub-Cycle Compatibility -->
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                  <div class="card text-center">
-                    <div class="card-body">
-                      <h5 class="card-title">Sub-Cycle Compatibility</h5>
-                      <p class="card-text display-4" :style="{ color: getScoreColor(state.compatibilityResult.compatibility.subCycleCompatibility.score) }">
-                        {{ state.compatibilityResult.compatibility.subCycleCompatibility.score }}
-                      </p>
-                      <p class="card-text">{{ state.compatibilityResult.compatibility.subCycleCompatibility.description }}</p>
-                    </div>
-                  </div>
-                </div>
+        <div class="row">
+          <div class="col-12 col-lg-4 mb-4">
+            <div class="card h-100">
+              <div class="card-header">I-Ching</div>
+              <div class="card-body">
+                <p class="display-6 mb-1" :style="{ color: scoreColor(ichingCompat?.score) }">{{ ichingCompat?.label }}</p>
+                <p class="small text-muted">{{ ichingCompat?.headline || ichingCompat?.summary || 'Score from elements, trigrams, sexagenary, and life stages.' }}</p>
+                <ul class="small mb-3" v-if="iching">
+                  <li>Elements: {{ iching.compatibility.elementalCompatibility.description }}</li>
+                  <li>Trigrams: {{ iching.compatibility.trigramHexagramCompatibility.description }}</li>
+                  <li>Sexagenary: {{ iching.compatibility.sexagenaryCompatibility.description }}</li>
+                  <li>Sub-cycles: {{ iching.compatibility.subCycleCompatibility.description }}</li>
+                </ul>
+                <p class="small mb-2" v-if="iching">
+                  {{ person1.name }} seed: {{ iching.person1.iching.preHeavenHexagram.name }}
+                  · {{ person2.name }} seed: {{ iching.person2.iching.preHeavenHexagram.name }}
+                </p>
               </div>
             </div>
-
-            <!-- Person 1 Details -->
-            <div v-if="state.activeTab === 'person1'">
-              <h4>{{ state.person1.name || 'Person 1' }}'s Astrological Profile</h4>
-              <div class="row justify-content-center">
-                <!-- Yearly Cycle -->
-                <div class="col-12 col-md-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Yearly Cycle</h5>
-                      <p><strong>Celestial Stem:</strong> {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.celestialStem.name }} ({{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.celestialStem.element.name }})</p>
-                      <p><strong>Horary Branch:</strong> {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.horaryBranch.name }} ({{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.horaryBranch.animal }}, {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.horaryBranch.element.name }})</p>
-                      <p class="text-muted">The stem and branch define your core astrological identity, influencing your personality and life path.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Pre-Heaven Hexagram -->
-                <div class="col-12 col-md-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Pre-Heaven Hexagram</h5>
-                      <p><strong>Hexagram:</strong> {{ state.compatibilityResult.person1.iching.preHeavenHexagram.name }}</p>
-                      <p><strong>Above Trigram:</strong> {{ state.compatibilityResult.person1.iching.preHeavenHexagram.above.name }} ({{ getTrigramElement(state.compatibilityResult.person1.iching.preHeavenHexagram.above.name) }})</p>
-                      <p><strong>Below Trigram:</strong> {{ state.compatibilityResult.person1.iching.preHeavenHexagram.below.name }} ({{ getTrigramElement(state.compatibilityResult.person1.iching.preHeavenHexagram.below.name) }})</p>
-                      <p class="text-muted">The pre-heaven hexagram reflects your innate qualities and spiritual foundation.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Later-Heaven Hexagram -->
-                <div class="col-12 col-md-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Later-Heaven Hexagram</h5>
-                      <p><strong>Hexagram:</strong> {{ state.compatibilityResult.person1.iching.laterHeavenHexagram.name }}</p>
-                      <p><strong>Above Trigram:</strong> {{ state.compatibilityResult.person1.iching.laterHeavenHexagram.above.name }} ({{ getTrigramElement(state.compatibilityResult.person1.iching.laterHeavenHexagram.above.name) }})</p>
-                      <p><strong>Below Trigram:</strong> {{ state.compatibilityResult.person1.iching.laterHeavenHexagram.below.name }} ({{ getTrigramElement(state.compatibilityResult.person1.iching.laterHeavenHexagram.below.name) }})</p>
-                      <p class="text-muted">The later-heaven hexagram shows how you manifest in the world over time.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Natal Hexagram -->
-                <div class="col-12 col-md-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Natal Hexagram</h5>
-                      <p><strong>Hexagram:</strong> {{ state.compatibilityResult.person1.natalHexagram.english }} ({{ state.compatibilityResult.person1.natalHexagram.chinese }})</p>
-                      <p class="text-muted">The natal hexagram provides insight into your life's overarching theme.</p>
-                    </div>
-                  </div>
-                </div>
+          </div>
+          <div class="col-12 col-lg-4 mb-4">
+            <div class="card h-100">
+              <div class="card-header">Vedic (Jyotish)</div>
+              <div class="card-body">
+                <p class="display-6 mb-1" :style="{ color: scoreColor(vedicCompat?.score) }">{{ vedicCompat?.label }}</p>
+                <p class="small text-muted">{{ vedicCompat?.intro }}</p>
+                <ul class="small mb-0">
+                  <li v-for="(pt, i) in (vedicCompat?.points || [])" :key="'v' + i">
+                    <strong>{{ pt.label }}.</strong> {{ pt.text }}
+                  </li>
+                </ul>
               </div>
             </div>
-
-            <!-- Person 2 Details -->
-            <div v-if="state.activeTab === 'person2'">
-              <h4>{{ state.person2.name || 'Person 2' }}'s Astrological Profile</h4>
-              <div class="row justify-content-center">
-                <!-- Yearly Cycle -->
-                <div class="col-12 col-md-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Yearly Cycle</h5>
-                      <p><strong>Celestial Stem:</strong> {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.celestialStem.name }} ({{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.celestialStem.element.name }})</p>
-                      <p><strong>Horary Branch:</strong> {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.horaryBranch.name }} ({{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.horaryBranch.animal }}, {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.horaryBranch.element.name }})</p>
-                      <p class="text-muted">The stem and branch define your core astrological identity, influencing your personality and life path.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Pre-Heaven Hexagram -->
-                <div class="col-12 col-md-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Pre-Heaven Hexagram</h5>
-                      <p><strong>Hexagram:</strong> {{ state.compatibilityResult.person2.iching.preHeavenHexagram.name }}</p>
-                      <p><strong>Above Trigram:</strong> {{ state.compatibilityResult.person2.iching.preHeavenHexagram.above.name }} ({{ getTrigramElement(state.compatibilityResult.person2.iching.preHeavenHexagram.above.name) }})</p>
-                      <p><strong>Below Trigram:</strong> {{ state.compatibilityResult.person2.iching.preHeavenHexagram.below.name }} ({{ getTrigramElement(state.compatibilityResult.person2.iching.preHeavenHexagram.below.name) }})</p>
-                      <p class="text-muted">The pre-heaven hexagram reflects your innate qualities and spiritual foundation.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Later-Heaven Hexagram -->
-                <div class="col-12 col-md-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Later-Heaven Hexagram</h5>
-                      <p><strong>Hexagram:</strong> {{ state.compatibilityResult.person2.iching.laterHeavenHexagram.name }}</p>
-                      <p><strong>Above Trigram:</strong> {{ state.compatibilityResult.person2.iching.laterHeavenHexagram.above.name }} ({{ getTrigramElement(state.compatibilityResult.person2.iching.laterHeavenHexagram.above.name) }})</p>
-                      <p><strong>Below Trigram:</strong> {{ state.compatibilityResult.person2.iching.laterHeavenHexagram.below.name }} ({{ getTrigramElement(state.compatibilityResult.person2.iching.laterHeavenHexagram.below.name) }})</p>
-                      <p class="text-muted">The later-heaven hexagram shows how you manifest in the world over time.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Natal Hexagram -->
-                <div class="col-12 col-md-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Natal Hexagram</h5>
-                      <p><strong>Hexagram:</strong> {{ state.compatibilityResult.person2.natalHexagram.english }} ({{ state.compatibilityResult.person2.natalHexagram.chinese }})</p>
-                      <p class="text-muted">The natal hexagram provides insight into your life's overarching theme.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Relationship Analysis -->
-            <div v-if="state.activeTab === 'relationship'">
-              <h4>Relationship Analysis</h4>
-              <div class="accordion" id="relationshipAccordion">
-                <!-- Elemental Compatibility -->
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="elementalHeading">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#elementalCollapse" aria-expanded="true" aria-controls="elementalCollapse">
-                      Elemental Compatibility (Score: {{ state.compatibilityResult.compatibility.elementalCompatibility.score }})
-                    </button>
-                  </h2>
-                  <div id="elementalCollapse" class="accordion-collapse collapse show" aria-labelledby="elementalHeading" data-bs-parent="#relationshipAccordion">
-                    <div class="accordion-body">
-                      <p><strong>{{ state.person1.name || 'Person 1' }}'s Element:</strong> {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.celestialStem.element.name }}</p>
-                      <p><strong>{{ state.person2.name || 'Person 2' }}'s Element:</strong> {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.celestialStem.element.name }}</p>
-                      <p><strong>Relationship:</strong> {{ getElementalRelationshipDescription(state.compatibilityResult.person1.yearly.yearlyCycle.cycle.celestialStem.element.name, state.compatibilityResult.person2.yearly.yearlyCycle.cycle.celestialStem.element.name) }}</p>
-                      <p class="text-muted">{{ state.compatibilityResult.compatibility.elementalCompatibility.description }}. Elements interact in generating (supportive) or controlling (challenging) cycles, shaping your dynamic.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Trigram/Hexagram Compatibility -->
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="trigramHeading">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#trigramCollapse" aria-expanded="false" aria-controls="trigramCollapse">
-                      Trigram/Hexagram Compatibility (Score: {{ state.compatibilityResult.compatibility.trigramHexagramCompatibility.score }})
-                    </button>
-                  </h2>
-                  <div id="trigramCollapse" class="accordion-collapse collapse" aria-labelledby="trigramHeading" data-bs-parent="#relationshipAccordion">
-                    <div class="accordion-body">
-                      <p><strong>{{ state.person1.name || 'Person 1' }}'s Pre-Heaven Trigrams:</strong> {{ state.compatibilityResult.person1.iching.preHeavenHexagram.above.name }} ({{ getTrigramElement(state.compatibilityResult.person1.iching.preHeavenHexagram.above.name) }}), {{ state.compatibilityResult.person1.iching.preHeavenHexagram.below.name }} ({{ getTrigramElement(state.compatibilityResult.person1.iching.preHeavenHexagram.below.name) }})</p>
-                      <p><strong>{{ state.person2.name || 'Person 2' }}'s Pre-Heaven Trigrams:</strong> {{ state.compatibilityResult.person2.iching.preHeavenHexagram.above.name }} ({{ getTrigramElement(state.compatibilityResult.person2.iching.preHeavenHexagram.above.name) }}), {{ state.compatibilityResult.person2.iching.preHeavenHexagram.below.name }} ({{ getTrigramElement(state.compatibilityResult.person2.iching.preHeavenHexagram.below.name) }})</p>
-                      <p><strong>Controlling Lines:</strong> {{ state.person1.name || 'Person 1' }}: {{ state.compatibilityResult.person1.iching.preHeavenHexagram.controllingLine?.line.name || 'N/A' }}, {{ state.person2.name || 'Person 2' }}: {{ state.compatibilityResult.person2.iching.preHeavenHexagram.controllingLine?.line.name || 'N/A' }}</p>
-                      <p class="text-muted">{{ state.compatibilityResult.compatibility.trigramHexagramCompatibility.description }}. Trigrams and hexagrams reflect how your energies align spiritually and practically.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Sexagenary Cycle Compatibility -->
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="sexagenaryHeading">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sexagenaryCollapse" aria-expanded="false" aria-controls="sexagenaryCollapse">
-                      Sexagenary Cycle Compatibility (Score: {{ state.compatibilityResult.compatibility.sexagenaryCompatibility.score }})
-                    </button>
-                  </h2>
-                  <div id="sexagenaryCollapse" class="accordion-collapse collapse" aria-labelledby="sexagenaryHeading" data-bs-parent="#relationshipAccordion">
-                    <div class="accordion-body">
-                      <p><strong>{{ state.person1.name || 'Person 1' }}'s Stem/Branch:</strong> {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.celestialStem.name }} ({{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.celestialStem.element.name }}, {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.celestialStem.polarity }}), {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.horaryBranch.name }} ({{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.horaryBranch.element.name }}, {{ state.compatibilityResult.person1.yearly.yearlyCycle.cycle.horaryBranch.polarity }})</p>
-                      <p><strong>{{ state.person2.name || 'Person 2' }}'s Stem/Branch:</strong> {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.celestialStem.name }} ({{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.celestialStem.element.name }}, {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.celestialStem.polarity }}), {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.horaryBranch.name }} ({{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.horaryBranch.element.name }}, {{ state.compatibilityResult.person2.yearly.yearlyCycle.cycle.horaryBranch.polarity }})</p>
-                      <p class="text-muted">{{ state.compatibilityResult.compatibility.sexagenaryCompatibility.description }}. The sexagenary cycle combines stems and branches to reveal energetic harmony or tension.</p>
-                    </div>
-                  </div>
-                </div>
-                <!-- Sub-Cycle Compatibility -->
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="subCycleHeading">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#subCycleCollapse" aria-expanded="false" aria-controls="subCycleCollapse">
-                      Sub-Cycle Compatibility (Score: {{ state.compatibilityResult.compatibility.subCycleCompatibility.score }})
-                    </button>
-                  </h2>
-                  <div id="subCycleCollapse" class="accordion-collapse collapse" aria-labelledby="subCycleHeading" data-bs-parent="#relationshipAccordion">
-                    <div class="accordion-body">
-                      <p><strong>Overview:</strong> {{ state.compatibilityResult.compatibility.subCycleCompatibility.description }}</p>
-                      <p class="text-muted">Sub-cycles represent life stages aligned by calendar years, accounting for age differences.</p>
-                      <table class="table table-bordered">
-                        <thead>
-                          <tr>
-                            <th>Year</th>
-                            <th>{{ state.person1.name || 'Person 1' }} (Age)</th>
-                            <th>{{ state.person2.name || 'Person 2' }} (Age)</th>
-                            <th>Alignment</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="yearData in getYearlySubCycleData()" :key="yearData.year">
-                            <td>{{ yearData.year }}</td>
-                            <td>
-                              {{ yearData.cycle1 ? `${yearData.cycle1.hexagram.name} (${yearData.age1})` : 'N/A' }}
-                            </td>
-                            <td>
-                              {{ yearData.cycle2 ? `${yearData.cycle2.hexagram.name} (${yearData.age2})` : 'N/A' }}
-                            </td>
-                            <td :style="{ color: yearData.alignment === 'Harmonious' ? 'green' : 'black' }">
-                              {{ yearData.alignment }}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
+          </div>
+          <div class="col-12 col-lg-4 mb-4">
+            <div class="card h-100">
+              <div class="card-header">Western synastry</div>
+              <div class="card-body">
+                <p class="display-6 mb-1" :style="{ color: scoreColor(westernCompat?.score) }">{{ westernCompat?.label }}</p>
+                <p class="small text-muted">{{ westernCompat?.intro }}</p>
+                <ul class="small mb-0">
+                  <li v-for="(pt, i) in (westernCompat?.points || []).slice(0, 6)" :key="'w' + i">
+                    <strong>{{ pt.label }}.</strong> {{ pt.text }}
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="card mb-4" v-if="iching">
+          <div class="card-header">I-Ching natal sketches</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6>{{ person1.name }}</h6>
+                <p class="small mb-1">Stem/branch: {{ stemBranch(iching.person1) }}</p>
+                <p class="small mb-1">Pre-heaven: {{ iching.person1.iching.preHeavenHexagram.name }}</p>
+                <p class="small mb-0">Later-heaven: {{ iching.person1.iching.laterHeavenHexagram.name }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6>{{ person2.name }}</h6>
+                <p class="small mb-1">Stem/branch: {{ stemBranch(iching.person2) }}</p>
+                <p class="small mb-1">Pre-heaven: {{ iching.person2.iching.preHeavenHexagram.name }}</p>
+                <p class="small mb-0">Later-heaven: {{ iching.person2.iching.laterHeavenHexagram.name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="small text-muted">
+          Educational overlay, not a verdict on whether you should be together. Vedic notes are natal-inspired, not a paid matching chart.
+          Open full charts:
+          <router-link to="/astrology">I-Ching</router-link>,
+          <router-link to="/vedic_astrology">Vedic</router-link>,
+          <router-link to="/western_astrology">Western</router-link>.
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive, computed, watch } from 'vue';
-import Datepicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
-import astro from '@/const/astrology';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { DateTime } from 'luxon';
+import { useRoute } from 'vue-router';
+import BirthDataForm from '@/components/BirthDataForm.vue';
+import BirthdayPicker from '@/components/BirthdayPicker.vue';
+import ReadingLead from '@/components/ReadingLead.vue';
 import { useBirthdayStore } from '@/stores/birthday';
+import { usePageTitle } from '@/composables/usePageTitle';
+import astro from '@/const/astrology';
+import { calculateVedicChart } from '@/utils/vedicCalculations';
+import { calculateWesternChart } from '@/utils/astrologyCalculations';
+import {
+  calculateVedicCompatibility,
+  calculateWesternCompatibility,
+  buildCombinedLead,
+  ichingSummary,
+} from '@/utils/relationshipCompatibility';
+import { downloadCompatibilityPdf } from '@/utils/compatibilityPdf';
+
+function emptyPerson(gender) {
+  return {
+    name: '',
+    date: '',
+    time: '12:00',
+    gender,
+    latitude: 0,
+    longitude: 0,
+    place: '',
+    timezoneOffset: -new Date().getTimezoneOffset(),
+    timezoneName: '',
+  };
+}
+
+function formFromBirthday(b) {
+  const dt = DateTime.fromISO(b.birthday);
+  return {
+    name: b.name,
+    date: dt.isValid ? dt.toJSDate() : '',
+    time: dt.isValid ? dt.toFormat('HH:mm') : '12:00',
+    gender: b.gender === 'FEMALE' ? 'FEMALE' : 'MALE',
+    latitude: b.coords.latitude,
+    longitude: b.coords.longitude,
+    place: b.place || '',
+    timezoneOffset: typeof b.timezoneOffset === 'number' ? b.timezoneOffset : (dt.isValid ? dt.offset : -new Date().getTimezoneOffset()),
+    timezoneName: b.timezoneName || '',
+  };
+}
+
+function validatePerson(person, label) {
+  if (!person.name || !String(person.name).trim()) return `${label}: name is required.`;
+  if (!person.date) return `${label}: birth date is required.`;
+  return '';
+}
+
+function toRecord(person) {
+  const day = person.date instanceof Date
+    ? DateTime.fromJSDate(person.date).toFormat('yyyy-MM-dd')
+    : String(person.date).slice(0, 10);
+  const dt = DateTime.fromISO(`${day}T${person.time || '12:00'}`);
+  return {
+    id: Date.now() + Math.floor(Math.random() * 1000),
+    name: person.name.trim(),
+    birthday: dt.toISO(),
+    gender: person.gender === 'FEMALE' ? 'FEMALE' : 'MALE',
+    coords: {
+      latitude: Number(person.latitude),
+      longitude: Number(person.longitude),
+    },
+    place: person.place || '',
+    timezoneOffset: Number(person.timezoneOffset),
+    timezoneName: person.timezoneName || '',
+  };
+}
+
+function stemBranch(person) {
+  const cycle = person?.yearly?.yearlyCycle?.cycle;
+  if (!cycle) return '—';
+  return `${cycle.celestialStem.name} (${cycle.celestialStem.element.name}) / ${cycle.horaryBranch.name} (${cycle.horaryBranch.animal})`;
+}
+
+function formatPersonWhen(person) {
+  if (!person?.date) return 'no date';
+  const day = person.date instanceof Date
+    ? DateTime.fromJSDate(person.date)
+    : DateTime.fromISO(String(person.date));
+  const date = day.isValid ? day.toFormat('yyyy-MM-dd') : '—';
+  return `${person.name || 'Unnamed'} · ${date} ${person.time || ''}`.trim();
+}
 
 export default {
-  name: 'Compatibility',
-  components: { Datepicker },
+  name: 'Relationship',
+  components: { BirthDataForm, BirthdayPicker, ReadingLead },
   setup() {
+    usePageTitle('Relationship compatibility');
+    const route = useRoute();
     const birthdayStore = useBirthdayStore();
-    const birthdayList = computed(() => birthdayStore.getBirthdayList);
+    const person1 = reactive(emptyPerson('MALE'));
+    const person2 = reactive(emptyPerson('FEMALE'));
+    const loading = ref(false);
+    const error = ref('');
+    const result = ref(null);
+    const iching = ref(null);
+    const vedicCompat = ref(null);
+    const westernCompat = ref(null);
+    const ichingCompat = ref(null);
+    const combinedLead = ref(null);
+    const showForms = ref(true);
+    const exporting = ref(false);
 
-    const state = reactive({
-      id: Date.now(),
-      person1: {
-        name: '',
-        birthDate: null,
-        gender: 'MALE',
-        latitude: 0,
-        longitude: 0,
-      },
-      person2: {
-        name: '',
-        birthDate: null,
-        gender: 'FEMALE',
-        latitude: 0,
-        longitude: 0,
-      },
-      minDate: DateTime.fromObject({ year: 1900, month: 1, day: 1 }).toJSDate(),
-      maxDate: DateTime.now().toJSDate(),
-      compatibilityResult: null,
-      showBirthdayHistory: false,
-      showBirthdayEntry: true,
-      showCompatibilityResults: false,
-      editingBirthday: null,
-      editingPersonNumber: null,
-      activeTab: 'overview',
-      loading: false,
+    const peopleSummary = computed(() => {
+      if (!person1.name && !person2.name && !person1.date && !person2.date) {
+        return 'Load or enter two births, then hide this panel when you are done.';
+      }
+      return `${formatPersonWhen(person1)}  ·  ${formatPersonWhen(person2)}`;
     });
 
-    const dateTimeFormatSimple = (date) => {
-      if (date) {
-        return DateTime.fromJSDate(new Date(date)).toFormat('yyyy-MM-dd HH:mm');
-      }
-      return null;
+    const assignPerson = (target, next) => {
+      Object.assign(target, next);
     };
 
-    const colorClass = computed(() => 'rgb(0,0,0)');
-
-    const getScoreColor = (score) => {
-      if (score > 0) return 'green';
-      if (score < 0) return 'red';
-      return 'black';
+    const loadPerson = (which, birthday) => {
+      assignPerson(which === 1 ? person1 : person2, formFromBirthday(birthday));
+      error.value = '';
     };
 
-    const getTrigramElement = (trigramName) => {
-      for (const element in astro.laterHeavenElements) {
-        if (astro.laterHeavenElements[element].trigrams.some(t => t.name === trigramName)) {
-          return element;
-        }
-      }
-      return 'Unknown';
+    const scoreColor = (score) => {
+      if (typeof score !== 'number') return '#333';
+      if (score > 1) return '#0a7a32';
+      if (score < -1) return '#b42318';
+      return '#333';
     };
 
-    const getElementalRelationshipDescription = (element1, element2) => {
-      if (!astro.elementRelationships) {
-        console.error('elementRelationships is undefined');
-        return 'Unable to determine elemental relationship';
+    const calculate = async () => {
+      error.value = '';
+      const e1 = validatePerson(person1, 'Person 1');
+      const e2 = validatePerson(person2, 'Person 2');
+      if (e1 || e2) {
+        error.value = e1 || e2;
+        return;
       }
-      const { generatingCycle, controllingCycle } = astro.elementRelationships;
-      if (!generatingCycle || !controllingCycle) {
-        console.error('Invalid elementRelationships structure');
-        return 'Unable to determine elemental relationship';
-      }
-      if (!element1 || !element2) {
-        return 'Invalid elements provided';
-      }
-      if (generatingCycle[element1] === element2) {
-        return `${element1} generates ${element2} (Supportive)`;
-      } else if (generatingCycle[element2] === element1) {
-        return `${element2} generates ${element1} (Supportive)`;
-      } else if (controllingCycle[element1] === element2) {
-        return `${element1} controls ${element2} (Challenging)`;
-      } else if (controllingCycle[element2] === element1) {
-        return `${element2} controls ${element1} (Challenging)`;
-      } else if (element1 === element2) {
-        return `Same element: ${element1} (Harmonious)`;
-      }
-      return 'Neutral relationship';
-    };
-
-    const validatePersonData = (person) => {
-      const errors = [];
-      if (!person.name || person.name.trim() === '') {
-        errors.push('Name is required.');
-      }
-      if (!person.birthDate || !DateTime.fromJSDate(person.birthDate).isValid) {
-        errors.push('Birth date must be a valid date.');
-      }
-      if (!['MALE', 'FEMALE'].includes(person.gender)) {
-        errors.push('Gender must be either "MALE" or "FEMALE".');
-      }
-      if (typeof person.latitude !== 'number' || person.latitude < -90 || person.latitude > 90) {
-        errors.push('Latitude must be a number between -90 and 90.');
-      }
-      if (typeof person.longitude !== 'number' || person.longitude < -180 || person.longitude > 180) {
-        errors.push('Longitude must be a number between -180 and 180.');
-      }
-      return errors;
-    };
-
-    const saveBirthdays = () => {
+      loading.value = true;
+      result.value = null;
       try {
-        const person1Errors = validatePersonData(state.person1);
-        if (person1Errors.length > 0) {
-          throw new Error(`Person 1: ${person1Errors.join(' ')}`);
-        }
-        const person2Errors = validatePersonData(state.person2);
-        if (person2Errors.length > 0) {
-          throw new Error(`Person 2: ${person2Errors.join(' ')}`);
+        const gender1 = person1.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
+        const gender2 = person2.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
+        const day1 = person1.date instanceof Date ? DateTime.fromJSDate(person1.date) : DateTime.fromISO(String(person1.date));
+        const day2 = person2.date instanceof Date ? DateTime.fromJSDate(person2.date) : DateTime.fromISO(String(person2.date));
+        if (!day1.isValid) throw new Error('Person 1 birth date is not valid.');
+        if (!day2.isValid) throw new Error('Person 2 birth date is not valid.');
+        const date1 = day1.toJSDate();
+        const date2 = day2.toJSDate();
+
+        try {
+          const ichingResult = await astro.calculateCompatibilityByYear(
+            date1, gender1, Number(person1.latitude), Number(person1.longitude),
+            date2, gender2, Number(person2.latitude), Number(person2.longitude)
+          );
+          iching.value = ichingResult;
+          ichingCompat.value = ichingSummary(ichingResult.compatibility);
+        } catch (ichingErr) {
+          console.error(ichingErr);
+          iching.value = null;
+          ichingCompat.value = {
+            score: 0,
+            label: 'Unavailable',
+            headline: 'I-Ching overlay could not be calculated.',
+            summary: ichingErr.message || 'I-Ching calculation failed.',
+          };
         }
 
-        birthdayStore.addBirthday({
-          id: Date.now(),
-          name: state.person1.name,
-          birthday: DateTime.fromJSDate(state.person1.birthDate).toISO(),
-          gender: state.person1.gender,
-          coords: { latitude: state.person1.latitude, longitude: state.person1.longitude },
+        const n1 = person1.name.trim();
+        const n2 = person2.name.trim();
+        try {
+          const vedic1 = calculateVedicChart({ ...person1, date: date1 });
+          const vedic2 = calculateVedicChart({ ...person2, date: date2 });
+          vedicCompat.value = calculateVedicCompatibility(vedic1, vedic2, n1, n2);
+        } catch (vedicErr) {
+          console.error(vedicErr);
+          vedicCompat.value = {
+            score: 0,
+            label: 'Unavailable',
+            intro: 'Vedic overlay could not be calculated for this pair.',
+            points: [{ label: 'Note', text: vedicErr.message || 'Vedic calculation failed.' }],
+          };
+        }
+        try {
+          const west1 = calculateWesternChart({ ...person1, date: date1 });
+          const west2 = calculateWesternChart({ ...person2, date: date2 });
+          westernCompat.value = calculateWesternCompatibility(west1, west2, n1, n2);
+        } catch (westErr) {
+          console.error(westErr);
+          westernCompat.value = {
+            score: 0,
+            label: 'Unavailable',
+            intro: 'Western synastry could not be calculated for this pair.',
+            points: [{ label: 'Note', text: westErr.message || 'Western calculation failed.' }],
+          };
+        }
+        combinedLead.value = buildCombinedLead({
+          name1: n1,
+          name2: n2,
+          iching: ichingCompat.value,
+          vedic: vedicCompat.value,
+          western: westernCompat.value,
         });
-
-        birthdayStore.addBirthday({
-          id: Date.now() + 1,
-          name: state.person2.name,
-          birthday: DateTime.fromJSDate(state.person2.birthDate).toISO(),
-          gender: state.person2.gender,
-          coords: { latitude: state.person2.latitude, longitude: state.person2.longitude },
-        });
-
-        alert('Birthdays saved successfully!');
-      } catch (error) {
-        console.error('Error saving birthdays:', error);
-        alert(`Failed to save birthdays: ${error.message}`);
-      }
-    };
-
-    const loadBirthday = (birthday, personNumber) => {
-      const person = personNumber === 1 ? state.person1 : state.person2;
-      person.name = birthday.name || '';
-      person.birthDate = DateTime.fromISO(birthday.birthday).toJSDate();
-      person.gender = birthday.gender;
-      person.latitude = birthday.coords.latitude;
-      person.longitude = birthday.coords.longitude;
-    };
-
-    const startEditingBirthday = (birthday) => {
-      if (state.person1.name === birthday.name) {
-        state.editingPersonNumber = 1;
-      } else if (state.person2.name === birthday.name) {
-        state.editingPersonNumber = 2;
-      } else {
-        state.editingPersonNumber = 1;
-        loadBirthday(birthday, 1);
-      }
-      state.editingBirthday = birthday;
-    };
-
-    const updateBirthday = () => {
-      try {
-        const person = state.editingPersonNumber === 1 ? state.person1 : state.person2;
-        const updatedBirthday = {
-          id: state.editingBirthday.id,
-          name: person.name,
-          birthday: DateTime.fromJSDate(person.birthDate).toISO(),
-          gender: person.gender,
-          coords: {
-            latitude: person.latitude,
-            longitude: person.longitude,
-          },
-        };
-
-        birthdayStore.updateBirthday(updatedBirthday);
-        alert('Birthday updated successfully!');
-        cancelEditing();
-      } catch (error) {
-        console.error('Error updating birthday:', error);
-        alert(`Failed to update birthday: ${error.message}`);
-      }
-    };
-
-    const cancelEditing = () => {
-      state.editingBirthday = null;
-      state.editingPersonNumber = null;
-    };
-
-    const calculateCompatibility = async () => {
-      try {
-        state.loading = true;
-        const person1Errors = validatePersonData(state.person1);
-        if (person1Errors.length > 0) {
-          throw new Error(`Person 1: ${person1Errors.join(' ')}`);
-        }
-        const person2Errors = validatePersonData(state.person2);
-        if (person2Errors.length > 0) {
-          throw new Error(`Person 2: ${person2Errors.join(' ')}`);
-        }
-
-        const gender1 = state.person1.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
-        const gender2 = state.person2.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
-        
-        const result = await astro.calculateCompatibilityByYear(
-          state.person1.birthDate,
-          gender1,
-          state.person1.latitude,
-          state.person1.longitude,
-          state.person2.birthDate,
-          gender2,
-          state.person2.latitude,
-          state.person2.longitude
-        );
-
-        // Log sub-cycles for debugging
-        console.log('Person 1 Sub-Cycles:', JSON.stringify(result.person1?.iching?.preHeavenBirthSubCycles, null, 2));
-        console.log('Person 2 Sub-Cycles:', JSON.stringify(result.person2?.iching?.preHeavenBirthSubCycles, null, 2));
-
-        // Validate sub-cycles
-        if (!result.person1?.iching?.preHeavenBirthSubCycles || !result.person2?.iching?.preHeavenBirthSubCycles) {
-          console.warn('Sub-cycles data is incomplete:', {
-            person1SubCycles: result.person1?.iching?.preHeavenBirthSubCycles,
-            person2SubCycles: result.person2?.iching?.preHeavenBirthSubCycles,
-          });
-          result.person1.iching.preHeavenBirthSubCycles = [];
-          result.person2.iching.preHeavenBirthSubCycles = [];
-        }
-
-        // Calculate natal hexagrams
-        result.person1.natalHexagram = await astro.calculateNatalHexagram(
-          DateTime.fromJSDate(state.person1.birthDate).toFormat('yyyy-MM-dd'),
-          DateTime.fromJSDate(state.person1.birthDate).toFormat('HH:mm')
-        );
-        result.person2.natalHexagram = await astro.calculateNatalHexagram(
-          DateTime.fromJSDate(state.person2.birthDate).toFormat('yyyy-MM-dd'),
-          DateTime.fromJSDate(state.person2.birthDate).toFormat('HH:mm')
-        );
-
-        state.compatibilityResult = result;
-        state.showCompatibilityResults = true;
-        state.activeTab = 'overview';
-      } catch (error) {
-        console.error('Error calculating compatibility:', error);
-        alert(`Failed to calculate compatibility: ${error.message}`);
+        result.value = true;
+        showForms.value = false;
+      } catch (err) {
+        console.error(err);
+        error.value = err.message || 'Could not calculate compatibility.';
       } finally {
-        state.loading = false;
+        loading.value = false;
       }
     };
 
-    const getYearlySubCycleData = () => {
-        if (!state.compatibilityResult) return [];
-        
-        const year1 = DateTime.fromJSDate(state.person1.birthDate).year;
-        const year2 = DateTime.fromJSDate(state.person2.birthDate).year;
-        const startYear = Math.max(year1, year2);
-        const endYear = Math.min(year1, year2) + 81;
-        
-        const cycles1 = state.compatibilityResult.person1.iching.preHeavenBirthSubCycles || [];
-        const cycles2 = state.compatibilityResult.person2.iching.preHeavenBirthSubCycles || [];
-        const gender1 = state.person1.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
-        const gender2 = state.person2.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
-        const baseAge1 = gender1 === astro.Gender.MALE ? 8 : 7;
-        const baseAge2 = gender2 === astro.Gender.MALE ? 8 : 7;
-
-        const getActiveCycle = (birthYear, targetYear, cycles, baseAge) => {
-          const age = targetYear - birthYear;
-          if (age < 0 || age > 81) return null;
-          const cycleIndex = Math.floor(age / baseAge);
-          return cycles[cycleIndex] || null;
-        };
-
-        const yearlyData = [];
-        for (let year = startYear; year <= endYear; year++) {
-          const age1 = year - year1;
-          const age2 = year - year2;
-          const cycle1 = getActiveCycle(year1, year, cycles1, baseAge1);
-          const cycle2 = getActiveCycle(year2, year, cycles2, baseAge2);
-          
-          let alignment = 'Neutral';
-          if (cycle1 && cycle2 && cycle1.hexagramBinary === cycle2.hexagramBinary) {
-            alignment = 'Harmonious';
-          }
-          
-          yearlyData.push({
-            year,
-            age1,
-            age2,
-            cycle1,
-            cycle2,
-            alignment,
-          });
-        }
-        
-        return yearlyData;
-      };
-
-    const handleImport = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        birthdayStore.importBirthdays(file);
-        event.target.value = '';
+    const exportPdf = async () => {
+      if (!result.value) return;
+      exporting.value = true;
+      try {
+        await downloadCompatibilityPdf({
+          person1,
+          person2,
+          combinedLead: combinedLead.value,
+          iching: iching.value,
+          ichingCompat: ichingCompat.value,
+          vedicCompat: vedicCompat.value,
+          westernCompat: westernCompat.value,
+        });
+      } catch (err) {
+        console.error(err);
+        error.value = err.message || 'Could not build the PDF.';
+      } finally {
+        exporting.value = false;
       }
     };
 
-    // Watch name changes only on explicit selection
-    watch(() => state.person1.name, (newName) => {
-      const selectedBirthday = birthdayList.value.find(b => b.name === newName);
-      if (selectedBirthday) {
-        loadBirthday(selectedBirthday, 1);
+    const saveBoth = () => {
+      try {
+        const e1 = validatePerson(person1, 'Person 1');
+        const e2 = validatePerson(person2, 'Person 2');
+        if (e1 || e2) throw new Error(e1 || e2);
+        birthdayStore.addBirthday(toRecord(person1));
+        birthdayStore.addBirthday(toRecord(person2));
+        error.value = '';
+        alert('Both birthdays saved.');
+      } catch (err) {
+        error.value = err.message;
       }
-    });
+    };
 
-    watch(() => state.person2.name, (newName) => {
-      const selectedBirthday = birthdayList.value.find(b => b.name === newName);
-      if (selectedBirthday) {
-        loadBirthday(selectedBirthday, 2);
+    onMounted(() => {
+      const a = route.query.a || route.query.load;
+      const b = route.query.b;
+      if (a) {
+        const found = birthdayStore.getBirthdayById(a);
+        if (found) loadPerson(1, found);
+      }
+      if (b) {
+        const found = birthdayStore.getBirthdayById(b);
+        if (found) loadPerson(2, found);
       }
     });
 
     return {
-      state,
-      birthdayList,
-      birthdayStore,
-      dateTimeFormatSimple,
-      colorClass,
-      getScoreColor,
-      getTrigramElement,
-      getElementalRelationshipDescription,
-      saveBirthdays,
-      loadBirthday,
-      startEditingBirthday,
-      updateBirthday,
-      cancelEditing,
-      calculateCompatibility,
-      handleImport,
-      getYearlySubCycleData,
+      person1,
+      person2,
+      assignPerson,
+      loadPerson,
+      loading,
+      error,
+      showForms,
+      peopleSummary,
+      calculate,
+      saveBoth,
+      exportPdf,
+      exporting,
+      result,
+      iching,
+      ichingCompat,
+      vedicCompat,
+      westernCompat,
+      combinedLead,
+      scoreColor,
+      stemBranch,
     };
   },
 };
 </script>
 
 <style scoped>
-.input-narrow {
-  max-width: 250px;
-  margin: 0 auto;
+.card-title {
+  border-bottom: 2px solid #6c63ff;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
-.btn-narrow {
+.relationship-page :deep(.card) {
+  margin: 0;
+  overflow: visible;
+}
+.display-6 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.forms-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   width: 100%;
-  max-width: 250px;
+  border: 0;
+  background: #f4f6fb;
+  text-align: left;
+  padding: 0.9rem 1.15rem;
+  border-radius: 0.375rem 0.375rem 0 0;
+  font-size: 0.95rem;
 }
-.card-text.display-4 {
-  font-size: 2.5rem;
+.forms-toggle:hover {
+  background: #eef1f8;
 }
-.card-text.display-6 {
-  font-size: 1.25rem;
+.toggle-hint {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #5b4cdb;
 }
 </style>

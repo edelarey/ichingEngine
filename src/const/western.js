@@ -111,9 +111,10 @@ export const PLANET_IN_HOUSE = {
 };
 
 export function signFromLongitude(longitude) {
-  const lon = ((longitude % 360) + 360) % 360;
-  const id = Math.floor(lon / 30);
-  return { ...WESTERN_SIGNS[id], id: id + 1, degreeInSign: lon % 30 };
+  const lon = ((Number(longitude) % 360) + 360) % 360;
+  const id = Number.isFinite(lon) ? Math.floor(lon / 30) % 12 : 0;
+  const sign = WESTERN_SIGNS[id] || WESTERN_SIGNS[0];
+  return { ...sign, id: id + 1, degreeInSign: Number.isFinite(lon) ? lon % 30 : 0 };
 }
 
 export function westernDignity(planetKey, signId) {
