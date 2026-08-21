@@ -1,238 +1,191 @@
-import { DateTime } from 'luxon';
+/**
+ * Western natal chart: tropical positions from the shared astronomia ephemeris,
+ * true Ascendant and Midheaven, Placidus houses (Equal fallback), major aspects.
+ */
 
-// Simplified planetary calculation functions
-export async function calculatePlanetaryPositions(date, time, latitude, longitude) {
-  try {
-    // Combine date and time
-    const [hours, minutes] = time.split(':').map(Number);
-    const birthDateTime = DateTime.fromJSDate(date).set({ hour: hours, minute: minutes });
-    
-    // Calculate Julian Day Number
-    const jd = calculateJulianDay(birthDateTime);
+import {
+  tropicalPositions,
+  tropicalLagna,
+  tropicalMidheaven,
+  julianDayFromBirth,
+  houseCusps,
+  houseOfLongitude,
+  isRetrograde,
+  formatDms,
+  formatOffset,
+  norm360,
+} from '@/utils/ephemeris';
+import {
+  WESTERN_PLANETS,
+  WESTERN_HOUSES,
+  WESTERN_SIGNS,
+  ASPECT_TYPES,
+  PLANET_IN_HOUSE,
+  signFromLongitude,
+  westernDignity,
+} from '@/const/western';
 
-    // Calculate planetary positions using simplified algorithms
-    const positions = [];
+const PLANET_KEYS = [
+  'sun', 'moon', 'mercury', 'venus', 'mars',
+  'jupiter', 'saturn', 'uranus', 'neptune', 'pluto',
+  'northnode', 'southnode',
+];
 
-    // Sun position (simplified)
-    const sunLon = calculateSunPosition(jd);
-    positions.push({
-      name: 'Sun',
-      symbol: '☉',
-      longitude: sunLon,
-      sign: getZodiacSign(sunLon),
-      house: calculateHouse(sunLon, latitude, longitude, jd)
-    });
-
-    // Moon position (simplified)
-    const moonLon = calculateMoonPosition(jd);
-    positions.push({
-      name: 'Moon',
-      symbol: '☽',
-      longitude: moonLon,
-      sign: getZodiacSign(moonLon),
-      house: calculateHouse(moonLon, latitude, longitude, jd)
-    });
-
-    // Calculate planetary positions using simplified formulas
-    const planets = [
-      { name: 'Mercury', symbol: '☿' },
-      { name: 'Venus', symbol: '♀' },
-      { name: 'Mars', symbol: '♂' },
-      { name: 'Jupiter', symbol: '♃' },
-      { name: 'Saturn', symbol: '♄' },
-      { name: 'Uranus', symbol: '♅' },
-      { name: 'Neptune', symbol: '♆' },
-      { name: 'Pluto', symbol: '♇' }
-    ];
-
-    planets.forEach((planet, index) => {
-      const longitude = calculatePlanetPosition(planet.name, jd);
-      positions.push({
-        name: planet.name,
-        symbol: planet.symbol,
-        longitude: longitude,
-        sign: getZodiacSign(longitude),
-        house: calculateHouse(longitude, latitude, longitude, jd)
-      });
-    });
-
-    return positions;
-  } catch (error) {
-    console.error('Error in calculatePlanetaryPositions:', error);
-    throw new Error('Failed to calculate planetary positions');
-  }
+function lonOf(trop, key) {
+  if (key === 'northnode') return trop.rahu;
+  if (key === 'southnode') return trop.ketu;
+  return trop[key];
 }
 
-// Calculate Julian Day Number
-function calculateJulianDay(dateTime) {
-  const year = dateTime.year;
-  const month = dateTime.month;
-  const day = dateTime.day + (dateTime.hour + dateTime.minute / 60) / 24;
-  
-  let a = Math.floor((14 - month) / 12);
-  let y = year + 4800 - a;
-  let m = month + 12 * a - 3;
-  
-  return day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
-}
-
-// Simplified Sun position calculation
-function calculateSunPosition(jd) {
-  const n = jd - 2451545.0;
-  const L = (280.460 + 0.9856474 * n) % 360;
-  const g = ((357.528 + 0.9856003 * n) % 360) * Math.PI / 180;
-  const lambda = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) % 360;
-  return lambda < 0 ? lambda + 360 : lambda;
-}
-
-// Simplified Moon position calculation
-function calculateMoonPosition(jd) {
-  const n = jd - 2451545.0;
-  const L = (218.316 + 13.176396 * n) % 360;
-  const M = ((134.963 + 13.064993 * n) % 360) * Math.PI / 180;
-  const F = ((93.272 + 13.229350 * n) % 360) * Math.PI / 180;
-  
-  const lambda = L + 6.289 * Math.sin(M) + 1.274 * Math.sin(2 * ((L - 124.7) * Math.PI / 180) - M) + 0.658 * Math.sin(2 * ((L - 124.7) * Math.PI / 180));
-  return ((lambda % 360) + 360) % 360;
-}
-
-// Simplified planetary position calculation
-function calculatePlanetPosition(planetName, jd) {
-  const n = jd - 2451545.0;
-  const T = n / 36525.0;
-  
-  // Simplified orbital elements (mean longitudes at epoch J2000.0 and daily motions)
-  const orbitalData = {
-    'Mercury': { L0: 252.25, n: 4.092317 },
-    'Venus': { L0: 181.98, n: 1.602136 },
-    'Mars': { L0: 355.43, n: 0.524071 },
-    'Jupiter': { L0: 34.35, n: 0.083056 },
-    'Saturn': { L0: 50.08, n: 0.033371 },
-    'Uranus': { L0: 314.05, n: 0.011769 },
-    'Neptune': { L0: 304.35, n: 0.006002 },
-    'Pluto': { L0: 238.93, n: 0.003969 }
-  };
-  
-  const data = orbitalData[planetName];
-  if (!data) return 0;
-  
-  const meanLongitude = (data.L0 + data.n * n) % 360;
-  return meanLongitude < 0 ? meanLongitude + 360 : meanLongitude;
-}
-
-// Helper function to get zodiac sign from longitude
-function getZodiacSign(longitude) {
-  const signs = [
-    'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-    'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
-  ];
-  
-  const signIndex = Math.floor(longitude / 30);
-  return signs[signIndex] || 'Aries';
-}
-
-// Simplified house calculation (Equal House system)
-function calculateHouse(planetLongitude, latitude, longitude, jd) {
-  try {
-    // Calculate local sidereal time (simplified)
-    const gmst = calculateGMST(jd);
-    const lst = gmst + longitude / 15; // Convert longitude to hours
-    
-    // Calculate Ascendant (simplified)
-    const ascendant = (lst * 15) % 360; // Convert back to degrees
-    
-    // Calculate house using Equal House system
-    const houseLongitude = (planetLongitude - ascendant + 360) % 360;
-    const house = Math.floor(houseLongitude / 30) + 1;
-    
-    return house > 12 ? house - 12 : (house < 1 ? house + 12 : house);
-  } catch (error) {
-    console.warn('Error calculating house:', error);
-    return 1; // Default to first house
-  }
-}
-
-// Calculate Greenwich Mean Sidereal Time
-function calculateGMST(jd) {
-  const T = (jd - 2451545.0) / 36525.0;
-  let gmst = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T - T * T * T / 38710000.0;
-  return ((gmst % 360) + 360) % 360;
-}
-
-// Calculate aspects between planets
 export function calculateAspects(planetPositions) {
   const aspects = [];
-  const aspectOrbs = {
-    conjunction: 8,
-    opposition: 8,
-    trine: 8,
-    square: 8,
-    sextile: 6,
-    quincunx: 3
-  };
-
-  for (let i = 0; i < planetPositions.length; i++) {
-    for (let j = i + 1; j < planetPositions.length; j++) {
-      const planet1 = planetPositions[i];
-      const planet2 = planetPositions[j];
-      
-      let diff = Math.abs(planet1.longitude - planet2.longitude);
+  const skip = new Set(['northnode', 'southnode']);
+  for (let i = 0; i < planetPositions.length; i += 1) {
+    for (let j = i + 1; j < planetPositions.length; j += 1) {
+      const a = planetPositions[i];
+      const b = planetPositions[j];
+      if (skip.has(a.key) && skip.has(b.key)) continue;
+      let diff = Math.abs(a.longitude - b.longitude);
       if (diff > 180) diff = 360 - diff;
-
-      // Check for major aspects
-      const aspectTypes = [
-        { name: 'conjunction', angle: 0 },
-        { name: 'sextile', angle: 60 },
-        { name: 'square', angle: 90 },
-        { name: 'trine', angle: 120 },
-        { name: 'quincunx', angle: 150 },
-        { name: 'opposition', angle: 180 }
-      ];
-
-      aspectTypes.forEach(aspectType => {
-        const orb = aspectOrbs[aspectType.name];
-        if (Math.abs(diff - aspectType.angle) <= orb) {
+      ASPECT_TYPES.forEach((type) => {
+        const orb = Math.abs(diff - type.angle);
+        if (orb <= type.orb) {
           aspects.push({
-            planet1: planet1.name,
-            planet2: planet2.name,
-            aspect: aspectType.name,
-            orb: Math.abs(diff - aspectType.angle),
-            angle: aspectType.angle
+            planet1: a.name,
+            planet2: b.name,
+            key1: a.key,
+            key2: b.key,
+            aspect: type.name,
+            symbol: type.symbol,
+            nature: type.nature,
+            blurb: type.blurb,
+            orb,
+            angle: type.angle,
+            applying: null,
           });
         }
       });
     }
   }
-
+  aspects.sort((x, y) => x.orb - y.orb);
   return aspects;
 }
 
-// Calculate houses using Equal House system (simplified)
-export function calculateHouses(birthDateTime, latitude, longitude) {
-  try {
-    const jd = calculateJulianDay(birthDateTime);
-
-    // Calculate local sidereal time
-    const gmst = calculateGMST(jd);
-    const lst = gmst + longitude / 15; // Convert longitude to hours
-    
-    // Calculate Ascendant
-    const ascendant = (lst * 15) % 360; // Convert back to degrees
-    
-    // Equal house system for simplicity
-    const houses = [];
-    for (let i = 1; i <= 12; i++) {
-      const cuspLongitude = (ascendant + (i - 1) * 30) % 360;
-      houses.push({
-        number: i,
-        cusp: cuspLongitude,
-        sign: getZodiacSign(cuspLongitude)
-      });
-    }
-
-    return houses;
-  } catch (error) {
-    console.error('Error calculating houses:', error);
-    return [];
-  }
+function planetSentence(planet) {
+  const houseIdx = planet.house - 1;
+  const houseLine = PLANET_IN_HOUSE[planet.key]
+    ? PLANET_IN_HOUSE[planet.key][houseIdx]
+    : `${planet.name} in the ${WESTERN_HOUSES[houseIdx].name} emphasises ${WESTERN_HOUSES[houseIdx].keywords.toLowerCase()}.`;
+  const sign = WESTERN_SIGNS[planet.signId - 1];
+  return `${planet.name} at ${planet.degreeLabel} ${sign.name} in the ${WESTERN_HOUSES[houseIdx].name}. Dignity: ${planet.dignity.label}. ${houseLine}${planet.retrograde ? ' Motion: retrograde.' : ''}`;
 }
+
+export function calculateWesternChart(birthInput) {
+  const { jd, jde, utc, local } = julianDayFromBirth(birthInput);
+  const lat = Number(birthInput.latitude) || 0;
+  const lng = Number(birthInput.longitude) || 0;
+  const system = birthInput.houseSystem === 'equal' ? 'equal' : 'placidus';
+
+  const tropNow = tropicalPositions(jde);
+  const tropPrev = tropicalPositions(jde - 1);
+  const lagna = tropicalLagna(jd, jde, lat, lng);
+  const mc = tropicalMidheaven(lagna.ramc, lagna.obliquity);
+  const houses = houseCusps(lagna.ascendant, lagna.ramc, lat, lagna.obliquity, system);
+
+  const planetPositions = PLANET_KEYS.map((key) => {
+    const meta = WESTERN_PLANETS.find((p) => p.key === key);
+    const longitude = lonOf(tropNow, key);
+    const sign = signFromLongitude(longitude);
+    const house = houseOfLongitude(longitude, houses.cusps);
+    const neverRetro = !!meta.neverRetro;
+    const alwaysRetro = !!meta.alwaysRetro;
+    const retrograde = alwaysRetro || (!neverRetro && isRetrograde(longitude, lonOf(tropPrev, key)));
+    return {
+      key,
+      name: meta.name,
+      symbol: meta.symbol,
+      color: meta.color,
+      keywords: meta.keywords,
+      longitude,
+      sign: sign.name,
+      signId: sign.id,
+      signMeta: sign,
+      degreeInSign: sign.degreeInSign,
+      degreeLabel: formatDms(sign.degreeInSign),
+      house,
+      houseName: WESTERN_HOUSES[house - 1].name,
+      dignity: westernDignity(key, sign.id),
+      retrograde,
+    };
+  });
+
+  planetPositions.forEach((p) => {
+    p.blurb = planetSentence(p);
+  });
+
+  const aspects = calculateAspects(planetPositions.filter((p) => p.key !== 'southnode'));
+  const sun = planetPositions.find((p) => p.key === 'sun');
+  const moon = planetPositions.find((p) => p.key === 'moon');
+  const risingSign = signFromLongitude(lagna.ascendant);
+
+  const interpretations = {
+    sun: `${sun.signMeta.sun} ${sun.blurb}`,
+    moon: `${moon.signMeta.moon} ${moon.blurb}`,
+    rising: `${risingSign.rising} Ascendant at ${formatDms(risingSign.degreeInSign)} ${risingSign.name}. Midheaven (MC) at ${formatDms(signFromLongitude(mc).degreeInSign)} ${signFromLongitude(mc).name}.`,
+    engine: `Tropical zodiac. ${houses.system === 'placidus' ? 'Placidus' : 'Equal'} houses${houses.fallback ? ' (Placidus fell back to Equal at this latitude)' : ''}. Positions from astronomia (VSOP87 / Meeus), natal-grade. Mean lunar nodes.`,
+    disclaimer: 'Educational Western astrology, not medical, legal, or financial advice.',
+  };
+
+  return {
+    birth: {
+      ...birthInput,
+      utcIso: utc.toISO(),
+      localIso: local.toISO(),
+      timezoneLabel: formatOffset(
+        typeof birthInput.timezoneOffset === 'number'
+          ? birthInput.timezoneOffset
+          : -new Date().getTimezoneOffset()
+      ),
+    },
+    jd,
+    jde,
+    ascendant: lagna.ascendant,
+    midheaven: mc,
+    ramc: lagna.ramc,
+    obliquity: lagna.obliquity,
+    houses,
+    planetPositions,
+    aspects,
+    risingSign,
+    interpretations,
+  };
+}
+
+/** Back-compat wrapper used by AstrologySection.vue */
+export async function calculatePlanetaryPositions(date, time, latitude, longitude, timezoneOffset) {
+  const chart = calculateWesternChart({
+    date,
+    time,
+    latitude,
+    longitude,
+    timezoneOffset,
+  });
+  return chart.planetPositions;
+}
+
+export function calculateHouses(birthDateTime, latitude, longitude, timezoneOffset) {
+  const chart = calculateWesternChart({
+    date: birthDateTime,
+    time: `${String(birthDateTime.hour ?? 12).padStart(2, '0')}:${String(birthDateTime.minute ?? 0).padStart(2, '0')}`,
+    latitude,
+    longitude,
+    timezoneOffset,
+  });
+  return chart.houses.cusps.map((c) => ({
+    number: c.number,
+    cusp: c.cusp,
+    sign: signFromLongitude(c.cusp).name,
+  }));
+}
+
+export { formatDms, formatOffset, norm360, WESTERN_HOUSES, WESTERN_SIGNS };

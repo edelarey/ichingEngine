@@ -170,6 +170,7 @@ export const useBirthdayStore = defineStore('birthday', {
                 longitude: typeof b.coords?.longitude === 'string' ? parseFloat(b.coords.longitude) : b.coords?.longitude || 0,
               },
               place: b.place || '', // Add place field
+              timezoneOffset: typeof b.timezoneOffset === 'number' ? b.timezoneOffset : undefined,
             };
 
             // Additional validation for imported data

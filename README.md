@@ -27,6 +27,31 @@ npm run build
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+## Vedic Astrology (Jyotish)
+
+The app now includes a **Vedic Astrology** section at `/vedic_astrology` (sidebar: Astrology → Vedic Astrology).
+
+- Sidereal natal chart (Janma Kuṇḍalī) with **Lahiri / Chitrāpakṣa** ayanāṁśa
+- Nine grahas: Sūrya (Sun) through Śani (Saturn), plus mean Rāhu and Ketu
+- Whole-sign houses from Lagna (Ascendant)
+- North Indian (Bhṛgu) diamond chart and South Indian (Guru) square chart
+- Nakshatras, dignity, dṛṣṭi (aspects), and Vimśottarī daśā
+- Rule-based interpretations; bilingual Sanskrit (English) labels throughout
+- PDF export; reuses the shared birthday history
+- Tradition guide: `/vedic_help` and `docs/vedic-astrology.md`
+
+Birth **time and timezone of the birth place** are required for an accurate Lagna. Positions are natal-grade (astronomia VSOP87 / Meeus), not Swiss Ephemeris.
+
+## Western Astrology
+
+`/western_astrology` now uses the **same tropical ephemeris** as Vedic (astronomia VSOP87 / Meeus), then keeps the tropical zodiac instead of subtracting Lahiri.
+
+- True **Ascendant (Rising)** and **Midheaven**, not a copy of the Sun sign
+- **Placidus** houses (Equal fallback at high latitude, or choose Equal)
+- Major **aspects** with orbs, drawn on the wheel (Ascendant on the left)
+- Retrograde, essential dignity, Sun / Moon / Rising interpretations
+- Timezone of the birth place (same birthday list as Vedic)
+
 # Enhance Relationship Compatibility
 # New Added Relationship Compatibility 
 # fix date handling
@@ -46,3 +71,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 # Add basic Life Symphony
 # Redeploy
 # Fix Pico Vulnerablity
+# Add Vedic Astrology section (Jyotish kundli, Lahiri, North/South Indian charts, interpretations, help)
+# Rewrite Western astrology on astronomia (true ASC, Placidus, aspects, timezone)

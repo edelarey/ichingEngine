@@ -35,8 +35,9 @@
                 <li>Interactive hexagram generation</li>
                 <li>Detailed interpretations and explanations</li>
                 <li>Save and revisit past readings</li>                
-                <li>Astrological Readings</li>
+                <li>Astrological Readings (I-Ching, Western, Vedic / Jyotish)</li>
                 <li>Save and revisit past astrological readings</li>
+                <li>Vedic natal chart, North/South Indian kundli, and Jyotish help</li>
                 <li>Explore Different Hexagram Sequences</li>
               </ul>
             </div>

@@ -33,13 +33,12 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import BirthDataForm from './BirthDataForm.vue';
 import AstroChartDisplay from './AstroChartDisplay.vue';
 import AstroSummary from './AstroSummary.vue';
 import { useAstrologyStore } from '@/stores/astrology';
-import { calculatePlanetaryPositions } from '@/utils/astrologyCalculations';
+import { calculateWesternChart } from '@/utils/astrologyCalculations';
 
 export default {
   name: 'AstrologySection',
@@ -58,17 +57,12 @@ export default {
       
       try {
         // Calculate planetary positions
-        const positions = await calculatePlanetaryPositions(
-          birthData.value.date,
-          birthData.value.time,
-          birthData.value.latitude,
-          birthData.value.longitude
-        );
-        
-        astrologyStore.setPlanetPositions(positions);
+        const chart = calculateWesternChart({ ...birthData.value });
+        astrologyStore.setPlanetPositions(chart.planetPositions);
         astrologyStore.setChartData({
+          ...chart,
           birthData: { ...birthData.value },
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
         
         // Optionally save the chart

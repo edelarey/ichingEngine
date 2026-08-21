@@ -120,8 +120,8 @@
                     </div>
                     
                     <div class="row">
-                      <div class="col-12 col-md-6 mb-3">
-                        <label for="birthTime" class="form-label">Birth Time</label>
+                      <div class="col-12 col-md-4 mb-3">
+                        <label for="birthTime" class="form-label">Birth Time (local civil time)</label>
                         <input
                           id="birthTime"
                           type="time"
@@ -129,7 +129,16 @@
                           v-model="localBirthData.time"
                         />
                       </div>
-                      <div class="col-12 col-md-6 mb-3">
+                      <div class="col-12 col-md-4 mb-3">
+                        <label for="western-tz" class="form-label">Timezone of birth place</label>
+                        <select id="western-tz" class="form-control" v-model.number="localBirthData.timezoneOffset">
+                          <option v-for="tz in timezonePresets" :key="tz.label + tz.offset" :value="tz.offset">
+                            {{ tz.label }}
+                          </option>
+                        </select>
+                        <div class="form-text">Needed for a real Ascendant (Rising sign).</div>
+                      </div>
+                      <div class="col-12 col-md-4 mb-3">
                         <label for="gender" class="form-label">Gender</label>
                         <select id="gender" class="form-control" v-model="localBirthData.gender">
                           <option value="MALE">MALE</option>
@@ -164,7 +173,7 @@
                     </div>
                     
                     <div class="row">
-                      <div class="col-12 mb-3">
+                      <div class="col-12 col-md-8 mb-3">
                         <label for="place" class="form-label">Birth Place (Optional)</label>
                         <input
                           id="place"
@@ -174,7 +183,18 @@
                           placeholder="e.g., New York, NY, USA"
                         />
                       </div>
+                      <div class="col-12 col-md-4 mb-3">
+                        <label for="houseSystem" class="form-label">House system</label>
+                        <select id="houseSystem" class="form-control" v-model="localBirthData.houseSystem">
+                          <option value="placidus">Placidus</option>
+                          <option value="equal">Equal (from Ascendant)</option>
+                        </select>
+                      </div>
                     </div>
+                    <p v-if="timezoneWarning" class="text-warning small">{{ timezoneWarning }}</p>
+                    <p class="small text-muted">
+                      Tropical zodiac via astronomia (VSOP87 / Meeus). Rising is the true Ascendant, not a copy of the Sun.
+                    </p>
                     
                     <div class="row">
                       <div class="col-12 text-center">
@@ -245,7 +265,8 @@ import { useBirthdayStore } from '@/stores/birthday';
 import { useAstrologyStore } from '@/stores/astrology';
 import AstroChartDisplay from '@/components/AstroChartDisplay.vue';
 import AstroSummary from '@/components/AstroSummary.vue';
-import { calculatePlanetaryPositions } from '@/utils/astrologyCalculations';
+import { calculateWesternChart, formatOffset } from '@/utils/astrologyCalculations';
+import { TIMEZONE_PRESETS } from '@/const/vedic';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -262,6 +283,13 @@ export default {
     const loading = ref(false);
     const chartData = ref(null);
     const planetPositions = ref(null);
+    const timezoneWarning = ref('');
+    const timezonePresets = computed(() => {
+      const browser = -new Date().getTimezoneOffset();
+      const has = TIMEZONE_PRESETS.some((t) => t.offset === browser);
+      const extra = has ? [] : [{ label: `Browser local (${formatOffset(browser)})`, offset: browser }];
+      return [...extra, ...TIMEZONE_PRESETS];
+    });
     
     const localBirthData = reactive({
       name: '',
@@ -270,7 +298,9 @@ export default {
       latitude: 0,
       longitude: 0,
       place: '',
-      gender: 'MALE'
+      gender: 'MALE',
+      timezoneOffset: -new Date().getTimezoneOffset(),
+      houseSystem: 'placidus',
     });
 
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
@@ -300,7 +330,7 @@ export default {
     };
 
     const updateDate = (event) => {
-      localBirthData.date = new Date(event.target.value);
+      localBirthData.date = new Date(`${event.target.value}T12:00:00`);
     };
 
     const loadBirthdayData = (birthday) => {
@@ -314,6 +344,13 @@ export default {
       // Extract time from birthday if available
       const birthDateTime = DateTime.fromISO(birthday.birthday);
       localBirthData.time = birthDateTime.toFormat('HH:mm');
+      if (typeof birthday.timezoneOffset === 'number') {
+        localBirthData.timezoneOffset = birthday.timezoneOffset;
+        timezoneWarning.value = '';
+      } else if (birthDateTime.isValid) {
+        localBirthData.timezoneOffset = birthDateTime.offset;
+        timezoneWarning.value = 'This saved birthday has no explicit timezone. Confirm the birth-place offset before trusting the Rising sign.';
+      }
       
       // Switch to chart tab and calculate
       switchToChartTab();
@@ -341,29 +378,23 @@ export default {
     const calculateChart = async () => {
       loading.value = true;
       try {
-        // Calculate planetary positions
-        const positions = await calculatePlanetaryPositions(
-          localBirthData.date,
-          localBirthData.time,
-          localBirthData.latitude,
-          localBirthData.longitude
-        );
-        
-        planetPositions.value = positions;
+        const chart = calculateWesternChart({ ...localBirthData });
+        planetPositions.value = chart.planetPositions;
         chartData.value = {
+          ...chart,
           birthData: { ...localBirthData },
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
         
-        // Update astrology store
         astrologyStore.updateBirthData({
           date: localBirthData.date,
           time: localBirthData.time,
           latitude: localBirthData.latitude,
           longitude: localBirthData.longitude,
-          place: localBirthData.place
+          place: localBirthData.place,
+          timezoneOffset: localBirthData.timezoneOffset,
         });
-        astrologyStore.setPlanetPositions(positions);
+        astrologyStore.setPlanetPositions(chart.planetPositions);
         astrologyStore.setChartData(chartData.value);
         
       } catch (error) {
@@ -393,7 +424,8 @@ export default {
             latitude: localBirthData.latitude,
             longitude: localBirthData.longitude
           },
-          place: localBirthData.place
+          place: localBirthData.place,
+          timezoneOffset: localBirthData.timezoneOffset,
         };
 
         const result = birthdayStore.addBirthday(birthdayData);
@@ -427,8 +459,11 @@ export default {
       localBirthData.longitude = 0;
       localBirthData.place = '';
       localBirthData.gender = 'MALE';
+      localBirthData.timezoneOffset = -new Date().getTimezoneOffset();
+      localBirthData.houseSystem = 'placidus';
       chartData.value = null;
       planetPositions.value = null;
+      timezoneWarning.value = '';
     };
 
     const startEditingBirthday = (birthday) => {
@@ -467,7 +502,7 @@ export default {
         // Title
         pdf.setFontSize(18);
         pdf.setFont(undefined, 'bold');
-        pdf.text('Western Astrology Chart Report', pageWidth / 2, yPosition, { align: 'center' });
+        pdf.text('Western Natal Chart (Tropical)', pageWidth / 2, yPosition, { align: 'center' });
         yPosition += 15;
 
         // Birth Data Section
@@ -485,8 +520,11 @@ export default {
           `Place: ${localBirthData.place || 'Not specified'}`,
           `Latitude: ${localBirthData.latitude}°`,
           `Longitude: ${localBirthData.longitude}°`,
-          `Gender: ${localBirthData.gender}`
-        ];
+          `Gender: ${localBirthData.gender}`,
+          `Timezone: ${formatOffset(localBirthData.timezoneOffset)}`,
+          `House system: ${chartData.value.houses ? chartData.value.houses.system : 'placidus'}`,
+          chartData.value.risingSign ? `Rising: ${chartData.value.risingSign.name}` : '',
+        ].filter(Boolean);
 
         birthInfo.forEach(info => {
           pdf.text(info, 20, yPosition);
@@ -706,6 +744,8 @@ export default {
       loading,
       chartData,
       planetPositions,
+      timezonePresets,
+      timezoneWarning,
       isValidData,
       dateTimeFormatSimple,
       formatDateForInput,

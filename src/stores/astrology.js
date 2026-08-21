@@ -8,7 +8,8 @@ export const useAstrologyStore = defineStore('astrology', {
       time: '12:00',
       latitude: 0,
       longitude: 0,
-      place: ''
+      place: '',
+      timezoneOffset: -new Date().getTimezoneOffset(),
     },
     planetPositions: null,
     chartData: null,

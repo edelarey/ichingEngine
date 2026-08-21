@@ -12,9 +12,11 @@ import Trigram from '../views/trigrams.vue';
 import TrigramDetail from '../views/trigram_detail.vue';
 import About from '../views/about.vue';
 import TibetanMantraChart from '../views/tibetan_mantra_chart.vue'; // Import the new component
-import WesternAstrology from '../views/western_astrology.vue';
+const WesternAstrology = () => import('../views/western_astrology.vue');
 import LifeSymphony from '../views/LifeSymphony.vue';
 import SolfeggioPlayer from '../views/solfeggio_player.vue';
+const VedicAstrology = () => import('../views/vedic_astrology.vue');
+const VedicHelp = () => import('../views/vedic_help.vue');
 
 const routes = [
   {
@@ -51,6 +53,16 @@ const routes = [
     path: '/western_astrology',
     name: 'WesternAstrology',
     component: WesternAstrology,
+  },
+  {
+    path: '/vedic_astrology',
+    name: 'VedicAstrology',
+    component: VedicAstrology,
+  },
+  {
+    path: '/vedic_help',
+    name: 'VedicHelp',
+    component: VedicHelp,
   },
   {
     path: '/life_symphony',

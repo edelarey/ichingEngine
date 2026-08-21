@@ -99,6 +99,16 @@
               <span class="align-middle">Western Astrology</span>
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/vedic_astrology" exact-active-class="active">
+              <span class="align-middle">Vedic Astrology</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/vedic_help" exact-active-class="active">
+              <span class="align-middle">Vedic Help</span>
+            </router-link>
+          </li>
         </ul>
       </li>
       <!-- Charts Sub-Menu -->
@@ -220,7 +230,7 @@ export default {
         },
         {
           name: 'keywords',
-          content: 'iChing, iChing oracle, iChing consultation, astrology, trigrams, hexagrams, divination, spiritual guidance, relationship',
+          content: 'iChing, iChing oracle, iChing consultation, astrology, Vedic astrology, Jyotish, kundli, trigrams, hexagrams, divination, spiritual guidance, relationship',
         },
         {
           name: 'robots',

@@ -71,6 +71,13 @@ module.exports = defineConfig({
             chunks: 'all',
             enforce: true,
           },
+          astronomia: {
+            name: 'astronomia',
+            test: /[\\/]node_modules[\\/]astronomia[\\/]/,
+            chunks: 'async',
+            priority: 20,
+            enforce: true,
+          },
         },
       });
     }
