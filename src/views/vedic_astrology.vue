@@ -25,11 +25,6 @@
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="vedic-history-tab" data-bs-toggle="tab" data-bs-target="#vedic-history" type="button" role="tab">
-            Birthday History
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
           <button class="nav-link" id="vedic-chart-tab" data-bs-toggle="tab" data-bs-target="#vedic-chart" type="button" role="tab">
             Vedic Chart
           </button>
@@ -82,46 +77,6 @@
           </div>
         </div>
 
-        <div class="tab-pane fade" id="vedic-history" role="tabpanel">
-          <div class="row justify-content-center mt-4">
-            <div class="col-12 col-md-8 col-lg-6">
-              <div class="card text-center">
-                <div class="card-body">
-                  <h5 class="card-title">Birthday History</h5>
-                  <div class="mb-3">
-                    <button @click="birthdayStore.exportBirthdays" class="btn btn-success btn-sm me-2">Export Birthdays</button>
-                    <label for="vedicImportFile" class="btn btn-primary btn-sm">
-                      Import Birthdays
-                      <input type="file" id="vedicImportFile" @change="handleImport" hidden accept=".json">
-                    </label>
-                    <button @click="birthdayStore.clearBirthdays" class="btn btn-danger btn-sm ms-2">Clear All</button>
-                  </div>
-                  <div v-if="birthdayList.length === 0">
-                    <p>No birthdays recorded yet.</p>
-                  </div>
-                  <div v-else>
-                    <div v-for="birthday in birthdayList" :key="birthday.id" class="mb-3 p-3 border rounded text-start">
-                      <p><strong>Date:</strong> {{ dateTimeFormatSimple(birthday.birthday) }}</p>
-                      <p><strong>Name:</strong> {{ birthday.name || 'Unnamed' }}</p>
-                      <p><strong>Gender:</strong> {{ birthday.gender }}</p>
-                      <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
-                      <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
-                      <p v-if="birthday.place"><strong>Place:</strong> {{ birthday.place }}</p>
-                      <p v-if="birthday.timezoneOffset != null">
-                        <strong>Timezone:</strong> {{ formatOffset(birthday.timezoneOffset) }}
-                      </p>
-                      <div>
-                        <button @click="loadBirthdayData(birthday)" class="btn btn-primary btn-sm me-2">Load for Chart</button>
-                        <button @click="birthdayStore.removeBirthday(birthday.id)" class="btn btn-danger btn-sm">Delete</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="tab-pane fade" id="vedic-chart" role="tabpanel">
           <div class="row justify-content-center mt-4">
             <div class="col-12">
@@ -129,6 +84,7 @@
                 <h3 class="card-header">Janma Kuṇḍalī (Vedic Natal Chart)</h3>
                 <div class="card-body">
                   <div class="birth-data-form mb-4">
+                    <BirthdayPicker load-label="Load for chart" @load="loadBirthdayData" />
                     <h5 class="mb-3">Birth Information</h5>
                     <div class="row">
                       <div class="col-12 col-md-6 mb-3">
@@ -218,12 +174,14 @@
 </template>
 
 <script>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { DateTime } from 'luxon';
+import { useRoute } from 'vue-router';
 import { useBirthdayStore } from '@/stores/birthday';
 import { useVedicStore } from '@/stores/vedic';
 import VedicChartDisplay from '@/components/VedicChartDisplay.vue';
 import VedicSummary from '@/components/VedicSummary.vue';
+import BirthdayPicker from '@/components/BirthdayPicker.vue';
 import { calculateVedicChart, formatOffset } from '@/utils/vedicCalculations';
 import { TIMEZONE_PRESETS } from '@/const/vedic';
 import jsPDF from 'jspdf';
@@ -231,10 +189,11 @@ import html2canvas from 'html2canvas';
 
 export default {
   name: 'VedicAstrology',
-  components: { VedicChartDisplay, VedicSummary },
+  components: { VedicChartDisplay, VedicSummary, BirthdayPicker },
   setup() {
     const birthdayStore = useBirthdayStore();
     const vedicStore = useVedicStore();
+    const route = useRoute();
     const loading = ref(false);
     const chart = ref(null);
     const error = ref(null);
@@ -324,6 +283,7 @@ export default {
       timezoneWarning.value = typeof birthday.timezoneOffset === 'number'
         ? ''
         : 'This saved birthday has no explicit timezone. Confirm the offset of the birth place before trusting Lagna (Ascendant).';
+      birthdayStore.selectBirthday(birthday.id);
       switchToChartTab();
       calculateChart();
     };
@@ -474,6 +434,11 @@ export default {
           y += 4;
         };
 
+        if (chart.value.interpretations.executive) {
+          const exec = chart.value.interpretations.executive;
+          addLines('In plain English', `${exec.headline} ${exec.intro}`);
+          exec.points.forEach((p) => addLines(p.label, p.text));
+        }
         addLines('Lagna (Ascendant)', chart.value.interpretations.lagna);
         addLines('Chandra (Moon)', chart.value.interpretations.moon);
         addLines('Surya (Sun)', chart.value.interpretations.sun);
@@ -519,6 +484,14 @@ export default {
         alert('Failed to generate PDF. Please try again.');
       }
     };
+
+    onMounted(() => {
+      const loadId = route.query.load;
+      if (loadId) {
+        const found = birthdayStore.getBirthdayById(loadId);
+        if (found) loadBirthdayData(found);
+      }
+    });
 
     return {
       birthdayStore,

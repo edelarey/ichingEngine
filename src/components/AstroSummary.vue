@@ -2,6 +2,13 @@
   <div class="astro-summary">
     <h4 class="text-center mb-4">Astrological Summary</h4>
 
+    <ReadingLead
+      v-if="executive"
+      :headline="executive.headline"
+      :intro="executive.intro"
+      :points="executive.points"
+    />
+
     <div class="row">
       <div class="col-12 col-md-4 mb-3">
         <div class="card h-100">
@@ -118,9 +125,11 @@
 <script>
 import { computed } from 'vue';
 import { WESTERN_SIGNS, signFromLongitude } from '@/const/western';
+import ReadingLead from './ReadingLead.vue';
 
 export default {
   name: 'AstroSummary',
+  components: { ReadingLead },
   props: {
     chartData: { type: Object, required: true },
     planetPositions: { type: Array, default: () => [] },
@@ -186,6 +195,7 @@ export default {
     const aspects = computed(() => props.chartData.aspects || []);
     const planetNotes = computed(() => (props.planetPositions || []).filter((p) => p.blurb));
     const birth = computed(() => (props.chartData.birth || props.chartData.birthData || {}));
+    const executive = computed(() => (props.chartData.interpretations && props.chartData.interpretations.executive) || null);
     const engineNote = computed(() => (props.chartData.interpretations && props.chartData.interpretations.engine) || '');
     const disclaimer = computed(() => (props.chartData.interpretations && props.chartData.interpretations.disclaimer) || '');
 
@@ -202,6 +212,7 @@ export default {
 
     return {
       sun, moon, rising, sunDegree, moonDegree, risingDegree,
+      executive,
       sunText, moonText, risingText,
       elementBalance, modalityBalance, aspects, planetNotes, birth,
       engineNote, disclaimer, formatDate, formatCoordinates,

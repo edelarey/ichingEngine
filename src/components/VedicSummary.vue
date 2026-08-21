@@ -2,6 +2,13 @@
   <div class="vedic-summary">
     <h4 class="text-center mb-4">Jyotish Reading (Vedic Interpretation)</h4>
 
+    <ReadingLead
+      v-if="chart.interpretations && chart.interpretations.executive"
+      :headline="chart.interpretations.executive.headline"
+      :intro="chart.interpretations.executive.intro"
+      :points="chart.interpretations.executive.points"
+    />
+
     <div class="row">
       <div class="col-12 col-md-4 mb-3">
         <div class="card h-100">
@@ -96,9 +103,11 @@
 
 <script>
 import { computed } from 'vue';
+import ReadingLead from './ReadingLead.vue';
 
 export default {
   name: 'VedicSummary',
+  components: { ReadingLead },
   props: {
     chart: { type: Object, required: true },
   },

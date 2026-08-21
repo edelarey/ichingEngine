@@ -4,14 +4,32 @@ import { DateTime } from 'luxon';
 export const useBirthdayStore = defineStore('birthday', {
   state: () => ({
     birthdays: JSON.parse(localStorage.getItem('birthdays')) || [],
+    selectedId: localStorage.getItem('birthdaySelectedId')
+      ? Number(localStorage.getItem('birthdaySelectedId'))
+      : null,
   }),
   getters: {
     getBirthdayList: (state) => state.birthdays,
+    selectedBirthday: (state) => state.birthdays.find((b) => b.id === state.selectedId) || null,
   },
   actions: {
     // Helper function to save to localStorage
     persistState() {
       localStorage.setItem('birthdays', JSON.stringify(this.birthdays));
+      if (this.selectedId != null) {
+        localStorage.setItem('birthdaySelectedId', String(this.selectedId));
+      } else {
+        localStorage.removeItem('birthdaySelectedId');
+      }
+    },
+
+    selectBirthday(id) {
+      this.selectedId = id == null ? null : Number(id);
+      this.persistState();
+    },
+
+    getBirthdayById(id) {
+      return this.birthdays.find((b) => b.id === Number(id)) || null;
     },
 
     // Validate a birthday object
@@ -136,11 +154,13 @@ export const useBirthdayStore = defineStore('birthday', {
 
     removeBirthday(id) {
       this.birthdays = this.birthdays.filter((b) => b.id !== id);
+      if (this.selectedId === id) this.selectedId = null;
       this.persistState();
     },
 
     clearBirthdays() {
       this.birthdays = [];
+      this.selectedId = null;
       this.persistState();
     },
 

@@ -27,6 +27,10 @@ npm run build
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+## Birthdays
+
+Saved people live on **Birthdays** (`/birthdays`) — add, edit, import/export — and are shared by I-Ching Astrology, Vedic, and Western. Each astrology page has a picker to load a saved birthday; the Birthdays page can open a person directly in any of the three systems.
+
 ## Vedic Astrology (Jyotish)
 
 The app now includes a **Vedic Astrology** section at `/vedic_astrology` (sidebar: Astrology → Vedic Astrology).
@@ -73,3 +77,4 @@ Birth **time and timezone of the birth place** are required for an accurate Lagn
 # Fix Pico Vulnerablity
 # Add Vedic Astrology section (Jyotish kundli, Lahiri, North/South Indian charts, interpretations, help)
 # Rewrite Western astrology on astronomia (true ASC, Placidus, aspects, timezone)
+# Separate Birthday management into its own shared page

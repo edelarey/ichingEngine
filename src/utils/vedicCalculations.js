@@ -28,6 +28,10 @@ import {
   rashiFromLongitude,
   nakshatraFromLongitude,
   norm360,
+  PLAIN_SIGN,
+  PLAIN_DIGNITY,
+  PLAIN_HOUSE_FOCUS,
+  PLAIN_PERIOD,
 } from '@/const/vedic';
 import {
   julianDayFromBirth,
@@ -372,8 +376,57 @@ function buildInterpretations({ lagnaRashi, lagnaLordKey, grahas, byKey, houses,
     houses: houseReadings,
     grahas: grahaNotes,
     dasha: dashaText,
+    executive: buildVedicExecutive({ lagnaRashi, lagnaLord, moon, sun, grahas, dasha }),
     disclaimer: 'This reading is educational Jyotish (Vedic astrology), not medical, legal, or financial advice. Whole-sign houses, Lahiri ayanāṁśa, and mean Rāhu/Ketu are used. Positions are natal-grade (VSOP87 / Meeus), not observatory ephemerides.',
   };
+}
+
+function buildVedicExecutive({ lagnaRashi, lagnaLord, moon, sun, grahas, dasha }) {
+  const face = PLAIN_SIGN[lagnaRashi.rashi.key] || PLAIN_SIGN.aries;
+  const heart = PLAIN_SIGN[moon.rashi.key] || PLAIN_SIGN.cancer;
+  const will = PLAIN_SIGN[sun.rashi.key] || PLAIN_SIGN.leo;
+  const maha = dasha.currentMaha;
+  const antar = dasha.currentAntar;
+  const mahaPlain = PLAIN_PERIOD[maha.key] || maha.key;
+  const antarPlain = PLAIN_PERIOD[antar.key] || antar.key;
+
+  const strong = grahas.filter((g) => ['exalted', 'moolatrikona', 'own'].includes(g.dignity.key) && !['rahu', 'ketu'].includes(g.key));
+  const strained = grahas.filter((g) => ['debilitated', 'enemy'].includes(g.dignity.key) && !['rahu', 'ketu'].includes(g.key));
+  const occupiedLife = grahas
+    .filter((g) => [1, 4, 7, 10].includes(g.house) && !['rahu', 'ketu'].includes(g.key))
+    .slice(0, 3)
+    .map((g) => PLAIN_HOUSE_FOCUS[g.house]);
+  const uniqueLife = [...new Set(occupiedLife)];
+
+  const headline = `${lagnaRashi.rashi.nameEn} rising, ${moon.rashi.nameEn} Moon, ${sun.rashi.nameEn} Sun.`;
+  const intro = `${face.face}. Inside, ${heart.heart}. ${will.will}. Right now you are in a ${GRAHA_BY_KEY[maha.key].nameEn} chapter of life.`;
+
+  const points = [
+    { label: 'How you come across', text: `${face.face}. The planet that steers this (your rising-sign ruler, ${lagnaLord.nameEn}) is in the area of ${PLAIN_HOUSE_FOCUS[lagnaLord.house]}. ${PLAIN_DIGNITY[lagnaLord.dignity.key] || ''}.` },
+    { label: 'How you feel', text: `${heart.heart}. The Moon’s lunar mansion is ${moon.nakshatra.nameEn} — ${moon.nakshatra.keywords}.` },
+    { label: 'What you are aiming at', text: `${will.will}. The Sun sits in the area of ${PLAIN_HOUSE_FOCUS[sun.house]}.` },
+    { label: 'The chapter you are in', text: `A ${GRAHA_BY_KEY[maha.key].nameEn} period (until ${maha.endLabel}) emphasises ${mahaPlain}. Under that, a ${GRAHA_BY_KEY[antar.key].nameEn} subplot (until ${antar.endLabel}) brings ${antarPlain}.` },
+  ];
+
+  if (uniqueLife.length) {
+    points.push({
+      label: 'Where life is busy',
+      text: `Planets light up ${uniqueLife.join('; ')}. Those rooms of life tend to stay active.`,
+    });
+  }
+
+  const easeBits = [];
+  if (strong.length) {
+    easeBits.push(`${strong.map((g) => g.nameEn).join(', ')} ${strong.length === 1 ? 'is' : 'are'} in good condition (${PLAIN_DIGNITY[strong[0].dignity.key]})`);
+  }
+  if (strained.length) {
+    easeBits.push(`${strained.map((g) => g.nameEn).join(', ')} ${strained.length === 1 ? 'asks' : 'ask'} for more patience`);
+  }
+  if (easeBits.length) {
+    points.push({ label: 'What comes easily vs what takes work', text: `${easeBits.join('. ')}.` });
+  }
+
+  return { headline, intro, points };
 }
 
 export function computeTropicalSnapshot(birthInput) {

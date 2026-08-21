@@ -71,6 +71,55 @@ export function calculateAspects(planetPositions) {
   return aspects;
 }
 
+const WESTERN_HOUSE_PLAIN = {
+  1: 'how you come across',
+  2: 'money and self-worth',
+  3: 'talk, siblings, and the local mind',
+  4: 'home and roots',
+  5: 'creativity, romance, and play',
+  6: 'daily work and health habits',
+  7: 'partnership',
+  8: 'shared money and deep change',
+  9: 'belief, travel, and the bigger picture',
+  10: 'career and public reputation',
+  11: 'friends and hopes',
+  12: 'privacy, rest, and the unseen',
+};
+
+function firstSentence(text) {
+  if (!text) return '';
+  const match = String(text).match(/^[^.!?]+[.!?]?/);
+  return match ? match[0].trim() : String(text);
+}
+
+function buildWesternExecutive({ sun, moon, risingSign, planetPositions, aspects, mc }) {
+  const mcSign = signFromLongitude(mc);
+  const tight = (aspects || []).filter((a) => !['northnode', 'southnode'].includes(a.key1) && !['northnode', 'southnode'].includes(a.key2))[0];
+  const strong = planetPositions.filter((p) => ['domicile', 'exaltation'].includes(p.dignity.key) && !['northnode', 'southnode'].includes(p.key));
+  const strained = planetPositions.filter((p) => ['detriment', 'fall'].includes(p.dignity.key) && !['northnode', 'southnode'].includes(p.key));
+  const headline = `${risingSign.name} rising, ${sun.sign} Sun, ${moon.sign} Moon.`;
+  const intro = `${firstSentence(risingSign.rising)} ${firstSentence(sun.signMeta.sun)} ${firstSentence(moon.signMeta.moon)}`;
+  const points = [
+    { label: 'How you come across', text: `${firstSentence(risingSign.rising)} Rising is the first impression — not the same thing as your Sun sign.` },
+    { label: 'Who you are becoming', text: `${firstSentence(sun.signMeta.sun)} The Sun is in the house of ${WESTERN_HOUSE_PLAIN[sun.house]}.` },
+    { label: 'How you feel', text: `${firstSentence(moon.signMeta.moon)} The Moon is in the house of ${WESTERN_HOUSE_PLAIN[moon.house]}.` },
+    { label: 'Public direction', text: `The Midheaven (career / calling point) is in ${mcSign.name}.` },
+  ];
+  if (tight) {
+    points.push({
+      label: 'A key relationship in the chart',
+      text: `${tight.planet1} ${tight.aspect} ${tight.planet2} (within ${tight.orb.toFixed(1)}°). ${tight.blurb}`,
+    });
+  }
+  const ease = [];
+  if (strong.length) ease.push(`${strong.map((p) => p.name).join(', ')} ${strong.length === 1 ? 'has' : 'have'} extra support`);
+  if (strained.length) ease.push(`${strained.map((p) => p.name).join(', ')} ${strained.length === 1 ? 'is' : 'are'} in a more awkward sign`);
+  if (ease.length) {
+    points.push({ label: 'Easy vs effort', text: `${ease.join('. ')}.` });
+  }
+  return { headline, intro, points };
+}
+
 function planetSentence(planet) {
   const houseIdx = planet.house - 1;
   const houseLine = PLANET_IN_HOUSE[planet.key]
@@ -132,6 +181,7 @@ export function calculateWesternChart(birthInput) {
     sun: `${sun.signMeta.sun} ${sun.blurb}`,
     moon: `${moon.signMeta.moon} ${moon.blurb}`,
     rising: `${risingSign.rising} Ascendant at ${formatDms(risingSign.degreeInSign)} ${risingSign.name}. Midheaven (MC) at ${formatDms(signFromLongitude(mc).degreeInSign)} ${signFromLongitude(mc).name}.`,
+    executive: buildWesternExecutive({ sun, moon, risingSign, planetPositions, aspects, mc }),
     engine: `Tropical zodiac. ${houses.system === 'placidus' ? 'Placidus' : 'Equal'} houses${houses.fallback ? ' (Placidus fell back to Equal at this latitude)' : ''}. Positions from astronomia (VSOP87 / Meeus), natal-grade. Mean lunar nodes.`,
     disclaimer: 'Educational Western astrology, not medical, legal, or financial advice.',
   };

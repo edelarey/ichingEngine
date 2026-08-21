@@ -19,27 +19,13 @@
         <li class="nav-item" role="presentation">
           <button 
             class="nav-link active" 
-            id="birthday-history-tab" 
-            data-bs-toggle="tab" 
-            data-bs-target="#birthday-history" 
-            type="button" 
-            role="tab" 
-            aria-controls="birthday-history" 
-            aria-selected="true"
-          >
-            Birthday History
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button 
-            class="nav-link" 
             id="western-chart-tab" 
             data-bs-toggle="tab" 
             data-bs-target="#western-chart" 
             type="button" 
             role="tab" 
             aria-controls="western-chart" 
-            aria-selected="false"
+            aria-selected="true"
           >
             Western Astrology Chart
           </button>
@@ -47,47 +33,8 @@
       </ul>
 
       <div class="tab-content" id="westernAstrologyTabContent">
-        <!-- Birthday History Tab -->
-        <div class="tab-pane fade show active" id="birthday-history" role="tabpanel" aria-labelledby="birthday-history-tab">
-          <div class="row justify-content-center mt-4">
-            <div class="col-12 col-md-8 col-lg-6">
-              <div class="card text-center">
-                <div class="card-body">
-                  <h5 class="card-title">Birthday History</h5>
-                  <div class="mb-3">
-                    <button @click="birthdayStore.exportBirthdays" class="btn btn-success btn-sm me-2">Export Birthdays</button>
-                    <label for="importFile" class="btn btn-primary btn-sm">
-                      Import Birthdays
-                      <input type="file" id="importFile" @change="handleImport" hidden accept=".json">
-                    </label>
-                    <button @click="birthdayStore.clearBirthdays" class="btn btn-danger btn-sm ms-2">Clear All</button>
-                  </div>
-                  <div v-if="birthdayList.length === 0">
-                    <p>No birthdays recorded yet.</p>
-                  </div>
-                  <div v-else>
-                    <div v-for="birthday in birthdayList" :key="birthday.id" class="mb-3 p-3 border rounded">
-                      <p><strong>Date:</strong> {{ dateTimeFormatSimple(birthday.birthday) }}</p>
-                      <p><strong>Name:</strong> {{ birthday.name || 'Unnamed' }}</p>
-                      <p><strong>Gender:</strong> {{ birthday.gender }}</p>
-                      <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
-                      <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
-                      <p v-if="birthday.place"><strong>Place:</strong> {{ birthday.place }}</p>
-                      <div>
-                        <button @click="loadBirthdayData(birthday)" class="btn btn-primary btn-sm me-2">Load for Chart</button>
-                        <button @click="startEditingBirthday(birthday)" class="btn btn-secondary btn-sm me-2">Edit</button>
-                        <button @click="birthdayStore.removeBirthday(birthday.id)" class="btn btn-danger btn-sm">Delete</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Western Astrology Chart Tab -->
-        <div class="tab-pane fade" id="western-chart" role="tabpanel" aria-labelledby="western-chart-tab">
+        <div class="tab-pane fade show active" id="western-chart" role="tabpanel" aria-labelledby="western-chart-tab">
           <div class="row justify-content-center mt-4">
             <div class="col-12">
               <div class="card">
@@ -95,6 +42,7 @@
                 <div class="card-body">
                   <!-- Birth Data Form with Save Functionality -->
                   <div class="birth-data-form mb-4">
+                    <BirthdayPicker load-label="Load for chart" @load="loadBirthdayData" />
                     <h5 class="mb-3">Birth Information</h5>
                     <div class="row">
                       <div class="col-12 col-md-6 mb-3">
@@ -259,12 +207,14 @@
 </template>
 
 <script>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { DateTime } from 'luxon';
+import { useRoute } from 'vue-router';
 import { useBirthdayStore } from '@/stores/birthday';
 import { useAstrologyStore } from '@/stores/astrology';
 import AstroChartDisplay from '@/components/AstroChartDisplay.vue';
 import AstroSummary from '@/components/AstroSummary.vue';
+import BirthdayPicker from '@/components/BirthdayPicker.vue';
 import { calculateWesternChart, formatOffset } from '@/utils/astrologyCalculations';
 import { TIMEZONE_PRESETS } from '@/const/vedic';
 import jsPDF from 'jspdf';
@@ -274,11 +224,13 @@ export default {
   name: 'WesternAstrology',
   components: {
     AstroChartDisplay,
-    AstroSummary
+    AstroSummary,
+    BirthdayPicker,
   },
   setup() {
     const birthdayStore = useBirthdayStore();
     const astrologyStore = useAstrologyStore();
+    const route = useRoute();
     
     const loading = ref(false);
     const chartData = ref(null);
@@ -351,28 +303,14 @@ export default {
         localBirthData.timezoneOffset = birthDateTime.offset;
         timezoneWarning.value = 'This saved birthday has no explicit timezone. Confirm the birth-place offset before trusting the Rising sign.';
       }
-      
-      // Switch to chart tab and calculate
+      birthdayStore.selectBirthday(birthday.id);
       switchToChartTab();
       calculateChart();
     };
 
     const switchToChartTab = () => {
-      // Switch to the western chart tab
       const chartTab = document.getElementById('western-chart-tab');
-      const historyTab = document.getElementById('birthday-history-tab');
-      const chartPane = document.getElementById('western-chart');
-      const historyPane = document.getElementById('birthday-history');
-      
-      if (chartTab && historyTab && chartPane && historyPane) {
-        historyTab.classList.remove('active');
-        historyTab.setAttribute('aria-selected', 'false');
-        chartTab.classList.add('active');
-        chartTab.setAttribute('aria-selected', 'true');
-        
-        historyPane.classList.remove('show', 'active');
-        chartPane.classList.add('show', 'active');
-      }
+      if (chartTab && !chartTab.classList.contains('active')) chartTab.click();
     };
 
     const calculateChart = async () => {
@@ -736,6 +674,14 @@ export default {
         alert('Failed to generate PDF. Please try again.');
       }
     };
+
+    onMounted(() => {
+      const loadId = route.query.load;
+      if (loadId) {
+        const found = birthdayStore.getBirthdayById(loadId);
+        if (found) loadBirthdayData(found);
+      }
+    });
 
     return {
       birthdayStore,

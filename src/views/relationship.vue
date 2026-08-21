@@ -46,30 +46,21 @@
       <div class="col-12 col-md-8 col-lg-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">Birthday History</h5>
-            <div class="mb-3">
-              <button @click="birthdayStore.exportBirthdays" class="btn btn-success btn-sm me-2">Export Birthdays</button>
-              <label for="importFile" class="btn btn-primary btn-sm">
-                Import Birthdays
-                <input type="file" id="importFile" @change="handleImport" hidden accept=".json">
-              </label>
-              <button @click="birthdayStore.clearBirthdays" class="btn btn-danger btn-sm ms-2">Clear All</button>
-            </div>
+            <h5 class="card-title">Saved birthdays</h5>
+            <p class="small">
+              Add or edit people on the
+              <router-link to="/birthdays">Birthdays</router-link>
+              page, then load them here as Person 1 or Person 2.
+            </p>
             <div v-if="birthdayList.length === 0">
-              <p>No birthdays recorded yet.</p>
+              <p>No birthdays recorded yet. <router-link to="/birthdays">Add one</router-link>.</p>
             </div>
             <div v-else>
-              <div v-for="birthday in birthdayList" :key="birthday.id" class="mb-3">
-                <p><strong>Date:</strong> {{ dateTimeFormatSimple(birthday.birthday) }}</p>
-                <p><strong>Name:</strong> {{ birthday.name || 'Unnamed' }}</p>
-                <p><strong>Gender:</strong> {{ birthday.gender }}</p>
-                <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
-                <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
+              <div v-for="birthday in birthdayList" :key="birthday.id" class="mb-3 p-2 border rounded">
+                <p class="mb-1"><strong>{{ birthday.name || 'Unnamed' }}</strong> — {{ dateTimeFormatSimple(birthday.birthday) }}</p>
                 <div>
                   <button @click="loadBirthday(birthday, 1)" class="btn btn-primary btn-sm me-2">Load Person 1</button>
-                  <button @click="loadBirthday(birthday, 2)" class="btn btn-primary btn-sm me-2">Load Person 2</button>
-                  <button @click="startEditingBirthday(birthday)" class="btn btn-primary btn-sm me-2">Edit</button>
-                  <button @click="birthdayStore.removeBirthday(birthday.id)" class="btn btn-danger btn-sm">Delete</button>
+                  <button @click="loadBirthday(birthday, 2)" class="btn btn-primary btn-sm">Load Person 2</button>
                 </div>
               </div>
             </div>

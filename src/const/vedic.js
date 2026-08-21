@@ -350,3 +350,56 @@ export function nakshatraFromLongitude(longitude) {
     lord: n.lord,
   };
 }
+
+/** Short, everyday language for executive summaries. */
+export const PLAIN_SIGN = {
+  aries: { face: 'people meet you as direct, impatient, and ready to start', heart: 'you feel best when something is moving', will: 'your drive is to go first' },
+  taurus: { face: 'people meet you as steady, sensual, and hard to rush', heart: 'you feel best with comfort, loyalty, and a full fridge', will: 'your drive is to build something that lasts' },
+  gemini: { face: 'people meet you as curious, talkative, and a little restless', heart: 'you feel best when there is news, a joke, or a second interest', will: 'your drive is to connect ideas and people' },
+  cancer: { face: 'people meet you as caring, private, and protective', heart: 'you feel best when home and the people you love are safe', will: 'your drive is to look after what is yours' },
+  leo: { face: 'people meet you as warm, proud, and hard to ignore', heart: 'you feel best when the heart is seen and appreciated', will: 'your drive is to create and to be generous' },
+  virgo: { face: 'people meet you as helpful, precise, and quietly critical', heart: 'you feel best when the details are in order and useful', will: 'your drive is to fix, refine, and serve well' },
+  libra: { face: 'people meet you as gracious, fair, and a bit indecisive', heart: 'you feel best when the room is peaceful and beautiful', will: 'your drive is to find balance with other people' },
+  scorpio: { face: 'people meet you as intense, private, and hard to fool', heart: 'you feel best when trust is real — or not offered at all', will: 'your drive is to go deep and not look away' },
+  sagittarius: { face: 'people meet you as frank, restless, and bigger than the room', heart: 'you feel best with meaning, humour, and open space', will: 'your drive is to learn, teach, and keep a horizon' },
+  capricorn: { face: 'people meet you as capable, reserved, and older than your years', heart: 'you feel best when duty is done and respect is earned', will: 'your drive is to climb and to make it last' },
+  aquarius: { face: 'people meet you as original, friendly, and a little detached', heart: 'you feel best among friends and future-facing ideas', will: 'your drive is to belong without being owned' },
+  pisces: { face: 'people meet you as kind, dreamy, and a bit hard to pin down', heart: 'you feel best when there is music, rest, or a larger story', will: 'your drive is to dissolve borders and to care' },
+};
+
+export const PLAIN_DIGNITY = {
+  exalted: 'this part of you works with unusual ease',
+  moolatrikona: 'this part of you has a stable, useful strength',
+  own: 'this part of you is at home',
+  friend: 'this part of you has friendly conditions',
+  neutral: 'this part of you works in an ordinary way',
+  enemy: 'this part of you has to try harder than usual',
+  debilitated: 'this part of you takes extra work and patience',
+};
+
+export const PLAIN_HOUSE_FOCUS = {
+  1: 'how you come across and how you start things',
+  2: 'money, voice, and what you keep',
+  3: 'courage, siblings, and short efforts',
+  4: 'home, mother, and inner peace',
+  5: 'creativity, romance, and children',
+  6: 'daily work, health, and problems to solve',
+  7: 'partnership and the people you meet as equals',
+  8: 'deep change, shared money, and what is hidden',
+  9: 'belief, luck, teachers, and long journeys',
+  10: 'career, reputation, and public work',
+  11: 'friends, gains, and what you hope for',
+  12: 'rest, letting go, and life behind the scenes',
+};
+
+export const PLAIN_PERIOD = {
+  sun: 'standing in the light, father-themes, and pride',
+  moon: 'home, mood, and what nourishes you',
+  mars: 'courage, conflict, and getting things done',
+  mercury: 'study, talk, trade, and the mind',
+  jupiter: 'growth, teachers, faith, and good fortune',
+  venus: 'love, beauty, pleasure, and what you enjoy',
+  saturn: 'patience, duty, delays, and what is earned the hard way',
+  rahu: 'the unfamiliar, appetite, and a hunger that is hard to fill',
+  ketu: 'letting go, insight, and turning inward',
+};

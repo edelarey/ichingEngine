@@ -17,6 +17,7 @@ import LifeSymphony from '../views/LifeSymphony.vue';
 import SolfeggioPlayer from '../views/solfeggio_player.vue';
 const VedicAstrology = () => import('../views/vedic_astrology.vue');
 const VedicHelp = () => import('../views/vedic_help.vue');
+const Birthdays = () => import('../views/birthdays.vue');
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
     path: '/consult',
     name: 'Consult',
     component: Consult,
+  },
+  {
+    path: '/birthdays',
+    name: 'Birthdays',
+    component: Birthdays,
   },
   {
     path: '/astrology',

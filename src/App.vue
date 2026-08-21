@@ -51,6 +51,11 @@
           <span class="align-middle">Consult</span>
         </router-link>
       </li>
+      <li class="nav-item">
+        <router-link class="nav-link" to="/birthdays" exact-active-class="active">
+          <span class="align-middle">Birthdays</span>
+        </router-link>
+      </li>
       <!-- Music Sub-Menu -->
       <li class="nav-item">
         <span
@@ -222,19 +227,39 @@ export default {
 
     // Add SEO meta tags
     useHead({
-      title: 'iChing Engine - Online Divination and Astrology Tool',
+      title: 'iChing Engine — I Ching Oracle, Vedic Jyotish & Western Astrology',
       meta: [
         {
           name: 'description',
-          content: 'Explore the iChing Engine for online iChing consultations, astrology insights, trigrams, hexagrams, and spiritual and relationship guidance.',
+          content: 'Free online I Ching (Yijing) oracle with hexagrams and trigrams, plus Vedic astrology (Jyotish kundli, Lahiri, nakshatra, dasha) and Western natal charts (Sun, Moon, Rising, Placidus). Birth-chart readings, Chinese sexagenary astrology, and relationship compatibility.',
         },
         {
           name: 'keywords',
-          content: 'iChing, iChing oracle, iChing consultation, astrology, Vedic astrology, Jyotish, kundli, trigrams, hexagrams, divination, spiritual guidance, relationship',
+          content: 'I Ching, iChing, Yijing, Book of Changes, I Ching oracle, I Ching consultation, hexagram, trigram, bagua, divination, Vedic astrology, Jyotish, kundli, janma kundali, Lahiri ayanamsa, nakshatra, Vimshottari dasha, Lagna, rashi, Western astrology, natal chart, birth chart, rising sign, ascendant, Placidus, tropical zodiac, sidereal zodiac, Chinese astrology, sexagenary cycle, heavenly stems, earthly branches, zodiac, relationship compatibility, I Ching astrology, spiritual guidance, online horoscope, natal chart calculator',
         },
         {
           name: 'robots',
           content: 'index, follow',
+        },
+        {
+          name: 'googlebot',
+          content: 'index, follow',
+        },
+        {
+          property: 'og:title',
+          content: 'iChing Engine — I Ching Oracle, Vedic Jyotish & Western Astrology',
+        },
+        {
+          property: 'og:description',
+          content: 'Consult the I Ching, cast a Vedic kundli, or read a Western natal chart. Hexagrams, trigrams, Jyotish, and tropical astrology in one place.',
+        },
+        {
+          property: 'og:type',
+          content: 'website',
+        },
+        {
+          property: 'og:url',
+          content: 'https://iching-engine.vercel.app/',
         },
       ],
     });

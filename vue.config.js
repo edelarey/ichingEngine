@@ -61,6 +61,22 @@ module.exports = defineConfig({
         return args;
       });
 
+    // public/index.html is the HtmlWebpackPlugin template. CopyWebpackPlugin
+    // would also copy it into dist/, which webpack reports as:
+    // "Conflict: Multiple assets emit different content to the same filename index.html"
+    if (config.plugins.has('copy')) {
+      config.plugin('copy').tap((args) => {
+        const options = args[0] || {};
+        const patterns = options.patterns || [];
+        patterns.forEach((pattern) => {
+          if (!pattern.globOptions) pattern.globOptions = {};
+          const ignore = pattern.globOptions.ignore || [];
+          pattern.globOptions.ignore = [...ignore, '**/index.html', 'index.html'];
+        });
+        return args;
+      });
+    }
+
     if (process.env.NODE_ENV === 'production') {
       config.optimization.splitChunks({
         chunks: 'all',

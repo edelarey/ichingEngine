@@ -20,9 +20,6 @@
           <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab" aria-controls="summary" aria-selected="true">Summary</button>
        </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="birthday-history-tab" data-bs-toggle="tab" data-bs-target="#birthday-history" type="button" role="tab" aria-controls="birthday-history" aria-selected="false">Birthday History</button>
-        </li>
-        <li class="nav-item" role="presentation">
           <button class="nav-link" id="birthday-entry-tab" data-bs-toggle="tab" data-bs-target="#birthday-entry" type="button" role="tab" aria-controls="birthday-entry" aria-selected="false">Birthday Entry</button>
          </li>
         <li class="nav-item" role="presentation">
@@ -57,6 +54,12 @@
           <h3 class="card-header py-3">I Ching Astrology Summary</h3>
           <div class="card-body">
             <div v-if="state.cycle">
+              <ReadingLead
+                v-if="ichingLead"
+                :headline="ichingLead.headline"
+                :intro="ichingLead.intro"
+                :points="ichingLead.points"
+              />
               <h5 class="card-title mb-3">Personal Details</h5>
               <p><strong>Name:</strong> {{ state.name }}</p>
               <p><strong>Birth Date:</strong> {{ dateTimeFormatSimple(state.birthDate) }}</p>
@@ -109,45 +112,6 @@
 
      
 
-         <!-- Birthday History Tab -->
-        <div class="tab-pane fade" id="birthday-history" role="tabpanel" aria-labelledby="birthday-history-tab">
-          <div class="row justify-content-center mt-4">
-            <div class="col-12 col-md-8 col-lg-6">
-              <div class="card text-center">
-                <div class="card-body">
-                  <h5 class="card-title">Birthday History</h5>
-                  <div class="mb-3">
-                    <button @click="birthdayStore.exportBirthdays" class="btn btn-success btn-sm me-2">Export Birthdays</button>
-                    <label for="importFile" class="btn btn-primary btn-sm">
-                      Import Birthdays
-                      <input type="file" id="importFile" @change="handleImport" hidden accept=".json">
-                    </label>
-                    <button @click="birthdayStore.clearBirthdays" class="btn btn-danger btn-sm ms-2">Clear All</button>
-                  </div>
-                  <div v-if="birthdayList.length === 0">
-                    <p>No birthdays recorded yet.</p>
-                  </div>
-                  <div v-else>
-                    <div v-for="birthday in birthdayList" :key="birthday.id" class="mb-3">
-                      <p><strong>Date:</strong> {{ dateTimeFormatSimple(birthday.birthday) }}</p>
-                      <p><strong>Name:</strong> {{ birthday.name || 'Unnamed' }}</p>
-                      <p><strong>Gender:</strong> {{ birthday.gender }}</p>
-                      <p><strong>Latitude:</strong> {{ birthday.coords.latitude }}</p>
-                      <p><strong>Longitude:</strong> {{ birthday.coords.longitude }}</p>
-                      <p v-if="birthday.place"><strong>Place:</strong> {{ birthday.place }}</p>
-                      <div>
-                        <button @click="loadBirthday(birthday)" class="btn btn-primary btn-sm me-2">Load</button>
-                        <button @click="startEditingBirthday(birthday)" class="btn btn-primary btn-sm me-2">Edit</button>
-                        <button @click="birthdayStore.removeBirthday(birthday.id)" class="btn btn-danger btn-sm">Delete</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Birthday Entry Tab -->
         <div class="tab-pane fade" id="birthday-entry" role="tabpanel" aria-labelledby="birthday-entry-tab">
           <div class="row justify-content-center mt-4">
@@ -170,6 +134,7 @@
                   </div>
                 </div>
                 <div class="card-body">
+                  <BirthdayPicker load-label="Load & consult" @load="loadBirthday" />
                   <h5 class="card-title mb-3">Birth Details</h5>
                   <div class="row justify-content-center">
                     <!-- Name Input -->
@@ -755,16 +720,22 @@
   import astro from '@/const/astrology';
   import { DateTime } from 'luxon';
   import { useBirthdayStore } from '@/stores/birthday';
+  import { useRoute } from 'vue-router';
+  import BirthdayPicker from '@/components/BirthdayPicker.vue';
+  import ReadingLead from '@/components/ReadingLead.vue';
 
   export default {
     name: 'Astrology',
     components: {
-      Datepicker
+      Datepicker,
+      BirthdayPicker,
+      ReadingLead,
     },
     setup() {
       const birthdayStore = useBirthdayStore();
       const birthdayList = computed(() => birthdayStore.getBirthdayList);
       const showHistory = ref(false);
+      const route = useRoute();
 
       const state = reactive({
         id: Date.now(), // Unique ID for datalist
@@ -1019,15 +990,16 @@
     };
 
     const loadBirthday = (birthday) => {
-  
       state.name = birthday.name;
       state.birthDate = DateTime.fromISO(birthday.birthday).toJSDate();
       state.gender = birthday.gender;
       state.latitude = birthday.coords.latitude;
       state.longitude = birthday.coords.longitude;
       state.place = birthday.place || '';
+      birthdayStore.selectBirthday(birthday.id);
       consult();
-      toggleHistory();
+      const entryTab = document.getElementById('birthday-entry-tab');
+      if (entryTab) entryTab.click();
     };
 
     const startEditingBirthday = (birthday) => {
@@ -1177,9 +1149,74 @@
         updateGraphics(newWidth);
       });
 
+      const firstPhrase = (text) => {
+        if (!text) return '';
+        return String(text).split(',')[0].trim();
+      };
+
+      const ichingLead = computed(() => {
+        if (!state.cycle || !state.preHeavenHexagram) return null;
+        const pre = state.preHeavenHexagram;
+        const later = state.laterHeavenHexagram;
+        const animal = state.sexagenaryCycle?.horaryBranch?.animal;
+        const stem = state.sexagenaryCycle?.celestialStem?.name;
+        const heaven = state.heavenlyTrigram?.trigram?.name;
+        const earth = state.earthlyTrigram?.trigram?.name;
+        const timeHex = state.timeOfBirthHexagram?.hexagram?.name;
+        const points = [
+          {
+            label: 'The seed you were born with',
+            text: `Your Pre-Heaven hexagram is ${pre.name} (${pre.symbol || ''}). In everyday language: ${firstPhrase(pre.translation) || 'the inner pattern of the life'}. This is more like temperament than a daily forecast.`,
+          },
+          {
+            label: 'How the life tends to unfold',
+            text: later
+              ? `Your Later-Heaven hexagram is ${later.name}. ${firstPhrase(later.translation) || 'This describes the weather of a lifetime, not a single event.'}`
+              : 'Later-Heaven hexagram is still calculating.',
+          },
+        ];
+        if (animal) {
+          points.push({
+            label: 'Your year in the 60-year cycle',
+            text: `You were born in a ${stem || ''} ${animal} year. Treat the animal as a flavour of the whole life — not a personality test by itself.`,
+          });
+        }
+        if (heaven && earth) {
+          points.push({
+            label: 'Sky and ground',
+            text: `Heavenly trigram ${heaven} and earthly trigram ${earth} are the two halves stacked into those hexagrams: one is the upper weather, one is the lower soil.`,
+          });
+        }
+        if (timeHex) {
+          points.push({
+            label: 'The hour you arrived',
+            text: `The time-of-birth hexagram is ${timeHex}. It colours the “when” of the birth, not the whole story.`,
+          });
+        }
+        if (state.selectedPreHeavenBirthSubCycle?.hexagram?.name) {
+          points.push({
+            label: 'The chapter you are in',
+            text: `Early-life cycle now points at ${state.selectedPreHeavenBirthSubCycle.hexagram.name} (about age ${state.selectedPreHeavenBirthSubCycle.age}). Later-life cycle: ${state.laterHeavenBirthSubCycleHexagram?.name || 'see the life-stage tab'}.`,
+          });
+        }
+        return {
+          headline: `${pre.name} inside, ${later?.name || 'life unfolding'} in the world.`,
+          intro: 'I-Ching astrology does not use planets. It reads hexagrams of the birth — a seed pattern, a lifetime weather, and the year/month/day cycles around them.',
+          points,
+        };
+      });
+
       onMounted(() => {
         updateGraphics(svgWidth.value);
         window.addEventListener('resize', () => updateGraphics(svgWidth.value));
+        const loadId = route.query.load;
+        if (loadId) {
+          const found = birthdayStore.getBirthdayById(loadId);
+          if (found) {
+            loadBirthday(found);
+            return;
+          }
+        }
         consult();
       });
 
@@ -1189,6 +1226,7 @@
 
       return {
         state,
+        ichingLead,
         birthdayList,
         birthdayStore,
         showHistory,
