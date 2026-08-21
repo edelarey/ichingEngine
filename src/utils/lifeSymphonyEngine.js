@@ -1,41 +1,8 @@
 import astrology from '../const/astrology';
 import { DateTime } from 'luxon';
+import { mapBinaryToLines } from '@/const/solfeggio';
 
-// Solfeggio Frequencies for lines 1-6 (Bottom to Top) as per requirements
-const SOLFEGGIO_FREQUENCIES = [
-  396, // Line 1 (Bottom) - Root
-  417, // Line 2 - Sacral
-  528, // Line 3 - Solar Plexus
-  639, // Line 4 - Heart
-  285, // Line 5 - (Deviation from standard ascending)
-  174  // Line 6 (Top) - (Deviation from standard ascending)
-];
-
-/**
- * Maps a binary hexagram string to audio parameters for each line.
- * @param {string} binaryString - 6-character string of '0's and '1's (Index 0 = Bottom Line)
- * @returns {Array} Array of line audio objects
- */
-const mapHexagramToFrequencies = (binaryString) => {
-  if (!binaryString || binaryString.length !== 6) return [];
-
-  return binaryString.split('').map((char, index) => {
-    const isYang = char === '1';
-    const frequency = SOLFEGGIO_FREQUENCIES[index];
-    
-    return {
-      line: index + 1,
-      frequency,
-      isYang,
-      // Audio properties based on Yin/Yang
-      // Yang: Loud (-6dB), Long (2s), Octave x2 (handled in player)
-      // Yin: Soft (-18dB), Short (1s), No octave shift
-      volume: isYang ? -6 : -18,
-      duration: isYang ? 2 : 1,
-      octaveShift: isYang ? 1 : 0 // 0 = normal, 1 = +1 octave (x2 freq)
-    };
-  });
-};
+const mapHexagramToFrequencies = (binaryString) => mapBinaryToLines(binaryString);
 
 /**
  * Generates the 90-year Life Symphony data sequence.

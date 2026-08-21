@@ -27,32 +27,74 @@
 
     <div v-else class="symphony-player">
       <div class="controls-sticky card shadow-sm mb-4 sticky-top">
-        <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
-          <button type="button" class="btn btn-outline-secondary" @click="reset">New chart</button>
-          <div class="d-flex align-items-center gap-2">
-            <button
-              type="button"
-              class="btn btn-lg"
-              :class="isPlaying ? 'btn-warning' : 'btn-success'"
-              @click="togglePlay"
-            >
-              {{ isPlaying ? 'Pause' : 'Play Symphony' }}
-            </button>
-            <button type="button" class="btn btn-outline-danger" @click="stop">Stop</button>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+            <button type="button" class="btn btn-outline-secondary" @click="reset">New chart</button>
+            <div class="d-flex align-items-center gap-2">
+              <button
+                type="button"
+                class="btn btn-lg"
+                :class="isPlaying ? 'btn-warning' : 'btn-success'"
+                @click="togglePlay"
+              >
+                {{ isPlaying ? 'Pause' : (canResume ? 'Resume' : 'Play Symphony') }}
+              </button>
+              <button type="button" class="btn btn-outline-danger" @click="stop">Stop</button>
+            </div>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 small" for="symphony-volume">Volume</label>
+                <input
+                  id="symphony-volume"
+                  type="range"
+                  class="form-range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  v-model.number="volume"
+                  style="width: 90px;"
+                >
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 small" for="symphony-speed">Speed</label>
+                <input
+                  id="symphony-speed"
+                  type="range"
+                  class="form-range"
+                  min="0.5"
+                  max="4"
+                  step="0.1"
+                  v-model.number="playbackSpeed"
+                  style="width: 90px;"
+                >
+                <span class="small text-muted">{{ playbackSpeed }}x</span>
+              </div>
+            </div>
           </div>
-          <div class="d-flex align-items-center gap-2">
-            <label class="form-label mb-0 small" for="symphony-speed">Speed</label>
-            <input
-              id="symphony-speed"
-              type="range"
-              class="form-range"
-              min="0.5"
-              max="4"
-              step="0.1"
-              v-model.number="playbackSpeed"
-              style="width: 100px;"
-            >
-            <span class="small text-muted">{{ playbackSpeed }}x</span>
+
+          <div class="year-scrubber">
+            <div class="d-flex align-items-center gap-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="currentYearIndex <= 0" @click="stepYear(-1)">Prev</button>
+              <input
+                type="range"
+                class="form-range flex-grow-1"
+                min="0"
+                :max="Math.max(0, symphonyData.timeline.length - 1)"
+                :value="currentYearIndex"
+                @input="onScrub($event.target.value)"
+              >
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                :disabled="currentYearIndex >= symphonyData.timeline.length - 1"
+                @click="stepYear(1)"
+              >
+                Next
+              </button>
+            </div>
+            <div class="small text-muted text-center mt-1" v-if="currentYearData">
+              Age {{ currentYearData.age }} · {{ currentYearData.year }} · step {{ currentYearIndex + 1 }} / {{ symphonyData.timeline.length }}
+            </div>
           </div>
         </div>
       </div>
@@ -62,51 +104,19 @@
           <h2 class="display-4 mb-0">Age {{ currentYearData.age }}</h2>
           <p class="text-muted mb-0">
             {{ currentYearData.year }} · {{ currentYearData.source }} cycle
-            <br>
-            <small>Step {{ currentYearIndex + 1 }} of {{ symphonyData.timeline.length }}</small>
             <span v-if="currentFrequency"> · {{ Math.round(currentFrequency) }} Hz</span>
           </p>
         </div>
 
         <div class="col-md-6 mb-4">
-          <div class="visualizer-container p-3 border rounded bg-dark position-relative">
-            <canvas ref="waveformCanvas" class="waveform-canvas"></canvas>
-            <div class="hexagram-overlay">
-              <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight" viewBox="0 0 160 240">
-                <g v-for="(line, index) in currentHexagramLines" :key="'line-' + index">
-                  <g :transform="`translate(0, ${index * 40})`">
-                    <g v-if="!line.isYang">
-                      <rect
-                        x="10" y="10" width="40" height="10"
-                        :fill="getLineColor(index)"
-                        :class="{ 'active-pulse': currentLineIndex === (5 - index) && isPlaying }"
-                      />
-                      <rect
-                        x="60" y="10" width="40" height="10"
-                        :fill="getLineColor(index)"
-                        :class="{ 'active-pulse': currentLineIndex === (5 - index) && isPlaying }"
-                      />
-                    </g>
-                    <g v-else>
-                      <rect
-                        x="10" y="10" width="90" height="10"
-                        :fill="getLineColor(index)"
-                        :class="{ 'active-pulse': currentLineIndex === (5 - index) && isPlaying }"
-                      />
-                    </g>
-                    <text
-                      x="110" y="20"
-                      font-size="12"
-                      :fill="getLineColor(index)"
-                      font-weight="bold"
-                    >
-                      {{ frequencies[5 - index] }} Hz
-                    </text>
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
+          <HexagramToneVisualizer
+            :lines="currentYearData.audio"
+            :current-line-index="currentLineIndex"
+            :current-frequency="currentFrequency"
+            :is-playing="isPlaying"
+            :get-waveform="getWaveform"
+            palette="chakra"
+          />
         </div>
 
         <div class="col-md-6 mb-4">
@@ -128,13 +138,15 @@
 </template>
 
 <script>
-import { computed, nextTick, onUnmounted, reactive, ref } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { DateTime } from 'luxon';
 import BirthDataForm from '@/components/BirthDataForm.vue';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
+import HexagramToneVisualizer from '@/components/HexagramToneVisualizer.vue';
 import { generateLifeSymphony } from '@/utils/lifeSymphonyEngine';
 import { useLifeAudio } from '@/composables/useLifeAudio';
 import { usePageTitle } from '@/composables/usePageTitle';
+import { useSymphonyStore } from '@/stores/symphony';
 import hexagramLibrary from '@/const/hexagram';
 
 function emptyForm() {
@@ -151,38 +163,16 @@ function emptyForm() {
   };
 }
 
-const frequencies = [396, 417, 528, 639, 285, 174];
-const frequencyColors = {
-  174: '#FF0000',
-  285: '#FFA500',
-  396: '#FF0000',
-  417: '#FFA500',
-  528: '#FFFF00',
-  639: '#00FF00',
-};
-const chakraColors = frequencies.map((f) => frequencyColors[f]);
-
-function hexToRgba(hex, alpha) {
-  if (!hex) return `rgba(173, 181, 189, ${alpha})`;
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
 export default {
   name: 'LifeSymphony',
-  components: { BirthDataForm, BirthdayPicker },
+  components: { BirthDataForm, BirthdayPicker, HexagramToneVisualizer },
   setup() {
     usePageTitle('Life Symphony');
+    const symphonyStore = useSymphonyStore();
     const loading = ref(false);
     const error = ref('');
     const form = reactive(emptyForm());
     const symphonyData = ref(null);
-    const waveformCanvas = ref(null);
-    let animationFrameId = null;
-    const svgWidth = 200;
-    const svgHeight = 300;
 
     const {
       isPlaying,
@@ -190,15 +180,28 @@ export default {
       currentLineIndex,
       currentFrequency,
       playbackSpeed,
+      volume,
+      canResume,
       loadTimeline,
       play,
       pause,
       stop: stopAudio,
+      setYear,
       getWaveform,
     } = useLifeAudio();
 
     const assignForm = (next) => {
       Object.assign(form, next);
+    };
+
+    const persist = () => {
+      if (!symphonyData.value) return;
+      symphonyStore.save({
+        form,
+        metadata: symphonyData.value.metadata,
+        timeline: symphonyData.value.timeline,
+        yearIndex: currentYearIndex.value,
+      });
     };
 
     const currentYearData = computed(() => {
@@ -208,26 +211,12 @@ export default {
         || null;
     });
 
-    const currentHexagramLines = computed(() => {
-      if (!currentYearData.value?.audio) return [];
-      return [...currentYearData.value.audio].reverse();
-    });
-
     const currentHexagramDetails = computed(() => {
       const year = currentYearData.value;
       if (!year) return null;
       if (year.hexagram && year.hexagram.name) return year.hexagram;
       return hexagramLibrary.sequence_binary().find((h) => h.binary === year.hexagramBinary) || null;
     });
-
-    const getLineColor = (index) => {
-      const lineIndexFromBottom = 5 - index;
-      const color = chakraColors[lineIndexFromBottom];
-      if (isPlaying.value && currentLineIndex.value === lineIndexFromBottom) return color;
-      const lineData = currentHexagramLines.value[index];
-      if (lineData && !lineData.isYang) return hexToRgba(color, 0.5);
-      return hexToRgba(color, 0.7);
-    };
 
     const loadBirthday = (birthday) => {
       const dt = DateTime.fromISO(birthday.birthday);
@@ -247,59 +236,29 @@ export default {
       error.value = '';
     };
 
-    const stopWaveform = () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
+    const applySnapshot = (snapshot) => {
+      if (!snapshot?.timeline?.length) return false;
+      const rawDate = snapshot.form?.date;
+      let savedDate = new Date();
+      if (rawDate instanceof Date && !Number.isNaN(rawDate.getTime())) {
+        savedDate = rawDate;
+      } else if (typeof rawDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(rawDate)) {
+        savedDate = new Date(`${rawDate.slice(0, 10)}T12:00:00`);
+      } else if (rawDate) {
+        const parsed = new Date(rawDate);
+        if (!Number.isNaN(parsed.getTime())) savedDate = parsed;
       }
-    };
-
-    const sizeCanvas = () => {
-      const canvas = waveformCanvas.value;
-      if (!canvas) return;
-      const width = canvas.offsetWidth || 400;
-      const height = canvas.offsetHeight || 300;
-      if (canvas.width !== width) canvas.width = width;
-      if (canvas.height !== height) canvas.height = height;
-    };
-
-    const drawWaveform = () => {
-      animationFrameId = requestAnimationFrame(drawWaveform);
-      const canvas = waveformCanvas.value;
-      if (!canvas) return;
-      sizeCanvas();
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      const { width, height } = canvas;
-      ctx.fillStyle = 'rgba(33, 37, 41, 0.2)';
-      ctx.fillRect(0, 0, width, height);
-      if (!isPlaying.value) return;
-      const values = getWaveform();
-      if (!values || !values.length) return;
-      const currentColor = currentLineIndex.value >= 0 ? chakraColors[currentLineIndex.value] : '#00ffff';
-      ctx.beginPath();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = currentColor;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = currentColor;
-      const sliceWidth = width / values.length;
-      let x = 0;
-      for (let i = 0; i < values.length; i++) {
-        const v = values[i] * 3.0;
-        const y = height / 2 + (v * height) / 2;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-        x += sliceWidth;
-      }
-      ctx.lineTo(width, height / 2);
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-    };
-
-    const startWaveform = () => {
-      stopWaveform();
-      sizeCanvas();
-      drawWaveform();
+      assignForm({
+        ...emptyForm(),
+        ...(snapshot.form || {}),
+        date: savedDate,
+      });
+      symphonyData.value = {
+        metadata: snapshot.metadata,
+        timeline: snapshot.timeline,
+      };
+      loadTimeline(snapshot.timeline, snapshot.yearIndex || 0);
+      return true;
     };
 
     const generateSymphony = async () => {
@@ -323,9 +282,8 @@ export default {
         );
         if (!data?.timeline?.length) throw new Error('No yearly cycle was produced for this birth data.');
         symphonyData.value = data;
-        loadTimeline(data.timeline);
-        await nextTick();
-        startWaveform();
+        loadTimeline(data.timeline, 0);
+        persist();
       } catch (err) {
         console.error(err);
         error.value = err.message || 'Could not generate the symphony. Check the birth data.';
@@ -341,17 +299,34 @@ export default {
 
     const stop = () => {
       stopAudio();
+      persist();
     };
 
     const reset = () => {
-      stop();
-      stopWaveform();
+      stopAudio();
+      symphonyStore.clear();
       symphonyData.value = null;
     };
 
+    const onScrub = (value) => {
+      setYear(Number(value));
+      persist();
+    };
+
+    const stepYear = (delta) => {
+      setYear(currentYearIndex.value + delta);
+      persist();
+    };
+
+    watch(currentYearIndex, () => persist());
+
+    onMounted(() => {
+      if (symphonyStore.snapshot) applySnapshot(symphonyStore.snapshot);
+    });
+
     onUnmounted(() => {
-      stop();
-      stopWaveform();
+      persist();
+      stopAudio();
     });
 
     return {
@@ -367,17 +342,16 @@ export default {
       currentLineIndex,
       currentFrequency,
       playbackSpeed,
+      volume,
+      canResume,
       togglePlay,
       stop,
       reset,
+      onScrub,
+      stepYear,
       currentYearData,
-      currentHexagramLines,
       currentHexagramDetails,
-      frequencies,
-      svgWidth,
-      svgHeight,
-      getLineColor,
-      waveformCanvas,
+      getWaveform,
     };
   },
 };
@@ -392,42 +366,8 @@ export default {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(5px);
 }
-.visualizer-container {
-  min-height: 300px;
-  position: relative;
-  overflow: hidden;
-  background-color: #212529 !important;
-}
-.waveform-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-.hexagram-overlay {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 300px;
-  width: 100%;
-  pointer-events: none;
-}
-.hexagram-svg {
+.year-scrubber {
+  max-width: 720px;
   margin: 0 auto;
-  display: block;
-  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
-  max-width: 100%;
-}
-.active-pulse {
-  animation: pulse 0.5s infinite alternate;
-  filter: drop-shadow(0 0 8px #00ffff);
-}
-@keyframes pulse {
-  from { opacity: 0.7; }
-  to { opacity: 1; }
 }
 </style>

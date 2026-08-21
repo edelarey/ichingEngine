@@ -1,185 +1,119 @@
-import * as Tone from 'tone';
-import { ref, onUnmounted } from 'vue';
-
-function releaseSynths(synths) {
-  synths.forEach((synth) => {
-    try {
-      synth.triggerRelease();
-    } catch (_) {
-      /* already silent */
-    }
-  });
-}
+import { computed, ref } from 'vue';
+import { useToneEngine } from '@/composables/useToneEngine';
 
 export function useLifeAudio() {
+  const engine = useToneEngine();
   const isPlaying = ref(false);
   const currentYearIndex = ref(0);
   const currentLineIndex = ref(-1);
   const currentFrequency = ref(0);
-  const playbackSpeed = ref(1.0);
+  const playbackSpeed = ref(1);
   const totalYears = ref(0);
+  const isPaused = ref(false);
+  const canResume = computed(() => isPaused.value);
 
-  let synths = [];
-  let reverb = null;
-  let analyser = null;
-  let sequencePart = null;
   let timelineData = [];
-  let playIndex = 0;
+  let playGen = 0;
+  let pauseRequested = false;
+  let resumeLine = 0;
 
-  const transport = () => Tone.getTransport();
-  const draw = () => Tone.getDraw();
-
-  const initAudio = async () => {
-    if (Tone.getContext().state !== 'running') {
-      await Tone.start();
-    }
-    if (synths.length > 0) return;
-
-    analyser = new Tone.Waveform(1024);
-    reverb = new Tone.Reverb({
-      decay: 3,
-      wet: 0.35,
-    }).toDestination();
-    await reverb.generate();
-
-    for (let i = 0; i < 6; i++) {
-      const synth = new Tone.FMSynth({
-        harmonicity: 1,
-        modulationIndex: 3.5,
-        oscillator: { type: 'sine' },
-        envelope: {
-          attack: 0.1,
-          decay: 0.5,
-          sustain: 0.1,
-          release: 1,
-        },
-        modulation: { type: 'sine' },
-        modulationEnvelope: {
-          attack: 0.1,
-          decay: 0.5,
-          sustain: 0.1,
-          release: 1,
-        },
-      }).connect(reverb);
-      synth.connect(analyser);
-      synths.push(synth);
-    }
-  };
-
-  const yearDurationSeconds = () => {
-    const speed = Math.max(0.25, Number(playbackSpeed.value) || 1);
-    const spacing = 0.55 / speed;
-    const longestNote = 2 / speed;
-    return 6 * spacing + longestNote + 0.2;
-  };
-
-  const playYearHexagram = (yearData, time) => {
-    if (!yearData || !yearData.audio || !synths.length) return;
-    const lines = yearData.audio;
-    const speed = Math.max(0.25, Number(playbackSpeed.value) || 1);
-    const noteSpacing = 0.55 / speed;
-
-    lines.forEach((lineData, index) => {
-      const synth = synths[index];
-      if (!synth) return;
-      let freq = lineData.frequency;
-      if (lineData.octaveShift > 0) {
-        freq *= 2 ** lineData.octaveShift;
-      }
-      const duration = lineData.duration / speed;
-      synth.volume.value = lineData.volume;
-      synth.triggerAttackRelease(freq, duration, time + index * noteSpacing);
-
-      draw().schedule(() => {
-        currentLineIndex.value = index;
-        currentFrequency.value = freq;
-      }, time + index * noteSpacing);
-    });
-  };
-
-  const loadTimeline = (timeline) => {
+  const loadTimeline = (timeline, startIndex = 0) => {
     timelineData = Array.isArray(timeline) ? timeline : [];
     totalYears.value = timelineData.length;
-    currentYearIndex.value = 0;
-    playIndex = 0;
+    const idx = Math.max(0, Math.min(Number(startIndex) || 0, Math.max(0, timelineData.length - 1)));
+    currentYearIndex.value = idx;
+    currentLineIndex.value = -1;
+    currentFrequency.value = 0;
+    resumeLine = 0;
   };
 
-  const clearLoop = () => {
-    if (sequencePart) {
-      sequencePart.dispose();
-      sequencePart = null;
+  const playFrom = async (yearIndex, lineIndex) => {
+    const gen = ++playGen;
+    pauseRequested = false;
+    isPaused.value = false;
+    await engine.ensure();
+    isPlaying.value = true;
+    let startLine = Math.max(0, lineIndex);
+
+    for (let y = yearIndex; y < timelineData.length; y++) {
+      if (gen !== playGen) return;
+      currentYearIndex.value = y;
+      const lines = timelineData[y]?.audio || [];
+      for (let i = startLine; i < lines.length; i++) {
+        if (gen !== playGen) return;
+        if (pauseRequested) {
+          resumeLine = i;
+          currentLineIndex.value = i;
+          isPlaying.value = false;
+          isPaused.value = true;
+          engine.silence();
+          return;
+        }
+        currentLineIndex.value = i;
+        const freq = await engine.playLine(lines[i], playbackSpeed.value);
+        if (gen !== playGen) return;
+        currentFrequency.value = freq;
+        if (pauseRequested) {
+          resumeLine = i;
+          isPlaying.value = false;
+          isPaused.value = true;
+          engine.silence();
+          return;
+        }
+      }
+      startLine = 0;
+      resumeLine = 0;
+      currentLineIndex.value = -1;
+      currentFrequency.value = 0;
     }
-    transport().stop();
-    transport().cancel();
-    releaseSynths(synths);
+
+    if (gen === playGen) {
+      isPlaying.value = false;
+      currentLineIndex.value = -1;
+      currentFrequency.value = 0;
+      resumeLine = 0;
+    }
   };
 
   const play = async () => {
-    if (isPlaying.value) return;
-    if (!timelineData.length) return;
-
-    await initAudio();
-    clearLoop();
-
-    playIndex = currentYearIndex.value || 0;
-    if (playIndex >= timelineData.length) playIndex = 0;
-
-    const yearDuration = yearDurationSeconds();
-    sequencePart = new Tone.Loop((time) => {
-      if (playIndex >= timelineData.length) {
-        draw().schedule(() => {
-          isPlaying.value = false;
-          currentLineIndex.value = -1;
-          currentFrequency.value = 0;
-          clearLoop();
-        }, time);
-        return;
-      }
-      const idx = playIndex;
-      playIndex += 1;
-      const yearData = timelineData[idx];
-      draw().schedule(() => {
-        currentYearIndex.value = idx;
-      }, time);
-      playYearHexagram(yearData, time);
-    }, yearDuration).start(0);
-
-    transport().start();
-    isPlaying.value = true;
+    if (isPlaying.value || !timelineData.length) return;
+    const year = currentYearIndex.value || 0;
+    const line = resumeLine;
+    await playFrom(year, line);
   };
 
   const pause = () => {
-    transport().pause();
-    isPlaying.value = false;
-    releaseSynths(synths);
+    if (!isPlaying.value) return;
+    pauseRequested = true;
+    engine.silence();
   };
 
   const stop = () => {
-    clearLoop();
+    playGen += 1;
+    pauseRequested = false;
+    isPaused.value = false;
+    resumeLine = 0;
+    engine.silence();
+    isPlaying.value = false;
     currentYearIndex.value = 0;
-    playIndex = 0;
     currentLineIndex.value = -1;
     currentFrequency.value = 0;
-    isPlaying.value = false;
   };
 
-  const setYear = (index) => {
+  const setYear = (index, { restart = true } = {}) => {
     const next = Math.max(0, Math.min(Number(index) || 0, Math.max(0, timelineData.length - 1)));
     currentYearIndex.value = next;
-    playIndex = next;
+    resumeLine = 0;
+    currentLineIndex.value = -1;
+    currentFrequency.value = 0;
+    if (isPlaying.value && restart) {
+      playGen += 1;
+      engine.silence();
+      isPlaying.value = false;
+      return playFrom(next, 0);
+    }
+    return Promise.resolve();
   };
-
-  const getWaveform = () => (analyser ? analyser.getValue() : null);
-
-  onUnmounted(() => {
-    stop();
-    synths.forEach((s) => s.dispose());
-    synths = [];
-    if (reverb) reverb.dispose();
-    if (analyser) analyser.dispose();
-    reverb = null;
-    analyser = null;
-  });
 
   return {
     isPlaying,
@@ -187,12 +121,14 @@ export function useLifeAudio() {
     currentLineIndex,
     currentFrequency,
     playbackSpeed,
+    volume: engine.volume,
     totalYears,
+    canResume,
     loadTimeline,
     play,
     pause,
     stop,
     setYear,
-    getWaveform,
+    getWaveform: engine.getWaveform,
   };
 }
