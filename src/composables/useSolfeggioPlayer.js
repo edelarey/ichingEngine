@@ -1,224 +1,191 @@
-import { ref, computed, watch } from 'vue';
+import { computed, onUnmounted, ref } from 'vue';
 import * as Tone from 'tone';
 import { useHexagramStore } from '../stores/oracle';
 
-// Solfeggio frequencies for lines 1 (bottom) to 6 (top)
-const SOLFEGGIO_FREQUENCIES = [
-  396, // Line 1 (Bottom)
-  417, // Line 2
-  528, // Line 3
-  639, // Line 4
-  285, // Line 5
-  174  // Line 6 (Top)
-];
+const SOLFEGGIO_FREQUENCIES = [396, 417, 528, 639, 285, 174];
+const SAMPLE_HEXAGRAM = '111111';
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, Math.max(0, ms)));
+
+function asBinary(value) {
+  const text = String(value || '');
+  return /^[01]{6}$/.test(text) ? text : '';
+}
 
 export function useSolfeggioPlayer() {
   const store = useHexagramStore();
-  
-  // State
+
   const isPlaying = ref(false);
   const currentReading = ref(null);
-  const currentLineIndex = ref(-1); // 0-5, -1 when not playing line
-  const playbackSpeed = ref(1.0); // Multiplier: 0.5x to 2x
+  const currentLineIndex = ref(-1);
+  const playbackSpeed = ref(1.0);
   const sortNewestFirst = ref(true);
   const progressMessage = ref('');
-  const activeHexagram = ref(''); // The binary string of the hexagram currently being played
-  const currentFrequency = ref(0); // Current frequency being played
-  
-  // Internal state
+  const activeHexagram = ref('');
+  const currentFrequency = ref(0);
+
   let synth = null;
   let reverb = null;
   let waveform = null;
   let stopSignal = false;
 
-  // Initialize Audio Context and Synth
+  const readingCount = computed(() => store.consultationHistory.length);
+
   const initAudio = async () => {
-    if (Tone.context.state !== 'running') {
+    if (Tone.getContext().state !== 'running') {
       await Tone.start();
     }
-    
-    if (!synth) {
-      // Create a reverb for that "healing" feel
-      reverb = new Tone.Reverb({
-        decay: 2.5,
-        preDelay: 0.1,
-        wet: 0.3
-      }).toDestination();
+    if (synth) return;
 
-      // Create Waveform analyser
-      waveform = new Tone.Waveform(1024);
+    reverb = new Tone.Reverb({
+      decay: 2.5,
+      preDelay: 0.1,
+      wet: 0.3,
+    }).toDestination();
+    await reverb.generate();
 
-      // Using a Synth with Sine wave
-      synth = new Tone.Synth({
-        oscillator: {
-          type: "sine"
-        },
-        envelope: {
-          attack: 0.1,
-          decay: 0.2,
-          sustain: 0.8,
-          release: 1.5 // Long release for ambient feel
-        }
-      }).connect(reverb);
-      
-      // Connect synth to waveform analyser as well
-      synth.connect(waveform);
+    waveform = new Tone.Waveform(1024);
+    synth = new Tone.Synth({
+      oscillator: { type: 'sine' },
+      envelope: {
+        attack: 0.1,
+        decay: 0.2,
+        sustain: 0.8,
+        release: 1.5,
+      },
+    }).connect(reverb);
+    synth.connect(waveform);
+  };
+
+  const silence = () => {
+    if (!synth) return;
+    try {
+      synth.triggerRelease();
+    } catch (_) {
+      /* already silent */
     }
   };
 
-  // Helper: Sleep function that respects speed
-  const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms / playbackSpeed.value));
-
-  // Play a single tone
   const playTone = async (lineIndex, isYang, isChanging) => {
-    if (stopSignal) return;
-
+    if (stopSignal || !synth) return;
     currentLineIndex.value = lineIndex;
-    
-    // Determine Frequency
-    let frequency = SOLFEGGIO_FREQUENCIES[lineIndex];
-    
-    // Rules:
-    // 1 = Yang: Loud (-6dB), Long (2s), Octave x2
-    // 0 = Yin: Soft (-18dB), Short (1s), No octave shift
-    
-    const volume = isYang ? -6 : -18;
-    const duration = isYang ? 2 : 1; // Seconds
-    const octaveMultiplier = isYang ? 2 : 1;
-    
-    const finalFrequency = frequency * octaveMultiplier;
+    const frequency = SOLFEGGIO_FREQUENCIES[lineIndex];
+    const duration = (isYang ? 2 : 1) / Math.max(0.25, playbackSpeed.value);
+    const finalFrequency = frequency * (isYang ? 2 : 1);
     currentFrequency.value = finalFrequency;
-    
-    // Apply volume
-    synth.volume.value = volume;
-
-    // Portamento for changing lines
-    // We simulate portamento by setting it before triggering attack
-    if (isChanging) {
-      synth.portamento = 0.3; 
-    } else {
-      synth.portamento = 0;
-    }
-
-    // Trigger the note
-    // duration is scaled by playbackSpeed for the Tone.js event? 
-    // Tone.js time is relative to Transport or seconds. 
-    // If we want the sound to last 'duration' seconds *physically*, we just pass 'duration'.
-    // But if 'speed' is 2x, everything should be faster, so duration should be shorter.
-    const adjustedDuration = duration / playbackSpeed.value;
-    
-    synth.triggerAttackRelease(finalFrequency, adjustedDuration);
-
-    // Wait for the duration of the note before resolving
-    await wait(adjustedDuration * 1000);
-    currentFrequency.value = 0; // Reset frequency after note
+    synth.volume.value = isYang ? -6 : -18;
+    synth.portamento = isChanging ? 0.3 : 0;
+    synth.triggerAttackRelease(finalFrequency, duration);
+    await wait(duration * 1000);
+    if (!stopSignal) currentFrequency.value = 0;
   };
 
-  // Play a full hexagram
   const playHexagram = async (hexString, changingLines = []) => {
-    // hexString is 6 chars, Left=Bottom=Index 0
-    // We play sequentially from bottom to top (index 0 to 5)
-    
+    const binary = asBinary(hexString);
+    if (!binary) return;
     for (let i = 0; i < 6; i++) {
       if (stopSignal) break;
-      
-      const char = hexString[i];
-      const isYang = char === '1';
-      
-      // changingLines are 1-based indices (1..6). Convert to 0-based for comparison.
-      // Check if this line index (i) is in the changingLines array
-      // Note: changingLines array might be strings or numbers, handle both
-      const isChanging = changingLines.some(lineNum => Number(lineNum) === (i + 1));
-      
+      const isYang = binary[i] === '1';
+      const isChanging = (changingLines || []).some((lineNum) => Number(lineNum) === i + 1);
       await playTone(i, isYang, isChanging);
     }
     currentLineIndex.value = -1;
   };
 
-  const playAll = async () => {
-    if (isPlaying.value) return; // Already playing
-    
+  const finishPlayback = (message) => {
+    isPlaying.value = false;
+    currentLineIndex.value = -1;
+    currentFrequency.value = 0;
+    stopSignal = false;
+    silence();
+    if (message) progressMessage.value = message;
+  };
+
+  const playReadings = async (readings, label) => {
+    if (isPlaying.value) return;
     await initAudio();
-    
     isPlaying.value = true;
     stopSignal = false;
-    
-    // Get readings
-    let readings = [...store.consultationHistory];
-    
-    // Sort
-    if (sortNewestFirst.value) {
-      readings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    } else {
-      readings.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    }
-    
     const total = readings.length;
-    
     try {
       for (let i = 0; i < total; i++) {
         if (stopSignal) break;
-        
         const reading = readings[i];
         currentReading.value = reading;
-        
-        // Update progress text
-        const hex1 = reading.primaryHexagram;
-        const hex2 = reading.transformedHexagram;
-        const transitionText = hex2 ? ` → ${hex2}` : '';
-        progressMessage.value = `Playing reading ${i + 1} of ${total} – Hexagram ${hex1}${transitionText}`;
-        
-        // Play Primary
-        activeHexagram.value = reading.primaryHexagram;
-        await playHexagram(reading.primaryHexagram, reading.changingLines);
-        
+        const primary = asBinary(reading.primaryHexagram);
+        const transformed = asBinary(reading.transformedHexagram);
+        if (!primary) continue;
+        const transitionText = transformed && transformed !== primary ? ` → ${transformed}` : '';
+        progressMessage.value = `${label} ${i + 1} of ${total} – ${primary}${transitionText}`;
+        activeHexagram.value = primary;
+        await playHexagram(primary, reading.changingLines || []);
         if (stopSignal) break;
-
-        // If transformed exists, wait 1s then play it
-        if (reading.transformedHexagram && reading.transformedHexagram !== reading.primaryHexagram) {
-          await wait(1000);
+        if (transformed && transformed !== primary) {
+          await wait(800 / Math.max(0.25, playbackSpeed.value));
           if (stopSignal) break;
-          // Play transformed.
-          // Note: Transformed hexagrams represent the result, so lines are stable (no changing logic applied usually).
-          // We pass empty array for changing lines to avoid portamento on the result.
-          activeHexagram.value = reading.transformedHexagram;
-          await playHexagram(reading.transformedHexagram, []);
+          activeHexagram.value = transformed;
+          await playHexagram(transformed, []);
         }
-        
-        // Small pause between readings? Not specified, but good practice.
-        await wait(500);
+        await wait(400 / Math.max(0.25, playbackSpeed.value));
       }
-      
-      if (!stopSignal) {
-        progressMessage.value = "Playback complete";
-      }
+      if (!stopSignal) finishPlayback(total ? 'Playback complete' : 'Nothing to play');
+      else finishPlayback('Stopped');
     } catch (e) {
-      console.error("Playback error:", e);
-      progressMessage.value = "Error during playback";
-    } finally {
-      isPlaying.value = false;
-      currentReading.value = null;
-      activeHexagram.value = '';
-      currentLineIndex.value = -1;
-      stopSignal = false;
+      console.error('Playback error:', e);
+      finishPlayback('Error during playback');
     }
+  };
+
+  const playAll = async () => {
+    const readings = [...store.consultationHistory];
+    if (!readings.length) {
+      progressMessage.value = 'No saved consultations yet. Cast a reading, or play the sample.';
+      return;
+    }
+    readings.sort((a, b) => {
+      const da = new Date(a.timestamp).getTime();
+      const db = new Date(b.timestamp).getTime();
+      return sortNewestFirst.value ? db - da : da - db;
+    });
+    await playReadings(readings, 'Playing reading');
+  };
+
+  const playSample = async () => {
+    await playReadings(
+      [{
+        id: 'sample',
+        timestamp: new Date().toISOString(),
+        question: 'Sample — Heaven over Heaven (Qián)',
+        primaryHexagram: SAMPLE_HEXAGRAM,
+        transformedHexagram: SAMPLE_HEXAGRAM,
+        changingLines: [],
+      }],
+      'Playing sample'
+    );
   };
 
   const stop = () => {
-    stopSignal = true;
-    if (synth) {
-      synth.releaseAll();
+    if (!isPlaying.value) {
+      progressMessage.value = 'Stopped';
+      return;
     }
-    isPlaying.value = false;
-    progressMessage.value = "Stopped";
+    stopSignal = true;
+    silence();
+    progressMessage.value = 'Stopped';
   };
 
-  const getWaveform = () => {
-    if (waveform) {
-      return waveform.getValue();
-    }
-    return null;
-  };
+  const getWaveform = () => (waveform ? waveform.getValue() : null);
+
+  onUnmounted(() => {
+    stopSignal = true;
+    silence();
+    if (synth) synth.dispose();
+    if (reverb) reverb.dispose();
+    if (waveform) waveform.dispose();
+    synth = null;
+    reverb = null;
+    waveform = null;
+  });
 
   return {
     isPlaying,
@@ -229,8 +196,10 @@ export function useSolfeggioPlayer() {
     progressMessage,
     activeHexagram,
     currentFrequency,
+    readingCount,
     getWaveform,
     playAll,
-    stop
+    playSample,
+    stop,
   };
 }

@@ -12,22 +12,36 @@
               Each line corresponds to a specific frequency, creating a unique sonic landscape for your divination journey.
             </p>
 
-            <!-- Controls -->
+            <div v-if="readingCount === 0" class="alert alert-info">
+              No saved consultations yet.
+              <router-link to="/consult">Cast a reading</router-link>
+              to play your own hexagrams, or start with the sample below.
+            </div>
+
             <div class="d-flex flex-wrap gap-3 justify-content-center mb-4 align-items-center">
-              <button 
-                class="btn btn-lg btn-success px-4" 
-                @click="playAll" 
+              <button
+                type="button"
+                class="btn btn-lg btn-success px-4"
+                @click="playAll"
+                :disabled="isPlaying || readingCount === 0"
+              >
+                Play all ({{ readingCount }})
+              </button>
+              <button
+                type="button"
+                class="btn btn-lg btn-outline-success px-4"
+                @click="playSample"
                 :disabled="isPlaying"
               >
-                <i class="bi bi-play-fill me-1"></i> Play All
+                Play sample
               </button>
-              
-              <button 
-                class="btn btn-lg btn-danger px-4" 
-                @click="stop" 
+              <button
+                type="button"
+                class="btn btn-lg btn-danger px-4"
+                @click="stop"
                 :disabled="!isPlaying"
               >
-                <i class="bi bi-stop-fill me-1"></i> Stop
+                Stop
               </button>
             </div>
 
@@ -83,11 +97,9 @@
                   <!-- Hexagram Overlay -->
                   <div v-if="activeHexagram" class="hexagram-overlay">
                     <svg class="hexagram-svg" :width="svgWidth" :height="svgHeight" viewBox="0 0 160 240">
-                      <g v-for="(char, index) in activeHexagram" :key="index">
+                      <g v-for="(char, index) in activeHexagram" :key="'sol-' + index">
                         <g :transform="`translate(0, ${svgHeight - (index + 1) * 40})`">
-                          
-                          <!-- Yin Line (0) -->
-                          <template v-if="char === '0'">
+                          <g v-if="char === '0'">
                             <rect
                               x="10" y="10" width="40" height="10"
                               :fill="getLineColor(index)"
@@ -98,16 +110,14 @@
                               :fill="getLineColor(index)"
                               :class="{ 'active-pulse': currentLineIndex === index }"
                             />
-                          </template>
-                          
-                          <!-- Yang Line (1) -->
-                          <template v-else>
+                          </g>
+                          <g v-else>
                             <rect
                               x="10" y="10" width="90" height="10"
                               :fill="getLineColor(index)"
                               :class="{ 'active-pulse': currentLineIndex === index }"
                             />
-                          </template>
+                          </g>
 
                           <!-- Frequency Label (Static) -->
                           <text
@@ -134,13 +144,12 @@
               <div class="col-md-6">
                 <div v-if="activeHexagramDetails" class="card h-100 border-0 bg-light">
                   <div class="card-body text-center">
-                    <h2 class="display-4 mb-2">{{ activeHexagramDetails.name }}</h2>
-                    <div class="display-1 mb-2" :style="{ color: '#333' }">{{ activeHexagramDetails.symbol }}</div>
+                    <h2 class="h3 mb-2">{{ activeHexagramDetails.name }}</h2>
+                    <div class="display-1 mb-2">{{ activeHexagramDetails.hexagram || activeHexagramDetails.symbol }}</div>
                     <h4 class="text-muted mb-4">{{ activeHexagramDetails.translation }}</h4>
-                    
                     <div v-if="activeHexagramDetails.summary" class="text-start">
                       <h5 class="border-bottom pb-2">Summary</h5>
-                      <p class="card-text" v-html="activeHexagramDetails.summary"></p>
+                      <p class="card-text">{{ activeHexagramDetails.summary }}</p>
                     </div>
                   </div>
                 </div>
@@ -167,11 +176,13 @@
 <script>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useSolfeggioPlayer } from '../composables/useSolfeggioPlayer';
+import { usePageTitle } from '@/composables/usePageTitle';
 import hexagramLibrary from '@/const/hexagram';
 
 export default {
   name: 'SolfeggioPlayer',
   setup() {
+    usePageTitle('Solfeggio Player');
     const {
       isPlaying,
       currentReading,
@@ -181,9 +192,11 @@ export default {
       progressMessage,
       activeHexagram,
       currentFrequency,
+      readingCount,
       getWaveform,
       playAll,
-      stop
+      playSample,
+      stop,
     } = useSolfeggioPlayer();
 
     const frequencies = [396, 417, 528, 639, 285, 174];
@@ -205,28 +218,29 @@ export default {
       return '#adb5bd'; // Light gray (Bootstrap gray-500) for better visibility on dark bg
     };
 
-    const drawWaveform = () => {
-      if (!waveformCanvas.value) return;
-      
+    const sizeCanvas = () => {
       const canvas = waveformCanvas.value;
+      if (!canvas) return;
+      const width = canvas.offsetWidth || 400;
+      const height = canvas.offsetHeight || 300;
+      if (canvas.width !== width) canvas.width = width;
+      if (canvas.height !== height) canvas.height = height;
+    };
+
+    const drawWaveform = () => {
+      animationFrameId = requestAnimationFrame(drawWaveform);
+      const canvas = waveformCanvas.value;
+      if (!canvas) return;
+      sizeCanvas();
       const ctx = canvas.getContext('2d');
+      if (!ctx) return;
       const width = canvas.width;
       const height = canvas.height;
-      
-      // Clear with fade effect
-      ctx.fillStyle = 'rgba(33, 37, 41, 0.2)'; // Dark background with trail
+      ctx.fillStyle = 'rgba(33, 37, 41, 0.2)';
       ctx.fillRect(0, 0, width, height);
-      
-      if (!isPlaying.value) {
-        animationFrameId = requestAnimationFrame(drawWaveform);
-        return;
-      }
-
+      if (!isPlaying.value) return;
       const values = getWaveform();
-      if (!values) {
-        animationFrameId = requestAnimationFrame(drawWaveform);
-        return;
-      }
+      if (!values) return;
 
       ctx.beginPath();
       ctx.lineWidth = 2;
@@ -252,39 +266,22 @@ export default {
         x += sliceWidth;
       }
 
-      ctx.lineTo(canvas.width, canvas.height / 2);
+      ctx.lineTo(width, height / 2);
       ctx.stroke();
-      
-      // Reset shadow for next frame performance
       ctx.shadowBlur = 0;
-
-      animationFrameId = requestAnimationFrame(drawWaveform);
     };
 
+    const onResize = () => sizeCanvas();
+
     onMounted(() => {
-      // Initialize canvas size
-      if (waveformCanvas.value) {
-        waveformCanvas.value.width = waveformCanvas.value.offsetWidth;
-        waveformCanvas.value.height = waveformCanvas.value.offsetHeight;
-      }
-      
-      // Start loop
+      sizeCanvas();
       drawWaveform();
-      
-      // Handle resize
-      window.addEventListener('resize', () => {
-        if (waveformCanvas.value) {
-          waveformCanvas.value.width = waveformCanvas.value.offsetWidth;
-          waveformCanvas.value.height = waveformCanvas.value.offsetHeight;
-        }
-      });
+      window.addEventListener('resize', onResize);
     });
 
     onUnmounted(() => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-      window.removeEventListener('resize', () => {});
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', onResize);
     });
 
     return {
@@ -296,7 +293,9 @@ export default {
       progressMessage,
       activeHexagram,
       currentFrequency,
+      readingCount,
       playAll,
+      playSample,
       stop,
       frequencies,
       svgWidth,
