@@ -674,8 +674,7 @@
   import BirthDataForm from '@/components/BirthDataForm.vue';
   import ReadingLead from '@/components/ReadingLead.vue';
   import { usePageTitle } from '@/composables/usePageTitle';
-  import jsPDF from 'jspdf';
-  import html2canvas from 'html2canvas';
+  import { downloadIchingPdf } from '@/utils/ichingPdf';
 
   export default {
     name: 'Astrology',
@@ -1045,56 +1044,10 @@
 
       const exportIchingPdf = async () => {
         try {
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const pageWidth = pdf.internal.pageSize.getWidth();
-          let y = 18;
-          pdf.setFontSize(16);
-          pdf.text('I-Ching Astrology Summary', pageWidth / 2, y, { align: 'center' });
-          y += 10;
-          pdf.setFontSize(10);
-          const lines = [
-            `Name: ${state.name}`,
-            `Birth: ${dateTimeFormatSimple(state.birthDate)}`,
-            `Gender: ${state.gender}`,
-            `Place: ${state.place || '—'} (${state.latitude}, ${state.longitude})`,
-          ];
-          if (ichingLead.value) {
-            lines.push('', ichingLead.value.headline, ichingLead.value.intro);
-            ichingLead.value.points.forEach((p) => lines.push(`${p.label}: ${p.text}`));
-          }
-          lines.push(
-            '',
-            `Pre-Heaven: ${state.preHeavenHexagram?.name || ''}`,
-            `Later-Heaven: ${state.laterHeavenHexagram?.name || ''}`,
-            `Year animal: ${state.sexagenaryCycle?.horaryBranch?.animal || ''}`,
-          );
-          lines.forEach((line) => {
-            const wrapped = pdf.splitTextToSize(String(line), pageWidth - 32);
-            wrapped.forEach((w) => {
-              if (y > 280) {
-                pdf.addPage();
-                y = 18;
-              }
-              pdf.text(w, 16, y);
-              y += 5;
-            });
-          });
-          const card = document.querySelector('.iching-summary-card');
-          if (card) {
-            try {
-              const canvas = await html2canvas(card, { backgroundColor: '#ffffff', scale: 1.2, logging: false });
-              pdf.addPage();
-              const w = pageWidth - 32;
-              const h = (canvas.height / canvas.width) * w;
-              pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 16, 16, w, Math.min(h, 260));
-            } catch (e) {
-              console.warn(e);
-            }
-          }
-          pdf.save(`${state.name || 'IChing'}_Astrology.pdf`);
+          await downloadIchingPdf({ state, lead: ichingLead.value });
         } catch (err) {
           console.error(err);
-          alert('Failed to generate PDF.');
+          alert(err.message || 'Failed to generate PDF.');
         }
       };
 

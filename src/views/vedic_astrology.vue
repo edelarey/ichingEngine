@@ -133,8 +133,7 @@ import BirthDataForm from '@/components/BirthDataForm.vue';
 import { usePageTitle } from '@/composables/usePageTitle';
 import { calculateVedicChart, formatOffset } from '@/utils/vedicCalculations';
 import { TIMEZONE_PRESETS } from '@/const/vedic';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { downloadVedicPdf } from '@/utils/vedicPdf';
 
 export default {
   name: 'VedicAstrology',
@@ -333,109 +332,10 @@ export default {
         return;
       }
       try {
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-        let y = 18;
-
-        pdf.setFontSize(16);
-        pdf.text('Janma Kundali (Vedic Astrology Chart)', pageWidth / 2, y, { align: 'center' });
-        y += 10;
-        pdf.setFontSize(10);
-        const info = [
-          `Name: ${localBirthData.name}`,
-          `Date: ${formatDateForInput(localBirthData.date)}  Time: ${localBirthData.time}  ${formatOffset(localBirthData.timezoneOffset)}`,
-          `Place: ${localBirthData.place || 'Custom coordinates'}  Lat ${localBirthData.latitude}  Lng ${localBirthData.longitude}`,
-          `Ayanamsa: ${chart.value.ayanamsaLabel} ${chart.value.ayanamsaFormatted}`,
-          `Lagna (Ascendant): ${chart.value.lagna.rashiLabel} ${chart.value.lagna.formatted}`,
-        ];
-        info.forEach((line) => {
-          pdf.text(line, 16, y);
-          y += 6;
-        });
-        y += 4;
-
-        const svgWrap = document.querySelector('.kundli-wrap');
-        if (svgWrap) {
-          const canvas = await html2canvas(svgWrap, { backgroundColor: '#ffffff', scale: 2, logging: false });
-          const img = canvas.toDataURL('image/png');
-          const w = 110;
-          const h = (canvas.height / canvas.width) * w;
-          pdf.addImage(img, 'PNG', (pageWidth - w) / 2, y, w, h);
-          y += h + 8;
-        }
-
-        const addLines = (title, body) => {
-          if (y > pageHeight - 30) {
-            pdf.addPage();
-            y = 18;
-          }
-          pdf.setFont(undefined, 'bold');
-          pdf.setFontSize(12);
-          pdf.text(title, 16, y);
-          y += 6;
-          pdf.setFont(undefined, 'normal');
-          pdf.setFontSize(9);
-          const wrapped = pdf.splitTextToSize(body, pageWidth - 32);
-          wrapped.forEach((line) => {
-            if (y > pageHeight - 16) {
-              pdf.addPage();
-              y = 18;
-            }
-            pdf.text(line, 16, y);
-            y += 4.2;
-          });
-          y += 4;
-        };
-
-        if (chart.value.interpretations.executive) {
-          const exec = chart.value.interpretations.executive;
-          addLines('In plain English', `${exec.headline} ${exec.intro}`);
-          exec.points.forEach((p) => addLines(p.label, p.text));
-        }
-        addLines('Lagna (Ascendant)', chart.value.interpretations.lagna);
-        addLines('Chandra (Moon)', chart.value.interpretations.moon);
-        addLines('Surya (Sun)', chart.value.interpretations.sun);
-        addLines('Vimshottari Dasha', chart.value.interpretations.dasha);
-
-        pdf.addPage();
-        y = 18;
-        pdf.setFont(undefined, 'bold');
-        pdf.setFontSize(12);
-        pdf.text('Grahas (Planets)', 16, y);
-        y += 8;
-        pdf.setFontSize(8);
-        pdf.setFont(undefined, 'bold');
-        ['Graha', 'Rashi', 'Deg', 'House', 'Nakshatra', 'Dignity'].forEach((h, i) => {
-          pdf.text(h, 16 + i * 32, y);
-        });
-        y += 5;
-        pdf.setFont(undefined, 'normal');
-        chart.value.grahas.forEach((g) => {
-          if (y > pageHeight - 16) {
-            pdf.addPage();
-            y = 18;
-          }
-          const row = [
-            `${g.nameSa} (${g.nameEn})`,
-            g.rashi.nameEn,
-            g.degreeLabel,
-            String(g.house),
-            `${g.nakshatra.nameEn} ${g.pada}`,
-            g.dignity.key,
-          ];
-          row.forEach((cell, i) => pdf.text(String(cell).slice(0, 18), 16 + i * 32, y));
-          y += 5;
-        });
-
-        y += 6;
-        addLines('Disclaimer', chart.value.interpretations.disclaimer);
-        pdf.setFontSize(8);
-        pdf.text(`Generated ${new Date().toLocaleDateString()} by iChing Engine`, 16, pageHeight - 10);
-        pdf.save(`${localBirthData.name || 'Vedic'}_Kundali.pdf`);
+        await downloadVedicPdf({ birth: localBirthData, chart: chart.value });
       } catch (err) {
         console.error('Error generating PDF:', err);
-        alert('Failed to generate PDF. Please try again.');
+        alert(err.message || 'Failed to generate PDF. Please try again.');
       }
     };
 
