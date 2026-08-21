@@ -1,34 +1,25 @@
 <template>
   <div class="home-page">
-    <header class="bg-light py-3 mb-4">
-      <div class="container">
-        <h1 class="display-4">iChing Engine</h1>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page">Home</li>
-          </ol>
-        </nav>
-      </div>
-    </header>
-
-    <div class="container mb-5">
-      <div class="hero card mb-4">
-        <div class="card-body">
-          <div class="row align-items-center g-4">
-            <div class="col-12 col-md-4 text-center">
+    <div class="container pt-3 mb-4">
+      <div class="hero card mb-0">
+        <div class="card-body py-3">
+          <div class="row align-items-center g-3">
+            <div class="col-12 col-md-3 text-center">
               <img class="hero-gif" alt="I Ching animation" :src="gifUrl" />
             </div>
-            <div class="col-12 col-md-8">
-              <p class="eyebrow">Book of Changes</p>
-              <h2 class="hero-title">Cast a hexagram. Read a birth. Hear the lines.</h2>
-              <p class="hero-copy">
-                An I Ching oracle, natal hexagrams after Sherrill &amp; Chu, Jyotish and Western charts,
-                from one birthday list. Educational, not a forecast.
+            <div class="col-12 col-md-9">
+              <h1 class="app-name">
+                iChing Engine
+                <span class="cn" lang="zh-Hant">易經引擎</span>
+              </h1>
+              <p class="app-aka" lang="zh-Hant">易經 · <span lang="en">Yìjīng</span> · Book of Changes</p>
+              <p class="hero-copy mb-2">
+                Cast a hexagram, read a birth, hear the lines. Oracle, natal charts, one birthday list.
               </p>
               <div class="d-flex flex-wrap gap-2">
-                <router-link to="/consult" class="btn btn-primary">Consult</router-link>
-                <router-link to="/astrology" class="btn btn-outline-primary">I-Ching astrology</router-link>
-                <router-link to="/birthdays" class="btn btn-outline-secondary">Birthdays</router-link>
+                <router-link to="/consult" class="btn btn-primary btn-sm">Consult</router-link>
+                <router-link to="/astrology" class="btn btn-outline-primary btn-sm">I-Ching astrology</router-link>
+                <router-link to="/birthdays" class="btn btn-outline-secondary btn-sm">Birthdays</router-link>
               </div>
             </div>
           </div>
@@ -135,9 +126,30 @@ export default {
   background: #fffdf7;
 }
 .hero-gif {
-  width: 140px;
+  width: 96px;
   height: auto;
   max-width: 100%;
+}
+.app-name {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #3d2e10;
+  margin: 0 0 0.15rem;
+  line-height: 1.2;
+}
+.app-name .cn {
+  display: inline-block;
+  margin-left: 0.55rem;
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  font-family: "Noto Serif CJK SC", "Noto Serif CJK TC", "Source Han Serif SC", "Songti SC", "SimSun", "PMingLiU", serif;
+}
+.app-aka {
+  font-size: 0.9rem;
+  color: #8a6a22;
+  margin-bottom: 0.45rem;
+  font-family: "Noto Serif CJK SC", "Noto Serif CJK TC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
 }
 .eyebrow {
   text-transform: uppercase;
@@ -146,14 +158,11 @@ export default {
   font-weight: 700;
   color: #8a6a22;
 }
-.hero-title {
-  font-size: 1.55rem;
-  color: #3d2e10;
-  margin-bottom: 0.6rem;
-}
 .hero-copy {
   color: #4a3b16;
   max-width: 36rem;
+  margin-bottom: 0;
+  font-size: 0.95rem;
 }
 .caster-wrap {
   border: 1px solid #efe4c6;

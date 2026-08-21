@@ -6,7 +6,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">iChing Engine</a>
+        <a class="navbar-brand" href="#">iChing Engine <span class="brand-cn" lang="zh-Hant">易經引擎</span></a>
         <button
           class="navbar-toggler"
           type="button"
@@ -342,6 +342,14 @@ export default {
 </script>
 
 <style scoped>
+.brand-cn {
+  margin-left: 0.4rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  font-size: 0.95em;
+  font-family: "Noto Serif CJK SC", "Noto Serif CJK TC", "Source Han Serif SC", "Songti SC", "SimSun", "PMingLiU", serif;
+  opacity: 0.9;
+}
 /* Sidebar styling */
 .sidebar {
   position: fixed;
