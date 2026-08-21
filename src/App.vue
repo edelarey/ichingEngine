@@ -30,16 +30,33 @@
       </div>
     </nav>
 
+    <div
+      v-show="isMobile && isSidebarOpen"
+      class="sidebar-backdrop"
+      @click="closeSidebar"
+    ></div>
+
     <!-- Sidebar and Main Content -->
     <div class="container-fluid">
       <div class="row flex-nowrap">
         <!-- Sidebar -->
         <nav
-  id="sidebarCollapse"
-  class="col-3 col-md-2 bg-light sidebar"
-  :class="{ 'show': isSidebarOpen }"
->
-  <div class="position-sticky pt-3">
+          id="sidebarCollapse"
+          class="bg-light sidebar"
+          :class="{ 'is-open': isSidebarOpen }"
+          :aria-hidden="isMobile && !isSidebarOpen ? 'true' : 'false'"
+          :inert="isMobile && !isSidebarOpen ? true : undefined"
+        >
+          <div class="sidebar-header d-flex d-md-none justify-content-between align-items-center px-3 pt-3 pb-1">
+            <span class="fw-semibold">Menu</span>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close menu"
+              @click="closeSidebar"
+            ></button>
+          </div>
+          <div class="position-sticky pt-3">
     <ul class="nav flex-column">
       <li class="nav-item">
         <router-link class="nav-link" to="/" exact-active-class="active">
@@ -194,8 +211,8 @@
 
         <!-- Main Content -->
         <main
-          class="col-12 col-md-10 col-lg-10 px-md-4 mt-5"
-          :class="{ 'col-md-12 col-lg-12': !isSidebarOpen }"
+          class="col-12 main-content px-md-4 mt-5"
+          :class="{ 'sidebar-shifted': isSidebarOpen && !isMobile }"
         >
           <router-view></router-view>
         </main>
@@ -212,9 +229,16 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { useHead } from '@vueuse/head';
 import { Analytics } from '@vercel/analytics/vue';
+
+const MOBILE_BREAKPOINT = 768;
+
+function getIsMobile() {
+  return typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT;
+}
 
 export default {
   name: 'App',
@@ -222,8 +246,9 @@ export default {
     Analytics, // Register the Analytics component
   },
   setup() {
-    const isSidebarOpen = ref(true); // Default to open for initial visibility
-    const isBootstrapLoaded = ref(false);
+    const router = useRouter();
+    const isMobile = ref(getIsMobile());
+    const isSidebarOpen = ref(!getIsMobile());
     const backgroundColor = ref('#3f41c2');
     const chartsMenuOpen = ref(false); // Tracks Charts sub-menu state
     const astrologyMenuOpen = ref(false); // Tracks Astrology sub-menu state
@@ -269,14 +294,24 @@ export default {
       ],
     });
 
+    const closeSidebar = () => {
+      isSidebarOpen.value = false;
+    };
+
     const toggleSidebar = () => {
       isSidebarOpen.value = !isSidebarOpen.value;
-      if (window.bootstrap && window.bootstrap.Collapse) {
-        const sidebar = document.getElementById('sidebarCollapse');
-        if (sidebar) {
-          const bsCollapse = bootstrap.Collapse.getOrCreateInstance(sidebar);
-          isSidebarOpen.value ? bsCollapse.show() : bsCollapse.hide();
-        }
+    };
+
+    const syncViewport = () => {
+      const mobile = getIsMobile();
+      if (mobile === isMobile.value) return;
+      isMobile.value = mobile;
+      isSidebarOpen.value = !mobile;
+    };
+
+    const onKeydown = (event) => {
+      if (event.key === 'Escape' && isMobile.value && isSidebarOpen.value) {
+        closeSidebar();
       }
     };
 
@@ -293,14 +328,16 @@ export default {
     };
 
 
-    watch(isSidebarOpen, (newValue) => {
-      document.body.style.overflow = newValue ? 'hidden' : '';
+    watch([isSidebarOpen, isMobile], ([open, mobile]) => {
+      document.body.style.overflow = open && mobile ? 'hidden' : '';
     });
     
     const saveBackgroundColor = () => {
       localStorage.setItem('backgroundColor', backgroundColor.value);
       document.body.style.backgroundColor = backgroundColor.value;
     };
+
+    let removeAfterEach;
 
     onMounted(() => {
       const savedColor = localStorage.getItem('backgroundColor');
@@ -310,24 +347,27 @@ export default {
         backgroundColor.value = '#3f41c2'; // Default from app.scss
       }
 
-      if (window.bootstrap && window.bootstrap.Collapse) {
-        isBootstrapLoaded.value = true;
-        const sidebar = document.getElementById('sidebarCollapse');
-        if (sidebar) {
-          new bootstrap.Collapse(sidebar, { toggle: false });
-          if (isSidebarOpen.value) sidebar.classList.add('show');
-        }
-      } else {
-        console.warn('Bootstrap 5 is not fully loaded. Sidebar collapse may not work.');
-        isSidebarOpen.value = true; // Ensure sidebar is visible as fallback
-      }
+      syncViewport();
+      window.addEventListener('resize', syncViewport);
+      window.addEventListener('keydown', onKeydown);
+      removeAfterEach = router.afterEach(() => {
+        if (isMobile.value) closeSidebar();
+      });
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', syncViewport);
+      window.removeEventListener('keydown', onKeydown);
+      if (removeAfterEach) removeAfterEach();
+      document.body.style.overflow = '';
     });
 
 
     return {
+      isMobile,
       isSidebarOpen,
-      isBootstrapLoaded,
       toggleSidebar,
+      closeSidebar,
       saveBackgroundColor,
       backgroundColor,
       chartsMenuOpen,      // Return Charts sub-menu state
@@ -350,26 +390,37 @@ export default {
   font-family: "Noto Serif CJK SC", "Noto Serif CJK TC", "Source Han Serif SC", "Songti SC", "SimSun", "PMingLiU", serif;
   opacity: 0.9;
 }
-/* Sidebar styling */
-.sidebar {
+.sidebar-backdrop {
   position: fixed;
-  top: 56px; /* Height of navbar */
+  top: 56px;
+  right: 0;
   bottom: 0;
   left: 0;
-  z-index: 100;
+  z-index: 1010;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.sidebar {
+  position: fixed;
+  top: 56px;
+  bottom: 0;
+  left: 0;
+  z-index: 1020;
+  width: min(280px, 85vw);
   padding: 0;
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
-  width: auto; /* Auto-size to fit content */
-  min-width: 200px; /* Minimum width to ensure readability */
-  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
-  transform: translateX(0); /* Default to visible, collapse handles hiding */
+  overflow-x: hidden;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.sidebar:not(.show) {
-  transform: translateX(-100%); /* Hide when not shown */
+.sidebar.is-open {
+  transform: translateX(0);
+  visibility: visible;
 }
 
-/* Ensure content fits naturally */
 .sidebar .nav-link {
   font-weight: 500;
   color: #333;
@@ -384,50 +435,30 @@ export default {
   background-color: #f8f9fa;
 }
 
-/* Main content adjustment */
-main {
-  min-height: calc(100vh - 112px); /* Adjust for navbar and footer */
-  transition: margin-left 0.3s ease-in-out;
+.main-content {
+  min-height: calc(100vh - 112px);
   margin-left: 0;
+  width: 100%;
+  transition: margin-left 0.3s ease-in-out;
 }
 
-main.col-md-12 {
-  margin-left: 0; /* Full width when sidebar is closed */
-}
-
-main.col-md-10 {
-  margin-left: 200px; /* Offset for open sidebar */
-}
-
-/* Resizable sidebar (optional) */
-.sidebar {
-  resize: horizontal;
-  overflow: auto;
-}
-
-/* Footer */
 footer {
   width: 100%;
 }
 
-/* Media queries */
-@media (max-width: 767.98px) {
+@media (min-width: 768px) {
   .sidebar {
-    min-width: 180px;
+    width: 220px;
+    visibility: visible;
   }
 
-  main.col-md-10 {
-    margin-left: 180px;
-  }
-}
-
-@media (max-width: 576px) {
-  .sidebar {
-    min-width: 150px;
+  .sidebar.is-open {
+    transform: translateX(0);
   }
 
-  main.col-md-10 {
-    margin-left: 150px;
+  .main-content.sidebar-shifted {
+    margin-left: 220px;
+    width: calc(100% - 220px);
   }
 }
 </style>
