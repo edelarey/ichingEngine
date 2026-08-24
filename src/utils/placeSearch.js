@@ -121,19 +121,42 @@ export function offsetForZone(iana, date, time) {
   return dt.offset;
 }
 
+export function compactTimezoneLabel(label) {
+  const text = String(label || '');
+  const utc = text.match(/\(UTC[+\-−±]\d{1,2}:\d{2}\)/);
+  const head = text.split(/[—–]/)[0].trim();
+  const abbrev = head.split(/\s+/)[0];
+  if (utc && abbrev) return `${abbrev} ${utc[0]}`;
+  return text;
+}
+
 export function timezonePresetsWithBrowser(extraOffset, extraLabel) {
   const browser = -new Date().getTimezoneOffset();
   const extras = [];
   const seen = new Set(TIMEZONE_PRESETS.map((t) => t.offset));
   if (!seen.has(browser)) {
-    extras.push({ label: `Browser local (${formatOffset(browser)})`, offset: browser });
+    extras.push({
+      label: `Browser local (${formatOffset(browser)})`,
+      shortLabel: `Local (${formatOffset(browser)})`,
+      offset: browser,
+    });
     seen.add(browser);
   }
   if (typeof extraOffset === 'number' && !seen.has(extraOffset)) {
     const name = extraLabel ? `${extraLabel} (${formatOffset(extraOffset)})` : `Birth place (${formatOffset(extraOffset)})`;
-    extras.push({ label: name, offset: extraOffset });
+    extras.push({
+      label: name,
+      shortLabel: extraLabel ? compactTimezoneLabel(name) : `Place (${formatOffset(extraOffset)})`,
+      offset: extraOffset,
+    });
   }
-  return [...extras, ...TIMEZONE_PRESETS];
+  return [
+    ...extras,
+    ...TIMEZONE_PRESETS.map((tz) => ({
+      ...tz,
+      shortLabel: compactTimezoneLabel(tz.label),
+    })),
+  ];
 }
 
 function labelOf(props) {

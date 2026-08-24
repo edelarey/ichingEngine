@@ -216,7 +216,7 @@
 
         <!-- Main Content -->
         <main
-          class="col-12 main-content px-md-4 mt-5"
+          class="col-12 main-content px-md-4"
           :class="{ 'sidebar-shifted': isSidebarOpen && !isMobile }"
         >
           <router-view></router-view>
@@ -386,6 +386,20 @@ export default {
 };
 </script>
 
+<style>
+html {
+  scroll-padding-top: 4.5rem;
+}
+@media (max-width: 767.98px) {
+  select.form-select {
+    appearance: auto;
+    -webkit-appearance: menulist;
+    background-image: none;
+    padding-right: 0.75rem;
+    min-height: 44px;
+  }
+}
+</style>
 <style scoped>
 .brand-cn {
   margin-left: 0.4rem;
@@ -416,14 +430,17 @@ export default {
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
   overflow-x: hidden;
   overflow-y: auto;
-  transform: translateX(-100%);
   visibility: hidden;
-  transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  pointer-events: none;
+  /* Use left, not transform — transform on a fixed layer mispositions native <select> menus. */
+  margin-left: -100%;
+  transition: margin-left 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 .sidebar.is-open {
-  transform: translateX(0);
+  margin-left: 0;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .sidebar .nav-link {
@@ -444,6 +461,7 @@ export default {
   min-height: calc(100vh - 112px);
   margin-left: 0;
   width: 100%;
+  padding-top: 4.5rem;
   transition: margin-left 0.3s ease-in-out;
 }
 
@@ -455,10 +473,12 @@ footer {
   .sidebar {
     width: 220px;
     visibility: visible;
+    pointer-events: auto;
+    margin-left: 0;
   }
 
   .sidebar.is-open {
-    transform: translateX(0);
+    margin-left: 0;
   }
 
   .main-content.sidebar-shifted {

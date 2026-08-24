@@ -31,7 +31,6 @@
             class="form-select time-select"
             :value="hourPart"
             @change="setTime($event.target.value, minutePart)"
-            style="width: auto; min-width: 5.5rem; max-width: 7rem; flex: 0 0 auto;"
           >
             <option v-for="h in hours" :key="'h' + h" :value="h">{{ h }}</option>
           </select>
@@ -41,7 +40,6 @@
             class="form-select time-select"
             :value="minutePart"
             @change="setTime(hourPart, $event.target.value)"
-            style="width: auto; min-width: 5.5rem; max-width: 7rem; flex: 0 0 auto;"
           >
             <option v-for="m in minutes" :key="'m' + m" :value="m">{{ m }}</option>
           </select>
@@ -57,10 +55,11 @@
           :id="id + '-tz'"
           class="form-select"
           :value="String(modelValue.timezoneOffset)"
+          :title="selectedTimezoneLabel"
           @change="set('timezoneOffset', Number($event.target.value))"
         >
           <option v-for="tz in presets" :key="tz.label + tz.offset" :value="String(tz.offset)">
-            {{ tz.label }}
+            {{ tz.shortLabel || tz.label }}
           </option>
         </select>
         <div class="form-text">Needed for Vedic Lagna and Western Rising. Picking a city sets this.</div>
@@ -87,7 +86,7 @@
         class="form-control"
         v-model="placeText"
         autocomplete="off"
-        placeholder="Type a city, then pick from the list"
+        placeholder="City name"
         @focus="showHits = hits.length > 0"
         @input="onPlaceTyped"
         @keydown.escape="showHits = false"
@@ -99,8 +98,7 @@
           <button
             type="button"
             class="place-hit-btn"
-            @mousedown.prevent="choosePlace(hit)"
-            @click.prevent="choosePlace(hit)"
+            @pointerdown.prevent="choosePlace(hit)"
           >
             {{ hit.label }}
           </button>
@@ -149,7 +147,7 @@
 </template>
 
 <script>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { DateTime } from 'luxon';
 import { searchPlaces, offsetForZone, timezonePresetsWithBrowser } from '@/utils/placeSearch';
 
@@ -184,6 +182,11 @@ export default {
     const presets = computed(() =>
       timezonePresetsWithBrowser(props.modelValue.timezoneOffset, props.modelValue.timezoneName)
     );
+    const selectedTimezoneLabel = computed(() => {
+      const offset = String(props.modelValue.timezoneOffset);
+      const match = presets.value.find((tz) => String(tz.offset) === offset);
+      return match ? (match.label || match.shortLabel) : '';
+    });
 
     watch(
       () => props.modelValue.place,
@@ -242,6 +245,9 @@ export default {
           showHits.value = hits.value.length > 0;
           if (!hits.value.length) {
             searchError.value = 'No matches. Try a city name, or enter coordinates below.';
+          } else {
+            await nextTick();
+            placeWrap.value?.scrollIntoView({ block: 'center', behavior: 'smooth' });
           }
         } catch (err) {
           searchError.value = 'Place search is unavailable. Enter coordinates below.';
@@ -280,6 +286,7 @@ export default {
 
     return {
       presets,
+      selectedTimezoneLabel,
       hours,
       minutes,
       hits,
@@ -308,22 +315,26 @@ export default {
   border-radius: 0.5rem;
   overflow: visible;
 }
+.birth-data-form :deep(.form-select),
+.birth-data-form :deep(.form-control) {
+  max-width: 100%;
+  min-width: 0;
+}
 .form-label {
   font-weight: 600;
 }
 .time-fields {
-  display: flex;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 0.5rem;
-  width: max-content;
+  width: 100%;
   max-width: 100%;
 }
 .birth-data-form .time-select {
-  flex: 0 0 auto;
-  width: auto !important;
-  min-width: 5.5rem;
-  max-width: 7rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
 }
 .time-colon {
   font-weight: 700;
@@ -345,6 +356,7 @@ export default {
   z-index: 30;
   max-height: 240px;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   background: #fff;
   border: 1px solid #ced4da;
   border-radius: 0.375rem;
@@ -359,11 +371,27 @@ export default {
   text-align: left;
   background: #fff;
   border: 0;
-  padding: 0.6rem 0.85rem;
+  padding: 0.75rem 0.85rem;
+  min-height: 44px;
   cursor: pointer;
 }
 .place-hit-btn:hover,
 .place-hit-btn:focus {
   background: #eef3ff;
+}
+@media (max-width: 767.98px) {
+  .birth-data-form {
+    padding: 0.85rem 0;
+    background: transparent;
+  }
+  .birth-data-form :deep(.form-select),
+  .birth-data-form :deep(.form-control) {
+    min-height: 44px;
+  }
+  .place-hits {
+    position: static;
+    max-height: 50vh;
+    z-index: 1;
+  }
 }
 </style>

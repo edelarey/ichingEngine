@@ -1,5 +1,5 @@
 <template>
-  <div class="iching-hex-card card h-100">
+  <div class="iching-hex-card card" :class="{ 'h-100': fillHeight }">
     <div class="card-body">
       <p v-if="title" class="eyebrow mb-1">{{ title }}</p>
       <div class="glyph-row">
@@ -67,6 +67,7 @@ export default {
     showDetailButton: { type: Boolean, default: true },
     highlightLines: { type: Array, default: () => [] },
     highlightKind: { type: String, default: 'changing' },
+    fillHeight: { type: Boolean, default: true },
   },
   emits: ['detail'],
   computed: {

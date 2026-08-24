@@ -156,22 +156,53 @@
           For today or any other day without scrolling these lists, open
           <router-link to="/daily_reading">Daily Reading</router-link>.
         </p>
-        <div class="row g-3 mb-3">
-          <div class="col-12 col-lg-6">
-            <label class="form-label" for="early-life-year">Early life (Pre-Heaven)</label>
-            <select
-              id="early-life-year"
-              class="form-select mb-3"
-              v-model="state.selectedPreHeavenYear"
-            >
-              <option
-                v-for="sub in state.preHeavenBirthSubCycles"
-                :key="'early-' + sub.year"
-                :value="sub.year"
-              >
-                {{ sub.year }} — age {{ sub.age }}
-              </option>
-            </select>
+
+        <div class="stage-tabs d-lg-none" role="tablist">
+          <button
+            type="button"
+            class="stage-tab"
+            :class="{ active: lifeStageTab === 'early' }"
+            role="tab"
+            :aria-selected="lifeStageTab === 'early' ? 'true' : 'false'"
+            @click="lifeStageTab = 'early'"
+          >
+            Early life
+          </button>
+          <button
+            type="button"
+            class="stage-tab"
+            :class="{ active: lifeStageTab === 'later' }"
+            role="tab"
+            :aria-selected="lifeStageTab === 'later' ? 'true' : 'false'"
+            @click="lifeStageTab = 'later'"
+          >
+            Later life
+          </button>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div
+            class="col-12 col-lg-6"
+            :class="{ 'd-none d-lg-block': lifeStageTab !== 'early' }"
+          >
+            <div class="stage-controls">
+              <SheetSelect
+                id="early-life-year"
+                label="Early life (Pre-Heaven)"
+                :options="earlyYearOptions"
+                v-model="state.selectedPreHeavenYear"
+              />
+              <SheetSelect
+                v-if="earlyDailyOptions.length"
+                id="early-daily"
+                label="Daily early life"
+                :options="earlyDailyOptions"
+                v-model="state.selectedPreHeavenDailyCycleDate"
+              />
+            </div>
+            <p v-if="earlyDailyOptions.length" class="text-muted small">
+              Daily figures for the selected year (about one every six days).
+            </p>
             <IchingHexagramCard
               v-if="state.selectedPreHeavenBirthSubCycle?.hexagram"
               title="Early life (Pre-Heaven cycle)"
@@ -179,25 +210,41 @@
               :controlling-line="state.selectedPreHeavenBirthSubCycle.controllingLine"
               :line-index-base="0"
               :note="earlyLifeNote"
+              :fill-height="false"
               @detail="openHexDetail"
             />
             <p v-else class="text-muted">No early-life hexagram for this year.</p>
+            <IchingHexagramCard
+              v-if="state.preHeavenDailyCycleHexagram"
+              class="mt-3"
+              title="Daily early life"
+              :hexagram="state.preHeavenDailyCycleHexagram"
+              :fill-height="false"
+              @detail="openHexDetail"
+            />
           </div>
-          <div class="col-12 col-lg-6">
-            <label class="form-label" for="later-life-year">Later life (Later-Heaven)</label>
-            <select
-              id="later-life-year"
-              class="form-select mb-3"
-              v-model="state.selectedLaterHeavenYear"
-            >
-              <option
-                v-for="sub in state.laterHeavenBirthSubCycles"
-                :key="'later-' + sub.year"
-                :value="sub.year"
-              >
-                {{ sub.year }} — age {{ sub.age }}
-              </option>
-            </select>
+          <div
+            class="col-12 col-lg-6"
+            :class="{ 'd-none d-lg-block': lifeStageTab !== 'later' }"
+          >
+            <div class="stage-controls">
+              <SheetSelect
+                id="later-life-year"
+                label="Later life (Later-Heaven)"
+                :options="laterYearOptions"
+                v-model="state.selectedLaterHeavenYear"
+              />
+              <SheetSelect
+                v-if="laterDailyOptions.length"
+                id="later-daily"
+                label="Daily later life"
+                :options="laterDailyOptions"
+                v-model="state.selectedLaterHeavenDailyCycleDate"
+              />
+            </div>
+            <p v-if="laterDailyOptions.length" class="text-muted small">
+              Daily figures for the selected year (about one every six days).
+            </p>
             <IchingHexagramCard
               v-if="state.laterHeavenBirthSubCycleHexagram"
               title="Later life (Later-Heaven cycle)"
@@ -205,40 +252,16 @@
               :controlling-line="state.selectedLaterHeavenBirthSubCycle?.controllingLine"
               :line-index-base="0"
               :note="laterLifeNote"
+              :fill-height="false"
               @detail="openHexDetail"
             />
             <p v-else class="text-muted">No later-life hexagram for this year.</p>
-          </div>
-        </div>
-
-        <div class="row g-3 mb-4" v-if="state.preHeavenDailyCycle?.length || state.laterHeavenDailyCycle?.length">
-          <div class="col-12">
-            <p class="text-muted small mb-0">
-              Daily hexagrams for the selected year (one figure about every six days).
-              If today falls in that year it is selected first; otherwise the year starts at the first listed date.
-            </p>
-          </div>
-          <div class="col-12 col-lg-6" v-if="state.preHeavenDailyCycle?.length">
-            <label class="form-label" for="early-daily">Daily early life</label>
-            <select id="early-daily" class="form-select mb-2" v-model="state.selectedPreHeavenDailyCycleDate">
-              <option v-for="sub in state.preHeavenDailyCycle" :key="sub.date" :value="sub.date">{{ sub.date }}</option>
-            </select>
-            <IchingHexagramCard
-              v-if="state.preHeavenDailyCycleHexagram"
-              title="Daily early life"
-              :hexagram="state.preHeavenDailyCycleHexagram"
-              @detail="openHexDetail"
-            />
-          </div>
-          <div class="col-12 col-lg-6" v-if="state.laterHeavenDailyCycle?.length">
-            <label class="form-label" for="later-daily">Daily later life</label>
-            <select id="later-daily" class="form-select mb-2" v-model="state.selectedLaterHeavenDailyCycleDate">
-              <option v-for="sub in state.laterHeavenDailyCycle" :key="sub.date" :value="sub.date">{{ sub.date }}</option>
-            </select>
             <IchingHexagramCard
               v-if="state.laterHeavenDailyCycleHexagram"
+              class="mt-3"
               title="Daily later life"
               :hexagram="state.laterHeavenDailyCycleHexagram"
+              :fill-height="false"
               @detail="openHexDetail"
             />
           </div>
@@ -376,6 +399,7 @@ import IchingHexagramCard from '@/components/IchingHexagramCard.vue';
 import IchingCycleChip from '@/components/IchingCycleChip.vue';
 import IchingTrigramTile from '@/components/IchingTrigramTile.vue';
 import IchingDetailModal from '@/components/IchingDetailModal.vue';
+import SheetSelect from '@/components/SheetSelect.vue';
 import { usePageTitle } from '@/composables/usePageTitle';
 import { downloadIchingPdf } from '@/utils/ichingPdf';
 
@@ -390,6 +414,7 @@ export default {
     IchingCycleChip,
     IchingTrigramTile,
     IchingDetailModal,
+    SheetSelect,
   },
   setup() {
     usePageTitle('I-Ching Astrology');
@@ -400,6 +425,7 @@ export default {
     const error = ref('');
     const readingRoot = ref(null);
     const openStem = ref('');
+    const lifeStageTab = ref('early');
     const detail = reactive({ show: false, kind: 'hexagram', binary: '' });
     const route = useRoute();
 
@@ -519,6 +545,31 @@ export default {
       if (!text) return '';
       return String(text).split(',')[0].trim();
     };
+
+    const earlyYearOptions = computed(() =>
+      (state.preHeavenBirthSubCycles || []).map((sub) => ({
+        value: sub.year,
+        label: `${sub.year} — age ${sub.age}`,
+      }))
+    );
+    const laterYearOptions = computed(() =>
+      (state.laterHeavenBirthSubCycles || []).map((sub) => ({
+        value: sub.year,
+        label: `${sub.year} — age ${sub.age}`,
+      }))
+    );
+    const earlyDailyOptions = computed(() =>
+      (state.preHeavenDailyCycle || []).map((sub) => ({
+        value: sub.date,
+        label: sub.date,
+      }))
+    );
+    const laterDailyOptions = computed(() =>
+      (state.laterHeavenDailyCycle || []).map((sub) => ({
+        value: sub.date,
+        label: sub.date,
+      }))
+    );
 
     const earlyLifeNote = computed(() => {
       const sub = state.selectedPreHeavenBirthSubCycle;
@@ -738,6 +789,8 @@ export default {
         const age = Math.floor(currentDate.diff(birthDate, 'years').years);
         state.selectedPreHeavenYear = yearForAge(state.preHeavenBirthSubCycles, age);
         state.selectedLaterHeavenYear = yearForAge(state.laterHeavenBirthSubCycles, age);
+        const lastEarlyAge = Math.max(0, ...state.preHeavenBirthSubCycles.map((sub) => Number(sub.age) || 0));
+        lifeStageTab.value = age > lastEarlyAge ? 'later' : 'early';
 
         await nextTick();
         readingRoot.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -895,6 +948,11 @@ export default {
       error,
       readingRoot,
       openStem,
+      lifeStageTab,
+      earlyYearOptions,
+      laterYearOptions,
+      earlyDailyOptions,
+      laterDailyOptions,
       detail,
       earlyLifeNote,
       laterLifeNote,
@@ -922,6 +980,13 @@ export default {
 </script>
 
 <style scoped>
+.astrology-page :deep(.card) {
+  overflow: visible;
+}
+.astrology-page :deep(select.form-select) {
+  max-width: 100%;
+  min-width: 0;
+}
 .lead-blurb {
   max-width: 46rem;
   color: #4a3b16;
@@ -996,9 +1061,56 @@ export default {
   background: #f7f5ef;
   border-color: #ddd4c2;
 }
-@media (max-width: 576px) {
+.stage-tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  position: sticky;
+  top: 56px;
+  z-index: 20;
+  background: #e6f0fa;
+  padding: 0.4rem 0;
+}
+.stage-tab {
+  flex: 1 1 0;
+  min-height: 44px;
+  border: 1px solid #c9b06a;
+  background: #fff;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+.stage-tab.active {
+  background: #3d2e10;
+  color: #fff;
+  border-color: #3d2e10;
+}
+.stage-controls {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.stage-controls + p {
+  margin-bottom: 0.75rem;
+}
+@media (max-width: 767.98px) {
+  .stage-controls {
+    position: sticky;
+    top: 108px;
+    z-index: 19;
+    background: #e6f0fa;
+    padding: 0.35rem 0 0.6rem;
+  }
+}
+@media (max-width: 767.98px) {
   .display-4 {
-    font-size: 2rem;
+    font-size: 1.75rem;
+  }
+  .astrology-page :deep(.card) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .astrology-page :deep(select.form-select) {
+    min-height: 44px;
   }
 }
 </style>

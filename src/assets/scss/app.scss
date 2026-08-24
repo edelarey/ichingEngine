@@ -50,13 +50,15 @@ img.animal-image {
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
   overflow-x: hidden;
   overflow-y: auto;
-  transform: translateX(-100%);
   visibility: hidden;
-  transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  pointer-events: none;
+  margin-left: -100%;
+  transition: margin-left 0.3s ease-in-out, visibility 0.3s ease-in-out;
 
   &.is-open {
-    transform: translateX(0);
+    margin-left: 0;
     visibility: visible;
+    pointer-events: auto;
   }
 
   .nav-link {
@@ -257,9 +259,11 @@ footer {
   .sidebar {
     width: 220px;
     visibility: visible;
+    pointer-events: auto;
+    margin-left: 0;
 
     &.is-open {
-      transform: translateX(0);
+      margin-left: 0;
     }
   }
 

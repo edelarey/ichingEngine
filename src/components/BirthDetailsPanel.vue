@@ -31,6 +31,9 @@ export default {
 </script>
 
 <style scoped>
+.birth-details-panel.card {
+  overflow: visible;
+}
 .forms-toggle {
   display: flex;
   justify-content: space-between;
@@ -51,5 +54,16 @@ export default {
   flex-shrink: 0;
   font-weight: 600;
   color: #5b4cdb;
+}
+@media (max-width: 767.98px) {
+  .birth-details-panel.card {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .birth-details-panel :deep(.card-body) {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+    overflow: visible;
+  }
 }
 </style>
