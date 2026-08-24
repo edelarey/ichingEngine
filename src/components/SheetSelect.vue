@@ -77,6 +77,7 @@ export default {
     const open = ref(false);
     const query = ref('');
     const filterEl = ref(null);
+    let lockedY = 0;
 
     const same = (a, b) => String(a) === String(b);
 
@@ -92,16 +93,23 @@ export default {
       return list.filter((opt) => String(opt.label).toLowerCase().includes(q));
     });
 
+    const restoreScroll = () => {
+      window.scrollTo(0, lockedY);
+    };
+
     const show = async () => {
+      lockedY = window.scrollY;
       query.value = '';
       open.value = true;
       await nextTick();
-      filterEl.value?.focus();
+      filterEl.value?.focus({ preventScroll: true });
+      restoreScroll();
     };
 
     const hide = () => {
       open.value = false;
       query.value = '';
+      restoreScroll();
     };
 
     const choose = (value) => {
@@ -110,7 +118,13 @@ export default {
     };
 
     watch(open, (isOpen) => {
-      document.body.style.overflow = isOpen ? 'hidden' : '';
+      if (isOpen) {
+        document.body.style.overflow = 'hidden';
+        restoreScroll();
+      } else {
+        document.body.style.overflow = '';
+        restoreScroll();
+      }
     });
 
     onUnmounted(() => {
@@ -146,8 +160,9 @@ export default {
   inset: 0;
   z-index: 1080;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
+  padding: 4.5rem 0.75rem 1.25rem;
 }
 .sheet-backdrop {
   position: absolute;
@@ -159,12 +174,12 @@ export default {
   z-index: 1;
   width: 100%;
   max-width: 540px;
-  max-height: min(80vh, 640px);
+  max-height: min(70vh, 560px);
   display: flex;
   flex-direction: column;
   background: #fff;
-  border-radius: 1rem 1rem 0 0;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 .sheet-header {
   display: flex;
@@ -209,12 +224,7 @@ export default {
 }
 @media (min-width: 768px) {
   .sheet-root {
-    align-items: center;
     padding: 1.5rem;
-  }
-  .sheet-panel {
-    border-radius: 0.75rem;
-    max-height: min(70vh, 560px);
   }
 }
 </style>
