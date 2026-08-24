@@ -19,6 +19,7 @@
               <div class="d-flex flex-wrap gap-2">
                 <router-link to="/consult" class="btn btn-primary btn-sm">Consult</router-link>
                 <router-link to="/astrology" class="btn btn-outline-primary btn-sm">I-Ching astrology</router-link>
+                <router-link to="/daily_reading" class="btn btn-outline-primary btn-sm">Daily reading</router-link>
                 <router-link to="/birthdays" class="btn btn-outline-secondary btn-sm">Birthdays</router-link>
               </div>
             </div>
@@ -106,6 +107,7 @@ export default {
     const doors = [
       { to: '/consult', title: 'Consult', text: 'Six lines, changing lines, a saved history you can reopen.' },
       { to: '/astrology', title: 'I-Ching astrology', text: 'Pre-Heaven and Later-Heaven from a birth, not the coin oracle.' },
+      { to: '/daily_reading', title: 'Daily reading', text: 'Today’s natal daily hexagram, or any day in early or later life.' },
       { to: '/vedic_astrology', title: 'Jyotish', text: 'Sidereal kundli, Lahiri, daśā.' },
       { to: '/western_astrology', title: 'Western', text: 'Tropical natal, true Rising, transits.' },
       { to: '/relationship', title: 'Relationship', text: 'Two people, three systems.' },

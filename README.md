@@ -25,6 +25,7 @@ Runs at `http://localhost:8080/`. Production: `npm run build`. Fixture checks: `
 | Consult | `/consult` | Coin or yarrow-style hexagram; history export/import |
 | Birthdays | `/birthdays` | Add/edit people; place search fills coordinates and timezone |
 | I-Ching Astrology | `/astrology` | Pre-Heaven / Later-Heaven, controlling line, sexagenary year/month/day, life stages, PDF |
+| Daily Reading | `/daily_reading` | Today’s natal daily hexagram for a saved birthday; look up any day in early or later life |
 | Vedic | `/vedic_astrology` | Sidereal kundli, North/South Indian chart, grahas, daśā |
 | Jyotish guide | `/vedic_help` | How the Vedic chart is drawn and read |
 | Western | `/western_astrology` | Tropical natal, houses, aspects, transits, PDF |
@@ -57,5 +58,6 @@ Natal charts are astronomia-grade, not Swiss Ephemeris. I-Ching astrology is cus
 - Vedic Jyotish section; Western rewrite on astronomia
 - Relationship compatibility across I-Ching, Vedic, and Western; shared PDF layout
 - I-Ching astrology single-page reading (no nine tabs); catalog pages for trigrams, hexagrams, sequences
+- Daily Reading: today (or any day) from the last selected birthday
 - Life Symphony and Solfeggio players
 - Plain-English executive summaries on natal pages

@@ -117,6 +117,11 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link class="nav-link" to="/daily_reading" exact-active-class="active">
+              <span class="align-middle">Daily Reading</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link class="nav-link" to="/western_astrology" exact-active-class="active">
               <span class="align-middle">Western Astrology</span>
             </router-link>

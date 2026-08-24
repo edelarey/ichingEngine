@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/home.vue';
 import Consult from '../views/consult.vue';
 import Astrology from '../views/astrology.vue';
+const DailyReading = () => import('../views/daily_reading.vue');
 import AstrologyChart from '../views/astrology_chart.vue';
 import IChingZodiacChart from '../views/iching_zodiac_chart.vue';
 import Relationship from '../views/relationship.vue';
@@ -45,6 +46,11 @@ const routes = [
     path: '/astrology',
     name: 'Astrology',
     component: Astrology,
+  },
+  {
+    path: '/daily_reading',
+    name: 'DailyReading',
+    component: DailyReading,
   },
   {
     path: '/astrology_chart',

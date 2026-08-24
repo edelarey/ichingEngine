@@ -153,6 +153,8 @@
         <h2 class="section-title">Life stages</h2>
         <p class="text-muted small">
           Early and later life have their own year lists. Later life continues after early life ends, so pick each column separately.
+          For today or any other day without scrolling these lists, open
+          <router-link to="/daily_reading">Daily Reading</router-link>.
         </p>
         <div class="row g-3 mb-3">
           <div class="col-12 col-lg-6">
@@ -210,6 +212,12 @@
         </div>
 
         <div class="row g-3 mb-4" v-if="state.preHeavenDailyCycle?.length || state.laterHeavenDailyCycle?.length">
+          <div class="col-12">
+            <p class="text-muted small mb-0">
+              Daily hexagrams for the selected year (one figure about every six days).
+              If today falls in that year it is selected first; otherwise the year starts at the first listed date.
+            </p>
+          </div>
           <div class="col-12 col-lg-6" v-if="state.preHeavenDailyCycle?.length">
             <label class="form-label" for="early-daily">Daily early life</label>
             <select id="early-daily" class="form-select mb-2" v-model="state.selectedPreHeavenDailyCycleDate">
@@ -541,11 +549,13 @@ export default {
       return match ? match.year : (list[0]?.year || '');
     };
 
-    const takeFirstDaily = (days) => {
+    const pickDaily = (days) => {
       if (!Array.isArray(days) || !days.length) {
         return { list: [], date: '', hexagram: '' };
       }
-      return { list: days, date: days[0].date, hexagram: days[0].hexagram };
+      const today = DateTime.now().toISODate();
+      const match = days.find((d) => d.date === today) || days[0];
+      return { list: days, date: match.date, hexagram: match.hexagram };
     };
 
     const openHexDetail = (binary) => {
@@ -768,10 +778,10 @@ export default {
               state.latitude,
               newYear,
             );
-            const first = takeFirstDaily(days);
-            state.preHeavenDailyCycle = first.list;
-            state.selectedPreHeavenDailyCycleDate = first.date;
-            state.preHeavenDailyCycleHexagram = first.hexagram;
+            const picked = pickDaily(days);
+            state.preHeavenDailyCycle = picked.list;
+            state.selectedPreHeavenDailyCycleDate = picked.date;
+            state.preHeavenDailyCycleHexagram = picked.hexagram;
           } catch (err) {
             console.error(err);
             state.preHeavenDailyCycle = [];
@@ -796,10 +806,10 @@ export default {
               state.latitude,
               newYear,
             );
-            const first = takeFirstDaily(days);
-            state.laterHeavenDailyCycle = first.list;
-            state.selectedLaterHeavenDailyCycleDate = first.date;
-            state.laterHeavenDailyCycleHexagram = first.hexagram;
+            const picked = pickDaily(days);
+            state.laterHeavenDailyCycle = picked.list;
+            state.selectedLaterHeavenDailyCycleDate = picked.date;
+            state.laterHeavenDailyCycleHexagram = picked.hexagram;
           } catch (err) {
             console.error(err);
             state.laterHeavenDailyCycle = [];

@@ -4,13 +4,19 @@
       <div class="flex-grow-1">
         <label class="form-label mb-1" :for="selectId">Saved birthday</label>
         <select :id="selectId" class="form-select" v-model="selectedId">
-          <option :value="null">Choose a saved person…</option>
+          <option v-if="!defaultFirst" :value="null">Choose a saved person…</option>
           <option v-for="b in birthdayList" :key="b.id" :value="b.id">
             {{ optionLabel(b) }}
           </option>
         </select>
       </div>
-      <button type="button" class="btn btn-primary" :disabled="!selectedId" @click="load">
+      <button
+        v-if="!autoLoad"
+        type="button"
+        class="btn btn-primary"
+        :disabled="!selectedId"
+        @click="load"
+      >
         {{ loadLabel }}
       </button>
       <router-link to="/birthdays" class="btn btn-outline-secondary">Manage birthdays</router-link>
@@ -24,7 +30,7 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { DateTime } from 'luxon';
 import { useBirthdayStore } from '@/stores/birthday';
 
@@ -33,13 +39,25 @@ export default {
   props: {
     loadLabel: { type: String, default: 'Load' },
     independent: { type: Boolean, default: false },
+    autoLoad: { type: Boolean, default: false },
+    defaultFirst: { type: Boolean, default: false },
   },
   emits: ['load'],
   setup(props, { emit }) {
     const birthdayStore = useBirthdayStore();
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
-    const selectedId = ref(props.independent ? null : birthdayStore.selectedId);
     const selectId = `birthday-picker-${Math.random().toString(36).slice(2, 8)}`;
+
+    const resolveInitialId = () => {
+      if (props.independent) return null;
+      const list = birthdayStore.getBirthdayList;
+      const saved = birthdayStore.selectedId;
+      if (saved != null && list.some((b) => b.id === Number(saved))) return Number(saved);
+      if (props.defaultFirst && list.length) return list[0].id;
+      return saved;
+    };
+
+    const selectedId = ref(resolveInitialId());
 
     watch(() => birthdayStore.selectedId, (id) => {
       if (!props.independent) selectedId.value = id;
@@ -57,6 +75,17 @@ export default {
       if (!props.independent) birthdayStore.selectBirthday(found.id);
       emit('load', found);
     };
+
+    onMounted(() => {
+      if (props.autoLoad && selectedId.value != null) load();
+    });
+
+    watch(selectedId, (id, prev) => {
+      if (!props.autoLoad) return;
+      if (id == null) return;
+      if (prev != null && Number(id) === Number(prev)) return;
+      load();
+    });
 
     return { birthdayList, selectedId, selectId, optionLabel, load };
   },
