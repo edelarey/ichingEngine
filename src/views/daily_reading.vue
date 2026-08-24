@@ -277,7 +277,7 @@ export default {
     const birthdayStore = useBirthdayStore();
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
 
-    const consulting = ref(false);
+    const consulting = ref(birthdayStore.getBirthdayList.length > 0);
     const loadingDaily = ref(false);
     const error = ref('');
     const qDate = route.query.date;
