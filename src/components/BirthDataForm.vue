@@ -26,23 +26,21 @@
       <div class="col-12">
         <span class="form-label d-block" :id="id + '-time-label'">Birth time</span>
         <div class="time-fields" role="group" :aria-labelledby="id + '-time-label'">
-          <select
+          <SheetSelect
             :id="id + '-hour'"
-            class="form-select time-select"
-            :value="hourPart"
-            @change="setTime($event.target.value, minutePart)"
-          >
-            <option v-for="h in hours" :key="'h' + h" :value="h">{{ h }}</option>
-          </select>
+            title="Hour"
+            :options="hourOptions"
+            :model-value="hourPart"
+            @update:model-value="(hour) => setTime(hour, minutePart)"
+          />
           <span class="time-colon" aria-hidden="true">:</span>
-          <select
+          <SheetSelect
             :id="id + '-minute'"
-            class="form-select time-select"
-            :value="minutePart"
-            @change="setTime(hourPart, $event.target.value)"
-          >
-            <option v-for="m in minutes" :key="'m' + m" :value="m">{{ m }}</option>
-          </select>
+            title="Minute"
+            :options="minuteOptions"
+            :model-value="minutePart"
+            @update:model-value="(minute) => setTime(hourPart, minute)"
+          />
         </div>
         <div class="form-text">24-hour clock at the birth place (hours : minutes).</div>
       </div>
@@ -50,31 +48,23 @@
 
     <div class="row g-3 mt-0">
       <div class="col-12">
-        <label :for="id + '-tz'" class="form-label">Timezone</label>
-        <select
+        <SheetSelect
           :id="id + '-tz'"
-          class="form-select"
-          :value="String(modelValue.timezoneOffset)"
-          :title="selectedTimezoneLabel"
-          @change="set('timezoneOffset', Number($event.target.value))"
-        >
-          <option v-for="tz in presets" :key="tz.label + tz.offset" :value="String(tz.offset)">
-            {{ tz.shortLabel || tz.label }}
-          </option>
-        </select>
+          label="Timezone"
+          :options="timezoneOptions"
+          :model-value="modelValue.timezoneOffset"
+          @update:model-value="(offset) => set('timezoneOffset', Number(offset))"
+        />
         <div class="form-text">Needed for Vedic Lagna and Western Rising. Picking a city sets this.</div>
       </div>
       <div v-if="showGender" class="col-12">
-        <label :for="id + '-gender'" class="form-label">Gender</label>
-        <select
+        <SheetSelect
           :id="id + '-gender'"
-          class="form-select"
-          :value="modelValue.gender"
-          @change="set('gender', $event.target.value)"
-        >
-          <option value="MALE">Male</option>
-          <option value="FEMALE">Female</option>
-        </select>
+          label="Gender"
+          :options="genderOptions"
+          :model-value="modelValue.gender"
+          @update:model-value="(gender) => set('gender', gender)"
+        />
       </div>
     </div>
 
@@ -132,16 +122,13 @@
     </div>
 
     <div v-if="showHouseSystem" class="mt-3 mb-0">
-      <label :for="id + '-houses'" class="form-label">House system</label>
-      <select
+      <SheetSelect
         :id="id + '-houses'"
-        class="form-select"
-        :value="modelValue.houseSystem || 'placidus'"
-        @change="set('houseSystem', $event.target.value)"
-      >
-        <option value="placidus">Placidus</option>
-        <option value="equal">Equal (from Ascendant)</option>
-      </select>
+        label="House system"
+        :options="houseOptions"
+        :model-value="modelValue.houseSystem || 'placidus'"
+        @update:model-value="(system) => set('houseSystem', system)"
+      />
     </div>
   </div>
 </template>
@@ -150,6 +137,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { DateTime } from 'luxon';
 import { searchPlaces, offsetForZone, timezonePresetsWithBrowser } from '@/utils/placeSearch';
+import SheetSelect from '@/components/SheetSelect.vue';
 
 function normalizeTime(value) {
   if (!value) return '12:00';
@@ -160,9 +148,20 @@ function normalizeTime(value) {
 
 const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
 const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+const hourOptions = hours.map((h) => ({ value: h, label: h }));
+const minuteOptions = minutes.map((m) => ({ value: m, label: m }));
+const genderOptions = [
+  { value: 'MALE', label: 'Male' },
+  { value: 'FEMALE', label: 'Female' },
+];
+const houseOptions = [
+  { value: 'placidus', label: 'Placidus' },
+  { value: 'equal', label: 'Equal (from Ascendant)' },
+];
 
 export default {
   name: 'BirthDataForm',
+  components: { SheetSelect },
   props: {
     modelValue: { type: Object, required: true },
     showName: { type: Boolean, default: true },
@@ -187,6 +186,12 @@ export default {
       const match = presets.value.find((tz) => String(tz.offset) === offset);
       return match ? (match.label || match.shortLabel) : '';
     });
+    const timezoneOptions = computed(() =>
+      presets.value.map((tz) => ({
+        value: tz.offset,
+        label: tz.shortLabel || tz.label,
+      }))
+    );
 
     watch(
       () => props.modelValue.place,
@@ -287,6 +292,11 @@ export default {
     return {
       presets,
       selectedTimezoneLabel,
+      timezoneOptions,
+      hourOptions,
+      minuteOptions,
+      genderOptions,
+      houseOptions,
       hours,
       minutes,
       hits,
@@ -331,9 +341,7 @@ export default {
   width: 100%;
   max-width: 100%;
 }
-.birth-data-form .time-select {
-  width: 100%;
-  min-width: 0;
+.time-fields :deep(.sheet-select-btn) {
   min-height: 44px;
 }
 .time-colon {

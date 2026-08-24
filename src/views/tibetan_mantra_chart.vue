@@ -15,13 +15,14 @@
 
     <!-- Control Box -->
     <div class="controls">
-      <label for="spiralType">Spiral Type:</label>
-      <select v-model="selectedSpiralType">
-        <option value="Logarithmic">Logarithmic</option>
-        <option value="Archimedean">Archimedean</option>
-        <option value="Fermat">Fermat</option>
-        <option value="Fibonacci">Fibonacci</option>
-      </select>
+      <div class="control-field">
+        <SheetSelect
+          id="spiralType"
+          label="Spiral type"
+          :options="spiralOptions"
+          v-model="selectedSpiralType"
+        />
+      </div>
       
       <label for="rotations">Rotations:</label>
       <input 
@@ -65,9 +66,18 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import * as d3 from 'd3';
 import { useSpiralSettingsStore } from '@/stores/spiralSettings';
+import SheetSelect from '@/components/SheetSelect.vue';
+
+const spiralOptions = [
+  { value: 'Logarithmic', label: 'Logarithmic' },
+  { value: 'Archimedean', label: 'Archimedean' },
+  { value: 'Fermat', label: 'Fermat' },
+  { value: 'Fibonacci', label: 'Fibonacci' },
+];
 
 export default {
   name: 'VajrasattvaMantra',
+  components: { SheetSelect },
   setup() {
     const mantraSvg = ref(null);
     const spiralStore = useSpiralSettingsStore();
@@ -286,6 +296,7 @@ export default {
     return {
       mantraSvg,
       selectedSpiralType,
+      spiralOptions,
       rotations,
       startingRadius,
     };
@@ -307,9 +318,16 @@ export default {
   margin-right: 10px;
 }
 
-.controls select,
 .controls input {
   margin-right: 20px;
   padding: 5px;
+}
+.control-field {
+  display: inline-block;
+  min-width: 12rem;
+  max-width: 100%;
+  margin: 0 1rem 0.75rem 0;
+  text-align: left;
+  vertical-align: bottom;
 }
 </style>

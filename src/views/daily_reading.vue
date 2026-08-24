@@ -128,72 +128,52 @@
         </p>
         <div class="row g-3 mb-4">
           <div class="col-12 col-lg-6">
-            <label class="form-label" for="early-year">Early life year</label>
-            <select
+            <SheetSelect
               id="early-year"
-              class="form-select mb-2"
-              :value="early.year"
-              @change="onEarlyYearChange($event.target.value)"
-            >
-              <option v-if="!natal.preHeavenBirthSubCycles.length" value="">No early-life years</option>
-              <option
-                v-for="sub in natal.preHeavenBirthSubCycles"
-                :key="'early-' + sub.year"
-                :value="sub.year"
-              >
-                {{ sub.year }} — age {{ sub.age }}
-              </option>
-            </select>
-            <label class="form-label" for="early-day">Day in that year</label>
-            <select
+              class="mb-2"
+              label="Early life year"
+              :options="earlyYearOptions"
+              :disabled="!earlyYearOptions.length"
+              :placeholder="earlyYearOptions.length ? 'Choose a year' : 'No early-life years'"
+              :model-value="early.year"
+              @update:model-value="onEarlyYearChange"
+            />
+            <SheetSelect
               id="early-day"
-              class="form-select mb-3"
-              :disabled="!early.days.length"
-              :value="early.selectedDate"
-              @change="onDayPicked($event.target.value)"
-            >
-              <option v-if="!early.days.length" value="">No daily list for this year</option>
-              <option v-for="sub in early.days" :key="'ed-' + sub.date" :value="sub.date">
-                {{ sub.date }}
-                <template v-if="sub.hexagram?.name"> — {{ sub.hexagram.name }}</template>
-              </option>
-            </select>
+              class="mb-3"
+              label="Day in that year"
+              :options="earlyDayOptions"
+              :disabled="!earlyDayOptions.length"
+              :placeholder="earlyDayOptions.length ? 'Choose a day' : 'No daily list for this year'"
+              :model-value="early.selectedDate"
+              @update:model-value="onDayPicked"
+            />
             <p v-if="early.yearly?.hexagram?.name" class="small text-muted mb-0">
               Year hexagram: {{ early.yearly.hexagram.name }}
               <span v-if="early.yearly.hexagram.symbol"> ({{ early.yearly.hexagram.symbol }})</span>
             </p>
           </div>
           <div class="col-12 col-lg-6">
-            <label class="form-label" for="later-year">Later life year</label>
-            <select
+            <SheetSelect
               id="later-year"
-              class="form-select mb-2"
-              :value="later.year"
-              @change="onLaterYearChange($event.target.value)"
-            >
-              <option v-if="!natal.laterHeavenBirthSubCycles.length" value="">No later-life years</option>
-              <option
-                v-for="sub in natal.laterHeavenBirthSubCycles"
-                :key="'later-' + sub.year"
-                :value="sub.year"
-              >
-                {{ sub.year }} — age {{ sub.age }}
-              </option>
-            </select>
-            <label class="form-label" for="later-day">Day in that year</label>
-            <select
+              class="mb-2"
+              label="Later life year"
+              :options="laterYearOptions"
+              :disabled="!laterYearOptions.length"
+              :placeholder="laterYearOptions.length ? 'Choose a year' : 'No later-life years'"
+              :model-value="later.year"
+              @update:model-value="onLaterYearChange"
+            />
+            <SheetSelect
               id="later-day"
-              class="form-select mb-3"
-              :disabled="!later.days.length"
-              :value="later.selectedDate"
-              @change="onDayPicked($event.target.value)"
-            >
-              <option v-if="!later.days.length" value="">No daily list for this year</option>
-              <option v-for="sub in later.days" :key="'ld-' + sub.date" :value="sub.date">
-                {{ sub.date }}
-                <template v-if="sub.hexagram?.name"> — {{ sub.hexagram.name }}</template>
-              </option>
-            </select>
+              class="mb-3"
+              label="Day in that year"
+              :options="laterDayOptions"
+              :disabled="!laterDayOptions.length"
+              :placeholder="laterDayOptions.length ? 'Choose a day' : 'No daily list for this year'"
+              :model-value="later.selectedDate"
+              @update:model-value="onDayPicked"
+            />
             <p v-if="later.yearly?.hexagram?.name" class="small text-muted mb-0">
               Year hexagram: {{ later.yearly.hexagram.name }}
               <span v-if="later.yearly.hexagram.symbol"> ({{ later.yearly.hexagram.symbol }})</span>
@@ -222,6 +202,7 @@ import { useBirthdayStore } from '@/stores/birthday';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
 import IchingHexagramCard from '@/components/IchingHexagramCard.vue';
 import IchingDetailModal from '@/components/IchingDetailModal.vue';
+import SheetSelect from '@/components/SheetSelect.vue';
 import { usePageTitle } from '@/composables/usePageTitle';
 
 function findYearly(cycles, year) {
@@ -270,6 +251,7 @@ export default {
     BirthdayPicker,
     IchingHexagramCard,
     IchingDetailModal,
+    SheetSelect,
   },
   setup() {
     usePageTitle('Daily Reading');
@@ -362,6 +344,31 @@ export default {
       if (yearName) bits.push(`From the ${early.yearly.year} early-life year (${yearName}).`);
       return bits.join(' ');
     });
+
+    const earlyYearOptions = computed(() =>
+      (natal.preHeavenBirthSubCycles || []).map((sub) => ({
+        value: sub.year,
+        label: `${sub.year} — age ${sub.age}`,
+      }))
+    );
+    const laterYearOptions = computed(() =>
+      (natal.laterHeavenBirthSubCycles || []).map((sub) => ({
+        value: sub.year,
+        label: `${sub.year} — age ${sub.age}`,
+      }))
+    );
+    const earlyDayOptions = computed(() =>
+      (early.days || []).map((sub) => ({
+        value: sub.date,
+        label: sub.hexagram?.name ? `${sub.date} — ${sub.hexagram.name}` : sub.date,
+      }))
+    );
+    const laterDayOptions = computed(() =>
+      (later.days || []).map((sub) => ({
+        value: sub.date,
+        label: sub.hexagram?.name ? `${sub.date} — ${sub.hexagram.name}` : sub.date,
+      }))
+    );
 
     const laterNote = computed(() => {
       if (!later.entry) return '';
@@ -595,6 +602,10 @@ export default {
       maxDate,
       earlyNote,
       laterNote,
+      earlyYearOptions,
+      laterYearOptions,
+      earlyDayOptions,
+      laterDayOptions,
       loadPerson,
       goToday,
       onEarlyYearChange,

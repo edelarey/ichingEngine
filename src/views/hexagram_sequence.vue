@@ -22,14 +22,12 @@
         <div class="card-body">
           <div class="row g-3 align-items-end">
             <div class="col-12 col-md-4">
-              <label class="form-label" for="idSequence">Sequence</label>
-              <select
+              <SheetSelect
                 id="idSequence"
+                label="Sequence"
+                :options="sequenceOptions"
                 v-model="chosenSequence"
-                class="form-select"
-              >
-                <option v-for="seq in sequence" :key="seq" :value="seq">{{ seq }}</option>
-              </select>
+              />
             </div>
             <div class="col-12 col-md-3">
               <button type="button" class="btn btn-primary" @click="animate">
@@ -84,18 +82,21 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted, ref, reactive, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, reactive, watch } from 'vue';
 import hexagram from '@/const/hexagram';
 import bagua from '@/const/bagua';
 import { useHexagramStore } from '@/stores/oracle';
 import _ from 'lodash';
 import { usePageTitle } from '@/composables/usePageTitle';
+import SheetSelect from '@/components/SheetSelect.vue';
 
 export default {
   name: 'HexagramSequence',
+  components: { SheetSelect },
   setup() {
     usePageTitle('Hexagram sequences');
     const sequence = ref(['King Wen', 'Binary', 'Grey Code', 'Shoa Yung', 'Consultation History']);
+    const sequenceOptions = computed(() => sequence.value.map((seq) => ({ value: seq, label: seq })));
     const chosenSequence = ref('King Wen');
     const chkColorCode = ref(false);
     const chkShowDetail = ref(false);
@@ -190,6 +191,7 @@ export default {
       belowGlyph,
       trigramColor,
       sequence,
+      sequenceOptions,
       chosenSequence,
       state,
       firstPhrase,

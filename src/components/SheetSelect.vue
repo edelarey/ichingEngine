@@ -5,6 +5,7 @@
       :id="buttonId"
       type="button"
       class="form-select sheet-select-btn"
+      :disabled="disabled"
       :aria-haspopup="true"
       :aria-expanded="open ? 'true' : 'false'"
       @click="show"
@@ -21,7 +22,7 @@
           :aria-labelledby="titleId"
         >
           <div class="sheet-header">
-            <h2 :id="titleId" class="sheet-title">{{ label || 'Choose' }}</h2>
+            <h2 :id="titleId" class="sheet-title">{{ title || label || 'Choose' }}</h2>
             <button type="button" class="btn-close" aria-label="Close" @click="hide"></button>
           </div>
           <div v-if="options.length > 12" class="sheet-filter">
@@ -68,6 +69,8 @@ export default {
     modelValue: { default: '' },
     options: { type: Array, default: () => [] },
     placeholder: { type: String, default: 'Choose…' },
+    title: { type: String, default: '' },
+    disabled: { type: Boolean, default: false },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
@@ -98,6 +101,7 @@ export default {
     };
 
     const show = async () => {
+      if (props.disabled) return;
       lockedY = window.scrollY;
       query.value = '';
       open.value = true;
@@ -149,11 +153,19 @@ export default {
 </script>
 
 <style scoped>
+.sheet-select {
+  width: 100%;
+  min-width: 0;
+}
 .sheet-select-btn {
   display: block;
   width: 100%;
   min-height: 44px;
   text-align: left;
+}
+.sheet-select-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 .sheet-root {
   position: fixed;

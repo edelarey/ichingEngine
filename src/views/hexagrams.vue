@@ -29,12 +29,12 @@
           />
         </div>
         <div class="col-8 col-md-4 col-lg-3">
-          <label class="form-label" for="hex-sort">Order</label>
-          <select id="hex-sort" v-model="sortBy" class="form-select">
-            <option value="kingwen">King Wen</option>
-            <option value="binary">Binary (Fu Xi)</option>
-            <option value="name">Name</option>
-          </select>
+          <SheetSelect
+            id="hex-sort"
+            label="Order"
+            :options="sortOptions"
+            v-model="sortBy"
+          />
         </div>
         <div class="col-4 col-md-2 col-lg-2">
           <p class="count mb-0">{{ filtered.length }} of 64</p>
@@ -69,9 +69,17 @@
 import { computed, ref } from 'vue';
 import hexagram from '@/const/hexagram';
 import { usePageTitle } from '@/composables/usePageTitle';
+import SheetSelect from '@/components/SheetSelect.vue';
+
+const sortOptions = [
+  { value: 'kingwen', label: 'King Wen' },
+  { value: 'binary', label: 'Binary (Fu Xi)' },
+  { value: 'name', label: 'Name' },
+];
 
 export default {
   name: 'Hexagrams',
+  components: { SheetSelect },
   setup() {
     usePageTitle('Hexagrams');
     const query = ref('');
@@ -115,7 +123,7 @@ export default {
       return String(name).split(',')[0].trim();
     };
 
-    return { query, sortBy, filtered, firstPhrase, shortName };
+    return { query, sortBy, sortOptions, filtered, firstPhrase, shortName };
   },
 };
 </script>
