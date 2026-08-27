@@ -117,7 +117,7 @@ export default {
       { to: '/compare', title: 'Compare', text: 'Same birth, three plain-English leads side by side.' },
       { to: '/relationship', title: 'Relationship', text: 'Two people, three systems: I-Ching hexagrams, Vedic Moon and Lagna, Western synastry.' },
       { to: '/hexagrams', title: 'Hexagrams & trigrams', text: 'All 64 hexagrams and 8 trigrams, sequences, King Wen or Fu Xi order.' },
-      { to: '/life_symphony', title: 'Music', text: 'Life Symphony from a birth hexagram, and a Solfeggio player.' },
+      { to: '/hexagram_studio', title: 'Music', text: 'Hexagram Studio plays cast readings or a Life Symphony as line-rhythm, scale, solfeggio, or Fibonacci tones.' },
     ];
     return { features };
   },

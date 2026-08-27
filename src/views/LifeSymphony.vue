@@ -3,6 +3,8 @@
     <h1 class="mb-4 text-center">Life Symphony</h1>
     <p class="text-center text-muted mb-4">
       Turn an I Ching natal cycle into a year-by-year sequence of Solfeggio tones.
+      To hear the same years as line-rhythm or scale,
+      <router-link to="/hexagram_studio">open Hexagram Studio</router-link>.
     </p>
 
     <BirthDetailsPanel v-model="showForms" :summary="birthSummary" class="mx-auto" style="max-width: 800px;">

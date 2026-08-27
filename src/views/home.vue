@@ -112,7 +112,7 @@ export default {
       { to: '/western_astrology', title: 'Western', text: 'Tropical natal, true Rising, transits.' },
       { to: '/relationship', title: 'Relationship', text: 'Two people, three systems.' },
       { to: '/hexagrams', title: '64 hexagrams', text: 'Catalog, sequences, trigrams.' },
-      { to: '/life_symphony', title: 'Music', text: 'Life Symphony and Solfeggio.' },
+      { to: '/hexagram_studio', title: 'Music', text: 'Play cast hexagrams or a Life Symphony as rhythm, scale, or solfeggio.' },
       { to: '/about', title: 'About', text: 'What this engine is, and is not.' },
     ];
     return { gifUrl, paused, ribbon, doors };

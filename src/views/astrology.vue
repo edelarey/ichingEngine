@@ -387,6 +387,7 @@
 import { reactive, computed, onMounted, watch, ref, nextTick } from 'vue';
 import _ from 'lodash';
 import astro from '@/const/astrology';
+import { consultIchingNatal } from '@/utils/ichingNatal';
 import { DateTime } from 'luxon';
 import { useBirthdayStore } from '@/stores/birthday';
 import { useRoute } from 'vue-router';
@@ -690,7 +691,7 @@ export default {
       }
     };
 
-    const loadBirthday = (birthday) => {
+    const loadBirthday = async (birthday) => {
       state.name = birthday.name;
       state.birthDate = DateTime.fromISO(birthday.birthday).toJSDate();
       state.gender = birthday.gender;
@@ -699,7 +700,44 @@ export default {
       state.place = birthday.place || '';
       state.timezoneOffset = typeof birthday.timezoneOffset === 'number' ? birthday.timezoneOffset : -new Date().getTimezoneOffset();
       birthdayStore.selectBirthday(birthday.id);
-      consult();
+      consulting.value = true;
+      error.value = '';
+      state.selectedLaterHeavenYear = '';
+      state.selectedPreHeavenYear = '';
+      state.selectedPreHeavenDailyCycleDate = '';
+      state.selectedLaterHeavenDailyCycleDate = '';
+      try {
+        const natalConsult = await consultIchingNatal(birthday);
+        state.hemisphere = natalConsult.hemisphere;
+        form.consultation = natalConsult.consultation;
+        const result = natalConsult.result;
+        state.cycle = result.sexagenaryCycle;
+        state.sexagenaryCycle = result.yearly.yearlyCycle.cycle;
+        state.dailyStemsandBranches = result.daily.dailyCycle;
+        state.monthlyStemsandBranches = result.monthly.monthlyStemBranch;
+        state.birthStemsandBranches = result.monthly.monthlyStemBranch;
+        state.preHeavenHexagram = result.iching.preHeavenHexagram;
+        state.heavenlyTrigram = result.iching.heavenlyTrigram;
+        state.earthlyTrigram = result.iching.earthlyTrigram;
+        state.timeOfBirthHexagram = result.iching.timeOfBirthSymbol;
+        state.laterHeavenHexagram = result.iching.laterHeavenHexagram;
+        state.preHeavenBirthSubCycles = natalConsult.preHeavenBirthSubCycles;
+        state.laterHeavenBirthSubCycles = natalConsult.laterHeavenBirthSubCycles;
+        showForms.value = false;
+        const birthDate = DateTime.fromJSDate(new Date(state.birthDate));
+        const age = Math.floor(DateTime.now().diff(birthDate, 'years').years);
+        state.selectedPreHeavenYear = yearForAge(state.preHeavenBirthSubCycles, age);
+        state.selectedLaterHeavenYear = yearForAge(state.laterHeavenBirthSubCycles, age);
+        const lastEarlyAge = Math.max(0, ...state.preHeavenBirthSubCycles.map((sub) => Number(sub.age) || 0));
+        lifeStageTab.value = age > lastEarlyAge ? 'later' : 'early';
+        await nextTick();
+        readingRoot.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        console.error(err);
+        error.value = err.message || 'Could not calculate this birth.';
+      } finally {
+        consulting.value = false;
+      }
     };
 
     const startEditingBirthday = (birthday) => {

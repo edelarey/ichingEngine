@@ -10,6 +10,8 @@
             <p class="text-muted mb-4">
               Hear I Ching readings as Solfeggio tones. Each hexagram line is a frequency;
               yang is longer and an octave higher, yin is softer and shorter.
+              For line-rhythm and scale playback,
+              <router-link to="/hexagram_studio">open Hexagram Studio</router-link>.
             </p>
 
             <div v-if="readingCount === 0" class="alert alert-info">

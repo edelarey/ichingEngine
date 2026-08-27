@@ -36,6 +36,7 @@ Runs at `http://localhost:8080/`. Production: `npm run build`. Fixture checks: `
 | Sequences | `/hexagram_sequence` | King Wen, Fu Xi, Grey code, Shao Yong, consultation history |
 | Life Symphony | `/life_symphony` | Tone.js reading from a birth hexagram |
 | Solfeggio | `/solfeggio` | Solfeggio player |
+| Hexagram Studio | `/hexagram_studio` | Play cast hexagrams or a Life Symphony as line-rhythm, Roche scale, solfeggio, or Fibonacci durations |
 | About | `/about` | What the engine is and is not |
 
 Gender on birth records is **Male or Female** (I-Ching astrology uses that polarity). Vedic and Western charts also need **birth time, place, and timezone** for Lagna / Rising.
@@ -60,4 +61,5 @@ Natal charts are astronomia-grade, not Swiss Ephemeris. I-Ching astrology is cus
 - I-Ching astrology single-page reading (no nine tabs); catalog pages for trigrams, hexagrams, sequences
 - Daily Reading: independent early-life and later-life daily hexagrams from the last selected birthday
 - Life Symphony and Solfeggio players
+- Hexagram Studio: cast readings and Life Symphony years as Uakti rhythm, Roche scale, solfeggio, or Fibonacci durations
 - Plain-English executive summaries on natal pages

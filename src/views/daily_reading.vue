@@ -63,7 +63,10 @@
           <div class="col-12 col-lg-6">
             <section class="stage-column">
               <h2 class="section-title">Daily early life</h2>
-              <p class="text-muted small">Pre-Heaven. Pick a year and day in early life only.</p>
+              <p class="text-muted small">
+                Pre-Heaven{{ earlyRangeLabel ? ` · ${earlyRangeLabel}` : '' }}.
+                Pick a year and day in early life only.
+              </p>
               <div class="date-bar card mb-3">
                 <div class="card-body">
                   <label class="form-label" for="early-lookup-date">Day in early life</label>
@@ -89,7 +92,7 @@
                 :options="earlyYearOptions"
                 :disabled="!earlyYearOptions.length"
                 :placeholder="earlyYearOptions.length ? 'Choose a year' : 'No early-life years'"
-                :model-value="early.year"
+                :model-value="early.yearIndex"
                 @update:model-value="onEarlyYearChange"
               />
               <SheetSelect
@@ -129,7 +132,10 @@
           <div class="col-12 col-lg-6">
             <section class="stage-column">
               <h2 class="section-title">Daily later life</h2>
-              <p class="text-muted small">Later-Heaven. Pick a year and day in later life only.</p>
+              <p class="text-muted small">
+                Later-Heaven{{ laterRangeLabel ? ` · ${laterRangeLabel}` : '' }}.
+                Pick a year and day in later life only.
+              </p>
               <div class="date-bar card mb-3">
                 <div class="card-body">
                   <label class="form-label" for="later-lookup-date">Day in later life</label>
@@ -155,7 +161,7 @@
                 :options="laterYearOptions"
                 :disabled="!laterYearOptions.length"
                 :placeholder="laterYearOptions.length ? 'Choose a year' : 'No later-life years'"
-                :model-value="later.year"
+                :model-value="later.yearIndex"
                 @update:model-value="onLaterYearChange"
               />
               <SheetSelect
@@ -209,8 +215,8 @@
 import { computed, reactive, ref } from 'vue';
 import { DateTime } from 'luxon';
 import { useRoute } from 'vue-router';
-import astro from '@/const/astrology';
 import { useBirthdayStore } from '@/stores/birthday';
+import { consultIchingNatal } from '@/utils/ichingNatal';
 import BirthdayPicker from '@/components/BirthdayPicker.vue';
 import IchingHexagramCard from '@/components/IchingHexagramCard.vue';
 import IchingDetailModal from '@/components/IchingDetailModal.vue';
@@ -259,6 +265,7 @@ function yearBounds(cycles) {
 function emptyStage() {
   return {
     year: '',
+    yearIndex: null,
     days: [],
     selectedDate: '',
     entry: null,
@@ -371,17 +378,31 @@ export default {
     });
 
     const earlyYearOptions = computed(() =>
-      (natal.preHeavenBirthSubCycles || []).map((sub) => ({
-        value: sub.year,
+      (natal.preHeavenBirthSubCycles || []).map((sub, index) => ({
+        value: index,
         label: `${sub.year} — age ${sub.age}`,
       }))
     );
     const laterYearOptions = computed(() =>
-      (natal.laterHeavenBirthSubCycles || []).map((sub) => ({
-        value: sub.year,
+      (natal.laterHeavenBirthSubCycles || []).map((sub, index) => ({
+        value: index,
         label: `${sub.year} — age ${sub.age}`,
       }))
     );
+    const earlyRangeLabel = computed(() => {
+      const list = natal.preHeavenBirthSubCycles || [];
+      if (!list.length) return '';
+      const first = list[0];
+      const last = list[list.length - 1];
+      return `${list.length} years · ages ${first.age}–${last.age} · ${first.year}–${last.year}`;
+    });
+    const laterRangeLabel = computed(() => {
+      const list = natal.laterHeavenBirthSubCycles || [];
+      if (!list.length) return '';
+      const first = list[0];
+      const last = list[list.length - 1];
+      return `${list.length} years · ages ${first.age}–${last.age} · ${first.year}–${last.year}`;
+    });
     const earlyDayOptions = computed(() =>
       (early.days || []).map((sub) => ({
         value: sub.date,
@@ -409,11 +430,19 @@ export default {
 
     const resetStage = (stage) => {
       stage.year = '';
+      stage.yearIndex = null;
       stage.days = [];
       stage.selectedDate = '';
       stage.entry = null;
       stage.yearly = null;
       stage.loading = false;
+    };
+
+    const indexOfCycle = (cycles, sub) => {
+      if (!sub) return null;
+      const idx = (cycles || []).findIndex((s) => s === sub
+        || (Number(s.year) === Number(sub.year) && Number(s.age) === Number(sub.age)));
+      return idx >= 0 ? idx : null;
     };
 
     const daysFor = async (stageKey, year, subcycle) => {
@@ -446,16 +475,23 @@ export default {
       return days[0].date;
     };
 
+    const applyCycle = async (stage, stageKey, cycles, sub) => {
+      if (!sub) return;
+      const days = await daysFor(stageKey, sub.year, sub);
+      stage.year = sub.year;
+      stage.yearIndex = indexOfCycle(cycles, sub);
+      stage.yearly = sub;
+      stage.days = days;
+      return days;
+    };
+
     const loadStageFirst = async (stage, stageKey, cycles) => {
-      const sub = Array.isArray(cycles) ? cycles[0] : null;
+      const sub = (cycles || [])[0];
       if (!sub) return;
       stage.loading = true;
       try {
-        const days = await daysFor(stageKey, sub.year, sub);
-        stage.year = Number(sub.year);
-        stage.yearly = sub;
-        stage.days = days;
-        selectStageDate(stage, days[0]?.date || '');
+        const days = await applyCycle(stage, stageKey, cycles, sub);
+        selectStageDate(stage, days?.[0]?.date || '');
       } catch (err) {
         console.error(err);
       } finally {
@@ -475,10 +511,11 @@ export default {
         for (const y of yearsToTry) {
           const sub = findYearly(cycles, y);
           if (!sub) continue;
-          const days = await daysFor(stageKey, y, sub);
+          const days = await daysFor(stageKey, sub.year, sub);
           const entry = days.find((d) => d.date === iso);
           if (entry) {
-            stage.year = Number(y);
+            stage.year = sub.year;
+            stage.yearIndex = indexOfCycle(cycles, sub);
             stage.yearly = sub;
             stage.days = days;
             stage.selectedDate = iso;
@@ -497,7 +534,8 @@ export default {
           const first = cycles[0];
           sub = Number(yearsToTry[0]) >= Number(last.year) ? last : first;
         }
-        stage.year = sub ? Number(sub.year) : '';
+        stage.year = sub ? sub.year : '';
+        stage.yearIndex = indexOfCycle(cycles, sub);
         stage.yearly = sub;
         stage.days = sub ? await daysFor(stageKey, sub.year, sub) : [];
         stage.selectedDate = iso;
@@ -510,15 +548,12 @@ export default {
       }
     };
 
-    const loadStageYear = async (stage, stageKey, cycles, yearValue) => {
-      const sub = findYearly(cycles, yearValue);
+    const loadStageYear = async (stage, stageKey, cycles, yearIndex) => {
+      const sub = (cycles || [])[Number(yearIndex)];
       if (!sub) return;
       stage.loading = true;
       try {
-        const days = await daysFor(stageKey, sub.year, sub);
-        stage.year = Number(sub.year);
-        stage.yearly = sub;
-        stage.days = days;
+        const days = await applyCycle(stage, stageKey, cycles, sub);
         selectStageDate(stage, pickDateInStageDays(days, stage.selectedDate));
       } catch (err) {
         console.error(err);
@@ -566,26 +601,16 @@ export default {
         birthdayStore.selectBirthday(birthday.id);
         natal.id = birthday.id;
         natal.name = birthday.name;
-        natal.gender = birthday.gender === 'FEMALE' ? 'FEMALE' : 'MALE';
         natal.place = birthday.place || '';
-        natal.birthDate = DateTime.fromISO(birthday.birthday).toJSDate();
-        natal.latitude = birthday.coords.latitude;
-        natal.longitude = birthday.coords.longitude;
-        natal.hemisphere = natal.latitude >= 0 ? 'Northern' : 'Southern';
-
-        const AstrologyClass = natal.hemisphere === 'Northern'
-          ? astro.IChingAstrology_North
-          : astro.IChingAstrology_South;
-        natal.consultation = new astro.IChingConsultation(new AstrologyClass());
-        const gender = natal.gender === 'FEMALE' ? astro.Gender.FEMALE : astro.Gender.MALE;
-        const result = await natal.consultation.consultOracle(
-          natal.birthDate,
-          gender,
-          natal.latitude,
-          natal.longitude,
-        );
-        natal.preHeavenBirthSubCycles = result.iching.preHeavenBirthSubCycles || [];
-        natal.laterHeavenBirthSubCycles = result.iching.laterHeavenBirthSubCycles || [];
+        const natalConsult = await consultIchingNatal(birthday);
+        natal.gender = natalConsult.gender;
+        natal.birthDate = natalConsult.birthDate;
+        natal.latitude = natalConsult.latitude;
+        natal.longitude = natalConsult.longitude;
+        natal.hemisphere = natalConsult.hemisphere;
+        natal.consultation = natalConsult.consultation;
+        natal.preHeavenBirthSubCycles = natalConsult.preHeavenBirthSubCycles;
+        natal.laterHeavenBirthSubCycles = natalConsult.laterHeavenBirthSubCycles;
         if (parsedQueryDate?.isValid) {
           await lookupStageDate(early, 'early', natal.preHeavenBirthSubCycles, initialDate);
           if (!early.entry) await loadStageFirst(early, 'early', natal.preHeavenBirthSubCycles);
@@ -626,6 +651,8 @@ export default {
       laterNote,
       earlyYearOptions,
       laterYearOptions,
+      earlyRangeLabel,
+      laterRangeLabel,
       earlyDayOptions,
       laterDayOptions,
       loadPerson,

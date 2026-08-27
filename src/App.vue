@@ -87,6 +87,11 @@
         </span>
         <ul v-show="musicMenuOpen" class="nav flex-column ms-3">
           <li class="nav-item">
+            <router-link class="nav-link" to="/hexagram_studio" exact-active-class="active">
+              <span class="align-middle">Hexagram Studio</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link class="nav-link" to="/solfeggio" exact-active-class="active">
               <span class="align-middle">Solfeggio Player</span>
             </router-link>

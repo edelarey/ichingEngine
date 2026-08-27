@@ -16,6 +16,7 @@ import TibetanMantraChart from '../views/tibetan_mantra_chart.vue'; // Import th
 const WesternAstrology = () => import('../views/western_astrology.vue');
 import LifeSymphony from '../views/LifeSymphony.vue';
 import SolfeggioPlayer from '../views/solfeggio_player.vue';
+const HexagramStudio = () => import('../views/hexagram_studio.vue');
 const VedicAstrology = () => import('../views/vedic_astrology.vue');
 const VedicHelp = () => import('../views/vedic_help.vue');
 const Birthdays = () => import('../views/birthdays.vue');
@@ -126,6 +127,11 @@ const routes = [
     path: '/solfeggio',
     name: 'SolfeggioPlayer',
     component: SolfeggioPlayer,
+  },
+  {
+    path: '/hexagram_studio',
+    name: 'HexagramStudio',
+    component: HexagramStudio,
   },
 ];
 

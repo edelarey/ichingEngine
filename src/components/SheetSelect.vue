@@ -37,7 +37,7 @@
           </div>
           <ul class="sheet-list" role="listbox">
             <li v-if="!filtered.length" class="sheet-empty">No matches.</li>
-            <li v-for="opt in filtered" :key="String(opt.value)">
+            <li v-for="(opt, optIndex) in filtered" :key="`${String(opt.value)}-${optIndex}`">
               <button
                 type="button"
                 class="sheet-option"

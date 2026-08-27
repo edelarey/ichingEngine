@@ -73,11 +73,20 @@ export function useToneEngine() {
     await ensure();
     const pace = Math.max(0.25, Number(speed) || 1);
     const duration = (line.duration || (line.isYang ? 2 : 1)) / pace;
+    const pitch = line.note;
     let freq = Number(line.frequency) || 396;
-    if (line.octaveShift > 0) freq *= 2 ** line.octaveShift;
+    if (pitch) {
+      try {
+        freq = Number(Tone.Frequency(pitch).toFrequency()) || freq;
+      } catch (_) {
+        /* keep numeric freq */
+      }
+    } else if (line.octaveShift > 0) {
+      freq *= 2 ** line.octaveShift;
+    }
     synth.volume.value = typeof line.volume === 'number' ? line.volume : (line.isYang ? -12 : -24);
     synth.portamento = line.portamento || 0;
-    synth.triggerAttackRelease(freq, duration);
+    synth.triggerAttackRelease(pitch || freq, duration);
     await wait(duration * 1000);
     return freq;
   };
