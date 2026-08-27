@@ -107,7 +107,7 @@ export default {
     const doors = [
       { to: '/consult', title: 'Consult', text: 'Six lines, changing lines, a saved history you can reopen.' },
       { to: '/astrology', title: 'I-Ching astrology', text: 'Pre-Heaven and Later-Heaven from a birth, not the coin oracle.' },
-      { to: '/daily_reading', title: 'Daily reading', text: 'Today’s natal daily hexagram, or any day in early or later life.' },
+      { to: '/daily_reading', title: 'Daily reading', text: 'Independent early-life and later-life daily hexagrams for a saved birthday.' },
       { to: '/vedic_astrology', title: 'Jyotish', text: 'Sidereal kundli, Lahiri, daśā.' },
       { to: '/western_astrology', title: 'Western', text: 'Tropical natal, true Rising, transits.' },
       { to: '/relationship', title: 'Relationship', text: 'Two people, three systems.' },

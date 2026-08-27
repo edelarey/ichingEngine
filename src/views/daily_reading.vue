@@ -11,9 +11,9 @@
           </ol>
         </nav>
         <p class="mb-0 lead-blurb">
-          The hexagram that covers a given day in a natal year, after Sherrill &amp; Chu.
-          Open on today for the last person you used (or the first saved birthday).
-          Change the date to look up any day in early or later life.
+          Two independent daily hexagrams after Sherrill &amp; Chu: early life (Pre-Heaven) and
+          later life (Later-Heaven). Each column has its own year and day. Changing one reading
+          does not clear the other.
         </p>
       </div>
     </header>
@@ -26,7 +26,7 @@
       <div v-if="!birthdayList.length" class="empty-state card">
         <div class="card-body">
           <p class="mb-0">
-            Save a birthday first, then this page can show today’s daily hexagram.
+            Save a birthday first, then this page can show today’s daily hexagrams.
             <router-link to="/birthdays">Add someone</router-link>.
           </p>
         </div>
@@ -42,142 +42,154 @@
       </div>
 
       <div v-else-if="natal.name" class="reading">
-        <p class="person-line text-muted mb-3">
-          {{ natal.name }}
-          · {{ genderLabel }}
-          · born {{ birthLabel }}
-          <span v-if="natal.place"> · {{ natal.place }}</span>
-          · {{ natal.hemisphere }} hemisphere
-        </p>
-
-        <div class="date-bar card mb-4">
-          <div class="card-body">
-            <div class="row g-3 align-items-end">
-              <div class="col-12 col-md-5">
-                <label class="form-label" for="lookup-date">Day to read</label>
-                <input
-                  id="lookup-date"
-                  type="date"
-                  class="form-control"
-                  v-model="lookupDate"
-                  :min="minDate"
-                  :max="maxDate"
-                />
-              </div>
-              <div class="col-12 col-md-7 d-flex flex-wrap gap-2">
-                <button type="button" class="btn btn-primary" @click="goToday">Today</button>
-                <router-link
-                  v-if="natal.id"
-                  class="btn btn-outline-secondary"
-                  :to="`/astrology?load=${natal.id}`"
-                >
-                  Full natal reading
-                </router-link>
-              </div>
-            </div>
-            <p class="mb-0 mt-3 date-caption">
-              {{ lookupCaption }}
-            </p>
-          </div>
+        <div class="person-bar mb-4">
+          <p class="person-line text-muted mb-2">
+            {{ natal.name }}
+            · {{ genderLabel }}
+            · born {{ birthLabel }}
+            <span v-if="natal.place"> · {{ natal.place }}</span>
+            · {{ natal.hemisphere }} hemisphere
+          </p>
+          <router-link
+            v-if="natal.id"
+            class="btn btn-outline-secondary btn-sm"
+            :to="`/astrology?load=${natal.id}`"
+          >
+            Full natal reading
+          </router-link>
         </div>
 
-        <h2 class="section-title">{{ isToday ? 'Today' : 'This day' }}</h2>
-        <p v-if="loadingDaily" class="text-muted">Updating daily hexagrams…</p>
-        <div class="row g-3 mb-4">
+        <div class="row g-4">
           <div class="col-12 col-lg-6">
-            <IchingHexagramCard
-              v-if="early.entry?.hexagram"
-              title="Daily early life (Pre-Heaven)"
-              :hexagram="early.entry.hexagram"
-              :note="earlyNote"
-              @detail="openHexDetail"
-            />
-            <div v-else class="empty-state card h-100">
-              <div class="card-body">
-                <p class="eyebrow mb-1">Daily early life</p>
-                <p class="mb-0 text-muted">
-                  {{ early.yearly ? 'This date is not in the early-life daily list for that year.' : 'This date is outside the early-life yearly cycle.' }}
-                </p>
+            <section class="stage-column">
+              <h2 class="section-title">Daily early life</h2>
+              <p class="text-muted small">Pre-Heaven. Pick a year and day in early life only.</p>
+              <div class="date-bar card mb-3">
+                <div class="card-body">
+                  <label class="form-label" for="early-lookup-date">Day in early life</label>
+                  <div class="d-flex flex-wrap gap-2 align-items-end">
+                    <input
+                      id="early-lookup-date"
+                      type="date"
+                      class="form-control date-input"
+                      :value="early.selectedDate"
+                      :min="earlyMinDate"
+                      :max="earlyMaxDate"
+                      @change="onEarlyDateInput"
+                    />
+                    <button type="button" class="btn btn-primary" @click="goEarlyToday">Today</button>
+                  </div>
+                  <p v-if="earlyCaption" class="mb-0 mt-2 date-caption">{{ earlyCaption }}</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="col-12 col-lg-6">
-            <IchingHexagramCard
-              v-if="later.entry?.hexagram"
-              title="Daily later life (Later-Heaven)"
-              :hexagram="later.entry.hexagram"
-              :note="laterNote"
-              @detail="openHexDetail"
-            />
-            <div v-else class="empty-state card h-100">
-              <div class="card-body">
-                <p class="eyebrow mb-1">Daily later life</p>
-                <p class="mb-0 text-muted">
-                  {{ later.yearly ? 'This date is not in the later-life daily list for that year.' : 'This date is outside the later-life yearly cycle.' }}
-                </p>
+              <SheetSelect
+                id="early-year"
+                class="mb-2"
+                label="Early life year"
+                :options="earlyYearOptions"
+                :disabled="!earlyYearOptions.length"
+                :placeholder="earlyYearOptions.length ? 'Choose a year' : 'No early-life years'"
+                :model-value="early.year"
+                @update:model-value="onEarlyYearChange"
+              />
+              <SheetSelect
+                id="early-day"
+                class="mb-3"
+                label="Day in that year"
+                :options="earlyDayOptions"
+                :disabled="!earlyDayOptions.length"
+                :placeholder="earlyDayOptions.length ? 'Choose a day' : 'No daily list for this year'"
+                :model-value="early.selectedDate"
+                @update:model-value="onEarlyDayPicked"
+              />
+              <p v-if="early.yearly?.hexagram?.name" class="small text-muted mb-3">
+                Year hexagram: {{ early.yearly.hexagram.name }}
+                <span v-if="early.yearly.hexagram.symbol"> ({{ early.yearly.hexagram.symbol }})</span>
+              </p>
+              <p v-if="early.loading" class="text-muted">Updating early-life hexagram…</p>
+              <IchingHexagramCard
+                v-if="early.entry?.hexagram"
+                title="Daily early life (Pre-Heaven)"
+                :hexagram="early.entry.hexagram"
+                :note="earlyNote"
+                :fill-height="false"
+                @detail="openHexDetail"
+              />
+              <div v-else class="empty-state card">
+                <div class="card-body">
+                  <p class="eyebrow mb-1">Daily early life</p>
+                  <p class="mb-0 text-muted">
+                    {{ early.yearly ? 'This date is not in the early-life daily list for that year.' : 'This date is outside the early-life yearly cycle.' }}
+                  </p>
+                </div>
               </div>
-            </div>
+            </section>
           </div>
-        </div>
 
-        <h2 class="section-title">Browse any year and day</h2>
-        <p class="text-muted small">
-          Each natal year has about one hexagram per day, changing every six days.
-          Pick a year in either life stage, then a date in that year.
-          The natal page still has these lists under Life stages; it used to land on the first day of the year rather than today.
-        </p>
-        <div class="row g-3 mb-4">
           <div class="col-12 col-lg-6">
-            <SheetSelect
-              id="early-year"
-              class="mb-2"
-              label="Early life year"
-              :options="earlyYearOptions"
-              :disabled="!earlyYearOptions.length"
-              :placeholder="earlyYearOptions.length ? 'Choose a year' : 'No early-life years'"
-              :model-value="early.year"
-              @update:model-value="onEarlyYearChange"
-            />
-            <SheetSelect
-              id="early-day"
-              class="mb-3"
-              label="Day in that year"
-              :options="earlyDayOptions"
-              :disabled="!earlyDayOptions.length"
-              :placeholder="earlyDayOptions.length ? 'Choose a day' : 'No daily list for this year'"
-              :model-value="early.selectedDate"
-              @update:model-value="onDayPicked"
-            />
-            <p v-if="early.yearly?.hexagram?.name" class="small text-muted mb-0">
-              Year hexagram: {{ early.yearly.hexagram.name }}
-              <span v-if="early.yearly.hexagram.symbol"> ({{ early.yearly.hexagram.symbol }})</span>
-            </p>
-          </div>
-          <div class="col-12 col-lg-6">
-            <SheetSelect
-              id="later-year"
-              class="mb-2"
-              label="Later life year"
-              :options="laterYearOptions"
-              :disabled="!laterYearOptions.length"
-              :placeholder="laterYearOptions.length ? 'Choose a year' : 'No later-life years'"
-              :model-value="later.year"
-              @update:model-value="onLaterYearChange"
-            />
-            <SheetSelect
-              id="later-day"
-              class="mb-3"
-              label="Day in that year"
-              :options="laterDayOptions"
-              :disabled="!laterDayOptions.length"
-              :placeholder="laterDayOptions.length ? 'Choose a day' : 'No daily list for this year'"
-              :model-value="later.selectedDate"
-              @update:model-value="onDayPicked"
-            />
-            <p v-if="later.yearly?.hexagram?.name" class="small text-muted mb-0">
-              Year hexagram: {{ later.yearly.hexagram.name }}
-              <span v-if="later.yearly.hexagram.symbol"> ({{ later.yearly.hexagram.symbol }})</span>
-            </p>
+            <section class="stage-column">
+              <h2 class="section-title">Daily later life</h2>
+              <p class="text-muted small">Later-Heaven. Pick a year and day in later life only.</p>
+              <div class="date-bar card mb-3">
+                <div class="card-body">
+                  <label class="form-label" for="later-lookup-date">Day in later life</label>
+                  <div class="d-flex flex-wrap gap-2 align-items-end">
+                    <input
+                      id="later-lookup-date"
+                      type="date"
+                      class="form-control date-input"
+                      :value="later.selectedDate"
+                      :min="laterMinDate"
+                      :max="laterMaxDate"
+                      @change="onLaterDateInput"
+                    />
+                    <button type="button" class="btn btn-primary" @click="goLaterToday">Today</button>
+                  </div>
+                  <p v-if="laterCaption" class="mb-0 mt-2 date-caption">{{ laterCaption }}</p>
+                </div>
+              </div>
+              <SheetSelect
+                id="later-year"
+                class="mb-2"
+                label="Later life year"
+                :options="laterYearOptions"
+                :disabled="!laterYearOptions.length"
+                :placeholder="laterYearOptions.length ? 'Choose a year' : 'No later-life years'"
+                :model-value="later.year"
+                @update:model-value="onLaterYearChange"
+              />
+              <SheetSelect
+                id="later-day"
+                class="mb-3"
+                label="Day in that year"
+                :options="laterDayOptions"
+                :disabled="!laterDayOptions.length"
+                :placeholder="laterDayOptions.length ? 'Choose a day' : 'No daily list for this year'"
+                :model-value="later.selectedDate"
+                @update:model-value="onLaterDayPicked"
+              />
+              <p v-if="later.yearly?.hexagram?.name" class="small text-muted mb-3">
+                Year hexagram: {{ later.yearly.hexagram.name }}
+                <span v-if="later.yearly.hexagram.symbol"> ({{ later.yearly.hexagram.symbol }})</span>
+              </p>
+              <p v-if="later.loading" class="text-muted">Updating later-life hexagram…</p>
+              <IchingHexagramCard
+                v-if="later.entry?.hexagram"
+                title="Daily later life (Later-Heaven)"
+                :hexagram="later.entry.hexagram"
+                :note="laterNote"
+                :fill-height="false"
+                @detail="openHexDetail"
+              />
+              <div v-else class="empty-state card">
+                <div class="card-body">
+                  <p class="eyebrow mb-1">Daily later life</p>
+                  <p class="mb-0 text-muted">
+                    {{ later.yearly ? 'This date is not in the later-life daily list for that year.' : 'This date is outside the later-life yearly cycle.' }}
+                  </p>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </div>
@@ -194,7 +206,7 @@
 </template>
 
 <script>
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { DateTime } from 'luxon';
 import { useRoute } from 'vue-router';
 import astro from '@/const/astrology';
@@ -235,6 +247,15 @@ function hexagramSpan(days, iso) {
   return `${days[start].date} – ${days[end].date}`;
 }
 
+function yearBounds(cycles) {
+  const years = (cycles || []).map((s) => Number(s.year)).filter((y) => Number.isFinite(y));
+  if (!years.length) return { min: '', max: '' };
+  return {
+    min: `${Math.min(...years)}-01-01`,
+    max: `${Math.max(...years) + 1}-12-31`,
+  };
+}
+
 function emptyStage() {
   return {
     year: '',
@@ -242,6 +263,7 @@ function emptyStage() {
     selectedDate: '',
     entry: null,
     yearly: null,
+    loading: false,
   };
 }
 
@@ -260,20 +282,18 @@ export default {
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
 
     const consulting = ref(birthdayStore.getBirthdayList.length > 0);
-    const loadingDaily = ref(false);
     const error = ref('');
     const qDate = route.query.date;
     const parsedQueryDate = qDate ? DateTime.fromISO(String(qDate)) : null;
-    const lookupDate = ref(
-      parsedQueryDate?.isValid ? parsedQueryDate.toISODate() : DateTime.now().toISODate(),
-    );
+    const initialDate = parsedQueryDate?.isValid
+      ? parsedQueryDate.toISODate()
+      : DateTime.now().toISODate();
     const loadId = route.query.load;
     if (loadId) {
       const found = birthdayStore.getBirthdayById(loadId);
       if (found) birthdayStore.selectBirthday(found.id);
     }
     const dailyCache = new Map();
-    let applying = false;
 
     const natal = reactive({
       id: null,
@@ -294,7 +314,6 @@ export default {
     const detail = reactive({ show: false, kind: 'hexagram', binary: '' });
 
     const todayIso = () => DateTime.now().toISODate();
-    const isToday = computed(() => lookupDate.value === todayIso());
 
     const genderLabel = computed(() => {
       if (natal.gender === 'FEMALE') return 'Female';
@@ -307,8 +326,9 @@ export default {
       return DateTime.fromJSDate(new Date(natal.birthDate)).toFormat('yyyy-MM-dd HH:mm');
     });
 
-    const lookupCaption = computed(() => {
-      const target = DateTime.fromISO(lookupDate.value || '');
+    const stageCaption = (stage, lifeLabel) => {
+      if (!stage.selectedDate) return '';
+      const target = DateTime.fromISO(stage.selectedDate);
       if (!target.isValid) return '';
       const parts = [target.toFormat('cccc d LLLL yyyy')];
       if (natal.birthDate) {
@@ -316,24 +336,19 @@ export default {
         const age = Math.floor(target.diff(birth, 'years').years);
         if (Number.isFinite(age) && age >= 0) parts.push(`age ${age}`);
       }
-      if (early.yearly) parts.push(`early-life year ${early.yearly.year}`);
-      if (later.yearly) parts.push(`later-life year ${later.yearly.year}`);
+      if (stage.yearly) parts.push(`${lifeLabel} year ${stage.yearly.year}`);
       return parts.join(' · ');
-    });
+    };
 
-    const yearBounds = computed(() => {
-      const years = [
-        ...(natal.preHeavenBirthSubCycles || []).map((s) => Number(s.year)),
-        ...(natal.laterHeavenBirthSubCycles || []).map((s) => Number(s.year)),
-      ].filter((y) => Number.isFinite(y));
-      if (!years.length) return { min: '', max: '' };
-      return {
-        min: `${Math.min(...years)}-01-01`,
-        max: `${Math.max(...years) + 1}-12-31`,
-      };
-    });
-    const minDate = computed(() => yearBounds.value.min);
-    const maxDate = computed(() => yearBounds.value.max);
+    const earlyCaption = computed(() => stageCaption(early, 'early-life'));
+    const laterCaption = computed(() => stageCaption(later, 'later-life'));
+
+    const earlyBounds = computed(() => yearBounds(natal.preHeavenBirthSubCycles));
+    const laterBounds = computed(() => yearBounds(natal.laterHeavenBirthSubCycles));
+    const earlyMinDate = computed(() => earlyBounds.value.min);
+    const earlyMaxDate = computed(() => earlyBounds.value.max);
+    const laterMinDate = computed(() => laterBounds.value.min);
+    const laterMaxDate = computed(() => laterBounds.value.max);
 
     const earlyNote = computed(() => {
       if (!early.entry) return '';
@@ -342,6 +357,16 @@ export default {
       const bits = [];
       if (span) bits.push(`Holds ${span} (about six days).`);
       if (yearName) bits.push(`From the ${early.yearly.year} early-life year (${yearName}).`);
+      return bits.join(' ');
+    });
+
+    const laterNote = computed(() => {
+      if (!later.entry) return '';
+      const span = hexagramSpan(later.days, later.selectedDate);
+      const yearName = later.yearly?.hexagram?.name;
+      const bits = [];
+      if (span) bits.push(`Holds ${span} (about six days).`);
+      if (yearName) bits.push(`From the ${later.yearly.year} later-life year (${yearName}).`);
       return bits.join(' ');
     });
 
@@ -370,16 +395,6 @@ export default {
       }))
     );
 
-    const laterNote = computed(() => {
-      if (!later.entry) return '';
-      const span = hexagramSpan(later.days, later.selectedDate);
-      const yearName = later.yearly?.hexagram?.name;
-      const bits = [];
-      if (span) bits.push(`Holds ${span} (about six days).`);
-      if (yearName) bits.push(`From the ${later.yearly.year} later-life year (${yearName}).`);
-      return bits.join(' ');
-    });
-
     const openHexDetail = (binary) => {
       detail.kind = 'hexagram';
       detail.binary = binary || '';
@@ -398,6 +413,7 @@ export default {
       stage.selectedDate = '';
       stage.entry = null;
       stage.yearly = null;
+      stage.loading = false;
     };
 
     const daysFor = async (stageKey, year, subcycle) => {
@@ -419,123 +435,125 @@ export default {
       return list;
     };
 
-    const fillStage = async (stage, stageKey, cycles, yearsToTry, iso) => {
-      for (const y of yearsToTry) {
-        const sub = findYearly(cycles, y);
-        if (!sub) continue;
-        const days = await daysFor(stageKey, y, sub);
-        const entry = days.find((d) => d.date === iso);
-        if (entry) {
-          stage.year = Number(y);
-          stage.yearly = sub;
-          stage.days = days;
-          stage.selectedDate = iso;
-          stage.entry = entry;
-          return;
-        }
-      }
-
-      let sub = null;
-      for (const y of yearsToTry) {
-        sub = findYearly(cycles, y);
-        if (sub) break;
-      }
-      if (!sub && cycles.length) {
-        const last = cycles[cycles.length - 1];
-        const first = cycles[0];
-        sub = Number(yearsToTry[0]) >= Number(last.year) ? last : first;
-      }
-      stage.year = sub ? Number(sub.year) : '';
-      stage.yearly = sub;
-      stage.days = sub ? await daysFor(stageKey, sub.year, sub) : [];
-      stage.selectedDate = '';
-      stage.entry = null;
+    const selectStageDate = (stage, iso) => {
+      stage.selectedDate = iso || '';
+      stage.entry = (stage.days || []).find((d) => d.date === iso) || null;
     };
 
-    const applyLookupDate = async (iso) => {
+    const pickDateInStageDays = (days, preferredIso) => {
+      if (!Array.isArray(days) || !days.length) return '';
+      if (preferredIso && days.some((d) => d.date === preferredIso)) return preferredIso;
+      return days[0].date;
+    };
+
+    const loadStageFirst = async (stage, stageKey, cycles) => {
+      const sub = Array.isArray(cycles) ? cycles[0] : null;
+      if (!sub) return;
+      stage.loading = true;
+      try {
+        const days = await daysFor(stageKey, sub.year, sub);
+        stage.year = Number(sub.year);
+        stage.yearly = sub;
+        stage.days = days;
+        selectStageDate(stage, days[0]?.date || '');
+      } catch (err) {
+        console.error(err);
+      } finally {
+        stage.loading = false;
+      }
+    };
+
+    const lookupStageDate = async (stage, stageKey, cycles, iso) => {
       if (!natal.consultation || !iso) return;
       const target = DateTime.fromISO(iso);
       if (!target.isValid) return;
-      applying = true;
-      loadingDaily.value = true;
+      stage.loading = true;
       try {
         const birth = DateTime.fromJSDate(new Date(natal.birthDate));
         const preferred = cycleYearForDate(birth, target);
         const yearsToTry = [preferred, preferred - 1, preferred + 1];
-        await fillStage(early, 'early', natal.preHeavenBirthSubCycles, yearsToTry, iso);
-        await fillStage(later, 'later', natal.laterHeavenBirthSubCycles, yearsToTry, iso);
+        for (const y of yearsToTry) {
+          const sub = findYearly(cycles, y);
+          if (!sub) continue;
+          const days = await daysFor(stageKey, y, sub);
+          const entry = days.find((d) => d.date === iso);
+          if (entry) {
+            stage.year = Number(y);
+            stage.yearly = sub;
+            stage.days = days;
+            stage.selectedDate = iso;
+            stage.entry = entry;
+            return;
+          }
+        }
+
+        let sub = null;
+        for (const y of yearsToTry) {
+          sub = findYearly(cycles, y);
+          if (sub) break;
+        }
+        if (!sub && cycles.length) {
+          const last = cycles[cycles.length - 1];
+          const first = cycles[0];
+          sub = Number(yearsToTry[0]) >= Number(last.year) ? last : first;
+        }
+        stage.year = sub ? Number(sub.year) : '';
+        stage.yearly = sub;
+        stage.days = sub ? await daysFor(stageKey, sub.year, sub) : [];
+        stage.selectedDate = iso;
+        stage.entry = null;
       } catch (err) {
         console.error(err);
         error.value = err.message || 'Could not calculate daily cycles for this date.';
       } finally {
-        loadingDaily.value = false;
-        applying = false;
+        stage.loading = false;
       }
     };
 
-    const pickDateInDays = (days) => {
-      if (!Array.isArray(days) || !days.length) return '';
-      const keep = days.find((d) => d.date === lookupDate.value);
-      if (keep) return keep.date;
-      const today = days.find((d) => d.date === todayIso());
-      if (today) return today.date;
-      return days[0].date;
-    };
-
-    const onEarlyYearChange = async (yearValue) => {
-      if (applying) return;
-      const sub = findYearly(natal.preHeavenBirthSubCycles, yearValue);
+    const loadStageYear = async (stage, stageKey, cycles, yearValue) => {
+      const sub = findYearly(cycles, yearValue);
       if (!sub) return;
-      applying = true;
-      loadingDaily.value = true;
+      stage.loading = true;
       try {
-        const days = await daysFor('early', sub.year, sub);
-        early.year = Number(sub.year);
-        early.yearly = sub;
-        early.days = days;
-        const next = pickDateInDays(days);
-        applying = false;
-        if (next && next !== lookupDate.value) lookupDate.value = next;
-        else await applyLookupDate(lookupDate.value);
+        const days = await daysFor(stageKey, sub.year, sub);
+        stage.year = Number(sub.year);
+        stage.yearly = sub;
+        stage.days = days;
+        selectStageDate(stage, pickDateInStageDays(days, stage.selectedDate));
       } catch (err) {
         console.error(err);
-        applying = false;
       } finally {
-        loadingDaily.value = false;
+        stage.loading = false;
       }
     };
 
-    const onLaterYearChange = async (yearValue) => {
-      if (applying) return;
-      const sub = findYearly(natal.laterHeavenBirthSubCycles, yearValue);
-      if (!sub) return;
-      applying = true;
-      loadingDaily.value = true;
-      try {
-        const days = await daysFor('later', sub.year, sub);
-        later.year = Number(sub.year);
-        later.yearly = sub;
-        later.days = days;
-        const next = pickDateInDays(days);
-        applying = false;
-        if (next && next !== lookupDate.value) lookupDate.value = next;
-        else await applyLookupDate(lookupDate.value);
-      } catch (err) {
-        console.error(err);
-        applying = false;
-      } finally {
-        loadingDaily.value = false;
-      }
+    const onEarlyYearChange = (yearValue) =>
+      loadStageYear(early, 'early', natal.preHeavenBirthSubCycles, yearValue);
+    const onLaterYearChange = (yearValue) =>
+      loadStageYear(later, 'later', natal.laterHeavenBirthSubCycles, yearValue);
+
+    const onEarlyDayPicked = (iso) => {
+      if (!iso) return;
+      selectStageDate(early, iso);
+    };
+    const onLaterDayPicked = (iso) => {
+      if (!iso) return;
+      selectStageDate(later, iso);
     };
 
-    const onDayPicked = (iso) => {
-      if (!iso || applying) return;
-      lookupDate.value = iso;
+    const onEarlyDateInput = (event) => {
+      const iso = event.target.value;
+      if (iso) lookupStageDate(early, 'early', natal.preHeavenBirthSubCycles, iso);
+    };
+    const onLaterDateInput = (event) => {
+      const iso = event.target.value;
+      if (iso) lookupStageDate(later, 'later', natal.laterHeavenBirthSubCycles, iso);
     };
 
-    const goToday = () => {
-      lookupDate.value = todayIso();
-    };
+    const goEarlyToday = () =>
+      lookupStageDate(early, 'early', natal.preHeavenBirthSubCycles, todayIso());
+    const goLaterToday = () =>
+      lookupStageDate(later, 'later', natal.laterHeavenBirthSubCycles, todayIso());
 
     const loadPerson = async (birthday) => {
       if (!birthday) return;
@@ -568,7 +586,16 @@ export default {
         );
         natal.preHeavenBirthSubCycles = result.iching.preHeavenBirthSubCycles || [];
         natal.laterHeavenBirthSubCycles = result.iching.laterHeavenBirthSubCycles || [];
-        await applyLookupDate(lookupDate.value);
+        if (parsedQueryDate?.isValid) {
+          await lookupStageDate(early, 'early', natal.preHeavenBirthSubCycles, initialDate);
+          if (!early.entry) await loadStageFirst(early, 'early', natal.preHeavenBirthSubCycles);
+          await lookupStageDate(later, 'later', natal.laterHeavenBirthSubCycles, initialDate);
+          if (!later.entry) await loadStageFirst(later, 'later', natal.laterHeavenBirthSubCycles);
+        } else {
+          await loadStageFirst(early, 'early', natal.preHeavenBirthSubCycles);
+          await lookupStageDate(later, 'later', natal.laterHeavenBirthSubCycles, todayIso());
+          if (!later.entry) await loadStageFirst(later, 'later', natal.laterHeavenBirthSubCycles);
+        }
       } catch (err) {
         console.error(err);
         natal.consultation = null;
@@ -579,27 +606,22 @@ export default {
       }
     };
 
-    watch(lookupDate, async (iso) => {
-      if (applying || !natal.consultation) return;
-      await applyLookupDate(iso);
-    });
-
     return {
       birthdayList,
       consulting,
-      loadingDaily,
       error,
-      lookupDate,
       natal,
       early,
       later,
       detail,
-      isToday,
       genderLabel,
       birthLabel,
-      lookupCaption,
-      minDate,
-      maxDate,
+      earlyCaption,
+      laterCaption,
+      earlyMinDate,
+      earlyMaxDate,
+      laterMinDate,
+      laterMaxDate,
       earlyNote,
       laterNote,
       earlyYearOptions,
@@ -607,10 +629,14 @@ export default {
       earlyDayOptions,
       laterDayOptions,
       loadPerson,
-      goToday,
       onEarlyYearChange,
       onLaterYearChange,
-      onDayPicked,
+      onEarlyDayPicked,
+      onLaterDayPicked,
+      onEarlyDateInput,
+      onLaterDateInput,
+      goEarlyToday,
+      goLaterToday,
       openHexDetail,
       openTriDetail,
     };
@@ -631,15 +657,25 @@ export default {
 .section-title {
   font-size: 1.35rem;
   color: #3d2e10;
-  margin: 1.75rem 0 0.75rem;
+  margin: 0 0 0.5rem;
 }
 .person-line {
   font-size: 0.95rem;
+}
+.stage-column {
+  min-height: 0;
+}
+.stage-column :deep(.iching-hex-card) {
+  height: auto;
+  min-height: 0;
 }
 .date-bar {
   margin: 0;
   border: 1px solid #e6d5a8;
   background: #fffdf7;
+}
+.date-input {
+  max-width: 12.5rem;
 }
 .date-caption {
   color: #4a3b16;
@@ -657,6 +693,9 @@ export default {
 @media (max-width: 576px) {
   .display-4 {
     font-size: 2rem;
+  }
+  .date-input {
+    max-width: none;
   }
 }
 </style>

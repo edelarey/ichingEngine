@@ -111,7 +111,7 @@ export default {
       { to: '/consult', title: 'Consult', text: 'Coin or yarrow-style lines. Primary hexagram, changing lines, transformed hexagram, history you can export.' },
       { to: '/birthdays', title: 'Birthdays', text: 'One list of people. Place search fills coordinates and timezone for every chart page.' },
       { to: '/astrology', title: 'I-Ching astrology', text: 'Pre-Heaven seed, Later-Heaven unfolding, heaven and earth, year/month/day, life stages, PDF.' },
-      { to: '/daily_reading', title: 'Daily reading', text: 'Today’s daily hexagram for a saved birthday, or look up any day in early or later life.' },
+      { to: '/daily_reading', title: 'Daily reading', text: 'Independent early-life and later-life daily hexagrams for a saved birthday.' },
       { to: '/vedic_astrology', title: 'Jyotish', text: 'Sidereal kundli, North or South Indian chart, grahas, nakshatra, daśā. Guide at Vedic Help.' },
       { to: '/western_astrology', title: 'Western', text: 'Tropical natal, houses, aspects, transits, PDF.' },
       { to: '/compare', title: 'Compare', text: 'Same birth, three plain-English leads side by side.' },
