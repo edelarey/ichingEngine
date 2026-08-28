@@ -14,12 +14,13 @@
               </h1>
               <p class="app-aka" lang="zh-Hant">易經 · <span lang="en">Yìjīng</span> · Book of Changes</p>
               <p class="hero-copy mb-2">
-                Cast a hexagram, read a birth, hear the lines. Oracle, natal charts, one birthday list.
+                Free I Ching oracle, Vedic Jyotish, and Western natal charts. Cast a hexagram,
+                read a birth, and open a daily page in each system from one birthday list.
               </p>
               <div class="d-flex flex-wrap gap-2">
                 <router-link to="/consult" class="btn btn-primary btn-sm">Consult</router-link>
                 <router-link to="/astrology" class="btn btn-outline-primary btn-sm">I-Ching astrology</router-link>
-                <router-link to="/daily_reading" class="btn btn-outline-primary btn-sm">Daily reading</router-link>
+                <router-link to="/daily_reading" class="btn btn-outline-primary btn-sm">I-Ching daily</router-link>
                 <router-link to="/birthdays" class="btn btn-outline-secondary btn-sm">Birthdays</router-link>
               </div>
             </div>
@@ -107,9 +108,11 @@ export default {
     const doors = [
       { to: '/consult', title: 'Consult', text: 'Six lines, changing lines, a saved history you can reopen.' },
       { to: '/astrology', title: 'I-Ching astrology', text: 'Pre-Heaven and Later-Heaven from a birth, not the coin oracle.' },
-      { to: '/daily_reading', title: 'Daily reading', text: 'Independent early-life and later-life daily hexagrams for a saved birthday.' },
+      { to: '/daily_reading', title: 'I-Ching daily', text: 'Independent early-life and later-life daily hexagrams for a saved birthday.' },
       { to: '/vedic_astrology', title: 'Jyotish', text: 'Sidereal kundli, Lahiri, daśā.' },
+      { to: '/vedic_daily', title: 'Vedic daily', text: 'Natal plus gochara for a chosen day. Daśā is the chapter; Chandra’s nakshatra leads the day.' },
       { to: '/western_astrology', title: 'Western', text: 'Tropical natal, true Rising, transits.' },
+      { to: '/western_daily', title: 'Western daily', text: 'Natal plus transits for a chosen day. Moon leads; Saturn and Jupiter frame the month.' },
       { to: '/relationship', title: 'Relationship', text: 'Two people, three systems.' },
       { to: '/hexagrams', title: '64 hexagrams', text: 'Catalog, sequences, trigrams.' },
       { to: '/hexagram_studio', title: 'Music', text: 'Play cast hexagrams or a Life Symphony as rhythm, scale, or solfeggio.' },

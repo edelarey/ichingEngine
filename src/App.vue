@@ -123,7 +123,7 @@
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/daily_reading" exact-active-class="active">
-              <span class="align-middle">Daily Reading</span>
+              <span class="align-middle">I-Ching Daily</span>
             </router-link>
           </li>
           <li class="nav-item">
@@ -132,8 +132,18 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link class="nav-link" to="/western_daily" exact-active-class="active">
+              <span class="align-middle">Western Daily</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link class="nav-link" to="/vedic_astrology" exact-active-class="active">
               <span class="align-middle">Vedic Astrology</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/vedic_daily" exact-active-class="active">
+              <span class="align-middle">Vedic Daily</span>
             </router-link>
           </li>
           <li class="nav-item">
@@ -239,10 +249,11 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useHead } from '@vueuse/head';
 import { Analytics } from '@vercel/analytics/vue';
+import { headTags } from '@/const/seo';
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -257,6 +268,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const isMobile = ref(getIsMobile());
     const isSidebarOpen = ref(!getIsMobile());
     const backgroundColor = ref('#3f41c2');
@@ -264,44 +276,12 @@ export default {
     const astrologyMenuOpen = ref(false); // Tracks Astrology sub-menu state
     const musicMenuOpen = ref(false); // Tracks Music sub-menu state
 
-
-    // Add SEO meta tags
+    const seoHead = computed(() => headTags(route.path));
     useHead({
-      title: 'iChing Engine — I Ching Oracle, Vedic Jyotish & Western Astrology',
-      meta: [
-        {
-          name: 'description',
-          content: 'Free online I Ching (Yijing) oracle with hexagrams and trigrams, plus Vedic astrology (Jyotish kundli, Lahiri, nakshatra, dasha) and Western natal charts (Sun, Moon, Rising, Placidus). Birth-chart readings, Chinese sexagenary astrology, and relationship compatibility.',
-        },
-        {
-          name: 'keywords',
-          content: 'I Ching, iChing, Yijing, Book of Changes, I Ching oracle, I Ching consultation, hexagram, trigram, bagua, divination, Vedic astrology, Jyotish, kundli, janma kundali, Lahiri ayanamsa, nakshatra, Vimshottari dasha, Lagna, rashi, Western astrology, natal chart, birth chart, rising sign, ascendant, Placidus, tropical zodiac, sidereal zodiac, Chinese astrology, sexagenary cycle, heavenly stems, earthly branches, zodiac, relationship compatibility, I Ching astrology, spiritual guidance, online horoscope, natal chart calculator',
-        },
-        {
-          name: 'robots',
-          content: 'index, follow',
-        },
-        {
-          name: 'googlebot',
-          content: 'index, follow',
-        },
-        {
-          property: 'og:title',
-          content: 'iChing Engine — I Ching Oracle, Vedic Jyotish & Western Astrology',
-        },
-        {
-          property: 'og:description',
-          content: 'Consult the I Ching, cast a Vedic kundli, or read a Western natal chart. Hexagrams, trigrams, Jyotish, and tropical astrology in one place.',
-        },
-        {
-          property: 'og:type',
-          content: 'website',
-        },
-        {
-          property: 'og:url',
-          content: 'https://iching-engine.vercel.app/',
-        },
-      ],
+      title: computed(() => seoHead.value.title),
+      meta: computed(() => seoHead.value.meta),
+      link: computed(() => seoHead.value.link),
+      script: computed(() => seoHead.value.script),
     });
 
     const closeSidebar = () => {

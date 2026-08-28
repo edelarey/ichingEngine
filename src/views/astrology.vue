@@ -154,7 +154,7 @@
         <p class="text-muted small">
           Early and later life have their own year lists. Later life continues after early life ends, so pick each column separately.
           For today or any other day without scrolling these lists, open
-          <router-link to="/daily_reading">Daily Reading</router-link>.
+          <router-link to="/daily_reading">I-Ching Daily</router-link>.
         </p>
 
         <div class="stage-tabs d-lg-none" role="tablist">

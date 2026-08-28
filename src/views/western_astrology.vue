@@ -10,6 +10,10 @@
             <li class="breadcrumb-item active" aria-current="page">Western Astrology</li>
           </ol>
         </nav>
+        <p class="mb-0 text-muted">
+          Natal chart. For the sky on a chosen day against this birth, open
+          <router-link to="/western_daily">Western Daily</router-link>.
+        </p>
       </div>
     </header>
 

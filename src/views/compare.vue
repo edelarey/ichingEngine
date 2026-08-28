@@ -44,6 +44,7 @@
                 :points="vedic.interpretations.executive.points"
               />
               <router-link v-if="person" class="btn btn-sm btn-primary" :to="`/vedic_astrology?load=${person.id}`">Open full reading</router-link>
+              <router-link v-if="person" class="btn btn-sm btn-outline-primary ms-1" :to="`/vedic_daily?load=${person.id}`">Vedic daily</router-link>
             </div>
           </div>
         </div>
@@ -58,6 +59,7 @@
                 :points="western.interpretations.executive.points"
               />
               <router-link v-if="person" class="btn btn-sm btn-primary" :to="`/western_astrology?load=${person.id}`">Open full reading</router-link>
+              <router-link v-if="person" class="btn btn-sm btn-outline-primary ms-1" :to="`/western_daily?load=${person.id}`">Western daily</router-link>
             </div>
           </div>
         </div>

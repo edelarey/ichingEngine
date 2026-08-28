@@ -2,12 +2,12 @@
   <div class="daily-reading-page">
     <header class="bg-light py-3 mb-4">
       <div class="container">
-        <h1 class="display-4">Daily Reading</h1>
+        <h1 class="display-4">I-Ching Daily</h1>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
             <li class="breadcrumb-item"><router-link to="/astrology">I-Ching Astrology</router-link></li>
-            <li class="breadcrumb-item active" aria-current="page">Daily Reading</li>
+            <li class="breadcrumb-item active" aria-current="page">I-Ching Daily</li>
           </ol>
         </nav>
         <p class="mb-0 lead-blurb">
@@ -283,7 +283,7 @@ export default {
     SheetSelect,
   },
   setup() {
-    usePageTitle('Daily Reading');
+    usePageTitle('I-Ching Daily');
     const route = useRoute();
     const birthdayStore = useBirthdayStore();
     const birthdayList = computed(() => birthdayStore.getBirthdayList);

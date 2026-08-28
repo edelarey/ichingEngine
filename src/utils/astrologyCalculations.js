@@ -267,6 +267,242 @@ export function calculateTransits(natalPositions) {
   };
 }
 
+const DAILY_ORB = {
+  moon: 1.5,
+  sun: 2,
+  mercury: 2.5,
+  venus: 2.5,
+  mars: 2.5,
+  jupiter: 2,
+  saturn: 2,
+  uranus: 1.2,
+  neptune: 1.2,
+  pluto: 1.2,
+};
+
+function dailyOrbLimit(transitKey, aspectName) {
+  const base = DAILY_ORB[transitKey] ?? 2;
+  if (aspectName === 'sextile') return Math.min(base, 1.5);
+  return base;
+}
+
+function transitKind(key) {
+  if (key === 'moon') return 'moon';
+  if (['sun', 'mercury', 'venus', 'mars'].includes(key)) return 'personal';
+  if (key === 'jupiter' || key === 'saturn') return 'social';
+  return 'outer';
+}
+
+function aspectOrb(lonA, lonB, angle) {
+  let diff = Math.abs(lonA - lonB);
+  if (diff > 180) diff = 360 - diff;
+  return Math.abs(diff - angle);
+}
+
+function transitingPlanet(key, trop, tropPrev, cusps) {
+  const meta = WESTERN_PLANETS.find((p) => p.key === key);
+  const longitude = trop[key];
+  const sign = signFromLongitude(longitude);
+  const house = houseOfLongitude(longitude, cusps);
+  const retrograde = !meta.neverRetro && isRetrograde(longitude, tropPrev[key]);
+  return {
+    key,
+    name: meta.name,
+    symbol: meta.symbol,
+    color: meta.color,
+    keywords: meta.keywords,
+    longitude,
+    prevLongitude: tropPrev[key],
+    sign: sign.name,
+    signId: sign.id,
+    degreeInSign: sign.degreeInSign,
+    degreeLabel: formatDms(sign.degreeInSign),
+    house,
+    houseName: WESTERN_HOUSES[house - 1].name,
+    housePlain: WESTERN_HOUSE_PLAIN[house],
+    houseKeywords: WESTERN_HOUSES[house - 1].keywords,
+    retrograde,
+    kind: transitKind(key),
+  };
+}
+
+function monthLine(planet, verb) {
+  if (!planet) return null;
+  const retro = planet.retrograde ? ` ${planet.name} is retrograde.` : '';
+  return {
+    key: planet.key,
+    name: planet.name,
+    symbol: planet.symbol,
+    color: planet.color,
+    sign: planet.sign,
+    degreeLabel: planet.degreeLabel,
+    house: planet.house,
+    houseName: planet.houseName,
+    housePlain: planet.housePlain,
+    retrograde: planet.retrograde,
+    text: `${planet.name} at ${planet.degreeLabel} ${planet.sign} in the ${planet.houseName} — ${verb} ${planet.housePlain}.${retro}`,
+  };
+}
+
+function buildDailyLead({ moon, sun, jupiter, saturn, moonHits, otherHits }) {
+  const tightMoon = moonHits[0];
+  const tightOther = otherHits[0];
+  const headline = `Moon in ${moon.sign}, lighting the ${moon.houseName}.`;
+  let intro = `Today’s Moon is at ${moon.degreeLabel} ${moon.sign} in the house of ${moon.housePlain}.`;
+  if (tightMoon) {
+    intro += ` Tightest lunar contact: ${tightMoon.aspect} natal ${tightMoon.natal} (${tightMoon.orb.toFixed(1)}°${tightMoon.applying ? ', applying' : ', separating'}).`;
+  } else {
+    intro += ' No major Moon-to-natal aspect is exact today; the house the Moon occupies is the day’s weather.';
+  }
+  const moonHouseLine = PLANET_IN_HOUSE.moon?.[moon.house - 1]
+    || `The Moon is activating ${moon.houseKeywords.toLowerCase()}.`;
+  const points = [
+    {
+      label: 'Today’s weather',
+      text: tightMoon ? `${moonHouseLine} ${tightMoon.blurb}` : moonHouseLine,
+    },
+    {
+      label: 'This month’s frame',
+      text: saturn.text,
+    },
+    {
+      label: 'This month’s opening',
+      text: jupiter.text,
+    },
+    {
+      label: 'Solar month',
+      text: `The transiting Sun is in ${sun.sign}, in the ${sun.houseName} — ${sun.housePlain}.`,
+    },
+  ];
+  if (tightOther) {
+    points.push({
+      label: tightMoon && tightOther.orb >= tightMoon.orb ? 'Also in force' : 'A key hit',
+      text: `${tightOther.blurb} Orb ${tightOther.orb.toFixed(1)}°${tightOther.applying ? ', applying' : ''}.`,
+    });
+  }
+  return { headline, intro, points };
+}
+
+/**
+ * Dated natal + transits reading. Tighter orbs than the natal-page snapshot.
+ * Moon leads the day; Saturn and Jupiter (plus the transiting Sun’s house) frame the month.
+ */
+export function calculateWesternDaily(natalChart, when) {
+  const natalPositions = natalChart.planetPositions || [];
+  const cusps = natalChart.houses?.cusps;
+  if (!cusps) {
+    throw new Error('Natal houses are required for a daily transit reading.');
+  }
+
+  const snap = julianDayFromBirth(when);
+  const trop = tropicalPositions(snap.jde);
+  const tropMoonPrev = tropicalPositions(snap.jde - 0.25);
+  const tropDayPrev = tropicalPositions(snap.jde - 1);
+
+  const transiting = TRANSIT_KEYS.map((key) => {
+    const prev = key === 'moon' ? tropMoonPrev : tropDayPrev;
+    return transitingPlanet(key, trop, prev, cusps);
+  });
+
+  const natal = natalPositions.filter((p) => TRANSIT_KEYS.includes(p.key));
+  const hits = [];
+  transiting.forEach((t) => {
+    natal.forEach((n) => {
+      ASPECT_TYPES.forEach((type) => {
+        const orbNow = aspectOrb(t.longitude, n.longitude, type.angle);
+        if (orbNow > dailyOrbLimit(t.key, type.name)) return;
+        const orbPrev = aspectOrb(t.prevLongitude, n.longitude, type.angle);
+        hits.push({
+          transit: t.name,
+          transitKey: t.key,
+          natal: n.name,
+          natalKey: n.key,
+          natalHouse: n.house,
+          natalHouseName: n.houseName,
+          transitHouse: t.house,
+          transitHouseName: t.houseName,
+          aspect: type.name,
+          symbol: type.symbol,
+          nature: type.nature,
+          orb: orbNow,
+          applying: orbNow < orbPrev - 1e-4,
+          kind: t.kind,
+          blurb: `Transit ${t.name} ${type.name} natal ${n.name} (${n.houseName}). ${type.blurb}`,
+        });
+      });
+    });
+  });
+  hits.sort((a, b) => a.orb - b.orb);
+
+  const moon = transiting.find((p) => p.key === 'moon');
+  const sun = transiting.find((p) => p.key === 'sun');
+  const jupiter = transiting.find((p) => p.key === 'jupiter');
+  const saturn = transiting.find((p) => p.key === 'saturn');
+
+  const moonNearest = [];
+  natal.forEach((n) => {
+    ASPECT_TYPES.forEach((type) => {
+      const orb = aspectOrb(moon.longitude, n.longitude, type.angle);
+      const orbPrev = aspectOrb(moon.prevLongitude, n.longitude, type.angle);
+      moonNearest.push({
+        transit: moon.name,
+        transitKey: moon.key,
+        natal: n.name,
+        natalKey: n.key,
+        natalHouseName: n.houseName,
+        aspect: type.name,
+        symbol: type.symbol,
+        orb,
+        applying: orb < orbPrev - 1e-4,
+        inForce: orb <= dailyOrbLimit('moon', type.name),
+        blurb: `Moon ${type.name} natal ${n.name} (${n.houseName}). ${type.blurb}`,
+      });
+    });
+  });
+  moonNearest.sort((a, b) => a.orb - b.orb);
+
+  const moonHits = hits.filter((h) => h.transitKey === 'moon');
+  const otherHits = hits.filter((h) => h.transitKey !== 'moon');
+  const offsetMinutes = typeof when.timezoneOffset === 'number'
+    ? when.timezoneOffset
+    : snap.local.offset;
+
+  const natalSun = natalPositions.find((p) => p.key === 'sun');
+  const natalMoon = natalPositions.find((p) => p.key === 'moon');
+
+  return {
+    asOf: snap.utc.toISO(),
+    asOfLabel: `${snap.local.toFormat('yyyy-MM-dd HH:mm')} ${formatOffset(offsetMinutes)}`,
+    localLabel: snap.local.toFormat('cccc d LLLL yyyy, HH:mm'),
+    transiting,
+    hits: hits.slice(0, 24),
+    moonHits,
+    otherHits: otherHits.slice(0, 16),
+    moonNearest: moonNearest.slice(0, 3),
+    monthStrip: {
+      saturn: monthLine(saturn, 'concentrating work in'),
+      jupiter: monthLine(jupiter, 'opening room in'),
+      sun: monthLine(sun, 'the year’s light is in'),
+    },
+    lead: buildDailyLead({
+      moon,
+      sun,
+      jupiter: monthLine(jupiter, 'opening room in'),
+      saturn: monthLine(saturn, 'concentrating work in'),
+      moonHits,
+      otherHits,
+    }),
+    moon,
+    natalBrief: {
+      sun: natalSun ? `${natalSun.sign} Sun` : '',
+      moon: natalMoon ? `${natalMoon.sign} Moon` : '',
+      rising: natalChart.risingSign ? `${natalChart.risingSign.name} rising` : '',
+    },
+    engine: 'Tropical transits to this natal chart. Daily orbs are tighter than the natal snapshot (Moon 1.5°, personal 2–2.5°, social 2°, outer 1.2°). Moon leads the day; Saturn and Jupiter frame the month. Not a Sun-sign horoscope.',
+    disclaimer: 'Educational Western astrology, not medical, legal, or financial advice.',
+  };
+}
+
 /** Back-compat wrapper used by AstrologySection.vue */
 export async function calculatePlanetaryPositions(date, time, latitude, longitude, timezoneOffset) {
   const chart = calculateWesternChart({

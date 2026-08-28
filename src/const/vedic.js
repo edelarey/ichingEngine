@@ -392,6 +392,19 @@ export const PLAIN_HOUSE_FOCUS = {
   12: 'rest, letting go, and life behind the scenes',
 };
 
+/** Nine taras counted from the janma nakshatra — the classical daily Moon clock. */
+export const NAVATARA = [
+  { key: 'janma', sa: 'Janma', en: 'birth star', tone: 'personal — body, vitality, and how the day starts' },
+  { key: 'sampat', sa: 'Sampat', en: 'wealth', tone: 'gain, resources, and what comes in' },
+  { key: 'vipat', sa: 'Vipat', en: 'danger', tone: 'caution — obstacles and missteps are louder' },
+  { key: 'kshema', sa: 'Kṣema', en: 'welfare', tone: 'protection, ease, and a safer stretch' },
+  { key: 'pratyari', sa: 'Pratyari', en: 'adversary', tone: 'opposition — watch conflict and rivalry' },
+  { key: 'sadhaka', sa: 'Sādhaka', en: 'accomplishment', tone: 'effort pays; work toward a result' },
+  { key: 'naidhana', sa: 'Naidhana', en: 'loss', tone: 'endings and leaks — keep the day light' },
+  { key: 'mitra', sa: 'Mitra', en: 'friend', tone: 'allies, support, and easier company' },
+  { key: 'paramamitra', sa: 'Paramamitra', en: 'best friend', tone: 'favour, ease, and a helpful sky' },
+];
+
 export const PLAIN_PERIOD = {
   sun: 'standing in the light, father-themes, and pride',
   moon: 'home, mood, and what nourishes you',

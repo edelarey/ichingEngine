@@ -12,7 +12,9 @@
         <p class="mb-0">
           Sidereal natal chart (Janma Kuṇḍalī) using Lahiri ayanāṁśa, whole-sign houses, nine grahas,
           and Vimśottarī daśā.
-          <router-link to="/vedic_help">Read the Jyotish guide</router-link>
+          For the sky on a chosen day against this birth, open
+          <router-link to="/vedic_daily">Vedic Daily</router-link>.
+          <router-link to="/vedic_help">Read the Jyotish guide</router-link>.
         </p>
       </div>
     </header>

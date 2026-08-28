@@ -185,14 +185,34 @@
           <li>Note graha dignity (exalted, own, debilitated, …).</li>
           <li>Walk the twelve bhāvas: occupants, lord placement, dṛṣṭi received.</li>
           <li>Check the current Vimśottarī mahādaśā / antardaśā for which themes are timed now.</li>
+          <li>For a chosen day, open Vedic Daily: Chandra’s nakshatra (navatāra) and gochara against this chart.</li>
         </ol>
+      </section>
+
+      <section>
+        <h2>Gochara (transits) and Vedic Daily</h2>
+        <p>
+          Jyotish times events with two clocks. <strong>Vimśottarī daśā</strong> is the chapter of life
+          (mahādaśā / antardaśā). <strong>Gochara</strong> is the sky on a chosen day against the natal chart.
+        </p>
+        <p>
+          The daily unit is Chandra (Moon): a nakshatra lasts about a day, a rāśi about two and a quarter.
+          Counted from the janma nakshatra, that Moon is one of nine <strong>navatāra</strong>
+          (Janma, Sampat, Vipat, Kṣema, Pratyari, Sādhaka, Naidhana, Mitra, Paramamitra).
+          Guru and Śani barely move day to day; they frame the month and year. Sūrya names the solar month.
+          Houses are whole-sign from Lagna and from the natal Moon. Aspects are classical dṛṣṭi, not Western orbs.
+        </p>
+        <p>
+          <router-link to="/vedic_daily">Open Vedic Daily</router-link> for a saved birthday.
+        </p>
       </section>
 
       <section>
         <h2>Limits</h2>
         <ul>
           <li>Positions come from astronomia (VSOP87 / Meeus), natal-grade, not JPL/Swiss Ephemeris.</li>
-          <li>No divisional charts (D-9 Navamśa, etc.), yogas, transits, or Ashtakoota matching in this version.</li>
+          <li>No divisional charts (D-9 Navamśa, etc.), yogas, or Ashtakoota matching in this version.</li>
+          <li>Gochara and dated daśā live on Vedic Daily; the natal page still shows the current mahādaśā / antardaśā only.</li>
           <li>Interpretations are rule-based educational text, not medical, legal, or financial advice.</li>
         </ul>
       </section>

@@ -41,7 +41,5 @@ if (savedColor) {
 }
 
 
-document.title = process.env.VUE_APP_TITLE;
-
 // Debug Bootstrap loading
 console.log('Bootstrap loaded:', typeof bootstrap !== 'undefined' && typeof bootstrap.Collapse !== 'undefined');

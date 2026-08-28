@@ -12,9 +12,11 @@
         <p class="mb-0">
           One list of people, used by
           <router-link to="/astrology">I-Ching Astrology</router-link>,
-          <router-link to="/daily_reading">Daily Reading</router-link>,
-          <router-link to="/vedic_astrology">Vedic</router-link>, and
-          <router-link to="/western_astrology">Western</router-link>.
+          <router-link to="/daily_reading">I-Ching Daily</router-link>,
+          <router-link to="/vedic_astrology">Vedic</router-link>,
+          <router-link to="/vedic_daily">Vedic Daily</router-link>,
+          <router-link to="/western_astrology">Western</router-link>, and
+          <router-link to="/western_daily">Western Daily</router-link>.
         </p>
       </div>
     </header>
@@ -75,9 +77,11 @@
                   </div>
                   <div class="mt-2 d-flex flex-wrap gap-1">
                     <router-link class="btn btn-sm btn-primary" :to="`/astrology?load=${b.id}`">I-Ching</router-link>
-                    <router-link class="btn btn-sm btn-primary" :to="`/daily_reading?load=${b.id}`">Daily</router-link>
+                    <router-link class="btn btn-sm btn-primary" :to="`/daily_reading?load=${b.id}`">I-Ching daily</router-link>
                     <router-link class="btn btn-sm btn-primary" :to="`/vedic_astrology?load=${b.id}`">Vedic</router-link>
+                    <router-link class="btn btn-sm btn-primary" :to="`/vedic_daily?load=${b.id}`">Vedic daily</router-link>
                     <router-link class="btn btn-sm btn-primary" :to="`/western_astrology?load=${b.id}`">Western</router-link>
+                    <router-link class="btn btn-sm btn-primary" :to="`/western_daily?load=${b.id}`">Western daily</router-link>
                     <router-link class="btn btn-sm btn-outline-dark" :to="`/compare?load=${b.id}`">Compare all</router-link>
                   </div>
                 </div>

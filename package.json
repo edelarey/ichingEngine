@@ -1,13 +1,13 @@
 {
   "name": "ichingengine",
   "version": "1.0.0",
-  "description": "I Ching oracle with I-Ching, Vedic, and Western natal charts",
+  "description": "Free I Ching (Yijing) oracle with I-Ching, Vedic Jyotish, and Western natal charts and daily readings",
   "main": "src/main.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "node scripts/verify-vedic.js && node scripts/verify-western.js"
+    "test": "node scripts/verify-vedic.js && node scripts/verify-western.js && node scripts/verify-western-daily.js && node scripts/verify-vedic-daily.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

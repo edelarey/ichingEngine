@@ -32,6 +32,7 @@ import {
   PLAIN_DIGNITY,
   PLAIN_HOUSE_FOCUS,
   PLAIN_PERIOD,
+  NAVATARA,
 } from '@/const/vedic';
 import {
   julianDayFromBirth,
@@ -100,7 +101,7 @@ function aspectTargets(fromHouse, key) {
   return spans.map((span) => ((fromHouse - 1 + span - 1) % 12) + 1);
 }
 
-export function computeVimshottari(moonLongitude, birthIso) {
+export function computeVimshottari(moonLongitude, birthIso, asOfIso) {
   const info = nakshatraFromLongitude(moonLongitude);
   const startIndex = info.index % 9;
   const elapsedFrac = info.progress;
@@ -134,11 +135,12 @@ export function computeVimshottari(moonLongitude, birthIso) {
     pushPeriod(idx, VIMSHOTTARI[idx].years);
   }
 
-  const now = DateTime.now();
-  const currentMaha = periods.find((p) => now >= DateTime.fromISO(p.start) && now < DateTime.fromISO(p.end)) || periods[0];
+  const asOfRaw = asOfIso ? DateTime.fromISO(asOfIso) : DateTime.now();
+  const asOf = asOfRaw.isValid ? asOfRaw : DateTime.now();
+  const currentMaha = periods.find((p) => asOf >= DateTime.fromISO(p.start) && asOf < DateTime.fromISO(p.end)) || periods[0];
 
   const antar = computeAntardasha(currentMaha);
-  const currentAntar = antar.find((p) => now >= DateTime.fromISO(p.start) && now < DateTime.fromISO(p.end)) || antar[0];
+  const currentAntar = antar.find((p) => asOf >= DateTime.fromISO(p.start) && asOf < DateTime.fromISO(p.end)) || antar[0];
 
   return {
     janmaNakshatra: info,
@@ -302,6 +304,262 @@ export function calculateVedicChart(birthInput) {
     dasha,
     interpretations,
     nodeNote: 'Rāhu and Ketu use the mean lunar node (not the true node).',
+  };
+}
+
+function drishtiName(span) {
+  if (span === 7) return '7th dṛṣṭi';
+  if (span === 4) return '4th dṛṣṭi';
+  if (span === 8) return '8th dṛṣṭi';
+  if (span === 5) return '5th dṛṣṭi';
+  if (span === 9) return '9th dṛṣṭi';
+  if (span === 3) return '3rd dṛṣṭi';
+  if (span === 10) return '10th dṛṣṭi';
+  return `${span}th dṛṣṭi`;
+}
+
+function navataraFrom(janmaIndex, transitIndex) {
+  const pos = (transitIndex - janmaIndex + 27) % 27;
+  const tara = NAVATARA[pos % 9];
+  return {
+    ...tara,
+    position: pos + 1,
+    caution: ['vipat', 'pratyari', 'naidhana'].includes(tara.key),
+  };
+}
+
+function sadeSatiFromMoon(saturnRashiId, moonRashiId) {
+  const fromMoon = wholeSignHouse(saturnRashiId, moonRashiId);
+  if (fromMoon === 12) {
+    return { active: true, phase: 'rising', fromMoon, text: 'Śani (Saturn) is in the 12th from the natal Moon — the rising phase of Sade Sati. Privacy, endings, and what is spent run louder than usual.' };
+  }
+  if (fromMoon === 1) {
+    return { active: true, phase: 'peak', fromMoon, text: 'Śani (Saturn) is on the natal Moon — the peak of Sade Sati. Duty, delay, and the mind’s weather are heavy; what is earned now tends to last.' };
+  }
+  if (fromMoon === 2) {
+    return { active: true, phase: 'setting', fromMoon, text: 'Śani (Saturn) is in the 2nd from the natal Moon — the setting phase of Sade Sati. Speech, money, and family structures are being rebuilt.' };
+  }
+  if (fromMoon === 8) {
+    return { active: false, phase: 'ashtama', fromMoon, text: 'Śani (Saturn) is 8th from the natal Moon (Aṣṭama Śani). Not Sade Sati, but a long stretch of deep change and shared-life pressure.' };
+  }
+  return { active: false, phase: null, fromMoon, text: '' };
+}
+
+function gocharaPlanet(key, trop, tropPrev, ayanamsa, lagnaSignId, moonSignId) {
+  const meta = GRAHA_BY_KEY[key];
+  const tropical = trop[key];
+  const lon = norm360(tropical - ayanamsa);
+  const sign = rashiFromLongitude(lon);
+  const nak = nakshatraFromLongitude(lon);
+  const house = wholeSignHouse(sign.id, lagnaSignId);
+  const moonHouse = wholeSignHouse(sign.id, moonSignId);
+  const alwaysRetro = key === 'rahu' || key === 'ketu';
+  const neverRetro = key === 'sun' || key === 'moon';
+  const retrograde = alwaysRetro || (!neverRetro && isRetrograde(tropical, tropPrev[key]));
+  return {
+    key,
+    nameEn: meta.nameEn,
+    nameSa: meta.nameSa,
+    label: grahaLabel(meta),
+    glyph: meta.glyph,
+    color: meta.color,
+    karaka: meta.karaka,
+    longitude: lon,
+    rashi: sign.rashi,
+    rashiId: sign.id,
+    rashiLabel: sign.label,
+    degreeInSign: sign.degreeInSign,
+    degreeLabel: formatDms(sign.degreeInSign),
+    house,
+    houseMeta: HOUSES[house - 1],
+    houseLabel: houseLabel(HOUSES[house - 1]),
+    housePlain: PLAIN_HOUSE_FOCUS[house],
+    moonHouse,
+    moonHouseLabel: houseLabel(HOUSES[moonHouse - 1]),
+    moonHousePlain: PLAIN_HOUSE_FOCUS[moonHouse],
+    nakshatra: nak.nakshatra,
+    nakshatraLabel: nak.label,
+    pada: nak.pada,
+    lord: nak.lord,
+    retrograde,
+    aspects: aspectTargets(house, key),
+  };
+}
+
+function monthLine(planet, verb) {
+  if (!planet) return null;
+  const retro = planet.retrograde ? ` ${planet.label} is vakra (retrograde).` : '';
+  return {
+    key: planet.key,
+    name: planet.label,
+    glyph: planet.glyph,
+    color: planet.color,
+    rashiLabel: planet.rashiLabel,
+    degreeLabel: planet.degreeLabel,
+    house: planet.house,
+    houseLabel: planet.houseLabel,
+    housePlain: planet.housePlain,
+    retrograde: planet.retrograde,
+    text: `${planet.label} at ${planet.degreeLabel} ${planet.rashiLabel} in ${planet.houseLabel} — ${verb} ${planet.housePlain}.${retro}`,
+  };
+}
+
+function buildVedicDailyLead({ moon, tara, dasha, saturn, jupiter, sun, sadeSati, hits }) {
+  const maha = dasha.currentMaha;
+  const antar = dasha.currentAntar;
+  const headline = `Chandra in ${moon.rashi.nameEn}, lighting ${moon.houseLabel}.`;
+  const intro = `Today’s Moon is at ${moon.degreeLabel} ${moon.rashiLabel} in ${moon.nakshatraLabel} pāda ${moon.pada} — the ${tara.sa} (${tara.en}) star from your birth Moon. ${tara.tone}. You are in a ${GRAHA_BY_KEY[maha.key].nameEn} mahādaśā with ${GRAHA_BY_KEY[antar.key].nameEn} antardaśā.`;
+  const points = [
+    {
+      label: 'Today’s weather',
+      text: `Chandra is moving through the house of ${moon.housePlain} from Lagna${tara.caution ? ` (${tara.sa} is a caution tara — keep the day simple)` : ''}. From the natal Moon, that is ${moon.moonHouseLabel} — ${moon.moonHousePlain}.`,
+    },
+    {
+      label: 'The chapter you are in',
+      text: `A ${GRAHA_BY_KEY[maha.key].nameEn} period (until ${maha.endLabel}) emphasises ${PLAIN_PERIOD[maha.key]}. Under that, a ${GRAHA_BY_KEY[antar.key].nameEn} subplot (until ${antar.endLabel}) brings ${PLAIN_PERIOD[antar.key]}.`,
+    },
+    {
+      label: 'This month’s frame',
+      text: saturn.text,
+    },
+    {
+      label: 'This month’s opening',
+      text: jupiter.text,
+    },
+    {
+      label: 'Solar month',
+      text: `Sūrya (Sun) is in ${sun.rashiLabel}, in ${sun.houseLabel} — ${sun.housePlain}.`,
+    },
+  ];
+  if (sadeSati.text) {
+    points.push({ label: sadeSati.active ? 'Sade Sati' : 'Saturn from the Moon', text: sadeSati.text });
+  }
+  const tight = (hits || []).find((h) => h.transitKey !== 'moon') || hits[0];
+  if (tight) {
+    points.push({ label: 'A key gochara contact', text: tight.blurb });
+  }
+  return { headline, intro, points };
+}
+
+/**
+ * Dated natal + gochara reading. Vimśottarī at the chosen date is the period clock;
+ * Chandra’s nakshatra (navatāra) leads the day; Guru and Śani frame the longer stretch.
+ */
+export function calculateVedicDaily(natalChart, when) {
+  const natalGrahas = natalChart.grahas || [];
+  const lagnaSignId = natalChart.lagna?.rashi?.id;
+  const natalMoon = natalGrahas.find((g) => g.key === 'moon');
+  const natalSun = natalGrahas.find((g) => g.key === 'sun');
+  if (!lagnaSignId || !natalMoon) {
+    throw new Error('A natal Lagna and Moon are required for a daily gochara reading.');
+  }
+
+  const snap = julianDayFromBirth(when);
+  const ayanamsa = lahiriAyanamsa(snap.jd);
+  const trop = tropicalPositions(snap.jde);
+  const tropMoonPrev = tropicalPositions(snap.jde - 0.25);
+  const tropDayPrev = tropicalPositions(snap.jde - 1);
+  const grahaKeys = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'rahu', 'ketu'];
+  const transiting = grahaKeys.map((key) => {
+    const prev = key === 'moon' ? tropMoonPrev : tropDayPrev;
+    return gocharaPlanet(key, trop, prev, ayanamsa, lagnaSignId, natalMoon.rashiId);
+  });
+
+  const hits = [];
+  transiting.forEach((t) => {
+    natalGrahas.forEach((n) => {
+      if (t.house === n.house) {
+        hits.push({
+          transit: t.label,
+          transitKey: t.key,
+          natal: n.label,
+          natalKey: n.key,
+          natalHouse: n.house,
+          natalHouseLabel: n.houseLabel,
+          transitHouse: t.house,
+          transitHouseLabel: t.houseLabel,
+          aspect: 'conjunction',
+          aspectSa: 'saṃyuta',
+          span: 1,
+          kind: t.key === 'moon' ? 'moon' : 'gochara',
+          blurb: `Gochara ${t.label} is with natal ${n.label} in ${t.houseLabel}. The two principles occupy the same whole-sign house.`,
+        });
+      }
+      (DRISHTI[t.key] || [7]).forEach((span) => {
+        const targetHouse = ((t.house - 1 + span - 1) % 12) + 1;
+        if (targetHouse === n.house) {
+          hits.push({
+            transit: t.label,
+            transitKey: t.key,
+            natal: n.label,
+            natalKey: n.key,
+            natalHouse: n.house,
+            natalHouseLabel: n.houseLabel,
+            transitHouse: t.house,
+            transitHouseLabel: t.houseLabel,
+            aspect: drishtiName(span),
+            aspectSa: 'dṛṣṭi',
+            span,
+            kind: t.key === 'moon' ? 'moon' : 'gochara',
+            blurb: `Gochara ${t.label} casts ${drishtiName(span)} on natal ${n.label} (${n.houseLabel}).`,
+          });
+        }
+      });
+    });
+  });
+
+  const moon = transiting.find((p) => p.key === 'moon');
+  const sun = transiting.find((p) => p.key === 'sun');
+  const jupiter = transiting.find((p) => p.key === 'jupiter');
+  const saturn = transiting.find((p) => p.key === 'saturn');
+  const janmaIndex = natalChart.dasha?.janmaNakshatra?.index
+    ?? nakshatraFromLongitude(natalMoon.longitude).index;
+  const tara = navataraFrom(janmaIndex, nakshatraFromLongitude(moon.longitude).index);
+  const dasha = computeVimshottari(
+    natalMoon.longitude,
+    natalChart.birth.localIso,
+    snap.local.toISO()
+  );
+  const sadeSati = sadeSatiFromMoon(saturn.rashiId, natalMoon.rashiId);
+  const saturnLine = monthLine(saturn, 'concentrating work in');
+  const jupiterLine = monthLine(jupiter, 'opening room in');
+  const sunLine = monthLine(sun, 'the year’s light is in');
+  const moonHits = hits.filter((h) => h.transitKey === 'moon');
+  const otherHits = hits.filter((h) => h.transitKey !== 'moon');
+  const offsetMinutes = typeof when.timezoneOffset === 'number' ? when.timezoneOffset : snap.local.offset;
+
+  return {
+    asOf: snap.utc.toISO(),
+    asOfLabel: `${snap.local.toFormat('yyyy-MM-dd HH:mm')} ${formatOffset(offsetMinutes)}`,
+    localLabel: snap.local.toFormat('cccc d LLLL yyyy, HH:mm'),
+    ayanamsa,
+    transiting,
+    hits: [...moonHits, ...otherHits].slice(0, 24),
+    moonHits,
+    otherHits: otherHits.slice(0, 16),
+    monthStrip: { saturn: saturnLine, jupiter: jupiterLine, sun: sunLine },
+    moon,
+    tara,
+    dasha,
+    sadeSati,
+    lead: buildVedicDailyLead({
+      moon,
+      tara,
+      dasha,
+      saturn: saturnLine,
+      jupiter: jupiterLine,
+      sun,
+      sadeSati,
+      hits: [...moonHits, ...otherHits],
+    }),
+    natalBrief: {
+      lagna: natalChart.lagna ? `${natalChart.lagna.rashi.nameEn} Lagna` : '',
+      sun: natalSun ? `${natalSun.rashi.nameEn} Sun` : '',
+      moon: `${natalMoon.rashi.nameEn} Moon`,
+    },
+    engine: 'Sidereal gochara (Lahiri) to this janma kuṇḍalī. Whole-sign houses from Lagna and from the natal Moon. Vimśottarī daśā is the period clock; Chandra’s nakshatra (navatāra) leads the day; Guru and Śani frame the longer stretch. Not a Sun-sign horoscope.',
+    disclaimer: natalChart.interpretations?.disclaimer
+      || 'Educational Jyotish, not medical, legal, or financial advice.',
   };
 }
 

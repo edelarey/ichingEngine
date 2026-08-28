@@ -14,10 +14,12 @@ import TrigramDetail from '../views/trigram_detail.vue';
 import About from '../views/about.vue';
 import TibetanMantraChart from '../views/tibetan_mantra_chart.vue'; // Import the new component
 const WesternAstrology = () => import('../views/western_astrology.vue');
+const WesternDaily = () => import('../views/western_daily.vue');
 import LifeSymphony from '../views/LifeSymphony.vue';
 import SolfeggioPlayer from '../views/solfeggio_player.vue';
 const HexagramStudio = () => import('../views/hexagram_studio.vue');
 const VedicAstrology = () => import('../views/vedic_astrology.vue');
+const VedicDaily = () => import('../views/vedic_daily.vue');
 const VedicHelp = () => import('../views/vedic_help.vue');
 const Birthdays = () => import('../views/birthdays.vue');
 const CompareReadings = () => import('../views/compare.vue');
@@ -74,9 +76,19 @@ const routes = [
     component: WesternAstrology,
   },
   {
+    path: '/western_daily',
+    name: 'WesternDaily',
+    component: WesternDaily,
+  },
+  {
     path: '/vedic_astrology',
     name: 'VedicAstrology',
     component: VedicAstrology,
+  },
+  {
+    path: '/vedic_daily',
+    name: 'VedicDaily',
+    component: VedicDaily,
   },
   {
     path: '/vedic_help',
