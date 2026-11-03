@@ -68,6 +68,14 @@
                 <button type="button" class="btn btn-primary btn-sm" @click="openSaved(item)">
                   Open this reading
                 </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-info btn-sm"
+                  :disabled="exporting"
+                  @click="exportSavedPdf(item)"
+                >
+                  Export PDF
+                </button>
                 <button type="button" class="btn btn-outline-danger btn-sm" @click="deleteSaved(item.id)">
                   Delete
                 </button>
@@ -150,6 +158,16 @@
           · {{ methodLabel(divinationMethod) }}
         </p>
         <h2 class="reading-question">{{ userQuestion || 'No question entered' }}</h2>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <button
+            type="button"
+            class="btn btn-info"
+            :disabled="exporting"
+            @click="exportCurrentPdf"
+          >
+            {{ exporting ? 'Building PDF…' : 'Export PDF' }}
+          </button>
+        </div>
 
         <div class="row g-3 align-items-stretch mb-4">
           <div class="col-12 col-lg-5">
@@ -226,6 +244,7 @@ import { useHexagramStore } from '@/stores/oracle';
 import { DateTime } from 'luxon';
 import IchingHexagramCard from '@/components/IchingHexagramCard.vue';
 import { usePageTitle } from '@/composables/usePageTitle';
+import { downloadConsultPdf } from '@/utils/consultPdf';
 
 function plain(html) {
   if (!html) return '';
@@ -261,6 +280,7 @@ export default {
     const divinationMethod = ref('coin');
     const showHistory = ref(false);
     const viewingSaved = ref(null);
+    const exporting = ref(false);
 
     const history = computed(() => hexagramStore.getConsultationHistory || []);
     const historyNewestFirst = computed(() => [...history.value].reverse());
@@ -452,6 +472,62 @@ export default {
       }
     };
 
+    const payloadFromState = () => {
+      const saved = viewingSaved.value
+        ? history.value.find((item) => item.id === viewingSaved.value)
+        : null;
+      return {
+        question: userQuestion.value,
+        method: divinationMethod.value,
+        timestamp: saved?.timestamp || new Date().toISOString(),
+        primary: hexagram.value,
+        transformed: hexagramTransformed.value,
+        changingLines: changingLines.value,
+        primaryLines: [...primaryHexagram.value],
+        transformedLines: [...transformedHexagram.value],
+      };
+    };
+
+    const payloadFromItem = (item) => {
+      const { primary, transformed } = restoreLines(item);
+      const pBin = typeof item.primaryHexagram === 'string'
+        ? item.primaryHexagram
+        : coin.transformCoinHexagramToBinary(primary);
+      const tBin = typeof item.transformedHexagram === 'string'
+        ? item.transformedHexagram
+        : coin.transformCoinHexagramToBinary(transformed);
+      return {
+        question: item.question || '',
+        method: item.method === 'yarrow' ? 'yarrow' : 'coin',
+        timestamp: item.timestamp,
+        primary: lookupHex(pBin),
+        transformed: lookupHex(tBin),
+        changingLines: [...(item.changingLines || [])],
+        primaryLines: primary,
+        transformedLines: transformed,
+      };
+    };
+
+    const runExport = async (payload) => {
+      if (!payload?.primary) {
+        alert('Finish a six-line cast before exporting.');
+        return;
+      }
+      exporting.value = true;
+      try {
+        await downloadConsultPdf(payload);
+      } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to generate PDF. Please try again.');
+      } finally {
+        exporting.value = false;
+      }
+    };
+
+    const exportCurrentPdf = () => runExport(payloadFromState());
+
+    const exportSavedPdf = (item) => runExport(payloadFromItem(item));
+
     return {
       userQuestion,
       primaryHexagram,
@@ -462,6 +538,7 @@ export default {
       divinationMethod,
       showHistory,
       viewingSaved,
+      exporting,
       readingRoot,
       hexagramStore,
       history,
@@ -475,6 +552,8 @@ export default {
       handleImport,
       deleteSaved,
       clearHistory,
+      exportCurrentPdf,
+      exportSavedPdf,
       hexName,
       methodLabel,
       formatWhen,

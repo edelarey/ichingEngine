@@ -50,13 +50,23 @@
             <span v-if="natal.place"> · {{ natal.place }}</span>
             · {{ natal.hemisphere }} hemisphere
           </p>
-          <router-link
-            v-if="natal.id"
-            class="btn btn-outline-secondary btn-sm"
-            :to="`/astrology?load=${natal.id}`"
-          >
-            Full natal reading
-          </router-link>
+          <div class="d-flex flex-wrap gap-2">
+            <router-link
+              v-if="natal.id"
+              class="btn btn-outline-secondary btn-sm"
+              :to="`/astrology?load=${natal.id}`"
+            >
+              Full natal reading
+            </router-link>
+            <button
+              type="button"
+              class="btn btn-info btn-sm"
+              :disabled="exporting || (!early.entry?.hexagram && !later.entry?.hexagram)"
+              @click="exportPdf"
+            >
+              {{ exporting ? 'Building PDF…' : 'Export PDF' }}
+            </button>
+          </div>
         </div>
 
         <div class="row g-4">
@@ -222,6 +232,7 @@ import IchingHexagramCard from '@/components/IchingHexagramCard.vue';
 import IchingDetailModal from '@/components/IchingDetailModal.vue';
 import SheetSelect from '@/components/SheetSelect.vue';
 import { usePageTitle } from '@/composables/usePageTitle';
+import { downloadIchingDailyPdf } from '@/utils/ichingDailyPdf';
 
 function findYearly(cycles, year) {
   const y = Number(year);
@@ -289,6 +300,7 @@ export default {
     const birthdayList = computed(() => birthdayStore.getBirthdayList);
 
     const consulting = ref(birthdayStore.getBirthdayList.length > 0);
+    const exporting = ref(false);
     const error = ref('');
     const qDate = route.query.date;
     const parsedQueryDate = qDate ? DateTime.fromISO(String(qDate)) : null;
@@ -631,9 +643,44 @@ export default {
       }
     };
 
+    const exportPdf = async () => {
+      if (!early.entry?.hexagram && !later.entry?.hexagram) {
+        alert('No daily hexagram to export yet.');
+        return;
+      }
+      exporting.value = true;
+      try {
+        await downloadIchingDailyPdf({
+          natal,
+          early: {
+            selectedDate: early.selectedDate,
+            caption: earlyCaption.value,
+            note: earlyNote.value,
+            rangeLabel: earlyRangeLabel.value,
+            yearly: early.yearly,
+            hexagram: early.entry?.hexagram,
+          },
+          later: {
+            selectedDate: later.selectedDate,
+            caption: laterCaption.value,
+            note: laterNote.value,
+            rangeLabel: laterRangeLabel.value,
+            yearly: later.yearly,
+            hexagram: later.entry?.hexagram,
+          },
+        });
+      } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to generate PDF. Please try again.');
+      } finally {
+        exporting.value = false;
+      }
+    };
+
     return {
       birthdayList,
       consulting,
+      exporting,
       error,
       natal,
       early,
@@ -664,6 +711,7 @@ export default {
       onLaterDateInput,
       goEarlyToday,
       goLaterToday,
+      exportPdf,
       openHexDetail,
       openTriDetail,
     };

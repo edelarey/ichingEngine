@@ -24,3 +24,6 @@ pnpm-debug.log*
 *.sw?
 
 dist/
+
+# Generated report downloads (jsPDF save() writes here in Node)
+/*.pdf

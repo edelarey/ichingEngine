@@ -170,12 +170,20 @@ export async function createReport({ title, subtitle = '', fileName, footerNote 
 
   const labeled = (label, text) => {
     if (!text) return;
-    need(12);
+    const lines = wrap(text, CONTENT_W - 3, 9);
+    // Keep the heading with at least the first body line.
+    need(5 + 4.4 + 3.5);
     setBold(9);
     pdf.setTextColor(...PURPLE);
     pdf.text(label, M, y);
     y += 5;
-    para(text, { indent: 3, after: 3.5 });
+    setNormal(9);
+    lines.forEach((line) => {
+      need(6);
+      pdf.text(line, M + 3, y);
+      y += 4.4;
+    });
+    y += 3.5;
   };
 
   const table = (headers, rows, widths) => {
@@ -319,11 +327,11 @@ export async function createReport({ title, subtitle = '', fileName, footerNote 
   y = 40;
 
   const finish = (name) => {
-    y += 4;
-    need(16);
-    pdf.setDrawColor(...RULE);
-    pdf.line(M, y, PAGE_W - M, y);
-    y += 6;
+    if (y + 10 <= PAGE_H - 18) {
+      y += 4;
+      pdf.setDrawColor(...RULE);
+      pdf.line(M, y, PAGE_W - M, y);
+    }
     footer();
     const safe = String(name || fileName || 'reading').replace(/[^\w.-]+/g, '_');
     pdf.save(`${safe}.pdf`);

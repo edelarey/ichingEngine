@@ -49,16 +49,26 @@
             <span v-if="person.place"> · {{ person.place }}</span>
             <span v-if="natalBrief"> · {{ natalBrief }}</span>
           </p>
-          <router-link
-            v-if="person.id"
-            class="btn btn-outline-secondary btn-sm me-2"
-            :to="`/vedic_astrology?load=${person.id}`"
-          >
-            Full natal chart
-          </router-link>
-          <router-link class="btn btn-outline-secondary btn-sm" to="/vedic_help">
-            Jyotish guide
-          </router-link>
+          <div class="d-flex flex-wrap gap-2">
+            <router-link
+              v-if="person.id"
+              class="btn btn-outline-secondary btn-sm"
+              :to="`/vedic_astrology?load=${person.id}`"
+            >
+              Full natal chart
+            </router-link>
+            <router-link class="btn btn-outline-secondary btn-sm" to="/vedic_help">
+              Jyotish guide
+            </router-link>
+            <button
+              type="button"
+              class="btn btn-info btn-sm"
+              :disabled="exporting || !daily"
+              @click="exportPdf"
+            >
+              {{ exporting ? 'Building PDF…' : 'Export PDF' }}
+            </button>
+          </div>
         </div>
 
         <div class="date-bar card mb-4">
@@ -268,6 +278,7 @@ import BirthdayPicker from '@/components/BirthdayPicker.vue';
 import ReadingLead from '@/components/ReadingLead.vue';
 import { usePageTitle } from '@/composables/usePageTitle';
 import { calculateVedicChart, calculateVedicDaily } from '@/utils/vedicCalculations';
+import { downloadVedicDailyPdf } from '@/utils/vedicDailyPdf';
 
 export default {
   name: 'VedicDaily',
@@ -299,6 +310,7 @@ export default {
     }
 
     const loading = ref(birthdayStore.getBirthdayList.length > 0);
+    const exporting = ref(false);
     const error = ref('');
     const natalChart = ref(null);
     const daily = ref(null);
@@ -437,9 +449,32 @@ export default {
       }
     };
 
+    const exportPdf = async () => {
+      if (!daily.value) {
+        alert('Load a birth and a day first.');
+        return;
+      }
+      exporting.value = true;
+      try {
+        await downloadVedicDailyPdf({
+          person,
+          natalChart: natalChart.value,
+          daily: daily.value,
+          natalBrief: natalBrief.value,
+          caption: caption.value,
+        });
+      } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to generate PDF. Please try again.');
+      } finally {
+        exporting.value = false;
+      }
+    };
+
     return {
       birthdayList,
       loading,
+      exporting,
       error,
       person,
       daily,
@@ -453,6 +488,7 @@ export default {
       onDateInput,
       onTimeInput,
       goToday,
+      exportPdf,
     };
   },
 };
